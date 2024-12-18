@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
+using LendACarAPI.Filters;
 
 namespace LendACarAPI.Endpoints
 {
@@ -162,6 +163,16 @@ namespace LendACarAPI.Endpoints
                 .ToArrayAsync(cancellationToken);
             
             return Ok(employees);
+        }
+
+
+        [HttpGet("filter")]
+        [TypeFilter(typeof(EmployeeFilterAttribute))]
+        public ActionResult<EmployeeDto[]> FilterEmployee([FromQuery]EmployeeFilterDto filterDto)
+        {
+            var result = HttpContext.Items["result"] as EmployeeDto[];
+
+            return Ok(result);
         }
         
 

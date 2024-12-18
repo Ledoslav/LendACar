@@ -11,4 +11,5 @@ export interface UserDto {
   emailAddress: string;
   username: string;
   averageRating: number;
+  isVerified: boolean;
 }

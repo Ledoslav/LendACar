@@ -13,8 +13,12 @@ namespace LendACarAPI.DTOs
         [Required]
         public int UserId { get; set; }
 
-        public string? RequestComment { get; set; } // mogucnost useru da ostavi komentar koji ce biti vidljiv uposleniku
+        public string? RequestComment { get; set; }
 
+
+        public DateTime? RequestReviewDate { get; set; }
+        public bool? IsApproved { get; set; }
+        public string? DenialComment { get; set; }
         public int EmployeeId { get; set; }
 
     }

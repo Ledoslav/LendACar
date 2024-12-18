@@ -1,26 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { EmployeeDto } from './../../Models/EmployeeDto';
+import { VerificationRequestDto } from './../../Models/VerificationRequestDto';
+import { Component,inject, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {Router} from '@angular/router';
+import {NgForm} from '@angular/forms';
+import {EmployeeService} from '../../services/employee.service';
+import {VerificationRequestService} from '../../services/verificationrequest.service';
+import {UserDto} from '../../Models/UserDto';
+import {UserService} from '../../services/user.service';
+import {CityService} from '../../services/city.service';
+import {City} from '../../Models/City';
+import {Country} from '../../Models/Country';
+import {CountryService} from '../../services/country.service';
 
-interface User {
-  id: number;
-  username: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  averageRating: number;
-  createdDate: string;
-  birthDate: string;
-  city: string;
-}
-
-interface VerificationRequest {
-  id: number;
-  requestDate: string;
-  user: User;
-  requestComment: string | null;
-  employeeId: number | null;
-}
 
 @Component({
   selector: 'app-verification-request',
@@ -28,71 +20,90 @@ interface VerificationRequest {
   styleUrls: ['./verification-request.component.css']
 })
 export class VerificationRequestComponent implements OnInit {
-  requests: VerificationRequest[] = [];
-  filteredRequests: VerificationRequest[] = [];
-  selectedRequest: VerificationRequest | null = null;
+
+  employeeService=inject(EmployeeService);
+  userService=inject(UserService);
+  verificationService=inject(VerificationRequestService);
+  router=inject(Router);
+
+
+  requests: VerificationRequestDto[] = [];
+  filteredRequests: VerificationRequestDto[] = [];
+  selectedRequest: VerificationRequestDto | null = null;
   filter: string = 'all';
-  employeeId: number = 1; // Placeholder for logged-in employee's ID
+  employeeId: number = 0; // Placeholder for logged-in employee's ID
+  comment: string = ''; // komentar koji uposlenik unosi kao razlog odobrenja ili odbijanja
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    const currentEmployee = this.employeeService.currentEmployee();
+    this.employeeId = currentEmployee?.id || 0;
+
     this.fetchRequests();
   }
 
   fetchRequests(): void {
-    this.http.get<VerificationRequest[]>('/api/verification-requests').subscribe(
-      (data) => {
-        this.requests = data;
-        this.filterRequests();
-      },
-      (error) => {
-        console.error('Error fetching requests:', error);
-      }
-    );
+    this.verificationService.GetVerificationRequests().subscribe(res=>{
+      this.requests=res;
+    })
   }
 
   filterRequests(): void {
     if (this.filter === 'active') {
       this.filteredRequests = this.requests.filter((req) => req.employeeId === null);
-    } else if (this.filter === 'approved') {
-      this.filteredRequests = this.requests.filter((req) => req.employeeId !== null);
-    } else {
+    } 
+    else if (this.filter === 'approved') {
+      this.filteredRequests = this.requests.filter((req) => req.isApproved === true);
+    } 
+    else if (this.filter === 'denied') {
+      this.filteredRequests = this.requests.filter((req) => req.isApproved === false);
+    } 
+    else {
       this.filteredRequests = this.requests;
     }
   }
 
-  selectRequest(request: VerificationRequest): void {
+  selectRequest(request: VerificationRequestDto): void {
     this.selectedRequest = request;
+    this.comment = ''; // resetuje komentar
   }
 
-  approveRequest(requestId: number): void {
-    this.http.put(`/api/verification-requests/${requestId}/approve`, { employeeId: this.employeeId }).subscribe(
-      () => {
-        const request = this.requests.find((req) => req.id === requestId);
-        if (request) {
-          request.employeeId = this.employeeId;
-        }
-        this.filterRequests();
-        this.selectedRequest = null;
-      },
-      (error) => {
-        console.error('Error approving request:', error);
-      }
-    );
+  approveRequest(request: VerificationRequestDto): void {
+    request.denialComment = this.comment;
+    request.employeeId = this.employeeId;
+    request.isApproved = true;
+
+    this.verificationService.ConfirmVerificationRequest(request, request.id).subscribe({
+      next:_ => {window.location.reload();},
+      error:err=>console.log(err)
+    })
   }
 
-  deleteRequest(requestId: number): void {
-    this.http.delete(`/api/verification-requests/${requestId}`).subscribe(
-      () => {
-        this.requests = this.requests.filter((req) => req.id !== requestId);
-        this.filterRequests();
-        this.selectedRequest = null;
-      },
-      (error) => {
-        console.error('Error deleting request:', error);
-      }
-    );
+  denyRequest(request: VerificationRequestDto): void {
+    request.denialComment = this.comment;
+    request.employeeId = this.employeeId;
+    request.isApproved = false;
+
+    this.verificationService.DenyVerificationRequest(request, request.id).subscribe({
+      next:_ => {window.location.reload();},
+      error:err=>console.log(err)
+    })
   }
+
+
+  getStatus(request: VerificationRequestDto | null): string {
+    if (!request) return '';
+    if (request.isApproved === true) {
+      return 'Approved';
+    } 
+    else if (request.isApproved === false) {
+      return 'Denied';
+    } 
+    else {
+      return 'Active';
+    }
+  }
+
 }
 

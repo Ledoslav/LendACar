@@ -12,6 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //import { DashboardComponent } from './employee/dashboard/dashboard.component';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,7 +27,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     ReactiveFormsModule,
     FormsModule,
     BrowserAnimationsModule,
-    TooltipModule
+    TooltipModule,
   ],
   providers: [
     provideAnimationsAsync()

@@ -1,8 +1,9 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {EmployeeDto} from '../Models/EmployeeDto';
 import {map} from 'rxjs';
 import {Router} from '@angular/router';
+import {EmployeeFilter} from '../Models/EmployeeFilter';
 
 @Injectable({
   providedIn: 'root'
@@ -61,6 +62,19 @@ export class EmployeeService {
 
   GetAllEmployees(){
     return this.http.get<EmployeeDto[]>(this.baseUrl+'employee/getAll')
+  }
+
+  FilterEmployees(filter:EmployeeFilter){
+    let params = new HttpParams();
+
+    // Dynamically append query parameters if they have values
+    if (filter.name) params = params.set('name', filter.name);
+    if (filter.ageFrom !== null && filter.ageFrom !== undefined) params = params.set('ageFrom', filter.ageFrom.toString());
+    if (filter.ageTo !== null && filter.ageTo !== undefined) params = params.set('ageTo', filter.ageTo.toString());
+    if (filter.cityId !== null && filter.cityId !== undefined) params = params.set('cityId', filter.cityId.toString());
+    if (filter.jobTitle) params = params.set('jobTitle', filter.jobTitle);
+
+    return this.http.get<EmployeeDto[]>(`${this.baseUrl}employee/filter`, { params });
   }
 
 }

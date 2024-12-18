@@ -17,19 +17,31 @@
         <p><strong>Request Date:</strong> {{ selectedRequest.requestDate }}</p>
         <p><strong>User:</strong> {{ selectedRequest.user.username }}</p>
         <p><strong>Request Comment:</strong> {{ selectedRequest.requestComment || 'No comment provided' }}</p>
-        <p><strong>Status:</strong> {{ selectedRequest.employeeId ? 'Approved' : 'Active' }}</p>
+        <p><strong>Status:</strong> {{ getStatus(selectedRequest) }}</p>
         <h4>User Information</h4>
         <p><strong>First Name:</strong> {{ selectedRequest.user.firstName }}</p>
         <p><strong>Last Name:</strong> {{ selectedRequest.user.lastName }}</p>
         <p><strong>Phone Number:</strong> {{ selectedRequest.user.phoneNumber }}</p>
-        <p><strong>Email:</strong> {{ selectedRequest.user.email }}</p>
         <p><strong>Average Rating:</strong> {{ selectedRequest.user.averageRating }}</p>
-        <p><strong>Account Created:</strong> {{ selectedRequest.user.createdDate }}</p>
         <p><strong>Birth Date:</strong> {{ selectedRequest.user.birthDate }}</p>
         <p><strong>City:</strong> {{ selectedRequest.user.city }}</p>
-        <div class="mt-3">
-          <button class="btn btn-success me-2" (click)="approveRequest(selectedRequest.id)">Approve</button>
-          <button class="btn btn-danger" (click)="deleteRequest(selectedRequest.id)">Delete</button>
+        <h4 *ngIf="selectedRequest.isApproved !== null">Request Review Information</h4>
+        <p *ngIf="selectedRequest.isApproved !== null"><strong>Review Date:</strong> {{ selectedRequest.requestReviewDate }}</p>
+        <p *ngIf="selectedRequest.isApproved !== null"><strong>Employee:</strong> {{ selectedRequest.employee?.username || 'Unknown' }}</p>
+        <p *ngIf="selectedRequest.isApproved !== null"><strong>Comment from employee:</strong> {{ selectedRequest.denialComment || 'No reasoning provided' }}</p>
+
+        <div *ngIf="selectedRequest.isApproved === null" class="mt-3">
+          <textarea
+            class="form-control mb-2"
+            [(ngModel)]="comment"
+            placeholder="Enter a comment for approval or denial"
+          ></textarea>
+          <button class="btn btn-success me-2" (click)="approveRequest(selectedRequest)">
+            Approve
+          </button>
+          <button class="btn btn-danger me-2" (click)="denyRequest(selectedRequest)">
+            Deny
+          </button>
         </div>
       </div>
     </div>
@@ -41,6 +53,7 @@
         <option value="all">All Requests</option>
         <option value="active">Active Requests</option>
         <option value="approved">Approved Requests</option>
+        <option value="denied">Denied Requests</option>
       </select>
     </div>
 
@@ -59,7 +72,7 @@
           <td>{{ i + 1 }}</td>
           <td>{{ request.user.username }}</td>
           <td>{{ request.requestDate }}</td>
-          <td>{{ request.employeeId ? 'Approved' : 'Active' }}</td>
+          <td>{{ getStatus(request) }}</td>
         </tr>
       </tbody>
     </table>

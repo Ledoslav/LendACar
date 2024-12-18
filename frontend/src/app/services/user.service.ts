@@ -66,6 +66,10 @@ export class UserService {
     })
   }
 
+  GetUserById(id:number){
+    return this.http.get<UserDto>(this.baseUrl + `user/getById/${id}`)
+  }
+
   // Getter to access current user
   getCurrentUser() {
     return this.currentUser();

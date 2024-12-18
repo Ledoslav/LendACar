@@ -35,6 +35,59 @@ namespace LendACarAPI.Endpoints
                 RequestDate = request.RequestDate,
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
+                RequestReviewDate = request.RequestReviewDate,
+                IsApproved = request.IsApproved,
+                DenialComment = request.DenialComment,
+                EmployeeId = request.EmployeeId,
+            };
+
+            return Ok(verificationRequest);
+        }
+
+        [HttpGet("getByUsername/{id}")]
+        public async Task<IActionResult> GetVerificationRequestByUsername(string username)
+        {
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null) return NotFound("Username doesn't exist.");
+
+            var request = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.UserId == user.Id);
+            if (request == null) return NotFound("User hasn't submited a request.");
+
+
+            var verificationRequest = new VerificationDto
+            {
+                Id = request.Id,
+                RequestDate = request.RequestDate,
+                UserId = request.UserId,
+                RequestComment = request.RequestComment,
+                RequestReviewDate = request.RequestReviewDate,
+                IsApproved = request.IsApproved,
+                DenialComment = request.DenialComment,
+                EmployeeId = request.EmployeeId,
+            };
+
+            return Ok(verificationRequest);
+        }
+
+        [HttpGet("getByUserId/{id}")]
+        public async Task<IActionResult> GetVerificationRequestByUserId(int userId)
+        {
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return NotFound("User doesn't exist.");
+
+            var request = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.UserId == user.Id);
+            if (request == null) return NotFound("User hasn't submited a request.");
+
+
+            var verificationRequest = new VerificationDto
+            {
+                Id = request.Id,
+                RequestDate = request.RequestDate,
+                UserId = request.UserId,
+                RequestComment = request.RequestComment,
+                RequestReviewDate = request.RequestReviewDate,
+                IsApproved = request.IsApproved,
+                DenialComment = request.DenialComment,
                 EmployeeId = request.EmployeeId,
             };
 
@@ -60,8 +113,8 @@ namespace LendACarAPI.Endpoints
             return CreatedAtAction(nameof(GetVerificationRequestById), new { id = newVerificationRequest.Id }, verificationSubmitDto);
         }
 
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> ConfirmVerificationRequest(int id, [FromBody] VerificationDto approvedVerificationRequest)
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> ApproveVerificationRequest(int id, [FromBody] VerificationDto approvedVerificationRequest)
         {
             var verificationRequest = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.Id == id);
             if (verificationRequest == null) return NotFound("Verification request not found");
@@ -69,8 +122,13 @@ namespace LendACarAPI.Endpoints
             var userGettingVerified = await db.Users.FirstOrDefaultAsync(u => u.Id == verificationRequest.UserId);
             if (userGettingVerified == null) return NotFound("User not found");
 
-            verificationRequest.EmployeeId = approvedVerificationRequest.EmployeeId;
+
             userGettingVerified.IsVerified = true;
+
+            verificationRequest.RequestReviewDate = DateTime.UtcNow;
+            verificationRequest.IsApproved = true;
+            verificationRequest.DenialComment = approvedVerificationRequest.DenialComment;
+            verificationRequest.EmployeeId = approvedVerificationRequest.EmployeeId;
 
             await db.SaveChangesAsync();
 
@@ -80,6 +138,41 @@ namespace LendACarAPI.Endpoints
                 RequestDate = verificationRequest.RequestDate,
                 UserId = verificationRequest.UserId,
                 RequestComment = verificationRequest.RequestComment,
+                RequestReviewDate = verificationRequest.RequestReviewDate,
+                IsApproved = verificationRequest.IsApproved,
+                DenialComment = verificationRequest.DenialComment,
+                EmployeeId = verificationRequest.EmployeeId,
+            });
+        }
+
+        [HttpPut("deny/{id}")]
+        public async Task<IActionResult> DenyVerificationRequest(int id, [FromBody] VerificationDto approvedVerificationRequest)
+        {
+            var verificationRequest = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.Id == id);
+            if (verificationRequest == null) return NotFound("Verification request not found");
+
+            var userGettingVerified = await db.Users.FirstOrDefaultAsync(u => u.Id == verificationRequest.UserId);
+            if (userGettingVerified == null) return NotFound("User not found");
+
+
+            userGettingVerified.IsVerified = false;
+
+            verificationRequest.RequestReviewDate = DateTime.UtcNow;
+            verificationRequest.IsApproved = false;
+            verificationRequest.DenialComment = approvedVerificationRequest.DenialComment;
+            verificationRequest.EmployeeId = approvedVerificationRequest.EmployeeId;
+
+            await db.SaveChangesAsync();
+
+            return Ok(new VerificationDto
+            {
+                Id = verificationRequest.Id,
+                RequestDate = verificationRequest.RequestDate,
+                UserId = verificationRequest.UserId,
+                RequestComment = verificationRequest.RequestComment,
+                RequestReviewDate = verificationRequest.RequestReviewDate,
+                IsApproved = verificationRequest.IsApproved,
+                DenialComment = verificationRequest.DenialComment,
                 EmployeeId = verificationRequest.EmployeeId,
             });
         }

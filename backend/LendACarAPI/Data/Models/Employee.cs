@@ -3,8 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LendACarAPI.Data.Models
 {
-    
-    
+
     public class Employee:Person
     {
         [Required]

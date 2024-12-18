@@ -26,5 +26,20 @@ namespace LendACarAPI.Data.Models
         public int CityId { get; set; }
         public City? City { get; set; }
 
+
+        public int GetAge()
+        {
+            var today = DateTime.Today;
+
+            var age = today.Year - BirthDate.Year;
+
+            if (BirthDate.Date > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            return age;
+        }
+
     }
 }

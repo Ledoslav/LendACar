@@ -38,6 +38,7 @@ namespace LendACarAPI.Endpoints
                 EmailAddress = user.EmailAdress,
                 Username=user.Username,
                 AverageRating = user.AverageRating,
+                IsVerified = user.IsVerified
             };
 
             return Ok(userDto);
@@ -63,6 +64,7 @@ namespace LendACarAPI.Endpoints
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
                 PasswordSalt = hmac.Key,
                 CreatedDate=DateTime.Now,
+                IsVerified = false,
             };
 
             db.Users.Add(createdUser);
@@ -103,6 +105,7 @@ namespace LendACarAPI.Endpoints
                 EmailAddress = user.EmailAdress,
                 Username = user.Username,
                 AverageRating = user.AverageRating,
+                IsVerified = user.IsVerified
             });
         }
 
@@ -143,6 +146,44 @@ namespace LendACarAPI.Endpoints
                 EmailAddress = user.EmailAdress,
                 Username = user.Username,
                 AverageRating = user.AverageRating,
+            });
+        }
+
+
+        [HttpPut("verifyUser/{id}")]
+        public async Task<IActionResult> VerifyUser([FromBody] UserDto verifiedUser, int id)
+        {
+            var user = await db.Users
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null) return NotFound("User not found");
+
+            if (user.IsVerified == true) return BadRequest("The user is already verified!");
+
+            user.IsVerified = true;
+
+            await db.SaveChangesAsync();
+
+            var returnUser = await db.Users
+            .Include(u => u.City)
+            .Include(u => u.City != null ? u.City.Country : null)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+
+
+            return Ok(new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                BirthDate = user.BirthDate.ToString("dd.MM.yyyy"),
+                City = user.City,
+                CityId = user.CityId,
+                EmailAddress = user.EmailAdress,
+                Username = user.Username,
+                AverageRating = user.AverageRating,
+                IsVerified = user.IsVerified,
             });
         }
 

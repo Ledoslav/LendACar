@@ -13,8 +13,8 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
     public class DataSeedGenerateEndpoint(ApplicationDbContext db):ControllerBase
     {
 
-        [HttpPost]
-        public async Task<string> DataSeedGeneration(CancellationToken cancellationToken = default)
+        [HttpPost("generateReferalData")]
+        public async Task<string> ReferalDataSeedGeneration(CancellationToken cancellationToken = default)
         {
 
 
@@ -46,6 +46,36 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
             };
 
 
+            var vehicleCategories = new List<VehicleCategory>
+            {
+                new VehicleCategory { Name = "Sedan" , Description = "Perfect blend of style, comfort and sportiness."},
+                new VehicleCategory { Name = "Hatchback" , Description = "Compact vehicle perfect for urban places."},
+            };
+
+            var workingHours = new List<WorkingHour>
+            {
+                new WorkingHour { StartTime = new TimeOnly(9, 00), EndTime = new TimeOnly(17, 00), Saturday = false, Sunday = false },
+                new WorkingHour { StartTime = new TimeOnly(8, 00), EndTime = new TimeOnly(16, 00), Saturday = false, Sunday = false },
+                new WorkingHour { StartTime = new TimeOnly(9, 30), EndTime = new TimeOnly(18, 00), Sunday = false },
+            };
+
+
+            // Dodavanje podataka u bazu
+            await db.WorkingHours.AddRangeAsync(workingHours, cancellationToken);
+            await db.Countries.AddRangeAsync(countries, cancellationToken);
+            await db.Cities.AddRangeAsync(cities, cancellationToken);
+            await db.VehicleCategories.AddRangeAsync(vehicleCategories, cancellationToken);
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            return "Data generation completed successfully.";
+        }
+
+        [HttpPost("generatePersonData")]
+        public async Task<string> PersonDataSeedGeneration(CancellationToken cancellationToken = default)
+        {
+
+
             var adminController = new AdministratorController(db);
             await adminController.RegisterAdministrator(new DTOs.AdministratorRegisterDto
             {
@@ -69,7 +99,8 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 BirthDate = new DateTime(2003, 11, 11).ToString("dd.MM.yyyy"),
                 CityId = 2,
                 PhoneNumber = "123-456-7890",
-                EmailAdress = "denis@edu.fit.ba"
+                EmailAdress = "denis@edu.fit.ba",
+                IsVerified = true
             });
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
@@ -80,7 +111,8 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 BirthDate = new DateTime(2003, 11, 10).ToString("dd.MM.yyyy"),
                 CityId = 3,
                 PhoneNumber = "123-456-7890",
-                EmailAdress = "edin@edu.fit.ba"
+                EmailAdress = "edin@edu.fit.ba",
+                IsVerified = true
             });
 
             await controller.RegisterUser(new DTOs.RegisterUserDto
@@ -92,28 +124,11 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 BirthDate = new DateTime(2002, 10, 31).ToString("dd.MM.yyyy"),
                 CityId = 7,
                 PhoneNumber = "123-456-7890",
-                EmailAdress = "emin@edu.fit.ba"
+                EmailAdress = "emin@edu.fit.ba",
+                IsVerified = false
             });
 
-            var vehicleCategories = new List<VehicleCategory>
-            {
-                new VehicleCategory { Name = "Sedan" , Description = "Perfect blend of style, comfort and sportiness."},
-                new VehicleCategory { Name = "Hatchback" , Description = "Compact vehicle perfect for urban places."},
-            };
-
-            var workingHours = new List<WorkingHour>
-            {
-                new WorkingHour { StartTime = new TimeOnly(9, 00), EndTime = new TimeOnly(17, 00), Saturday = false, Sunday = false },
-                new WorkingHour { StartTime = new TimeOnly(8, 00), EndTime = new TimeOnly(16, 00), Saturday = false, Sunday = false },
-                new WorkingHour { StartTime = new TimeOnly(9, 30), EndTime = new TimeOnly(18, 00), Sunday = false },
-            };
-
-
-            // Dodavanje podataka u bazu
-            await db.WorkingHours.AddRangeAsync(workingHours, cancellationToken);
-            await db.Countries.AddRangeAsync(countries, cancellationToken);
-            await db.Cities.AddRangeAsync(cities, cancellationToken);
-            await db.VehicleCategories.AddRangeAsync(vehicleCategories, cancellationToken);
+            
 
             await db.SaveChangesAsync(cancellationToken);
 

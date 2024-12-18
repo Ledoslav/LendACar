@@ -1,5 +1,5 @@
 <section class="intro">
-  <h2 class="text-center">Employee Information</h2>
+  <h2 class="text-center pt-3">Employee Information</h2>
   <div class="bg-image h-100" >
     <div class="mask d-flex align-items-center h-100">
       <div class="container">
@@ -9,6 +9,35 @@
               <input type="text" placeholder="Search employee" id="empSearch" style="width: 20%">
               <button class="btn btn-default btn-outline-light mx-3">Search</button>
             </div>-->
+            <form [formGroup]="employeeSearchForm" (ngSubmit)="onSearch()">
+              <div class="container d-inline-block border p-2 my-3">
+                <div class="row align-items-center">
+                  <div class="col-auto">
+                    <input class="form-control" formControlName="name" placeholder="Name">
+                  </div>
+                  <div class="col-auto">
+                    <input class="form-control" formControlName="ageFrom" type="number" placeholder="Age from">
+                  </div>
+                  <div class="col-auto">
+                    <input class="form-control"  formControlName="ageTo" type="number" placeholder="Age to">
+                  </div>
+                  <div class="col-auto">
+                    <select class="form-select" id="city" formControlName="cityId">
+                      <option *ngFor="let city of cities" [ngValue]="city.id">{{city.name}}</option>
+                    </select>
+                  </div>
+                  <div class="col-auto">
+                    <select class="form-select"  formControlName="jobTitle">
+                      <option  *ngFor="let title of jobTitles">{{title}}</option>
+                    </select>
+                  </div>
+                  <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                    <button class="btn btn-secondary mx-2" type="button" (click)="employeeSearchForm.reset()">Clear filters</button>
+                  </div>
+                </div>
+              </div>
+            </form>
             <div class="card">
               <div class="card-body p-0">
                 <div class="table-responsive table-scroll" data-mdb-perfect-scrollbar="true"

@@ -30,5 +30,6 @@ namespace LendACarAPI.DTOs
         [Required]
         public string? Username { get; set; }
         public double AverageRating { get; set; } = 0.0;
+        public bool IsVerified { get; set; }
     }
 }
