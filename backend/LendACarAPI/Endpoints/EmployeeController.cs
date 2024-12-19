@@ -112,6 +112,13 @@ namespace LendACarAPI.Endpoints
 
             employee.PhoneNumber = employeeDto.PhoneNumber;
             employee.CityId = employeeDto.CityId;
+            employee.EmailAdress = employeeDto.EmailAddress;
+            employee.FirstName = employeeDto.FirstName;
+            employee.LastName = employeeDto.LastName;
+            employee.Username = employeeDto.Username;
+            employee.BirthDate = DateTime.Parse(employeeDto.BirthDate);
+            employee.JobTitle= employeeDto.JobTitle;
+            employee.DateOfHire = employeeDto.DateOfHire;
 
             await db.SaveChangesAsync(cancellationToken);
 
@@ -125,7 +132,7 @@ namespace LendACarAPI.Endpoints
                    FirstName = e.FirstName,
                    LastName = e.LastName,
                    PhoneNumber = e.PhoneNumber,
-                   BirthDate = e.BirthDate.ToString("dd.MM.yyyy"),
+                   BirthDate = e.BirthDate.ToString("yyyy-MM-dd"),
                    City = e.City,
                    CityId = e.CityId,
                    EmailAddress = e.EmailAdress,
@@ -133,6 +140,7 @@ namespace LendACarAPI.Endpoints
                    JobTitle = e.JobTitle,
                    WorkingHour = e.WorkingHour,
                    WorkingHourId = e.WorkingHourId,
+                   DateOfHire = e.DateOfHire
                })
                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
@@ -150,7 +158,7 @@ namespace LendACarAPI.Endpoints
                     FirstName = e.FirstName,
                     LastName = e.LastName,
                     PhoneNumber = e.PhoneNumber,
-                    BirthDate = e.BirthDate.ToString("dd.MM.yyyy"),
+                    BirthDate = e.BirthDate.ToString("yyyy-MM-dd"),
                     City = e.City,
                     CityId = e.CityId,
                     EmailAddress = e.EmailAdress,
@@ -158,11 +166,39 @@ namespace LendACarAPI.Endpoints
                     JobTitle = e.JobTitle,
                     WorkingHour = e.WorkingHour,
                     WorkingHourId = e.WorkingHourId,
+                    DateOfHire = e.DateOfHire
 
                 })
                 .ToArrayAsync(cancellationToken);
             
             return Ok(employees);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EmployeeDto>> GetEmployeeById(int id,CancellationToken cancellation)
+        {
+            var employee=await db.Employees
+                .Select(e => new EmployeeDto
+                {
+                    Id = e.Id,
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    PhoneNumber = e.PhoneNumber,
+                    BirthDate = e.BirthDate.ToString("yyyy-MM-dd"),
+                    City = e.City,
+                    CityId = e.CityId,
+                    EmailAddress = e.EmailAdress,
+                    Username = e.Username,
+                    JobTitle = e.JobTitle,
+                    WorkingHour = e.WorkingHour,
+                    WorkingHourId = e.WorkingHourId,
+                    DateOfHire=e.DateOfHire
+
+                })
+                .FirstOrDefaultAsync(x => x.Id == id,cancellation);
+            if(employee == null) return NotFound($"User with the given id:{id} was not found");
+
+            return Ok(employee);
         }
 
 

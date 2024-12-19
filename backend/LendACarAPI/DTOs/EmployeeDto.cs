@@ -34,5 +34,7 @@ namespace LendACarAPI.DTOs
         public WorkingHour? WorkingHour { get; set; }
 
         public string? JobTitle { get; set; }
+
+        public DateOnly DateOfHire { get; set; }
     }
 }

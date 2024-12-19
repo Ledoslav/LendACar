@@ -20,7 +20,7 @@
 
     <div class="form-group mb-3">
       <label for="email">Email</label>
-      <input type="email" disabled id="email" class="form-control" name="email" [(ngModel)]="employee.emailAdress" required email />
+      <input type="email" disabled id="email" class="form-control" name="email" [(ngModel)]="employee.emailAddress" required email />
       <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['email']?.errors?.['required']">
         Email is required.
       </small>
@@ -59,7 +59,7 @@
 
     <div class="form-group mb-3">
       <label for="birthDate">Birth Date</label>
-      <input type="date" id="birthDate" class="form-control" name="birhDate" [(ngModel)]="employee.birthDate" required />
+      <input type="date"  id="birthDate" class="form-control" name="birhDate" [(ngModel)]="employee.birthDate" required />
       <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['birthDate']?.errors?.['required']">
         Birth date is required.
       </small>
@@ -77,12 +77,13 @@
 
     <div class="form-group mb-3">
       <label for="hireDate">Hire Date</label>
-      <input type="date" id="hireDate" class="form-control" name="hireDate" [(ngModel)]="employee.hireDate" required />
+      <input type="date" id="hireDate" class="form-control" name="hireDate" [(ngModel)]="employee.dateOfHire" required />
       <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['hireDate']?.errors?.['required']">
         Hire date is required.
       </small>
     </div>
 
-    <button type="submit" class="btn btn-primary w-100">Register</button>
+    <button *ngIf="!editMode" type="submit" class="btn btn-primary w-100">Register</button>
+    <button *ngIf="editMode" type="button" class="btn btn-primary w-100" (click)="update()">Update</button>
   </form>
 </div>
