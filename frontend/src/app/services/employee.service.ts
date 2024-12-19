@@ -68,6 +68,10 @@ export class EmployeeService {
     return this.http.get<EmployeeDto[]>(this.baseUrl+`employee/${id}`);
   }
 
+  DeleteEmployee(id:number){
+    return this.http.delete(this.baseUrl+`employee/remove/${id}`);
+  }
+
   FilterEmployees(filter:EmployeeFilter){
     let params = new HttpParams();
 

@@ -19,7 +19,7 @@ namespace LendACarAPI.Endpoints
         {
             using var hmac = new HMACSHA256();
 
-            if (await EmployeeExists(registerEmployee.Username, registerEmployee.EmailAdress)) { return BadRequest("Username or email is taken"); }
+            if (await EmployeeExists(registerEmployee.Username, registerEmployee.EmailAddress)) { return BadRequest("Username or email is taken"); }
 
             var employee = new Employee
             {
@@ -28,13 +28,13 @@ namespace LendACarAPI.Endpoints
                 BirthDate = DateTime.Parse(registerEmployee.BirthDate),
                 PhoneNumber = registerEmployee.PhoneNumber,
                 CityId = registerEmployee.CityId,
-                EmailAdress = registerEmployee.EmailAdress,
+                EmailAdress = registerEmployee.EmailAddress,
                 Username = registerEmployee.Username,
                 JobTitle = registerEmployee.JobTitle,
                 WorkingHourId = registerEmployee.WorkingHourId,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerEmployee.Password)),
                 PasswordSalt = hmac.Key,
-                DateOfHire = DateOnly.Parse(registerEmployee.HireDate)
+                DateOfHire = registerEmployee.DateOfHire
             };
 
             db.Employees.Add(employee);
@@ -100,15 +100,15 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> EditEmployee(int id, [FromBody] EmployeeDto employeeDto,CancellationToken cancellationToken)
+        public async Task<IActionResult> EditEmployee(int id, [FromBody] EmployeeDto employeeDto, CancellationToken cancellationToken)
         {
-            var employee= await db.Employees
-                .Include(e=>e.City)
+            var employee = await db.Employees
+                .Include(e => e.City)
                 .Include(u => u.City != null ? u.City.Country : null)
-                .Include(e=>e.WorkingHour)
+                .Include(e => e.WorkingHour)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-            if(employee == null) return NotFound();
+            if (employee == null) return NotFound();
 
             employee.PhoneNumber = employeeDto.PhoneNumber;
             employee.CityId = employeeDto.CityId;
@@ -117,7 +117,7 @@ namespace LendACarAPI.Endpoints
             employee.LastName = employeeDto.LastName;
             employee.Username = employeeDto.Username;
             employee.BirthDate = DateTime.Parse(employeeDto.BirthDate);
-            employee.JobTitle= employeeDto.JobTitle;
+            employee.JobTitle = employeeDto.JobTitle;
             employee.DateOfHire = employeeDto.DateOfHire;
 
             await db.SaveChangesAsync(cancellationToken);
@@ -152,9 +152,9 @@ namespace LendACarAPI.Endpoints
         public async Task<ActionResult> GetAllEmployees(CancellationToken cancellationToken)
         {
             var employees = await db.Employees
-                .Select(e=>new EmployeeDto
+                .Select(e => new EmployeeDto
                 {
-                    Id=e.Id,
+                    Id = e.Id,
                     FirstName = e.FirstName,
                     LastName = e.LastName,
                     PhoneNumber = e.PhoneNumber,
@@ -170,14 +170,14 @@ namespace LendACarAPI.Endpoints
 
                 })
                 .ToArrayAsync(cancellationToken);
-            
+
             return Ok(employees);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<EmployeeDto>> GetEmployeeById(int id,CancellationToken cancellation)
+        public async Task<ActionResult<EmployeeDto>> GetEmployeeById(int id, CancellationToken cancellation)
         {
-            var employee=await db.Employees
+            var employee = await db.Employees
                 .Select(e => new EmployeeDto
                 {
                     Id = e.Id,
@@ -192,11 +192,11 @@ namespace LendACarAPI.Endpoints
                     JobTitle = e.JobTitle,
                     WorkingHour = e.WorkingHour,
                     WorkingHourId = e.WorkingHourId,
-                    DateOfHire=e.DateOfHire
+                    DateOfHire = e.DateOfHire
 
                 })
-                .FirstOrDefaultAsync(x => x.Id == id,cancellation);
-            if(employee == null) return NotFound($"User with the given id:{id} was not found");
+                .FirstOrDefaultAsync(x => x.Id == id, cancellation);
+            if (employee == null) return NotFound($"User with the given id:{id} was not found");
 
             return Ok(employee);
         }
@@ -204,13 +204,13 @@ namespace LendACarAPI.Endpoints
 
         [HttpGet("filter")]
         [TypeFilter(typeof(EmployeeFilterAttribute))]
-        public ActionResult<EmployeeDto[]> FilterEmployee([FromQuery]EmployeeFilterDto filterDto)
+        public ActionResult<EmployeeDto[]> FilterEmployee([FromQuery] EmployeeFilterDto filterDto)
         {
             var result = HttpContext.Items["result"] as EmployeeDto[];
 
             return Ok(result);
         }
-        
+
 
 
         private async Task<bool> EmployeeExists(string username, string email)

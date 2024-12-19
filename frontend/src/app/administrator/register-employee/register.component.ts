@@ -24,12 +24,12 @@ export class RegisterComponent implements OnInit {
   editMode=false;
 
   ngOnInit(): void {
-     this.loadCities();
-     const employeeId=this.route.snapshot.queryParamMap.get('id');
-     if(employeeId) {
-       this.loadEmployee(employeeId);
-       this.editMode=true;
-     }
+    this.loadCities();
+    const employeeId=this.route.snapshot.queryParamMap.get('id');
+    if(employeeId) {
+      this.loadEmployee(employeeId);
+      this.editMode=true;
+    }
   }
 
   loadEmployee(employeeId:string){
