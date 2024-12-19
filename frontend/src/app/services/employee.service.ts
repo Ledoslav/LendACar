@@ -64,6 +64,10 @@ export class EmployeeService {
     return this.http.get<EmployeeDto[]>(this.baseUrl+'employee/getAll')
   }
 
+  GetEmployeeById(id:number){
+    return this.http.get<EmployeeDto[]>(this.baseUrl+`employee/${id}`);
+  }
+
   FilterEmployees(filter:EmployeeFilter){
     let params = new HttpParams();
 

@@ -10,7 +10,7 @@ namespace LendACarAPI.Data.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public DateTime RequestDate { get; set; } 
+        public DateTime RequestDate { get; set; }
 
 
         [ForeignKey(nameof(User))]

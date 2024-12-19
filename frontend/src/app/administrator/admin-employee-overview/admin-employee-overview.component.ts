@@ -4,6 +4,8 @@ import {EmployeeService} from '../../services/employee.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
+import {Router} from '@angular/router';
+import {HttpParams} from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-employee-overview',
@@ -16,12 +18,16 @@ export class AdminEmployeeOverviewComponent implements OnInit {
     this.loadCities();
   }
 
+  router=inject(Router);
   fb=inject(FormBuilder);
+
   cityService=inject(CityService);
   cities:City[]=[];
+
   employees: EmployeeDto[] = [];
   jobTitles:string[]=[" ","Customer support","Developer"];
   employeeService=inject(EmployeeService);
+
   employeeSearchForm=this.fb.group({
     name: [undefined],
     cityId: [undefined],
@@ -50,7 +56,11 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   }
 
   EditEmployee($event: any) {
-    console.log($event.target.value);
+    const employeeId=$event.target.value;
+
+    const params={id:employeeId.toString()};
+
+    void this.router.navigate(['/admin/register/'],{queryParams:params});
   }
 
   onSearch() {

@@ -2,6 +2,9 @@ import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {CityService} from '../../services/city.service';
 import {EmployeeService} from '../../services/employee.service';
 import {NgForm} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
+import {DatePipe} from '@angular/common';
+import {AdminService} from '../../services/administrator.service';
 
 @Component({
   selector: 'app-register-employee',
@@ -14,10 +17,35 @@ export class RegisterComponent implements OnInit {
   cities: any;
   cityService=inject(CityService);
   employeeService=inject(EmployeeService);
+  private route=inject(ActivatedRoute);
+  private datePipe=inject(DatePipe);
+  adminService=inject(AdminService);
 
+  editMode=false;
 
   ngOnInit(): void {
      this.loadCities();
+     const employeeId=this.route.snapshot.queryParamMap.get('id');
+     if(employeeId) {
+       this.loadEmployee(employeeId);
+       this.editMode=true;
+     }
+  }
+
+  loadEmployee(employeeId:string){
+    const id=Number(employeeId);
+    this.employeeService.GetEmployeeById(id).subscribe({
+      next:result => {
+        this.employee=result
+        this.formatDate();
+      },
+      error: err => {console.log(err);}
+    })
+  }
+
+  formatDate(){
+    this.employee.birthDate=this.datePipe.transform(Date.parse(this.employee.birthDate),"yyyy-MM-dd");
+    this.employee.dateOfHire=this.datePipe.transform(this.employee.dateOfHire,"yyyy-MM-dd");
   }
 
   loadCities(){
@@ -50,13 +78,13 @@ export class RegisterComponent implements OnInit {
   }
 
   generateEmail(): void {
-    if (this.employee.firstName && this.employee.lastName) {
+    if (this.employee.firstName || this.employee.lastName) {
       const FirstName = this.employee.firstName.trim().toLowerCase();
       const LastName = this.employee.lastName.trim().toLowerCase();
 
       // Generate the email
       let email=`${FirstName}.${LastName}@lendacar.ba`;
-      this.employee.emailAdress = this.formatEmail(email);
+      this.employee.emailAddress = this.formatEmail(email);
     }
   }
 
@@ -81,5 +109,16 @@ export class RegisterComponent implements OnInit {
     } else {
       alert('Please fill in the form correctly.');
     }
+  }
+
+  update(){
+    this.adminService.UpdateEmployee(this.employee).subscribe({
+      next:result=> {
+        this.employee = result;
+        this.formatDate();
+        alert("Successfully updated employee");
+      },
+      error:err=>{alert("Error"); window.location.reload();}
+    })
   }
 }

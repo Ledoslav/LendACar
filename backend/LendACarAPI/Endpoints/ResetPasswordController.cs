@@ -31,7 +31,7 @@ namespace LendACarAPI.Endpoints
             User? user = null;
             Employee? employee = null;
 
-            if (resetDto.EmailAddress.Contains("@lendacar.com"))
+            if (resetDto.EmailAddress.Contains("@lendacar.ba"))
                 employee = await db.Employees.FirstOrDefaultAsync(e => e.EmailAdress == resetDto.EmailAddress, cancellationToken);
             else
                 user = await db.Users.FirstOrDefaultAsync(u => u.EmailAdress == resetDto.EmailAddress, cancellationToken);

@@ -11,6 +11,8 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //import { DashboardComponent } from './employee/dashboard/dashboard.component';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import {DatePipe} from '@angular/common';
+
 
 
 @NgModule({
@@ -28,9 +30,11 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     FormsModule,
     BrowserAnimationsModule,
     TooltipModule,
+    DatePipe
   ],
   providers: [
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

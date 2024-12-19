@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 
 import { EmployeeRoutingModule } from './employee-routing.module';
 import { LoginComponent } from './login/login.component';
@@ -22,7 +22,8 @@ import { VerificationRequestComponent } from './verification-request/verificatio
     CommonModule,
     EmployeeRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DatePipe
   ]
 })
 export class EmployeeModule { }
