@@ -100,7 +100,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 CityId = 2,
                 PhoneNumber = "123-456-7890",
                 EmailAdress = "denis@edu.fit.ba",
-                IsVerified = true
+                IsVerified = false
             });
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
@@ -112,7 +112,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 CityId = 3,
                 PhoneNumber = "123-456-7890",
                 EmailAdress = "edin@edu.fit.ba",
-                IsVerified = true
+                IsVerified = false
             });
 
             await controller.RegisterUser(new DTOs.RegisterUserDto

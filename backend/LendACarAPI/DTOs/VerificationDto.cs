@@ -19,7 +19,7 @@ namespace LendACarAPI.DTOs
         public DateTime? RequestReviewDate { get; set; }
         public bool? IsApproved { get; set; }
         public string? DenialComment { get; set; }
-        public int EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
 
     }
 }

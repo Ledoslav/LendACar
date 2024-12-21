@@ -452,7 +452,7 @@ namespace LendACarAPI.Migrations
                     b.Property<string>("DenialComment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<bool?>("IsApproved")
@@ -471,8 +471,6 @@ namespace LendACarAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("UserId");
 
@@ -798,19 +796,11 @@ namespace LendACarAPI.Migrations
 
             modelBuilder.Entity("LendACarAPI.Data.Models.VerificationRequest", b =>
                 {
-                    b.HasOne("LendACarAPI.Data.Models.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Employee");
 
                     b.Navigation("User");
                 });
