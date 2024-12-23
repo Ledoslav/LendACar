@@ -49,8 +49,8 @@ export class UserService {
     );
   }
 
-  Delete(model:any){
-    return this.http.delete<string>(this.baseUrl+`user/remove/${model.id}`)
+  Delete(id:any){
+    return this.http.delete<string>(this.baseUrl+`user/remove/${id}`)
   }
 
   ChangePassword(model:any){

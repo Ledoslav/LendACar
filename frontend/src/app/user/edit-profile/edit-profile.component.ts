@@ -41,7 +41,7 @@ export class EditProfileComponent implements OnInit {
 
   Delete() {
     if(window.confirm("Are you sure you want to delete account?")){
-        this.accountService.Delete(this.model).subscribe({
+        this.accountService.Delete(this.model.id).subscribe({
           next: result => {
             console.log(result);
             this.accountService.currentUser.set(null);
