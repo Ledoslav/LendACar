@@ -41,6 +41,10 @@ export class AdminService {
     );
   }
 
+  UpdateUser(model:any){
+    return this.http.put<EmployeeDto>(this.baseUrl+`user/update/${model.id}`,model);
+  }
+
   UpdateEmployee(model: any) {
     return this.http.put<EmployeeDto>(this.baseUrl+`employee/update/${model.id}`,model)
   }

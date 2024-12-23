@@ -4,6 +4,7 @@ import {City} from '../../Models/City';
 import {Country} from '../../Models/Country';
 import {FormBuilder} from '@angular/forms';
 import {UserService} from '../../services/user.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-user-overview',
@@ -15,6 +16,7 @@ export class UserOverviewComponent  implements OnInit {
       this.loadUsers();
   }
   fb=inject(FormBuilder);
+  router=inject(Router);
   userService=inject(UserService)
   users: UserDto[]=[];
   cities: City[]=[];
@@ -28,4 +30,11 @@ export class UserOverviewComponent  implements OnInit {
   }
 
 
+  Update($event: any) {
+    const userId=$event.target.value;
+
+    const params={id:userId.toString()};
+
+    void this.router.navigate(['/admin/user-update/'],{queryParams:params});
+  }
 }

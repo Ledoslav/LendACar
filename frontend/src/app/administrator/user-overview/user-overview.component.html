@@ -42,7 +42,7 @@
                       } @else {
                         <td>No</td>
                       }
-                      <td><button class="btn btn-outline-light mx-1 " value="{{user.id}}" >Edit</button>
+                      <td><button class="btn btn-outline-light mx-1 " value="{{user.id}}" (click)="Update($event)" >Edit</button>
                         <button class="btn btn-outline-danger" value="{{user.id}}" >Delete</button></td>
                     </tr>
                     </tbody>

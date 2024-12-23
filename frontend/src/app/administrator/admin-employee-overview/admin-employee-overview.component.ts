@@ -71,9 +71,9 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   EditEmployee($event: any) {
     const employeeId=$event.target.value;
 
-    const params={id:employeeId.toString()};
+    const params=employeeId.toString();
 
-    void this.router.navigate(['/admin/register/'],{queryParams:params});
+    void this.router.navigate(['/admin/register/',params]);
   }
 
   onSearch() {
