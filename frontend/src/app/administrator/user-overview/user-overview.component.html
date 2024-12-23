@@ -1,7 +1,59 @@
-<body>
 
-
-    <div class="container d-flex align-items-center">
-        <button type="button" class="btn btn-primary btn-sm" routerLink="/admin/dashboard">Back</button>
+<section class="intro">
+  <h2 class="text-center pt-3">User Information</h2>
+  <div class="bg-image h-100" >
+    <div class="mask d-flex align-items-center h-100">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body p-0">
+                <div class="table-responsive table-scroll" data-mdb-perfect-scrollbar="true"
+                     style="position: relative">
+                  <table class="table table-striped mb-0">
+                    <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Email</th>
+                      <th>Username</th>
+                      <th>Phone number</th>
+                      <th>Birth date</th>
+                      <th>City</th>
+                      <th>Country</th>
+                      <th>Verified</th>
+                      <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let user of users; let i=index">
+                      <td>{{user.id }}</td>
+                      <td>{{user.firstName }}</td>
+                      <td>{{user.lastName }}</td>
+                      <td>{{user.emailAddress }}</td>
+                      <td>{{user.username}}</td>
+                      <td>{{user.phoneNumber }}</td>
+                      <td>{{user.birthDate}}</td>
+                      <td>{{user.city.name}}</td>
+                      <td>{{user.city.country.name}}</td>
+                      @if(user.isVerified){
+                        <td>Yes</td>
+                      } @else {
+                        <td>No</td>
+                      }
+                      <td><button class="btn btn-outline-light mx-1 " value="{{user.id}}" >Edit</button>
+                        <button class="btn btn-outline-danger" value="{{user.id}}" >Delete</button></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-outline-light btn-secondary my-3" routerLink="/admin/register">Add user</button>
+      </div>
     </div>
-</body>
+  </div>
+</section>
