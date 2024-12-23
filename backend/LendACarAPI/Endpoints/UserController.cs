@@ -44,6 +44,34 @@ namespace LendACarAPI.Endpoints
             return Ok(userDto);
         }
 
+
+        [HttpGet("getAll")]
+        public async Task<ActionResult<UserDto[]>> GetAllUsers(CancellationToken cancellationToken)
+        {
+            var users= await db.Users
+                .Include(u => u.City)
+                .Include(u => u.City != null ? u.City.Country : null)
+                .Select(user => new UserDto ()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    BirthDate = user.BirthDate.ToString("dd.MM.yyyy"),
+                    City = user.City,
+                    CityId = user.CityId,
+                    EmailAddress = user.EmailAdress,
+                    Username = user.Username,
+                    AverageRating = user.AverageRating,
+                    IsVerified = user.IsVerified
+                })
+                .ToArrayAsync(cancellationToken);
+
+            if(users.Length==0) return BadRequest();
+
+            return Ok(users);
+        }
+
         [HttpPost("register")]
         public async Task<ActionResult<string>> RegisterUser([FromBody]RegisterUserDto user)
         {
