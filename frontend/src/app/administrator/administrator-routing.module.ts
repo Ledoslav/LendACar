@@ -12,6 +12,7 @@ import {RegisterComponent} from './register-employee/register.component';
 import {HomeComponent} from './home/home.component';
 import {AdminCityOverviewComponent} from './admin-city-overview/admin-city-overview.component';
 import {AdminCountryOverviewComponent} from './admin-country-overview/admin-country-overview.component';
+import {AdminUserUpdateComponent} from './admin-user-update/admin-user-update.component';
 
 const routes: Routes = [
   {path:'',redirectTo:'login' ,pathMatch:'full'},
@@ -26,9 +27,9 @@ const routes: Routes = [
       {path:'userOverview',component: UserOverviewComponent},
       {path:'home',component: HomeComponent},
       {path:'city',component:AdminCityOverviewComponent},
-      {path:'country',component:AdminCountryOverviewComponent}
+      {path:'country',component:AdminCountryOverviewComponent},
     ]},
-
+  {path:'user-update',component:AdminUserUpdateComponent},
   {path:'register',component: RegisterComponent},
 ];
 

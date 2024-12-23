@@ -32,7 +32,7 @@ namespace LendACarAPI.Endpoints
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
-                BirthDate = user.BirthDate.ToString("dd.MM.yyyy"),
+                BirthDate = user.BirthDate.ToString("yyy-MM-dd"),
                 City = user.City,
                 CityId = user.CityId,
                 EmailAddress = user.EmailAdress,
@@ -57,7 +57,7 @@ namespace LendACarAPI.Endpoints
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     PhoneNumber = user.PhoneNumber,
-                    BirthDate = user.BirthDate.ToString("dd.MM.yyyy"),
+                    BirthDate = user.BirthDate.ToString("yyyy-MM-dd"),
                     City = user.City,
                     CityId = user.CityId,
                     EmailAddress = user.EmailAdress,
@@ -152,6 +152,8 @@ namespace LendACarAPI.Endpoints
             user.EmailAdress = updatedUser.EmailAddress;
             user.PhoneNumber= updatedUser.PhoneNumber;
             user.CityId = updatedUser.CityId;
+            user.BirthDate =DateTime.Parse(updatedUser.BirthDate);
+            user.Username = updatedUser.Username;
 
             await db.SaveChangesAsync();
 
