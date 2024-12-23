@@ -14,7 +14,7 @@ namespace LendACarAPI.DTOs
         public string? Description { get; set; }
 
         //[Required]
-        //public string VehicleCategoryIconBase64 { get; set; }
+        public byte[]? Icon { get; set; }
 
     }
 }

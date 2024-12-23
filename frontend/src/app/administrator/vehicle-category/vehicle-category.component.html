@@ -16,7 +16,8 @@
         <td>{{ category.description }}</td>
         <td>
           <img
-            [src]="'data:image/png;base64,'"
+            *ngIf="category.icon"
+            [src]="category.icon"
             alt="Icon"
             class="category-icon"
           />
@@ -56,11 +57,12 @@
         id="categoryIcon"
         (change)="onIconChange($event)"
         name="categoryIcon"
-        [required]="!editMode"
+        required
       />
 
       <button type="submit">{{ editMode ? 'Update Category' : 'Save Category' }}</button>
-      <button type="button" (click)="resetForm()" class="btn btn-secondary">Reset</button>
+      <button type="button" (click)="resetForm()" class="btn btn-secondary" style="margin-left: 5%;">Reset</button>
+
     </form>
   </div>
 </div>
