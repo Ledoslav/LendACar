@@ -28,18 +28,4 @@ export class UserOverviewComponent  implements OnInit {
   }
 
 
-  DeleteUser($event: any) {
-    console.log($event.target.value);
-    if(window.confirm("Are you sure you want to delete this user?")){
-      if(this.userService.currentUser()?.id==$event.target.value){
-        localStorage.removeItem('user');
-        this.userService.currentUser.set(null);
-      }
-      this.userService.Delete($event.target.value).subscribe({
-        next:_ => {window.location.reload();},
-        error:err=>console.log(err),
-      })
-    }
-    else return;
-  }
 }
