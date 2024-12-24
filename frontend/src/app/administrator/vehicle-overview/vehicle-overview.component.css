@@ -1,0 +1,43 @@
+.filter-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 1rem 0;
+  color: #fff;
+}
+
+.filter-label {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.filter-select {
+  padding: 0.5rem;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+mat-paginator{
+  background-color: #343a40; /* Dark background */
+  color: #fff;
+  font-weight: bold;        /* Bold font for better visibility */
+  text-align: center;       /* Center align the text */
+}
+
+tr{
+  background-color: #343a40; /* Dark background */
+  color: white;             /* White text for contrast */
+  font-weight: bold;        /* Bold font for better visibility */
+  text-align: center;       /* Center align the text */
+}
+
+

@@ -1,19 +1,32 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, ViewChild} from '@angular/core';
 import {VehicleService} from '../../services/vehicle.service';
 import {VehiclesDto} from '../../Models/VehiclesDto';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-vehicle-overview',
   templateUrl: './vehicle-overview.component.html',
   styleUrl: './vehicle-overview.component.css'
 })
+
 export class VehicleOverviewComponent {
-  ngOnInit(): void {
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  ngOnInit(){
     this.loadVehicles();
   }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
   formIsClosed : boolean = true;
   ServiceVehicle = inject(VehicleService);
   vehicles: VehiclesDto[] = [];
+  dataSource = new MatTableDataSource<VehiclesDto>([]);
+  displayedColumns: string[] = ['No.', 'Id', 'ModelName', 'BrandName', 'Actions'];
+  uniqueBrands: string[] = [];
 
   formVehicle: any = {
     modelName: '',
@@ -25,6 +38,20 @@ export class VehicleOverviewComponent {
     newModelName: '',
     updateBrandName: '',
     newBrandName: ''
+  }
+
+  applyFilter(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    const brand = selectElement.value; // Safely access the value
+    console.log('Filtering by brand:', brand);
+
+    if (brand) {
+      this.dataSource.data = this.vehicles.filter(
+        (vehicle) => vehicle.vehicleBrand.brandName === brand
+      );
+    } else {
+      this.dataSource.data = this.vehicles;
+    }
   }
 
   updateFormIsClosed: boolean = true;
@@ -40,6 +67,8 @@ export class VehicleOverviewComponent {
             brandName: v.vehicleBrand.brandName
           }
         }))
+        this.dataSource.data = this.vehicles;
+        this.uniqueBrands = [...new Set(this.vehicles.map((v) => v.vehicleBrand.brandName))];
         console.log(this.vehicles);
       },
       error: error => console.error('Error loading vehicles:', error)
@@ -57,6 +86,7 @@ export class VehicleOverviewComponent {
       next: () => {
         console.log('Vehicle added successfully');
         this.loadVehicles(); // Refresh vehicle list
+        location.reload()
         this.formIsClosed = true; // Close the form after success
       },
       error: (error) => {
@@ -82,6 +112,7 @@ export class VehicleOverviewComponent {
 
   cancelAddForm() {
     this.formIsClosed = !this.formIsClosed
+    location.reload();
   }
 
   editVehicle(vehicle: VehiclesDto) {
@@ -102,7 +133,9 @@ export class VehicleOverviewComponent {
       next: () => {
         console.log('Vehicle deleted successfully');
         this.loadVehicles(); // Refresh vehicle list
+        location.reload();
       },
+
       error: (error) => {
         console.error('There was an error deleting the vehicle:', error);
       }
@@ -112,5 +145,8 @@ export class VehicleOverviewComponent {
 
   cancelUpdateForm() {
     this.updateFormIsClosed = !this.updateFormIsClosed
+    location.reload();
   }
 }
+
+

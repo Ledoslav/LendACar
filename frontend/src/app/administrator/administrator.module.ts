@@ -17,6 +17,9 @@ import { HomeComponent } from './home/home.component';
 import { AdminCityOverviewComponent } from './admin-city-overview/admin-city-overview.component';
 import { AdminCountryOverviewComponent } from './admin-country-overview/admin-country-overview.component';
 import { AdminUserUpdateComponent } from './admin-user-update/admin-user-update.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
+
 
 
 @NgModule({
@@ -36,11 +39,13 @@ import { AdminUserUpdateComponent } from './admin-user-update/admin-user-update.
     AdminCountryOverviewComponent,
     AdminUserUpdateComponent
   ],
-    imports: [
-        CommonModule,
-        AdministratorRoutingModule,
-        FormsModule,
-        ReactiveFormsModule
-    ]
+  imports: [
+    CommonModule,
+    AdministratorRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatPaginatorModule,
+    MatTableModule,
+  ]
 })
 export class AdministratorModule { }
