@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 
 namespace LendACarAPI.Endpoints
 {
@@ -217,15 +218,25 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpDelete("remove/{id}")]
-        public async Task<ActionResult<string>> RemoveUser(int id)
+        public async Task<ActionResult<string>> RemoveUser(int id,CancellationToken cancellationToken)
         {
             var user = await db.Users
             .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null) return NotFound("User not found");
 
+            var companyEmployee = await db.CompanyEmployees
+                .Where(ce => ce.UserId == user.Id)
+                .ToListAsync(cancellationToken);
+
+
+            if (companyEmployee.Count == 0) return NotFound();
+
+            db.RemoveRange(companyEmployee);
+
+
             db.Remove(user);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(cancellationToken);
 
             return Ok();
         }
