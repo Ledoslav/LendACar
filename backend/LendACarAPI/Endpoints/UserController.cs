@@ -1,6 +1,7 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
+using LendACarAPI.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 
 namespace LendACarAPI.Endpoints
 {
@@ -32,7 +34,7 @@ namespace LendACarAPI.Endpoints
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
-                BirthDate = user.BirthDate.ToString("dd.MM.yyyy"),
+                BirthDate = user.BirthDate.ToString("yyy-MM-dd"),
                 City = user.City,
                 CityId = user.CityId,
                 EmailAddress = user.EmailAdress,
@@ -42,6 +44,35 @@ namespace LendACarAPI.Endpoints
             };
 
             return Ok(userDto);
+        }
+
+
+        [HttpGet("getAll")]
+        [TypeFilter(typeof(UserFilterAttribute))]
+        public async Task<ActionResult<UserDto[]>> GetAllUsers(CancellationToken cancellationToken)
+        {
+            var users= await db.Users
+                .Include(u => u.City)
+                .Include(u => u.City != null ? u.City.Country : null)
+                .Select(user => new UserDto ()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    BirthDate = user.BirthDate.ToString("yyyy-MM-dd"),
+                    City = user.City,
+                    CityId = user.CityId,
+                    EmailAddress = user.EmailAdress,
+                    Username = user.Username,
+                    AverageRating = user.AverageRating,
+                    IsVerified = user.IsVerified
+                })
+                .ToArrayAsync(cancellationToken);
+
+            if(users.Length==0) return BadRequest();
+
+            return Ok(users);
         }
 
         [HttpPost("register")]
@@ -124,6 +155,8 @@ namespace LendACarAPI.Endpoints
             user.EmailAdress = updatedUser.EmailAddress;
             user.PhoneNumber= updatedUser.PhoneNumber;
             user.CityId = updatedUser.CityId;
+            user.BirthDate =DateTime.Parse(updatedUser.BirthDate);
+            user.Username = updatedUser.Username;
 
             await db.SaveChangesAsync();
 
@@ -189,18 +222,37 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpDelete("remove/{id}")]
-        public async Task<ActionResult<string>> RemoveUser(int id)
+        public async Task<ActionResult<string>> RemoveUser(int id,CancellationToken cancellationToken)
         {
             var user = await db.Users
             .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null) return NotFound("User not found");
 
+            var companyEmployee = await db.CompanyEmployees
+                .Where(ce => ce.UserId == user.Id)
+                .ToListAsync(cancellationToken);
+
+
+            if (companyEmployee.Count > 0) 
+                 db.RemoveRange(companyEmployee);
+
+
             db.Remove(user);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(cancellationToken);
 
             return Ok();
         }
+
+        [HttpGet("filter")]
+        [TypeFilter(typeof(UserFilterAttribute))]
+        public ActionResult<UserDto[]> FilterUser([FromQuery] UserFilterDto filterDto)
+        {
+            var result = HttpContext.Items["users"] as UserDto[];
+
+            return Ok(result);
+        }
+
 
 
         private async Task<bool> UserExists(string username,string email)

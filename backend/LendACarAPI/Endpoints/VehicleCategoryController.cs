@@ -1,6 +1,7 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
+using LendACarAPI.Migrations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,7 @@ namespace LendACarAPI.Endpoints
                 Id = vehicleCategory.Id,
                 Name = vehicleCategory.Name,
                 Description = vehicleCategory.Description,
-                //VehicleCategoryIconBase64 = Convert.ToBase64String(vehicleCategory.VehicleCategoryIcon)
+                Icon = vehicleCategory.Icon,
             };
 
             return Ok(vehicleCategoryDto);
@@ -48,7 +49,7 @@ namespace LendACarAPI.Endpoints
             {
                 Name = vehicleCategoryDto.Name,
                 Description = vehicleCategoryDto.Description,
-                //VehicleCategoryIcon = Convert.FromBase64String(vehicleCategoryDto.VehicleCategoryIconBase64)
+                Icon = vehicleCategoryDto.Icon,
             };
 
             db.VehicleCategories.Add(newVehicleCategory);
@@ -66,7 +67,7 @@ namespace LendACarAPI.Endpoints
 
             vehicleCategory.Name = updatedCategoryDto.Name;
             vehicleCategory.Description = updatedCategoryDto.Description;
-            //vehicleCategory.VehicleCategoryIcon = Convert.FromBase64String(updatedCategoryDto.VehicleCategoryIconBase64);
+            vehicleCategory.Icon = updatedCategoryDto.Icon;
 
             await db.SaveChangesAsync();
 
@@ -75,7 +76,7 @@ namespace LendACarAPI.Endpoints
                 Id = vehicleCategory.Id,
                 Name = vehicleCategory.Name,
                 Description = vehicleCategory.Description,
-                //VehicleCategoryIconBase64 = Convert.ToBase64String(vehicleCategory.VehicleCategoryIcon)
+                Icon = vehicleCategory.Icon,
             });
         }
 

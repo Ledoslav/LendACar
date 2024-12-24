@@ -1,7 +1,93 @@
-<body>
 
-
-    <div class="container d-flex align-items-center">
-        <button type="button" class="btn btn-primary btn-sm" routerLink="/admin/dashboard">Back</button>
+<section class="intro">
+  <h2 class="text-center pt-3">User Information</h2>
+  <div class="bg-image h-100" >
+    <div class="mask d-flex align-items-center h-100">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <form [formGroup]="userSearchForm" (ngSubmit)="onSearch()">
+              <div class="container d-inline-block border p-2 my-3">
+                <div class="row align-items-center">
+                  <div class="col-auto">
+                    <input class="form-control" formControlName="name" placeholder="Name">
+                  </div>
+                  <div class="col-auto">
+                    <input class="form-control" formControlName="ageFrom" type="number" placeholder="Age from">
+                  </div>
+                  <div class="col-auto">
+                    <input class="form-control"  formControlName="ageTo" type="number" placeholder="Age to">
+                  </div>
+                  <div class="col-auto">
+                    <select class="form-select" id="city" formControlName="cityId">
+                      <option *ngFor="let city of filteredCities" value="{{city.id}}">{{city.name}}</option>
+                    </select>
+                  </div>
+                  <div class="col-auto">
+                    <select class="form-select" (change)="filterCities($event)"  formControlName="countryId">
+                      <option  *ngFor="let country of countries" value="{{country.id}}">{{country.name}}</option>
+                    </select>
+                  </div>
+                  <div class="col-auto">
+                    <select class="form-select" formControlName="isVerified">
+                      <option  *ngFor="let option of verifiedFilterOptions" >{{option}}</option>
+                    </select>
+                  </div>
+                  <div class="col-3 mt-2">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                    <button class="btn btn-secondary mx-2" type="button" (click)="userSearchForm.reset()">Clear filters</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div class="card">
+              <div class="card-body p-0">
+                <div class="table-responsive table-scroll" data-mdb-perfect-scrollbar="true"
+                     style="position: relative">
+                  <table class="table table-striped mb-0">
+                    <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Email</th>
+                      <th>Username</th>
+                      <th>Phone number</th>
+                      <th>Birth date</th>
+                      <th>City</th>
+                      <th>Country</th>
+                      <th>Verified</th>
+                      <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let user of users; let i=index">
+                      <td>{{user.id }}</td>
+                      <td>{{user.firstName }}</td>
+                      <td>{{user.lastName }}</td>
+                      <td>{{user.emailAddress }}</td>
+                      <td>{{user.username}}</td>
+                      <td>{{user.phoneNumber }}</td>
+                      <td>{{user.birthDate}}</td>
+                      <td>{{user.city.name}}</td>
+                      <td>{{user.city.country.name}}</td>
+                      @if(user.isVerified){
+                        <td>Yes</td>
+                      } @else {
+                        <td>No</td>
+                      }
+                      <td><button class="btn btn-outline-light mx-1 " value="{{user.id}}" (click)="Update($event)" >Edit</button>
+                        <button class="btn btn-outline-danger" value="{{user.id}}" (click)="DeleteUser($event)" >Delete</button></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--<button class="btn btn-outline-light btn-secondary my-3" routerLink="/admin/register">Add user</button>-->
+      </div>
     </div>
-</body>
+  </div>
+</section>

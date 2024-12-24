@@ -5,7 +5,7 @@ namespace LendACarAPI.DTOs
 {
     public class EmployeeDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         public string? FirstName { get; set; }
@@ -34,5 +34,6 @@ namespace LendACarAPI.DTOs
         public WorkingHour? WorkingHour { get; set; }
 
         public string? JobTitle { get; set; }
+        public DateOnly DateOfHire { get; set; }
     }
 }

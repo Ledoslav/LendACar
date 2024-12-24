@@ -364,6 +364,9 @@ namespace LendACarAPI.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("Icon")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -452,7 +455,7 @@ namespace LendACarAPI.Migrations
                     b.Property<string>("DenialComment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<bool?>("IsApproved")
@@ -471,8 +474,6 @@ namespace LendACarAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("UserId");
 
@@ -616,7 +617,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.Country", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Country");
@@ -627,7 +628,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -638,25 +639,25 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.CompanyPosition", "CompanyPosition")
                         .WithMany()
                         .HasForeignKey("CompanyPositionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithOne()
                         .HasForeignKey("LendACarAPI.Data.Models.CompanyEmployee", "UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.WorkingHour", "WorkingHour")
                         .WithMany()
                         .HasForeignKey("WorkingHourId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Company");
@@ -673,13 +674,13 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.User", "Reviewer")
                         .WithMany()
                         .HasForeignKey("ReviewerId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Company");
@@ -692,7 +693,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithOne("DriversLicense")
                         .HasForeignKey("LendACarAPI.Data.Models.DriversLicense", "UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -703,7 +704,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.City", "City")
                         .WithMany()
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("City");
@@ -714,13 +715,13 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.User", "Reviewer")
                         .WithMany()
                         .HasForeignKey("ReviewerId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Reviewer");
@@ -733,19 +734,19 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.VehicleCategory", "VehicleCategory")
                         .WithMany()
                         .HasForeignKey("VehicleCategoryID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.VehicleModel", "VehicleModel")
                         .WithMany()
                         .HasForeignKey("VehicleModelID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.User", "VehicleOwner")
                         .WithMany()
                         .HasForeignKey("VehicleOwnerID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("VehicleCategory");
@@ -760,7 +761,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.Vehicle", "Vehicle")
                         .WithMany()
                         .HasForeignKey("VehicleID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Vehicle");
@@ -771,7 +772,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.VehicleBrand", "VehicleBrand")
                         .WithMany()
                         .HasForeignKey("VehicleBrandId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("VehicleBrand");
@@ -782,13 +783,13 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.User", "Reviewer")
                         .WithMany()
                         .HasForeignKey("ReviewerId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.Vehicle", "Vehicle")
                         .WithMany()
                         .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Reviewer");
@@ -798,19 +799,11 @@ namespace LendACarAPI.Migrations
 
             modelBuilder.Entity("LendACarAPI.Data.Models.VerificationRequest", b =>
                 {
-                    b.HasOne("LendACarAPI.Data.Models.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Employee");
 
                     b.Navigation("User");
                 });
@@ -820,7 +813,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.WorkingHour", "WorkingHour")
                         .WithMany()
                         .HasForeignKey("WorkingHourId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("WorkingHour");

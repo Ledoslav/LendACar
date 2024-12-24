@@ -13,30 +13,30 @@ export class VerificationRequestService {
   baseUrl:string="http://localhost:7000/api/";
 
   GetVerificationRequests(){
-    return this.http.get<VerificationRequestDto[]>(this.baseUrl + 'VerificationRequest/get')
+    return this.http.get<VerificationRequestDto[]>(this.baseUrl + 'verificationrequest/get')
   }
 
   GetVerificationRequestById(id:number){
-    return this.http.get<VerificationRequestDto>(this.baseUrl + `VerificationRequest/getById/${id}`)
+    return this.http.get<VerificationRequestDto>(this.baseUrl + `verificationrequest/getById/${id}`)
   }
 
   GetVerificationRequestByUserId(id:number){
-    return this.http.get<VerificationRequestDto>(this.baseUrl + `VerificationRequest/getByUserId/${id}`)
+    return this.http.get<VerificationRequestDto>(this.baseUrl + `verificationrequest/getByUserId/${id}`)
   }
 
   AddVerificationRequest(model:VerificationRequestSubmitDto){
-    return this.http.post(this.baseUrl+'VerificationRequest/addNew',model);
+    return this.http.post(this.baseUrl+'verificationrequest/addNew',model);
   }
 
   ConfirmVerificationRequest(model:VerificationRequestDto ,id:number){
-    return this.http.put(this.baseUrl+`VerificationRequest/approve/${id}`, model);
+    return this.http.put(this.baseUrl+`verificationrequest/approve/${id}`, model);
   }
 
   DenyVerificationRequest(model:VerificationRequestDto ,id:number){
-    return this.http.put(this.baseUrl+`VerificationRequest/deny/${id}`, model);
+    return this.http.put(this.baseUrl+`verificationrequest/deny/${id}`, model);
   }
 
   DeleteVerificationRequest(id:number){
-    return this.http.delete(this.baseUrl+`VerificationRequest/remove/${id}`);
+    return this.http.delete(this.baseUrl+`verificationrequest/remove/${id}`);
   }
 }

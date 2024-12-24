@@ -20,17 +20,19 @@ export class UserProfileComponent {
   ngOnInit(): void {
     const currentUser = this.accountService.currentUser();
 
-    this.verificationService.GetVerificationRequestByUserId(currentUser?.id || 0).subscribe({
-      next: (res) => {
-        this.verificationRequest = res;
-        this.CheckVerificationStatus(); // Ensure to re-check after updating verificationRequest
-      },
-      error: (err) => {
-        console.error('Error fetching verification request:', err);
-        this.verificationRequest = null;
-        this.CheckVerificationStatus(); // Reset status if there's an error
-      }
-    });
+    if(currentUser !== null){
+      this.verificationService.GetVerificationRequestByUserId(currentUser.id).subscribe({
+        next: (res) => {
+          this.verificationRequest = res;
+          this.CheckVerificationStatus(); // Ensure to re-check after updating verificationRequest
+        },
+        error: (err) => {
+          console.error('Error fetching verification request:', err);
+          this.verificationRequest = null;
+          this.CheckVerificationStatus(); // Reset status if there's an error
+        }
+      });
+    }
   }
 
   CheckVerificationStatus() {

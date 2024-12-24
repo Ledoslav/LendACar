@@ -4,6 +4,8 @@ import {EmployeeService} from '../../services/employee.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
+import {Router} from '@angular/router';
+import {HttpParams} from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-employee-overview',
@@ -16,12 +18,19 @@ export class AdminEmployeeOverviewComponent implements OnInit {
     this.loadCities();
   }
 
+  router=inject(Router);
   fb=inject(FormBuilder);
+
   cityService=inject(CityService);
   cities:City[]=[];
+
+
+
+
   employees: EmployeeDto[] = [];
   jobTitles:string[]=[" ","Customer support","Developer"];
   employeeService=inject(EmployeeService);
+
   employeeSearchForm=this.fb.group({
     name: [undefined],
     cityId: [undefined],
@@ -46,12 +55,30 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   }
 
   DeleteEmployee($event: any) {
-    console.log($event.target.value);
+    console.log(this.employeeService.currentEmployee());
+
+    if(window.confirm("Are you sure you want to delete employee")){
+      if(this.employeeService.currentEmployee()?.id==$event.target.value){
+        localStorage.removeItem('employee');
+        this.employeeService.currentEmployee.set(null);
+      }
+      this.employeeService.DeleteEmployee($event.target.value).subscribe({
+        next: _ => {window.location.reload()},
+        error: err => {console.log(err)}
+      });
+    }
+    else return;
+
   }
 
   EditEmployee($event: any) {
-    console.log($event.target.value);
+    const employeeId=$event.target.value;
+
+    const params=employeeId.toString();
+
+    void this.router.navigate(['/admin/register/',params]);
   }
+
 
   onSearch() {
       console.log(this.employeeSearchForm.value);

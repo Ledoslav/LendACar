@@ -8,12 +8,10 @@ namespace LendACarAPI.Data.Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        // Obrisati Description s obzirom da se userima nigdje nece prikazivati (bar nema razloga da se prikazuje)
         public string? Description { get; set; }
 
-        // Koristiti cemo string sa URL-om na ikonice kategorija vozila
         //[Required]
-        //public byte[] VehicleCategoryIcon { get; set; }
+        public byte[]? Icon { get; set; }
 
     }
 }

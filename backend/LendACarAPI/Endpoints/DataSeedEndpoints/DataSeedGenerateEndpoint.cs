@@ -48,8 +48,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
 
             var vehicleCategories = new List<VehicleCategory>
             {
-                new VehicleCategory { Name = "Sedan" , Description = "Perfect blend of style, comfort and sportiness."},
-                new VehicleCategory { Name = "Hatchback" , Description = "Compact vehicle perfect for urban places."},
+                new VehicleCategory { Name = "Other" , Description = "No specific vehicle category was chosen."},
             };
 
             var workingHours = new List<WorkingHour>
@@ -100,7 +99,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 CityId = 2,
                 PhoneNumber = "123-456-7890",
                 EmailAdress = "denis@edu.fit.ba",
-                IsVerified = true
+                IsVerified = false
             });
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
@@ -112,7 +111,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 CityId = 3,
                 PhoneNumber = "123-456-7890",
                 EmailAdress = "edin@edu.fit.ba",
-                IsVerified = true
+                IsVerified = false
             });
 
             await controller.RegisterUser(new DTOs.RegisterUserDto

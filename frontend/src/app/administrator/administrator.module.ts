@@ -16,6 +16,7 @@ import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { AdminCityOverviewComponent } from './admin-city-overview/admin-city-overview.component';
 import { AdminCountryOverviewComponent } from './admin-country-overview/admin-country-overview.component';
+import { AdminUserUpdateComponent } from './admin-user-update/admin-user-update.component';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import { AdminCountryOverviewComponent } from './admin-country-overview/admin-co
     HomeComponent,
     AdminCityOverviewComponent,
     AdminCountryOverviewComponent,
+    AdminUserUpdateComponent
   ],
     imports: [
         CommonModule,

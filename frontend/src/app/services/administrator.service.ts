@@ -2,6 +2,7 @@ import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {AdministratorDto} from '../Models/AdministratorDto';
 import {map} from 'rxjs';
+import {EmployeeDto} from '../Models/EmployeeDto';
 
 @Injectable({
   providedIn: 'root'
@@ -38,5 +39,13 @@ export class AdminService {
         return admin;
       })
     );
+  }
+
+  UpdateUser(model:any){
+    return this.http.put<EmployeeDto>(this.baseUrl+`user/update/${model.id}`,model);
+  }
+
+  UpdateEmployee(model: any) {
+    return this.http.put<EmployeeDto>(this.baseUrl+`employee/update/${model.id}`,model)
   }
 }

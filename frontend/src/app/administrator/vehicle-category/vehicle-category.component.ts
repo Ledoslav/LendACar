@@ -8,6 +8,7 @@ interface VehicleCategory {
   id?: number;
   name: string;
   description: string;
+  icon?: string;
 }
 
 @Component({
@@ -34,7 +35,13 @@ export class VehicleCategoriesComponent implements OnInit {
 
   loadCategories(): void {
     this.http.get<VehicleCategory[]>(`${this.apiUrl}/get`).subscribe(
-      (categories) => (this.vehicleCategories = categories),
+      (categories) => {
+        // Prefix the icons with `data:image/png;base64,` for display purposes
+        this.vehicleCategories = categories.map(category => ({
+          ...category,
+          icon: category.icon ? `data:image/png;base64,${category.icon}` : undefined,
+        }));
+      },
       (error) => console.error('Failed to fetch categories:', error)
     );
   }
@@ -50,7 +57,10 @@ export class VehicleCategoriesComponent implements OnInit {
   addCategory(): void {
     this.http.post<VehicleCategory>(`${this.apiUrl}/addNew`, this.newCategory).subscribe(
       (category) => {
-        this.vehicleCategories.push(category);
+        this.vehicleCategories.push({
+          ...category,
+          icon: category.icon ? `data:image/png;base64,${category.icon}` : undefined,
+        });
         this.resetForm();
       },
       (error) => console.error('Failed to add category:', error)
@@ -82,12 +92,14 @@ export class VehicleCategoriesComponent implements OnInit {
     this.editCategoryId = category.id || null;
   }
 
-  onIconChange(event: any): void {
-    const file = event.target.files[0];
+  onIconChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-
+        if (reader.result) {
+          this.newCategory.icon = (reader.result as string).split(',')[1]; // Extract Base64 string
+        }
       };
       reader.readAsDataURL(file);
     }

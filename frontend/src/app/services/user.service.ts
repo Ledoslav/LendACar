@@ -1,9 +1,11 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {UserDto} from '../Models/UserDto';
 import {map} from 'rxjs';
 import {PasswordReset} from '../Models/PasswordReset';
 import {Router} from '@angular/router';
+import {EmployeeFilter} from '../Models/EmployeeFilter';
+import {UserFilter} from '../Models/UserFilter';
 
 @Injectable({
   providedIn: 'root'
@@ -49,8 +51,8 @@ export class UserService {
     );
   }
 
-  Delete(model:any){
-    return this.http.delete<string>(this.baseUrl+`user/remove/${model.id}`)
+  Delete(id:any){
+    return this.http.delete<string>(this.baseUrl+`user/remove/${id}`)
   }
 
   ChangePassword(model:any){
@@ -70,8 +72,32 @@ export class UserService {
     return this.http.get<UserDto>(this.baseUrl + `user/getById/${id}`)
   }
 
+  GetAllUsers(){
+    return this.http.get<UserDto[]>(this.baseUrl+`user/getAll`)
+  }
+
   // Getter to access current user
   getCurrentUser() {
     return this.currentUser();
+  }
+
+  FilterUsers(filter:UserFilter){
+      let params=new HttpParams();
+
+      if (filter.name) params = params.set('name', filter.name);
+      if (filter.ageFrom) params = params.set('ageFrom', filter.ageFrom.toString());
+      if(filter.ageTo) params = params.set('ageTo', filter.ageTo.toString());
+      if(filter.cityId) params = params.set('cityId', filter.cityId.toString());
+      if(filter.countryId) params = params.set('countryId', filter.countryId.toString());
+      if(filter.isVerified){
+        if(filter.isVerified=="Yes") {
+         params=params.set('isVerified', "true");
+        }else{
+          params=params.set('isVerified', "false");
+        }
+      }
+      console.log(params);
+
+      return this.http.get<UserDto[]>(`${this.baseUrl}user/filter`,{params});
   }
 }
