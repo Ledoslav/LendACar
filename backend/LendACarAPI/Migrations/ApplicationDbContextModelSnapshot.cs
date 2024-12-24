@@ -617,7 +617,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.Country", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Country");
@@ -628,7 +628,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -639,25 +639,25 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.CompanyPosition", "CompanyPosition")
                         .WithMany()
                         .HasForeignKey("CompanyPositionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithOne()
                         .HasForeignKey("LendACarAPI.Data.Models.CompanyEmployee", "UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.WorkingHour", "WorkingHour")
                         .WithMany()
                         .HasForeignKey("WorkingHourId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Company");
@@ -674,13 +674,13 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.User", "Reviewer")
                         .WithMany()
                         .HasForeignKey("ReviewerId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Company");
@@ -693,7 +693,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithOne("DriversLicense")
                         .HasForeignKey("LendACarAPI.Data.Models.DriversLicense", "UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -704,7 +704,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.City", "City")
                         .WithMany()
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("City");
@@ -715,13 +715,13 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.User", "Reviewer")
                         .WithMany()
                         .HasForeignKey("ReviewerId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Reviewer");
@@ -734,19 +734,19 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.VehicleCategory", "VehicleCategory")
                         .WithMany()
                         .HasForeignKey("VehicleCategoryID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.VehicleModel", "VehicleModel")
                         .WithMany()
                         .HasForeignKey("VehicleModelID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.User", "VehicleOwner")
                         .WithMany()
                         .HasForeignKey("VehicleOwnerID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("VehicleCategory");
@@ -761,7 +761,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.Vehicle", "Vehicle")
                         .WithMany()
                         .HasForeignKey("VehicleID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Vehicle");
@@ -772,7 +772,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.VehicleBrand", "VehicleBrand")
                         .WithMany()
                         .HasForeignKey("VehicleBrandId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("VehicleBrand");
@@ -783,13 +783,13 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.User", "Reviewer")
                         .WithMany()
                         .HasForeignKey("ReviewerId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LendACarAPI.Data.Models.Vehicle", "Vehicle")
                         .WithMany()
                         .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Reviewer");
@@ -802,7 +802,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -813,7 +813,7 @@ namespace LendACarAPI.Migrations
                     b.HasOne("LendACarAPI.Data.Models.WorkingHour", "WorkingHour")
                         .WithMany()
                         .HasForeignKey("WorkingHourId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("WorkingHour");
