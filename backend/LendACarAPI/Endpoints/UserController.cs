@@ -1,6 +1,7 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
+using LendACarAPI.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpGet("getAll")]
+        [TypeFilter(typeof(UserFilterAttribute))]
         public async Task<ActionResult<UserDto[]>> GetAllUsers(CancellationToken cancellationToken)
         {
             var users= await db.Users
@@ -232,9 +234,8 @@ namespace LendACarAPI.Endpoints
                 .ToListAsync(cancellationToken);
 
 
-            if (companyEmployee.Count == 0) return NotFound();
-
-            db.RemoveRange(companyEmployee);
+            if (companyEmployee.Count > 0) 
+                 db.RemoveRange(companyEmployee);
 
 
             db.Remove(user);
@@ -242,6 +243,16 @@ namespace LendACarAPI.Endpoints
 
             return Ok();
         }
+
+        [HttpGet("filter")]
+        [TypeFilter(typeof(UserFilterAttribute))]
+        public ActionResult<UserDto[]> FilterUser([FromQuery] UserFilterDto filterDto)
+        {
+            var result = HttpContext.Items["users"] as UserDto[];
+
+            return Ok(result);
+        }
+
 
 
         private async Task<bool> UserExists(string username,string email)

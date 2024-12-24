@@ -24,6 +24,9 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   cityService=inject(CityService);
   cities:City[]=[];
 
+
+
+
   employees: EmployeeDto[] = [];
   jobTitles:string[]=[" ","Customer support","Developer"];
   employeeService=inject(EmployeeService);
@@ -75,6 +78,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
 
     void this.router.navigate(['/admin/register/',params]);
   }
+
 
   onSearch() {
       console.log(this.employeeSearchForm.value);
