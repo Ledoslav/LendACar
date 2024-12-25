@@ -147,6 +147,22 @@ export class VehicleOverviewComponent {
     this.updateFormIsClosed = !this.updateFormIsClosed
     location.reload();
   }
+
+  deleteBrand(number: number,name: string) {
+    if(window.confirm(`Are you sure you want to delete the ${name} brand? It will delete every model associated with this brand.`)){
+      this.ServiceVehicle.DeleteBrand(number).subscribe({
+        next: () => {
+          console.log('Vehicle deleted successfully');
+          this.loadVehicles(); // Refresh vehicle list
+          location.reload();
+        },
+
+        error: (error) => {
+          console.error('There was an error deleting the vehicle:', error);
+        }
+      });
+    }
+  }
 }
 
 

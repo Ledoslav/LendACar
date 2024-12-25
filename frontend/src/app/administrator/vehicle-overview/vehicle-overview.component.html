@@ -54,6 +54,7 @@
                         <td mat-cell *matCellDef="let element">
                           <button class="btn btn-warning m-2 p-1" style="width: 100px" (click)="editVehicle(element)">Update</button>
                           <button class="btn btn-danger m-2 p-1" style="width: 100px" (click)="deleteVehicle(element.id)">Delete</button>
+                          <button class="btn btn-danger m-2 p-1" style="width: 150px" (click)="deleteBrand(element.vehicleBrand.id,element.vehicleBrand.brandName)">Delete Brand</button>
                         </td>
                       </ng-container>
 

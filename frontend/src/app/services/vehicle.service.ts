@@ -50,4 +50,7 @@ export class VehicleService{
     return this.http.delete<any>(`http://localhost:7000/api/VehicleModelAndBrand/deleteModel/${id}`);
   }
 
+  DeleteBrand(id: number): Observable<any> {
+    return this.http.delete<any>(`http://localhost:7000/api/VehicleModelAndBrand/deleteBrand/${id}`);
+  }
 }
