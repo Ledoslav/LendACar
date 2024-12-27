@@ -1,11 +1,12 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
 import {UserDto} from '../Models/UserDto';
 import {map} from 'rxjs';
 import {PasswordReset} from '../Models/PasswordReset';
 import {Router} from '@angular/router';
 import {EmployeeFilter} from '../Models/EmployeeFilter';
 import {UserFilter} from '../Models/UserFilter';
+import {PaginatedResult} from '../Models/Pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -72,8 +73,14 @@ export class UserService {
     return this.http.get<UserDto>(this.baseUrl + `user/getById/${id}`)
   }
 
-  GetAllUsers(){
-    return this.http.get<UserDto[]>(this.baseUrl+`user/getAll`)
+  GetAllUsers(pageNumber?:number,pageSize?:number){
+    let params = new HttpParams();
+    if(pageNumber&&pageSize){
+      params = params.set('pageNumber',pageNumber);
+      params=params.set('pageSize',pageSize);
+    }
+
+    return this.http.get<UserDto[]>(this.baseUrl+`user/getAll`,{observe:'response',params:params})
   }
 
   // Getter to access current user
@@ -81,7 +88,7 @@ export class UserService {
     return this.currentUser();
   }
 
-  FilterUsers(filter:UserFilter){
+  FilterUsers(filter:UserFilter,pageNumber?:number,pageSize?:number){
       let params=new HttpParams();
 
       if (filter.name) params = params.set('name', filter.name);
@@ -96,8 +103,12 @@ export class UserService {
           params=params.set('isVerified', "false");
         }
       }
+      if(pageNumber && pageSize){
+        params = params.set('pageSize',pageSize);
+        params=params.set('pageNumber',pageNumber);
+      }
       console.log(params);
 
-      return this.http.get<UserDto[]>(`${this.baseUrl}user/filter`,{params});
+      return this.http.get<UserDto[]>(`${this.baseUrl}user/filter`,{observe:'response',params});
   }
 }

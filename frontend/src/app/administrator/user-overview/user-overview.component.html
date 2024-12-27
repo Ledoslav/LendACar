@@ -61,7 +61,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let user of users; let i=index">
+                    <tr *ngFor="let user of users.items; let i=index">
                       <td>{{user.id }}</td>
                       <td>{{user.firstName }}</td>
                       <td>{{user.lastName }}</td>
@@ -87,6 +87,21 @@
           </div>
         </div>
         <!--<button class="btn btn-outline-light btn-secondary my-3" routerLink="/admin/register">Add user</button>-->
+        <div *ngIf="users.pagination && users.pagination.totalCount>pageSize" class="d-flex justify-content-center mt-3">
+          <pagination
+            [boundaryLinks]="true"
+            [totalItems]="users.pagination!.totalCount"
+            [itemsPerPage]="users.pagination!.pageSize"
+            [maxSize]="10"
+            (pageChanged)="pageChanged($event)"
+            previousText="&lsaquo;"
+            nextText="&rsaquo;"
+            firstText="&laquo;"
+            lastText="&raquo;">
+          >
+
+          </pagination>
+        </div>
       </div>
     </div>
   </div>

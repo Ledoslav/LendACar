@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace LendACarAPI.Helper;
 
@@ -31,5 +32,18 @@ public static class MyExtensionMethods
     {
         base64string = base64string.Split(',')[1];
         return Convert.FromBase64String(base64string);
+    }
+
+    public static void AddPaginationHeader<T>(this HttpResponse response, MyPagedList<T> data)
+    {
+        var paginationHeader=new PaginationHeader(data.CurrentPage,data.PageSize,data.TotalCount,data.TotalPages,data.HasPrevious,data.HasNext);
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+
+        response.Headers.Append("Pagination", JsonSerializer.Serialize(paginationHeader, options));
+        response.Headers.Append("Access-Control-Expose-Headers", "Pagination");
     }
 }
