@@ -19,6 +19,7 @@ import { AdminCountryOverviewComponent } from './admin-country-overview/admin-co
 import { AdminUserUpdateComponent } from './admin-user-update/admin-user-update.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import {PaginationComponent} from "ngx-bootstrap/pagination";
 
 
 
@@ -39,13 +40,14 @@ import { MatTableModule } from '@angular/material/table';
     AdminCountryOverviewComponent,
     AdminUserUpdateComponent
   ],
-  imports: [
-    CommonModule,
-    AdministratorRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatPaginatorModule,
-    MatTableModule,
-  ]
+    imports: [
+        CommonModule,
+        AdministratorRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatPaginatorModule,
+        MatTableModule,
+        PaginationComponent,
+    ]
 })
 export class AdministratorModule { }

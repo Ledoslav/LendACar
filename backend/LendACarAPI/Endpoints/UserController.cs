@@ -2,6 +2,7 @@
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
 using LendACarAPI.Filters;
+using LendACarAPI.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,12 +50,13 @@ namespace LendACarAPI.Endpoints
 
         [HttpGet("getAll")]
         [TypeFilter(typeof(UserFilterAttribute))]
-        public async Task<ActionResult<UserDto[]>> GetAllUsers(CancellationToken cancellationToken)
+        public async Task<ActionResult<MyPagedList<UserDto[]>>> GetAllUsers([FromQuery]MyPagingRequest pagedParams, CancellationToken cancellationToken)
         {
-            var users= await db.Users
+
+            var query = db.Users
                 .Include(u => u.City)
                 .Include(u => u.City != null ? u.City.Country : null)
-                .Select(user => new UserDto ()
+                .Select(user => new UserDto()
                 {
                     Id = user.Id,
                     FirstName = user.FirstName,
@@ -67,12 +69,15 @@ namespace LendACarAPI.Endpoints
                     Username = user.Username,
                     AverageRating = user.AverageRating,
                     IsVerified = user.IsVerified
-                })
-                .ToArrayAsync(cancellationToken);
+                });
 
-            if(users.Length==0) return BadRequest();
+            var users = await MyPagedList<UserDto>.CreateAsync(query, pagedParams, cancellationToken);
 
-            return Ok(users);
+            Response.AddPaginationHeader(users);
+
+            if (users.DataItems.Length==0) return BadRequest();
+
+            return Ok(users.DataItems);
         }
 
         [HttpPost("register")]
@@ -246,11 +251,16 @@ namespace LendACarAPI.Endpoints
 
         [HttpGet("filter")]
         [TypeFilter(typeof(UserFilterAttribute))]
-        public ActionResult<UserDto[]> FilterUser([FromQuery] UserFilterDto filterDto)
+        public async Task<ActionResult<MyPagedList<UserDto[]>>> FilterUser([FromQuery] UserFilterDto filterDto,[FromQuery]MyPagingRequest pagingRequest, CancellationToken token)
         {
-            var result = HttpContext.Items["users"] as UserDto[];
+            var query = HttpContext.Items["users"] as IQueryable<UserDto>;
 
-            return Ok(result);
+           
+            var users = await MyPagedList<UserDto>.CreateAsync(query, pagingRequest, token);
+            Response.AddPaginationHeader(users);
+
+
+            return Ok(users.DataItems);
         }
 
 

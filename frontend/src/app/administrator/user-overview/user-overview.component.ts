@@ -7,7 +7,8 @@ import {UserService} from '../../services/user.service';
 import {CityService} from '../../services/city.service';
 import {CountryService} from '../../services/country.service';
 import {Router} from '@angular/router';
-import {HttpParams} from '@angular/common/http';
+import {HttpParams, HttpResponse} from '@angular/common/http';
+import {PaginatedResult} from '../../Models/Pagination';
 
 @Component({
   selector: 'app-user-overview',
@@ -25,15 +26,26 @@ export class UserOverviewComponent  implements OnInit {
   userService=inject(UserService)
   cityService=inject(CityService);
   countryService=inject(CountryService);
-  users: UserDto[]=[];
+  newUsers: UserDto[]=[];
   cities: City[]=[];
   countries: Country[]=[];
   filteredCities:City[]=[];
   verifiedFilterOptions:string[]=[" ","Yes","No"];
 
+  users:PaginatedResult<UserDto[]>=new PaginatedResult()
+
+  pageNumber:number=1;
+  pageSize:number=3;
+
   loadUsers(){
-    this.userService.GetAllUsers().subscribe({
-     next:res=>this.users=res,
+    this.userService.GetAllUsers(this.pageNumber,this.pageSize).subscribe({
+     next:res=> {
+       this.users={
+         items:res.body as UserDto[],
+         pagination:JSON.parse(res.headers.get('Pagination')!)
+       };
+       console.log(this.users.pagination);
+     },
       error:err=>console.log(err),
     })
   }
@@ -91,12 +103,25 @@ export class UserOverviewComponent  implements OnInit {
 
 
   onSearch() {
+
      console.log(this.userSearchForm.value);
      if(this.userSearchForm.value.countryId==0) this.userSearchForm.value.countryId=undefined;
-     this.userService.FilterUsers(this.userSearchForm.value).subscribe({
-       next:res=>this.users=res,
+     this.userService.FilterUsers(this.userSearchForm.value,this.pageNumber,this.pageSize).subscribe({
+       next:res=>this.users={
+         items:res.body as UserDto[],
+         pagination:JSON.parse(res.headers.get('Pagination')!)
+       },
        error:err=>console.log(err),
      })
+
+
+  }
+
+  pageChanged($event: any) {
+    if(this.pageNumber!==$event.page){
+      this.pageNumber=$event.page;
+      this.loadUsers();
+    }
 
   }
 }

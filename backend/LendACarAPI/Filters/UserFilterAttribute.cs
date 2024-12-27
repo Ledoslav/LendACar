@@ -46,8 +46,8 @@ namespace LendACarAPI.Filters
                         Username = user.Username,
                         AverageRating = user.AverageRating,
                         IsVerified = user.IsVerified
-                    })
-                    .ToArray();
+                    });
+                   
 
                 context.HttpContext.Items["users"]=users;
                 return;
@@ -86,7 +86,7 @@ namespace LendACarAPI.Filters
                 query = query.Where(u => EF.Functions.DateDiffYear(u.BirthDate, DateTime.Today) <= filter.AgeTo);
             }
 
-            var result= query
+            var result = query
                      .Select(user => new UserDto()
                      {
                          Id = user.Id,
@@ -100,8 +100,8 @@ namespace LendACarAPI.Filters
                          Username = user.Username,
                          AverageRating = user.AverageRating,
                          IsVerified = user.IsVerified
-                     })
-                      .ToArray();
+                     });
+                  
 
             context.HttpContext.Items["users"] = result;
         }
