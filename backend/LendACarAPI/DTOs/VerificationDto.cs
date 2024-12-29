@@ -17,9 +17,11 @@ namespace LendACarAPI.DTOs
 
 
         public DateTime? RequestReviewDate { get; set; }
-        public bool? IsApproved { get; set; }
+        public int? RequestStatus { get; set; } // 0 - odbijen, 1 - odobren, 2 - aktivan (ili drugi broj koji nije 0 ili 1)
         public string? DenialComment { get; set; }
-        public int? EmployeeId { get; set; }
+
+        public int? EmpAdmId { get; set; }
+        public bool? RevievedByAdmin { get; set; }
 
     }
 }

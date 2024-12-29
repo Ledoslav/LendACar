@@ -8,8 +8,8 @@ export interface VerificationRequestDto {
   user: UserDto;
   requestComment: string | null; 
   requestReviewDate: string | null; 
-  isApproved: boolean; 
+  requestStatus: number; 
   denialComment: string | null; 
-  employeeId: number | null; 
-  employee: EmployeeDto | null; 
+  empAdmId: number | null; 
+  reviewedByAdmin: boolean | false;
 }

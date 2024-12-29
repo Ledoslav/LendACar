@@ -14,7 +14,7 @@ export class UserProfileComponent {
   verificationService=inject(VerificationRequestService);
 
   verificationRequest: VerificationRequestDto | null = null;
-  verificationStatus: number = 1; // 0 - unverified, 1 - verified, 2 - denied verification, 3 - pending verification
+  verificationStatus: number = 3;
   comment:string = '';
 
   ngOnInit(): void {
@@ -36,24 +36,14 @@ export class UserProfileComponent {
   }
 
   CheckVerificationStatus() {
-    const currentUser = this.accountService.currentUser();
-    
-    if(currentUser?.isVerified === true){
-      this.verificationStatus = 1;
+    if(this.verificationRequest !== null)
+    {
+      this.verificationStatus = this.verificationRequest.requestStatus;
     }
-    else if (this.verificationRequest?.isApproved === true){
-      this.verificationStatus = 1;
-    }
-    else if (this.verificationRequest?.isApproved === false){
-      this.verificationStatus = 2;
-    }
-    else if (this.verificationRequest?.isApproved === null){
+    else
+    {
       this.verificationStatus = 3;
     }
-    else {
-      this.verificationStatus = 0; // if verification request doesn't exist
-    }
-
   }
 
   SubmitVerificationRequest() {

@@ -36,15 +36,16 @@ namespace LendACarAPI.Endpoints
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
                 RequestReviewDate = request.RequestReviewDate,
-                IsApproved = request.IsApproved,
+                RequestStatus = request.RequestStatus,
                 DenialComment = request.DenialComment,
-                EmployeeId = request.EmployeeId,
+                EmpAdmId = request.EmpAdmId,
+                RevievedByAdmin = request.RevievedByAdmin,
             };
 
             return Ok(verificationRequest);
         }
 
-        [HttpGet("getByUsername/{id}")]
+        [HttpGet("getByUsername/{username}")]
         public async Task<IActionResult> GetVerificationRequestByUsername(string username)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Username == username);
@@ -61,18 +62,19 @@ namespace LendACarAPI.Endpoints
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
                 RequestReviewDate = request.RequestReviewDate,
-                IsApproved = request.IsApproved,
+                RequestStatus = request.RequestStatus,
                 DenialComment = request.DenialComment,
-                EmployeeId = request.EmployeeId,
+                EmpAdmId = request.EmpAdmId,
+                RevievedByAdmin = request.RevievedByAdmin,
             };
 
             return Ok(verificationRequest);
         }
 
         [HttpGet("getByUserId/{id}")]
-        public async Task<IActionResult> GetVerificationRequestByUserId(int userId)
+        public async Task<IActionResult> GetVerificationRequestByUserId(int id)
         {
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null) return NotFound("User doesn't exist.");
 
             var request = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.UserId == user.Id);
@@ -86,9 +88,10 @@ namespace LendACarAPI.Endpoints
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
                 RequestReviewDate = request.RequestReviewDate,
-                IsApproved = request.IsApproved,
+                RequestStatus = request.RequestStatus,
                 DenialComment = request.DenialComment,
-                EmployeeId = request.EmployeeId,
+                EmpAdmId = request.EmpAdmId,
+                RevievedByAdmin = request.RevievedByAdmin,
             };
 
             return Ok(verificationRequest);
@@ -126,9 +129,10 @@ namespace LendACarAPI.Endpoints
             userGettingVerified.IsVerified = true;
 
             verificationRequest.RequestReviewDate = DateTime.UtcNow;
-            verificationRequest.IsApproved = true;
+            verificationRequest.RequestStatus = 1;
             verificationRequest.DenialComment = approvedVerificationRequest.DenialComment;
-            verificationRequest.EmployeeId = approvedVerificationRequest.EmployeeId;
+            verificationRequest.EmpAdmId = approvedVerificationRequest.EmpAdmId;
+            verificationRequest.RevievedByAdmin = approvedVerificationRequest.RevievedByAdmin;
 
             await db.SaveChangesAsync();
 
@@ -139,9 +143,10 @@ namespace LendACarAPI.Endpoints
                 UserId = verificationRequest.UserId,
                 RequestComment = verificationRequest.RequestComment,
                 RequestReviewDate = verificationRequest.RequestReviewDate,
-                IsApproved = verificationRequest.IsApproved,
+                RequestStatus = verificationRequest.RequestStatus,
                 DenialComment = verificationRequest.DenialComment,
-                EmployeeId = verificationRequest.EmployeeId,
+                EmpAdmId = verificationRequest.EmpAdmId,
+                RevievedByAdmin = verificationRequest.RevievedByAdmin,
             });
         }
 
@@ -158,9 +163,10 @@ namespace LendACarAPI.Endpoints
             userGettingVerified.IsVerified = false;
 
             verificationRequest.RequestReviewDate = DateTime.UtcNow;
-            verificationRequest.IsApproved = false;
+            verificationRequest.RequestStatus = 0;
             verificationRequest.DenialComment = approvedVerificationRequest.DenialComment;
-            verificationRequest.EmployeeId = approvedVerificationRequest.EmployeeId;
+            verificationRequest.EmpAdmId = approvedVerificationRequest.EmpAdmId;
+            verificationRequest.RevievedByAdmin = approvedVerificationRequest.RevievedByAdmin;
 
             await db.SaveChangesAsync();
 
@@ -171,9 +177,10 @@ namespace LendACarAPI.Endpoints
                 UserId = verificationRequest.UserId,
                 RequestComment = verificationRequest.RequestComment,
                 RequestReviewDate = verificationRequest.RequestReviewDate,
-                IsApproved = verificationRequest.IsApproved,
+                RequestStatus = verificationRequest.RequestStatus,
                 DenialComment = verificationRequest.DenialComment,
-                EmployeeId = verificationRequest.EmployeeId,
+                EmpAdmId = verificationRequest.EmpAdmId,
+                RevievedByAdmin = verificationRequest.RevievedByAdmin,
             });
         }
 

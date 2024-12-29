@@ -11,26 +11,27 @@
     <h1 class="mb-4">Verification Requests</h1>
 
     <!-- Selected Request Details -->
-    <div *ngIf="selectedRequest" class="mb-4">
+    <div *ngIf="selectedRequest && selectedUser" class="mb-4">
       <h3>Request Details</h3>
       <div class="card p-3">
         <p><strong>Request Date:</strong> {{ selectedRequest.requestDate }}</p>
-        <p><strong>User:</strong> {{ selectedRequest.user.username }}</p>
+        <p><strong>User:</strong> {{ selectedUser.username }}</p>
         <p><strong>Request Comment:</strong> {{ selectedRequest.requestComment || 'No comment provided' }}</p>
         <p><strong>Status:</strong> {{ getStatus(selectedRequest) }}</p>
         <h4>User Information</h4>
-        <p><strong>First Name:</strong> {{ selectedRequest.user.firstName }}</p>
-        <p><strong>Last Name:</strong> {{ selectedRequest.user.lastName }}</p>
-        <p><strong>Phone Number:</strong> {{ selectedRequest.user.phoneNumber }}</p>
-        <p><strong>Average Rating:</strong> {{ selectedRequest.user.averageRating }}</p>
-        <p><strong>Birth Date:</strong> {{ selectedRequest.user.birthDate }}</p>
-        <p><strong>City:</strong> {{ selectedRequest.user.city }}</p>
-        <h4 *ngIf="selectedRequest.isApproved !== null">Request Review Information</h4>
-        <p *ngIf="selectedRequest.isApproved !== null"><strong>Review Date:</strong> {{ selectedRequest.requestReviewDate }}</p>
-        <p *ngIf="selectedRequest.isApproved !== null"><strong>Employee:</strong> {{ selectedRequest.employee?.username || 'Unknown' }}</p>
-        <p *ngIf="selectedRequest.isApproved !== null"><strong>Comment from employee:</strong> {{ selectedRequest.denialComment || 'No reasoning provided' }}</p>
+        <p><strong>First Name:</strong> {{ selectedUser.firstName }}</p>
+        <p><strong>Last Name:</strong> {{ selectedUser.lastName }}</p>
+        <p><strong>Phone Number:</strong> {{ selectedUser.phoneNumber }}</p>
+        <p><strong>Average Rating:</strong> {{ selectedUser.averageRating }}</p>
+        <p><strong>Birth Date:</strong> {{ selectedUser.birthDate }}</p>
+        <p><strong>City:</strong> {{ getCityName(selectedUser.cityId) }}</p>
+        <h4 *ngIf="selectedRequest.requestStatus !== 2">Request Review Information</h4>
+        <p *ngIf="selectedRequest.requestStatus !== 2"><strong>Review Date:</strong> {{ selectedRequest.requestReviewDate }}</p>
+        <p *ngIf="selectedRequest.requestStatus !== 2 && selectedRequest.reviewedByAdmin === false"><strong>Employee:</strong> {{ selectedRequest.empAdmId || 'Unknown' }}</p>
+        <p *ngIf="selectedRequest.requestStatus !== 2 && selectedRequest.reviewedByAdmin === true"><strong>Administrator:</strong> {{ selectedRequest.empAdmId || 'Unknown' }}</p>
+        <p *ngIf="selectedRequest.requestStatus !== 2"><strong>Comment from employee:</strong> {{ selectedRequest.denialComment || 'No reasoning provided' }}</p>
 
-        <div *ngIf="selectedRequest.isApproved === null" class="mt-3">
+        <div *ngIf="selectedRequest.requestStatus === 2" class="mt-3">
           <textarea
             class="form-control mb-2"
             [(ngModel)]="comment"
@@ -62,7 +63,7 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>User Name</th>
+          <th>Username</th>
           <th>Request Date</th>
           <th>Status</th>
         </tr>
@@ -70,7 +71,7 @@
       <tbody>
         <tr *ngFor="let request of filteredRequests; let i = index" (click)="selectRequest(request)">
           <td>{{ i + 1 }}</td>
-          <td>{{ request.user.username }}</td>
+          <td>{{ getUsername(request.userId) }}</td>
           <td>{{ request.requestDate }}</td>
           <td>{{ getStatus(request) }}</td>
         </tr>

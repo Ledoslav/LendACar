@@ -23,13 +23,20 @@ export class VerificationRequestComponent implements OnInit {
 
   employeeService=inject(EmployeeService);
   userService=inject(UserService);
+  cityService=inject(CityService);
   verificationService=inject(VerificationRequestService);
   router=inject(Router);
 
 
   requests: VerificationRequestDto[] = [];
+  users: UserDto[] = [];
+  cities: City[] = [];
   filteredRequests: VerificationRequestDto[] = [];
+
   selectedRequest: VerificationRequestDto | null = null;
+  selectedUser: UserDto | null = null;
+
+
   filter: string = 'all';
   employeeId: number = 0; // Placeholder for logged-in employee's ID
   comment: string = ''; // komentar koji uposlenik unosi kao razlog odobrenja ili odbijanja
@@ -40,39 +47,53 @@ export class VerificationRequestComponent implements OnInit {
     const currentEmployee = this.employeeService.currentEmployee();
     this.employeeId = currentEmployee?.id || 0;
 
-    this.fetchRequests();
+    this.fetchData();
   }
 
-  fetchRequests(): void {
+  fetchData(): void {
     this.verificationService.GetVerificationRequests().subscribe(res=>{
       this.requests=res;
+      this.filterRequests();
     })
+    this.userService.GetAllUsers().subscribe(res => {
+      this.users = res.body || []; // Use `res.body` for the user array
+      this.filterRequests();
+    });
+    this.cityService.GetAllCities().subscribe(res => {
+      this.cities = res;
+      this.filterRequests();
+    });
   }
+
 
   filterRequests(): void {
     if (this.filter === 'active') {
-      this.filteredRequests = this.requests.filter((req) => req.employeeId === null);
+      this.filteredRequests = this.requests.filter((req) => req.requestStatus === 2);
     } 
     else if (this.filter === 'approved') {
-      this.filteredRequests = this.requests.filter((req) => req.isApproved === true);
+      this.filteredRequests = this.requests.filter((req) => req.requestStatus === 1);
     } 
     else if (this.filter === 'denied') {
-      this.filteredRequests = this.requests.filter((req) => req.isApproved === false);
+      this.filteredRequests = this.requests.filter((req) => req.requestStatus === 0);
     } 
-    else {
+    else if (this.filter === 'all') {
       this.filteredRequests = this.requests;
     }
   }
 
   selectRequest(request: VerificationRequestDto): void {
     this.selectedRequest = request;
+    this.selectedUser = this.users.find(res => res.id === request.userId) || null;
+
+    console.log(request);
     this.comment = ''; // resetuje komentar
   }
 
   approveRequest(request: VerificationRequestDto): void {
     request.denialComment = this.comment;
-    request.employeeId = this.employeeId;
-    request.isApproved = true;
+    request.empAdmId = this.employeeId;
+    request.requestStatus = 1;
+    request.reviewedByAdmin = false;
 
     this.verificationService.ConfirmVerificationRequest(request, request.id).subscribe({
       next:_ => {window.location.reload();},
@@ -82,8 +103,9 @@ export class VerificationRequestComponent implements OnInit {
 
   denyRequest(request: VerificationRequestDto): void {
     request.denialComment = this.comment;
-    request.employeeId = this.employeeId;
-    request.isApproved = false;
+    request.empAdmId = this.employeeId;
+    request.requestStatus = 0;
+    request.reviewedByAdmin = false;
 
     this.verificationService.DenyVerificationRequest(request, request.id).subscribe({
       next:_ => {window.location.reload();},
@@ -94,16 +116,28 @@ export class VerificationRequestComponent implements OnInit {
 
   getStatus(request: VerificationRequestDto | null): string {
     if (!request) return '';
-    if (request.isApproved === true) {
+    if (request.requestStatus === 1) {
       return 'Approved';
     } 
-    else if (request.isApproved === false) {
+    else if (request.requestStatus === 0) {
       return 'Denied';
     } 
-    else {
+    else if (request.requestStatus === 2){
       return 'Active';
+    }
+    else{
+      return 'Undefined'
     }
   }
 
-}
+  getUsername(userId:number): string{
+    const user = this.users.find(res => res.id === userId);
+    return user?.username || 'Unknown';
+  }
+  
+  getCityName(cityId:number): string{
+    const city = this.cities.find(res => res.id === cityId);
+    return city?.name || 'Unknown';
+  }
 
+}

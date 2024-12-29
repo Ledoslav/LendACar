@@ -455,11 +455,8 @@ namespace LendACarAPI.Migrations
                     b.Property<string>("DenialComment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<int?>("EmpAdmId")
                         .HasColumnType("int");
-
-                    b.Property<bool?>("IsApproved")
-                        .HasColumnType("bit");
 
                     b.Property<string>("RequestComment")
                         .HasColumnType("nvarchar(max)");
@@ -469,6 +466,12 @@ namespace LendACarAPI.Migrations
 
                     b.Property<DateTime?>("RequestReviewDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("RequestStatus")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("RevievedByAdmin")
+                        .HasColumnType("bit");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");

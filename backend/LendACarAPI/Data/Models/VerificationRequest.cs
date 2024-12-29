@@ -16,17 +16,18 @@ namespace LendACarAPI.Data.Models
         [ForeignKey(nameof(User))]
         [Required]
         public int UserId { get; set; }
-        public User? User { get; set; } // korisnik koji salje zahtjev
+        public User? User { get; set; } 
 
-        public string? RequestComment { get; set; } // mogucnost korisniku da ostavi komentar koji ce biti vidljiv uposleniku
+        public string? RequestComment { get; set; } 
 
 
 
-        public DateTime? RequestReviewDate { get; set; } // datum kada je uposlenik pregledao zahtjev
-        public bool? IsApproved { get; set; } // ukoliko je null znaci da zahtjev jos nije pregledan, ako je true znaci da je odobren, ukoliko je false znaci da je odbijen
-        public string? DenialComment { get; set; } // ovdje uposlenik moze navesti razlog zasto je odbio zahtjev
+        public DateTime? RequestReviewDate { get; set; }
+        public int? RequestStatus { get; set; } = 2; // 0 - odbijen, 1 - odobren, 2 - aktivan (ili drugi broj koji nije 0 ili 1)
+        public string? DenialComment { get; set; } 
 
-        public int? EmployeeId { get; set; } // uposlenik koji je odobrio/odbio zahtjev, biti ce null dok zahtjev nije odobren/odbijen
+        public int? EmpAdmId { get; set; } // id uposlenika ili admina koji je odobrio/odbio zahtjev
+        public bool? RevievedByAdmin { get; set; } = false; // biti ce true ukoliko je admin izvrsio pregled verifikacije
 
     }
 }
