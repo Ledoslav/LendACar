@@ -12,6 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //import { DashboardComponent } from './employee/dashboard/dashboard.component';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import {DatePipe} from '@angular/common';
+import {MatStepperModule} from '@angular/material/stepper';
 
 
 
@@ -30,7 +31,8 @@ import {DatePipe} from '@angular/common';
     FormsModule,
     BrowserAnimationsModule,
     TooltipModule,
-    DatePipe
+    DatePipe,
+    MatStepperModule
   ],
   providers: [
     provideAnimationsAsync(),

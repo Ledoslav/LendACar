@@ -1,0 +1,13 @@
+ .mat-stepper-horizontal {
+  background-color: inherit  !important;
+  box-shadow: none; /* Remove any shadow if present */
+}
+
+ .container {
+   max-width: 600px;
+   margin: 0 auto;
+ }
+
+ #stepperContainer{
+   max-width: 1200px !important ;
+ }
