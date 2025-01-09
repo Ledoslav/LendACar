@@ -100,7 +100,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 PhoneNumber = "123-456-7890",
                 EmailAdress = "denis@edu.fit.ba",
                 IsVerified = false
-            });
+            },cancellationToken);
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
                 Username = "LedoSlav",
@@ -112,7 +112,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 PhoneNumber = "123-456-7890",
                 EmailAdress = "edin@edu.fit.ba",
                 IsVerified = false
-            });
+            }, cancellationToken);
 
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
@@ -125,7 +125,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 PhoneNumber = "123-456-7890",
                 EmailAdress = "emin@edu.fit.ba",
                 IsVerified = false
-            });
+            }, cancellationToken);
 
             
 

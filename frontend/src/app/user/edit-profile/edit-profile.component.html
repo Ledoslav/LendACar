@@ -9,7 +9,7 @@
         <hr>
       </div>
       <!-- Form START -->
-      <form #editForm="ngForm" (ngSubmit)="Update()" class="file-upload">
+      <form [formGroup]="userEditForm" (ngSubmit)="Update()" class="file-upload">
         <div class="row mb-5 gx-5">
           <!-- Contact detail -->
           <div class="col-xxl-8 mb-5 mb-xxl-0">
@@ -20,45 +20,52 @@
                 <div class="col-md-6">
                   <label class="form-label">First Name *</label>
                   <input type="text" class="form-control" name="firstName" aria-label="First name"
-                         [(ngModel)]="model.firstName">
+                   formControlName="firstName">
                 </div>
                 <!-- Last name -->
                 <div class="col-md-6">
                   <label class="form-label">Last Name *</label>
                   <input type="text" class="form-control" name="lastName" aria-label="Last name"
-                         [(ngModel)]="model.lastName">
+                         formControlName="lastName">
                 </div>
                 <!-- Phone number -->
                 <div class="col-md-6">
                   <label class="form-label">Phone number *</label>
                   <input type="text" class="form-control" name="phoneNumber" aria-label="Phone number"
-                        [(ngModel)]="model.phoneNumber" >
+                         formControlName="phoneNumber" >
                 </div>
                 <!-- Mobile number -->
                 <div class="col-md-6">
                   <label class="form-label">Birth date *</label>
-                  <input type="text" disabled class="form-control bg-secondary" name="birthDate" aria-label="Phone number"
-                       [(ngModel)]="model.birthDate">
+                  <input type="text"
+                         class="form-control bg-secondary" name="birthDate" aria-label="Phone number" readonly
+                         formControlName="birthDate">
                 </div>
                 <div class="col-md-6">
-                  <label for="inputEmail4" class="form-label">City *</label>
-                  <select class="form-select" aria-label="Default select example" name="city" [(ngModel)]="model.cityId">
-                      <option *ngFor="let city of cities" id="floatingInputCity" [value]="city.id">{{city.name}}</option>
+                  <label for="country">Country</label>
+                  <select class="form-select"  aria-label="Default select example" formControlName="countryId" >
+                    <option *ngFor="let country of countries"   id="country" value="{{country.id}}">{{country.name}}</option>
                   </select>
+                </div>
 
+                <div class="col-md-6">
+                  <label for="city">City</label>
+                  <select  class="form-select" aria-label="Default select example" formControlName="cityId" >
+                    <option *ngFor="let city of filteredCities"  id="city" value="{{city.id}}">{{city.name}}</option>
+                  </select>
                 </div>
 
                 <!-- Email -->
                 <div class="col-md-6">
                   <label for="inputEmail4" class="form-label">Email *</label>
-                  <input type="email" disabled class="form-control bg-secondary" name="emailAddress" id="inputEmail4"
-                       [(ngModel)]="model.emailAddress">
+                  <input type="email" readonly  class="form-control bg-secondary" name="emailAddress" id="inputEmail4"
+                         formControlName="emailAddress">
                 </div>
-                <!-- Usernaem -->
+                <!-- Username -->
                 <div class="col-md-6">
                   <label class="form-label">Username *</label>
-                  <input type="text" disabled class="form-control bg-secondary" name="username" aria-label="Phone number"
-                       [(ngModel)]="model.username">
+                  <input type="text" readonly  class="form-control bg-secondary" name="username" aria-label="Phone number"
+                         formControlName="username">
                 </div>
               </div> <!-- Row END -->
             </div>
@@ -96,7 +103,7 @@
       </form> <!-- Form END -->
 
       <!-- change password -->
-      <form #changePasswordForm="ngForm" (ngSubmit)="ChangePassword()">
+      <form [formGroup]="changePasswordForm" (ngSubmit)="ChangePassword()">
         <div class="col-xxl-6">
           <div class="bg-secondary-soft px-4 py-5 rounded">
             <div class="row g-3">
@@ -104,30 +111,30 @@
               <!-- Old password -->
               <div class="col-md-6">
                 <label for="exampleInputPassword1" class="form-label">Current password *</label>
-                <input [type]="passwordShow ? 'text': 'password'" class="form-control" id="exampleInputPassword1"
-                       [(ngModel)]="passwordsModel.CurrentPassword" name="currentpassword">
+                <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control" id="exampleInputPassword1"
+                       formControlName="currentPassword" name="currentpassword">
               </div>
               <!-- New password -->
               <div class="col-md-6">
                 <label for="exampleInputPassword2" class="form-label">New password *</label>
-                <input [type]="passwordShow ? 'text': 'password'" class="form-control" id="exampleInputPassword2"
-                       [(ngModel)]="passwordsModel.NewPassword" name="newpassword">
+                <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'"  class="form-control" id="exampleInputPassword2"
+                      formControlName="newPassword" name="newpassword">
               </div>
               <!-- Confirm password -->
               <div class="col-md-12">
                 <label for="exampleInputPassword3" class="form-label">Confirm Password *</label>
-                <input [type]="passwordShow ? 'text': 'password'" class="form-control" id="exampleInputPassword3"
-                     name="repeatPassword"  [(ngModel)]="repeatPassword" (input)="ComparePassword()">
+                <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control" id="exampleInputPassword3"
+                       name="repeatPassword" formControlName="repeatPassword">
 
-                <div class="d-flex" *ngIf="!passwordSame">
-                  <span class="text-danger">Password don't match</span>
+                <div class="d-flex" *ngIf="changePasswordForm.get('repeatPassword')?.invalid && changePasswordForm.get('repeatPassword')?.touched">
+                  <span style="color: red;" class="text-danger">Passwords don't match</span>
                 </div>
 
-                <input [(ngModel)]="passwordShow" type="checkbox" id="check" name="check"/>
+                <input formControlName="passwordShow" type="checkbox" id="check" name="check"/>
                 <label class="form-label px-2" for="check">Show password</label>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-lg mt-5">Change password</button>
+            <button type="submit" class="btn btn-primary btn-lg mt-5" [disabled]="changePasswordForm.invalid">Change password</button>
           </div>
         </div>
       </form>

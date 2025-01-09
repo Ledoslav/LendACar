@@ -81,9 +81,9 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<string>> RegisterUser([FromBody]RegisterUserDto user)
+        public async Task<ActionResult<string>> RegisterUser([FromBody]RegisterUserDto user,CancellationToken cancellationToken)
         {
-            if (await UserExists(user.Username, user.EmailAdress)) return BadRequest("Username or email is taken");
+            if (await UserExists(user.Username, user.EmailAdress,cancellationToken)) return BadRequest("Username or email is taken");
 
             using var hmac=new HMACSHA256();
 
@@ -104,19 +104,19 @@ namespace LendACarAPI.Endpoints
             };
 
             db.Users.Add(createdUser);
-            await db.SaveChangesAsync();    
+            await db.SaveChangesAsync(cancellationToken);    
 
             return Created();
         }
 
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> LoginUser([FromBody] LoginUserDto userLogin)
+        public async Task<ActionResult<UserDto>> LoginUser([FromBody] LoginUserDto userLogin,CancellationToken cancellationToken)
         {
             var user = await db.Users
                 .Include(u=>u.City)
                 .Include(u => u.City != null ? u.City.Country : null)
-                .FirstOrDefaultAsync(u => u.Username.ToLower() == userLogin.Username.ToLower());
+                .FirstOrDefaultAsync(u => u.Username.ToLower() == userLogin.Username.ToLower(),cancellationToken);
 
             if (user == null) return Unauthorized("Invalid credentials");
 
@@ -148,10 +148,11 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> EditUser([FromBody]UserDto updatedUser,int id)
+        public async Task<IActionResult> EditUser([FromBody]UserDto updatedUser,int id, CancellationToken cancellationToken)
         {
             var user = await db.Users
             .FirstOrDefaultAsync(u => u.Id == id);
+
 
             if (user == null) return NotFound("User not found");
 
@@ -163,12 +164,12 @@ namespace LendACarAPI.Endpoints
             user.BirthDate =DateTime.Parse(updatedUser.BirthDate);
             user.Username = updatedUser.Username;
 
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(cancellationToken);
 
             var returnUser = await db.Users
             .Include(u => u.City)
             .Include(u => u.City != null ? u.City.Country : null)
-            .FirstOrDefaultAsync(u => u.Id == id);
+            .FirstOrDefaultAsync(u => u.Id == id,cancellationToken);
 
 
 
@@ -265,10 +266,10 @@ namespace LendACarAPI.Endpoints
 
 
 
-        private async Task<bool> UserExists(string username,string email)
+        private async Task<bool> UserExists(string username,string email,CancellationToken cancellation)
         {
             return await db.Users.AnyAsync(user => user.Username.ToLower() == username.ToLower()
-            && user.EmailAdress.ToLower()==email.ToLower());
+            || user.EmailAdress.ToLower()==email.ToLower(),cancellation);
 
             // dodati i provjeru da li email ili username je koristen u admin, employee ili company employee tabeli
         }
