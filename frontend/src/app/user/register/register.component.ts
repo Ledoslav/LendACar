@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
 import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {CountryService} from '../../services/country.service';
 import {Country} from '../../Models/Country';
-import {passwordMatchValidator} from './PasswrodMatchValidator';
+import {HttpClient} from '@angular/common/http';
 
 
 @Component({
@@ -24,20 +24,20 @@ export class RegisterComponent implements OnInit {
     cities:City[]=[];
     filteredCities:City[]=[]
     countries:Country[]=[];
+    httpClient=inject(HttpClient)
   accountService=inject(UserService);
   cityService=inject(CityService);
   countryService=inject(CountryService)
   router=inject(Router);
   fb=inject(FormBuilder);
   passwordShow: boolean=false;
-  passwordCheck:any;
-  passwordSame:boolean=true;
+  captchaSuccess:boolean=false;
 
   registrationForm=this.fb.group({
     personalInfo:this.fb.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      username: ['', Validators.required],
+      firstName: ['', [Validators.required,Validators.min(2),Validators.max(15)]],
+      lastName: ['', [Validators.required,Validators.min(2),Validators.max(15)]],
+      username: ['', [Validators.required,Validators.min(5),Validators.max(20)]],
       birthDate: ['', Validators.required],
     }),
     contactDetails:this.fb.group({
@@ -70,7 +70,6 @@ export class RegisterComponent implements OnInit {
 
 
 
-
   get personalInfo(): FormGroup {
     return this.registrationForm.get('personalInfo') as FormGroup;
   }
@@ -84,19 +83,6 @@ export class RegisterComponent implements OnInit {
     return this.registrationForm.get('passwords') as FormGroup;
   }
 
-
-  test(){
-
-    this.model = {
-      ...this.personalInfo.value,
-      ...this.contactDetails.value,
-      ...this.address.value,
-      ...this.passwords.value,
-    };
-
-    console.log(this.model)
-
-  }
 
 
   loadCountries(){
@@ -133,19 +119,26 @@ export class RegisterComponent implements OnInit {
     })
   }
 
-  ComparePassword() {
-      if(this.model.Password!==this.passwordCheck)
-        this.passwordSame=false;
-      else
-        this.passwordSame=true;
-  }
-
 
   FilterCities($event:any) {
     let countryId=$event.target.value;
       this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
   }
 
+  handleSuccess(token: string) {
+    console.log(token)
+
+    const obj={
+      ResponseToken:token
+    }
+
+    this.httpClient.post("http://localhost:7000/api/Captcha/verify",obj ).subscribe({
+      next: result => {
+        this.captchaSuccess=true;
+      },
+      error: err => {console.log(err)},
+    })
+  }
 }
 
 

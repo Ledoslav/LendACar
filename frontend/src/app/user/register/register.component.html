@@ -1,82 +1,20 @@
-<!--
-<div class="text-center">
-  <main class="form-signin">
-    <form #loginForm="ngForm" (ngSubmit)="register()">
-      <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
-      <div class="form-floating">
-        <input type="text" class="form-control mb-2" id="floatingFirstName" name="firsname" [(ngModel)]="model.FirstName" placeholder="Firstname">
-        <label for="floatingFirstName">Firstname</label>
-      </div>
-      <div class="form-floating">
-        <input type="text" class="form-control mb-2" id="floatingLastName" name="lastname" [(ngModel)]="model.LastName" placeholder="Lastname">
-        <label for="floatingLastName">Lastname</label>
-      </div>
-      <div class="form-floating">
-        <input type="tel" class="form-control mb-2" id="floatingPhone" name="phonenumber" [(ngModel)]="model.PhoneNumber" placeholder="Phone number">
-        <label for="floatingPhone">Phone number</label>
-      </div>
-      <div class="form-floating">
-        <input type="date" class="form-control mb-2" id="floatingInputPhone" name="birthdate" [(ngModel)]="model.BirthDate" placeholder="Birth date">
-        <label for="floatingInputPhone">BirthDate</label>
-      </div>
-      <div class="form-floating">
-        <select class="form-select" aria-label="Default select example" name="city" [(ngModel)]="model.CityId">
-          @for (city of cities; track city.id){
-            <option  id="floatingInputCity" value="{{city.id}}">{{city.name}}</option>
-          }
-        </select>
-      </div>
-      <div class="form-floating">
-        <input type="email" class="form-control mb-2" id="floatingInputEmail" name="email" [(ngModel)]="model.EmailAdress" placeholder="EmailAddress">
-        <label for="floatingInputEmail">Email address</label>
-      </div>
-      <div class="form-floating">
-        <input type="text" class="form-control mb-2" id="floatingInputUsername" name="username" [(ngModel)]="model.Username" placeholder="Username">
-        <label for="floatingInputUsername">Username</label>
-      </div>
-      <div class="form-floating">
-        <input [type]="passwordShow ? 'text': 'password' " class="form-control mb-2" id="floatingPassword" name="password" [(ngModel)]="model.Password" placeholder="Password">
-        <label for="floatingPassword">Password</label>
-      </div>
-      <div class="form-floating">
-        <input [type]="passwordShow ? 'text': 'password' " class="form-control mb-2" id="floatingPasswordRepeat"
-              (input)="ComparePassword()" name="password" [(ngModel)]="passwordCheck" placeholder="Password">
-        <label for="floatingPassword">Repeat password</label>
-      </div>
-      <div class="d-flex" *ngIf="!passwordSame">
-        <span class="text-danger">Password don't match</span>
-      </div>
-      <div class="d-flex justify-content-begin">
-        <input [(ngModel)]="passwordShow" type="checkbox" id="check" name="showPassword"/>
-        <label class="form-label px-2" for="check">Show password</label>
-      </div>
-
-      <div class="text-end" >
-        <button  class="w-40 btn btn-lg btn-primary mt-3 me-4" type="submit">Sign up</button>
-      </div>
-    </form>
-    <button type="button" class="btn btn-primary" routerLink="/user/dashboard">Back</button>
-  </main>
-</div>
-
--->
 
 <div class="container mt-4" id="stepperContainer">
-  <mat-stepper linear #stepper>
+  <mat-stepper   #stepper>
     <mat-step label="Personal Information" [stepControl]="personalInfo" >
       <div class="container mt-4">
         <h3 class="text-center mb-2">Personal Information</h3>
         <form [formGroup]="personalInfo">
 
           <div class="form-group mb-2">
-            <label for="firstName">First Name</label>
+            <label for="firstName">First Name*</label>
             <input type="text" id="firstName" class="form-control" formControlName="firstName" >
             <mat-error *ngIf="personalInfo.get('firstName')?.invalid && personalInfo.get('firstName')?.touched" style="color: red">
               First name required </mat-error>
           </div>
 
           <div class="form-group mb-2">
-            <label for="lastName">Last Name</label>
+            <label for="lastName">Last Name*</label>
             <input formControlName="lastName" id="lastName" type="text"  class="form-control" >
             <mat-error *ngIf="personalInfo.get('lastName')?.invalid && personalInfo.get('lastName')?.touched" style="color: red">
               Last name required
@@ -85,15 +23,15 @@
 
 
           <div class="form-group mb-2">
-            <label for="lastName">Username</label>
+            <label for="lastName">Username*</label>
             <input formControlName="username" id="username" type="text"  class="form-control" >
             <mat-error *ngIf="personalInfo.get('username')?.invalid && personalInfo.get('username')?.touched" style="color: red">
-              Last name required
+              Username required
             </mat-error>
           </div>
 
           <div class="form-group mb-2">
-            <label for="birthDate">Birth date</label>
+            <label for="birthDate">Birth date*</label>
             <input formControlName="birthDate" id="birthDate" type="date" class="form-control" >
             <mat-error *ngIf="personalInfo.get('birthDate')?.invalid && personalInfo.get('birthDate')?.touched" style="color: red">
               Birth date required
@@ -101,7 +39,7 @@
           </div>
 
           <div class="d-flex justify-content-end">
-          <button class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
+          <button [disabled]="personalInfo.invalid" class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
           </div>
         </form>
       </div>
@@ -112,20 +50,24 @@
         <div class="container mt-4">
           <h3 class="text-center mb-2">Contact Details</h3>
         <div class="form-group mb-2">
-          <label for="firstName">Email Address</label>
+          <label for="firstName">Email Address*</label>
           <input type="text" id="emailAddress" class="form-control" formControlName="emailAdress" placeholder="lendacar@gmail.com">
-          <mat-error *ngIf="contactDetails.get('emailAdress')?.invalid"></mat-error>
+          <mat-error *ngIf="contactDetails.get('emailAdress')?.invalid && contactDetails.get('emailAdress')?.touched" style="color: red">
+            Email is required
+          </mat-error>
         </div>
 
         <div class="form-group mb-2">
-          <label for="firstName">Phone number</label>
+          <label for="firstName">Phone number*</label>
           <input type="text" id="phoneNumber" class="form-control" formControlName="phoneNumber" placeholder="+38761888999">
-          <mat-error *ngIf="contactDetails.get('phoneNumber')?.invalid"></mat-error>
+          <mat-error *ngIf="contactDetails.get('phoneNumber')?.invalid && contactDetails.get('phoneNumber')?.touched" style="color: red">
+            Phone number required
+          </mat-error>
         </div>
 
           <div class="d-flex justify-content-between">
             <button class="btn btn-outline-light mt-2" matStepperPrevious type="button">Back</button>
-            <button class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
+            <button [disabled]="contactDetails.invalid" class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
           </div>
         </div>
 
@@ -137,21 +79,21 @@
         <div class="container mt-4">
           <h3 class="text-center mb-2">Address</h3>
           <div class="form-group mb-2">
-            <label for="country">Country</label>
+            <label for="country">Country*</label>
             <select  class="form-select" (change)="FilterCities($event)" aria-label="Default select example" formControlName="countryId" >
               <option *ngFor="let country of countries"  id="country" value="{{country.id}}">{{country.name}}</option>
             </select>
           </div>
 
           <div class="form-group mb-2">
-            <label for="city">City</label>
+            <label for="city">City*</label>
             <select  class="form-select" aria-label="Default select example" formControlName="cityId" >
               <option *ngFor="let city of filteredCities"  id="city" value="{{city.id}}">{{city.name}}</option>
             </select>
           </div>
           <div class="d-flex justify-content-between">
             <button class="btn btn-outline-light mt-2" matStepperPrevious type="button">Back</button>
-            <button class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
+            <button [disabled]="address.invalid" class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
           </div>
         </div>
 
@@ -164,43 +106,42 @@
         <form [formGroup]="passwords">
 
           <div class="form-group mb-2">
-            <label for="password">Password</label>
+            <label for="password">Password*</label>
             <input [type]="passwordShow ? 'text': 'password'" (change)="UpdateRepeatPasswordValidity()" id="password" class="form-control" formControlName="password" required>
-            <mat-error *ngIf="passwords.get('password')?.invalid"></mat-error>
+            <mat-error *ngIf="passwords.get('password')?.invalid &&passwords.get('password')?.touched" style="color: red">
+              Password required
+            </mat-error>
           </div>
 
 
           <div class="form-group mb-2">
-            <label for="repeatPassword">Repeat password</label>
+            <label for="repeatPassword">Repeat password*</label>
             <input [type]="passwordShow ? 'text': 'password'" id="repeatPassword" class="form-control" formControlName="repeatPassword" required>
             <mat-error *ngIf="passwords.get('repeatPassword')?.invalid"></mat-error>
           </div>
-
 
         </form>
         <div class="d-flex justify-content-begin">
           <input [(ngModel)]="passwordShow" type="checkbox" id="check" name="showPassword"/>
           <label class="form-label px-2" for="check">Show password</label>
         </div>
-        <div class="d-flex justify-content-between">
-          <button class="btn btn-outline-light mt-2" matStepperPrevious type="button">Back</button>
-          <button class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
+
+        <div class="d-flex justify-content-begin">
+          <ngx-recaptcha2
+            siteKey="siteKey"
+            (success)="handleSuccess($event)"
+            (expire)="captchaSuccess=false"
+          >
+          </ngx-recaptcha2>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3">
+          <button class="btn btn-outline-light"  matStepperPrevious>Back</button>
+          <button [disabled]="captchaSuccess==false || passwords.invalid==true" class="btn btn-outline-light" (click)="register()">Finish</button>
         </div>
       </div>
     </mat-step>
 
-    <mat-step>
-      <ng-template matStepLabel>Done</ng-template>
-      <div class="container">
-        <div class="d-flex justify-content-center">
-          <h2>You are now done.</h2>
-        </div>
-        <div class="d-flex justify-content-between mt-2">
-          <button class="btn btn-outline-light"  matStepperPrevious>Back</button>
-          <button class="btn btn-outline-light" (click)="register()">Finish</button>
-        </div>
-      </div>
-    </mat-step>
   </mat-stepper>
 </div>
 

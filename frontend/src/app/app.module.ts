@@ -13,6 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import {DatePipe} from '@angular/common';
 import {MatStepperModule} from '@angular/material/stepper';
+import { NgxCaptchaModule } from 'ngx-captcha';
 
 
 
@@ -32,7 +33,8 @@ import {MatStepperModule} from '@angular/material/stepper';
     BrowserAnimationsModule,
     TooltipModule,
     DatePipe,
-    MatStepperModule
+    MatStepperModule,
+    NgxCaptchaModule
   ],
   providers: [
     provideAnimationsAsync(),

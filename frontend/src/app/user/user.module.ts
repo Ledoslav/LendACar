@@ -10,6 +10,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import {MatStep, MatStepper, MatStepperNext, MatStepperPrevious} from "@angular/material/stepper";
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
+import {NgxCaptchaModule} from 'ngx-captcha';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
     ReactiveFormsModule,
     MatStepperNext,
     MatError,
-    MatStepperPrevious
+    MatStepperPrevious,
+    NgxCaptchaModule
   ]
 })
 export class UserModule { }
