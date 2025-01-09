@@ -1,66 +1,74 @@
 <div class="container mt-4">
   <h2 class="text-center mb-2">Employee Registration</h2>
-  <form #employeeForm="ngForm" (ngSubmit)="register(employeeForm)">
+  <form [formGroup]="employeeForm" (ngSubmit)="register(employeeForm)">
 
     <div class="form-group mb-2">
       <label for="firstName">First Name</label>
-      <input type="text" id="firstName" class="form-control" name="firstName" (input)="generateEmail()" [(ngModel)]="employee.firstName" required  />
-      <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['firstName']?.errors?.['required']">
+      <input type="text" id="firstName" class="form-control" name="firstName"  formControlName="firstName"   />
+      <small class="text-danger" *ngIf="employeeForm.get('firstName')?.touched && employeeForm.get('firstName')?.invalid ">
         First name is required.
       </small>
     </div>
 
     <div class="form-group mb-2">
       <label for="lastName">Last Name</label>
-      <input type="text" id="lastName" class="form-control" name="lastName" (input)="generateEmail()" [(ngModel)]="employee.lastName" required />
-      <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['lastName']?.errors?.['required']">
+      <input type="text" id="lastName" class="form-control" name="lastName"  formControlName="lastName"  />
+      <small class="text-danger" *ngIf="employeeForm.get('lastName')?.touched && employeeForm.get('lastName')?.invalid ">
         Last name is required.
       </small>
     </div>
 
     <div class="form-group mb-2">
       <label for="email">Email</label>
-      <input type="email" disabled id="email" class="form-control" name="email" [(ngModel)]="employee.emailAddress" required email />
-      <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['email']?.errors?.['required']">
+      <input type="email" readonly id="email" class="form-control" name="email" formControlName="emailAddress" />
+<!--      <small class="text-danger" *ngIf="employeeForm.get('emailAddress')?.touched && employeeForm.get('emailAddress')?.invalid ">
         Email is required.
       </small>
-      <small class="text-danger" *ngIf="employeeForm.controls['email']?.errors?.['email']">
+      <small class="text-danger" *ngIf="employeeForm.get('emailAddress')?.touched && employeeForm.get('emailAddress')?.invalid ">
         Enter a valid email address.
-      </small>
+      </small>-->
     </div>
 
     <div class="form-group mb-2">
       <label for="username">Username</label>
-      <input type="text" id="username" class="form-control" name="username" [(ngModel)]="employee.username" required />
-      <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['username']?.errors?.['required']">
+      <input type="text" id="username" class="form-control" name="username" formControlName="username"  />
+      <small class="text-danger" *ngIf="employeeForm.get('username')?.touched && employeeForm.get('username')?.invalid ">
         Username is required.
       </small>
+<!--      <small class="text-danger" *ngIf="employeeForm.get('username')?.dirty && employeeForm.get('username')?.invalid">
+        Username should be between 2 and 20 characters long
+      </small>-->
     </div>
 
     <div class="form-group mb-2">
       <label for="phone">Phone</label>
-      <input type="text" id="phone" class="form-control" name="phone" [(ngModel)]="employee.phoneNumber" required pattern="^\+?[0-9\s\-()]*$" />
-      <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['phone']?.errors?.['required']">
+      <input type="text" id="phone" class="form-control" name="phone" formControlName="phoneNumber" placeholder="+38762335441" />
+      <small class="text-danger" *ngIf="employeeForm.get('phoneNumber')?.dirty && employeeForm.get('phoneNumber')?.invalid">
         Phone number is required.
       </small>
-      <small class="text-danger" *ngIf="employeeForm.controls['phone']?.errors?.['pattern']">
+      <small class="text-danger" *ngIf="employeeForm.get('phoneNumber')?.touched && employeeForm.get('phoneNumber')?.invalid">
         Enter a valid phone number.
       </small>
     </div>
 
     <div class="form-group mb-2">
+      <label for="city">Country</label>
+      <select  class="form-select" aria-label="Default select example" name="city" formControlName="countryId">
+        <option *ngFor="let country of countries" id="country" value="{{country.id}}">{{country.name}}</option>
+      </select>
+    </div>
+
+    <div class="form-group mb-2">
       <label for="city">City</label>
-      <select  class="form-select" aria-label="Default select example" name="city" [(ngModel)]="employee.cityId">
-        @for (city of cities; track city.id){
-          <option  id="city" value="{{city.id}}">{{city.name}}, {{city.country.name}}</option>
-        }
+      <select  class="form-select" aria-label="Default select example" name="city" formControlName="cityId">
+          <option *ngFor="let city of filteredCities" id="city" value="{{city.id}}">{{city.name}}</option>
       </select>
     </div>
 
     <div class="form-group mb-2">
       <label for="birthDate">Birth Date</label>
-      <input type="date"  id="birthDate" class="form-control" name="birhDate" [(ngModel)]="employee.birthDate" required />
-      <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['birthDate']?.errors?.['required']">
+      <input type="date"  id="birthDate" class="form-control" name="birthDate" formControlName="birthDate" required />
+      <small class="text-danger" *ngIf="employeeForm.get('birthDate')?.touched && employeeForm.get('birthDate')?.invalid">
         Birth date is required.
       </small>
     </div>
@@ -69,21 +77,24 @@
 
     <div class="form-group mb-2">
       <label for="jobTitle">Job Title</label>
-      <input type="text" id="jobTitle" class="form-control" name="jobTitle" [(ngModel)]="employee.jobTitle" required />
-      <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['jobTitle']?.errors?.['required']">
+      <input type="text" id="jobTitle" class="form-control" name="jobTitle" formControlName="jobTitle" required />
+      <small class="text-danger" *ngIf="employeeForm.get('jobTitle')?.touched && employeeForm.get('jobTitle')?.invalid">
         Job title is required.
       </small>
     </div>
 
     <div class="form-group mb-2">
       <label for="hireDate">Hire Date</label>
-      <input type="date" id="hireDate" class="form-control" name="hireDate" [(ngModel)]="employee.dateOfHire" required />
-      <small class="text-danger" *ngIf="employeeForm.submitted && employeeForm.controls['hireDate']?.errors?.['required']">
+      <input type="date" id="hireDate" class="form-control" name="hireDate" formControlName="dateOfHire" required />
+      <small class="text-danger" *ngIf="employeeForm.get('dateOfHire')?.touched && employeeForm.get('dateOfHire')?.invalid">
         Hire date is required.
       </small>
     </div>
 
-    <button *ngIf="!editMode" type="submit" class="btn btn-primary w-100">Register</button>
-    <button *ngIf="editMode" type="button" class="btn btn-primary w-100" (click)="update()">Update</button>
+    <button *ngIf="!editMode" [disabled]="employeeForm.invalid
+    || compareDates(employeeForm.get('dateOfHire')?.value)
+    || compareDates(employeeForm.get('birthDate')?.value)"   type="submit" class="btn btn-primary w-100">Register</button>
+    <button *ngIf="editMode" [disabled]="employeeForm.invalid || compareDates(employeeForm.get('dateOfHire')?.value)
+    || compareDates(employeeForm.get('birthDate')?.value) " type="button" class="btn btn-primary w-100" (click)="update()">Update</button>
   </form>
 </div>

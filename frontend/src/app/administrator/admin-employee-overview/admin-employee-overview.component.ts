@@ -5,7 +5,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
 import {Router} from '@angular/router';
-import {HttpParams} from '@angular/common/http';
+
 
 @Component({
   selector: 'app-admin-employee-overview',
@@ -16,6 +16,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   ngOnInit(): void {
     this.loadEmployees();
     this.loadCities();
+
   }
 
   router=inject(Router);
@@ -23,7 +24,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
 
   cityService=inject(CityService);
   cities:City[]=[];
-
+  filteredCities:City[]=[];
 
 
 
@@ -31,13 +32,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   jobTitles:string[]=[" ","Customer support","Developer"];
   employeeService=inject(EmployeeService);
 
-  employeeSearchForm=this.fb.group({
-    name: [undefined],
-    cityId: [undefined],
-    jobTitle:[undefined],
-    ageFrom:[undefined],
-    ageTo:[undefined]
-  })
+
 
   loadEmployees(){
     this.employeeService.GetAllEmployees().subscribe({
@@ -53,6 +48,15 @@ export class AdminEmployeeOverviewComponent implements OnInit {
       }
     })
   }
+
+  employeeSearchForm=this.fb.group({
+    name: [undefined],
+    cityId: [undefined],
+    countryId: 0,
+    jobTitle:[undefined],
+    ageFrom:[undefined],
+    ageTo:[undefined]
+  })
 
   DeleteEmployee($event: any) {
     console.log(this.employeeService.currentEmployee());
@@ -78,6 +82,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
 
     void this.router.navigate(['/admin/register/'],{queryParams:params});
   }
+
 
 
   onSearch() {

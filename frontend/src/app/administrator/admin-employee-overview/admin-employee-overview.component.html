@@ -19,7 +19,7 @@
                   </div>
                   <div class="col-auto">
                     <select class="form-select" id="city" formControlName="cityId">
-                      <option *ngFor="let city of cities" [ngValue]="city.id">{{city.name}}</option>
+                      <option *ngFor="let city of cities" [value]="city.id">{{city.name}}</option>
                     </select>
                   </div>
                   <div class="col-auto">
@@ -48,7 +48,7 @@
                       <th>Email</th>
                       <th>Phone number</th>
                       <th>Birth date</th>
-                      <th>City</th>
+                      <th>City
                       <th>Username</th>
                       <th>Job title</th>
                       <th>Actions</th>

@@ -1,10 +1,14 @@
 import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {CityService} from '../../services/city.service';
 import {EmployeeService} from '../../services/employee.service';
-import {NgForm} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
+import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DatePipe} from '@angular/common';
 import {AdminService} from '../../services/administrator.service';
+import {City} from '../../Models/City';
+import {Country} from '../../Models/Country';
+import {CountryService} from '../../services/country.service';
+import {concatMap, Observable} from 'rxjs';
 
 @Component({
   selector: 'app-register-employee',
@@ -13,34 +17,113 @@ import {AdminService} from '../../services/administrator.service';
 })
 export class RegisterComponent implements OnInit {
 
-  employee: any = {};
-  cities: any;
+
+  constructor() {
+    this.employeeForm=this.fb.group({
+      id:[{value:0,disabled:true}],
+      firstName: [undefined,[Validators.required,Validators.minLength(2),Validators.max(15)]],
+      lastName: [undefined,[Validators.required,Validators.minLength(2),Validators.max(25)]],
+      emailAddress: ['',[Validators.required,Validators.email]],
+      username: [undefined,[Validators.required,Validators.minLength(2),Validators.max(20)]],
+      phoneNumber: [undefined,[Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
+      cityId: [undefined,Validators.required],
+      countryId:[undefined,Validators.required],
+      birthDate: [undefined,Validators.required],
+      jobTitle:[undefined,Validators.required],
+      dateOfHire:[undefined,Validators.required],
+      password:'password',
+      workingHourId:1
+    })
+  }
+
+  employee: any;
+  cities: City[]=[];
+  countries: Country[]=[];
+  filteredCities: City[]=[];
   cityService=inject(CityService);
   employeeService=inject(EmployeeService);
   private route=inject(ActivatedRoute);
   private datePipe=inject(DatePipe);
   adminService=inject(AdminService);
+  fb=inject(FormBuilder);
+  private countryService=inject(CountryService);
+
+  employeeForm!:FormGroup;
 
   editMode=false;
 
   ngOnInit(): void {
-    this.loadCities();
+    this.loadCountries();
     const employeeId=this.route.snapshot.queryParamMap.get('id');
     if(employeeId) {
-      this.loadEmployee(employeeId);
       this.editMode=true;
+      this.getCitiesAndEmployee(employeeId).subscribe({
+        next: result => {
+          this.employee= result;
+          this.formatDate();
+          this.initForm();
+        }
+      });
     }
+    else{
+        this.editMode=false;
+        this.loadCountries();
+        this.loadCities();
+    }
+
+    this.employeeForm.get('countryId')?.valueChanges.subscribe(val=>{
+      this.FilterCities(val);
+    })
+
+    this.employeeForm.get('firstName')?.valueChanges.subscribe(val=>{
+      this.generateEmail();
+    })
+
+    this.employeeForm.get('lastName')?.valueChanges.subscribe(val=>{
+      this.generateEmail();
+    })
+
   }
+
+  initForm(){
+    this.employeeForm.get('id')?.enable()
+    this.employeeForm.get('password')?.disable()
+    this.employeeForm.patchValue({
+      id:this.employee.id,
+      firstName: this.employee.firstName,
+      lastName: this.employee.lastName,
+      emailAddress: this.employee.emailAddress,
+      username: this.employee.username,
+      phoneNumber: this.employee.phoneNumber,
+      cityId: this.employee.cityId,
+      countryId: this.employee.city.countryId,
+      birthDate: this.employee.birthDate,
+      jobTitle: this.employee.jobTitle,
+      dateOfHire: this.employee.dateOfHire,
+    });
+    this.FilterCities(this.employee.city.countryId);
+  }
+
+
 
   loadEmployee(employeeId:string){
     const id=Number(employeeId);
-    this.employeeService.GetEmployeeById(id).subscribe({
-      next:result => {
-        this.employee=result
-        this.formatDate();
-      },
-      error: err => {console.log(err);}
+    return this.employeeService.GetEmployeeById(id)
+  }
+
+  loadCountries(){
+    this.countryService.getAllCountries().subscribe(res=>{
+      this.countries = res;
     })
+  }
+
+  getCitiesAndEmployee(employeeId:string):Observable<any>{
+    return this.cityService.GetAllCities().pipe(
+      concatMap(cities=>{
+        this.cities=cities;
+        return this.loadEmployee(employeeId);
+      })
+    )
   }
 
   formatDate(){
@@ -78,47 +161,54 @@ export class RegisterComponent implements OnInit {
   }
 
   generateEmail(): void {
-    if (this.employee.firstName || this.employee.lastName) {
-      const FirstName = this.employee.firstName.trim().toLowerCase();
-      const LastName = this.employee.lastName.trim().toLowerCase();
+    if (this.employeeForm.get('firstName')?.value || this.employeeForm.get('lastName')?.value) {
+      const FirstName = this.employeeForm.get('firstName')?.value.trim().toLowerCase();
+      const LastName = this.employeeForm.get('lastName')?.value.trim().toLowerCase();
 
       // Generate the email
       let email=`${FirstName}.${LastName}@lendacar.ba`;
-      this.employee.emailAddress = this.formatEmail(email);
+      this.employeeForm.patchValue({
+        emailAddress:this.formatEmail(email)
+      })
+    }
+    else {
+      this.employeeForm.patchValue({
+        emailAddress:''
+      })
     }
   }
 
   compareDates(dateString:string):boolean{
     const currentDate = new Date();
     const parsedDate=new Date(dateString);
-    console.log(parsedDate.getTime());
-    console.log(currentDate.getTime())
-    if(parsedDate.getTime() > currentDate.getTime()) return false;
+    if(parsedDate.getTime() < currentDate.getTime()) return false;
 
     return true;
   }
 
   register(form: any) {
-    if (form.valid && this.compareDates(this.employee.hireDate)) {
-      this.employee.workingHourId=1;
-      this.employee.password=this.generateRandomString(12);
-      console.log('Employee Registered:', this.employee);
-      this.employeeService.Register(this.employee).subscribe({
-        next:result => {alert('Employee successfully registered!');}
-      })
-    } else {
-      alert('Please fill in the form correctly.');
-    }
+    console.log('Employee Registered:', this.employee);
+    console.log(this.employeeForm.value)
+    this.employeeService.Register(this.employeeForm.value).subscribe({
+      next:result => {alert('Employee successfully registered!');}
+    })
   }
 
   update(){
-    this.adminService.UpdateEmployee(this.employee).subscribe({
+    console.log(this.employeeForm.value)
+    this.adminService.UpdateEmployee(this.employeeForm.value).subscribe({
       next:result=> {
         this.employee = result;
         this.formatDate();
         alert("Successfully updated employee");
       },
-      error:err=>{alert("Error"); window.location.reload();}
+      error:err=>{alert("Error"); console.log(err) }
     })
+  }
+
+
+  FilterCities(countryId:number) {
+
+      this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
   }
 }
