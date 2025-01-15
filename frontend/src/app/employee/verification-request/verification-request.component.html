@@ -47,6 +47,18 @@
       </div>
     </div>
 
+    <!-- Sarch bar -->
+    <div class="mb-3">
+      <label for="search" class="form-label">Search by Username</label>
+      <input 
+        type="text" 
+        id="search" 
+        class="form-control" 
+        [(ngModel)]="searchQuery" 
+        (input)="filterRequests()" 
+        placeholder="Enter username"
+      />
+    </div>
     <!-- Filters -->
     <div class="mb-3">
       <label for="filter" class="form-label">Filter Requests</label>
@@ -77,6 +89,15 @@
         </tr>
       </tbody>
     </table>
+    <!-- Table pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <div>
+        <button class="btn btn-secondary btn-sm me-2" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <button class="btn btn-secondary btn-sm" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
+    
 
     <div>
         <button type="button" class="btn btn-primary btn-sm" routerLink="/employee/dashboard">Back</button>

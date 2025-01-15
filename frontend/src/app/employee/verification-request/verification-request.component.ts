@@ -38,8 +38,14 @@ export class VerificationRequestComponent implements OnInit {
 
 
   filter: string = 'all';
+  searchQuery: string = ''; // New property for the search query
   employeeId: number = 0; // Placeholder for logged-in employee's ID
   comment: string = ''; // komentar koji uposlenik unosi kao razlog odobrenja ili odbijanja
+
+  // Pagination
+  currentPage: number = 1; 
+  pageSize: number = 10; 
+  totalPages: number = 1; 
 
   constructor(private http: HttpClient) {}
 
@@ -67,18 +73,33 @@ export class VerificationRequestComponent implements OnInit {
 
 
   filterRequests(): void {
+    let filtered = this.requests;
+
+    // Apply filter
     if (this.filter === 'active') {
-      this.filteredRequests = this.requests.filter((req) => req.requestStatus === 2);
-    } 
-    else if (this.filter === 'approved') {
-      this.filteredRequests = this.requests.filter((req) => req.requestStatus === 1);
-    } 
-    else if (this.filter === 'denied') {
-      this.filteredRequests = this.requests.filter((req) => req.requestStatus === 0);
-    } 
-    else if (this.filter === 'all') {
-      this.filteredRequests = this.requests;
+      filtered = filtered.filter((req) => req.requestStatus === 2);
+    } else if (this.filter === 'approved') {
+      filtered = filtered.filter((req) => req.requestStatus === 1);
+    } else if (this.filter === 'denied') {
+      filtered = filtered.filter((req) => req.requestStatus === 0);
     }
+
+    // Apply search query
+    if (this.searchQuery.trim() !== '') {
+      filtered = filtered.filter((req) => {
+        const username = this.getUsername(req.userId).toLowerCase();
+        return username.includes(this.searchQuery.toLowerCase());
+      });
+    }
+
+    // Set total pages
+    this.totalPages = Math.ceil(filtered.length / this.pageSize);
+
+    // Paginate the filtered requests
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+
+    this.filteredRequests = filtered.slice(startIndex, endIndex);
   }
 
   selectRequest(request: VerificationRequestDto): void {
@@ -138,6 +159,20 @@ export class VerificationRequestComponent implements OnInit {
   getCityName(cityId:number): string{
     const city = this.cities.find(res => res.id === cityId);
     return city?.name || 'Unknown';
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.filterRequests();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.filterRequests();
+    }
   }
 
 }
