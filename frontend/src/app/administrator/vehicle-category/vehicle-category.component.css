@@ -63,7 +63,7 @@ h2 {
 
 .add-category-form button {
   padding: 10px 20px;
-  background-color: #32848f;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
@@ -71,7 +71,7 @@ h2 {
 }
 
 .add-category-form button:hover {
-  background-color: #215961;
+  background-color: #0056b3;
 }
 
 .category-icon {
@@ -79,4 +79,43 @@ h2 {
   height: 50px;
   object-fit: cover;
   border-radius: 5px; /* Optional for rounded icons */
+}
+
+.drag-drop-area {
+  border: 2px dashed white;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.drag-drop-area:hover {
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  color: #ccc;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.drag-drop-area.dragging {
+  background-color: #ccc;
+}
+
+.drag-drop-area p {
+  margin: 15px;
+  font-size: 16px;
+}
+
+.image-preview img {
+  width: 33%;
+  height: 33%;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-top: 10px;
 }

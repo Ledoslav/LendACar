@@ -105,6 +105,38 @@ export class VehicleCategoriesComponent implements OnInit {
     }
   }
 
+  onDragOver(event: DragEvent): void {
+    event.preventDefault(); // Prevent default behavior (e.g., opening the file in the browser)
+    event.stopPropagation();
+    const target = event.currentTarget as HTMLElement;
+    target.classList.add('dragging');
+  }
+  
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const target = event.currentTarget as HTMLElement;
+    target.classList.remove('dragging');
+  }
+  
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const target = event.currentTarget as HTMLElement;
+    target.classList.remove('dragging');
+  
+    const file = event.dataTransfer?.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          this.newCategory.icon = (reader.result as string).split(',')[1]; // Extract Base64 string
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  
   resetForm(): void {
     this.newCategory = { name: '', description: '' };
     this.editMode = false;

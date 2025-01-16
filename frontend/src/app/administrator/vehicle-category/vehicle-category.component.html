@@ -30,9 +30,10 @@
     </tbody>
   </table>
 
+  
   <div class="add-category-form">
     <h3>{{ editMode ? 'Edit Category' : 'Add New Category' }}</h3>
-    <form (ngSubmit)="saveButton()">
+    <form (ngSubmit)="saveButton()" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
       <label for="categoryName">Category Name:</label>
       <input
         type="text"
@@ -51,14 +52,35 @@
         required
       />
 
-      <label for="categoryIcon">Category Icon:</label>
-      <input
-        type="file"
-        id="categoryIcon"
-        (change)="onIconChange($event)"
-        name="categoryIcon"
-        required
+      <label>Category Icon:</label>
+      <!-- Image Preview -->
+      <div *ngIf="newCategory.icon" class="image-preview">
+      <img
+        [src]="newCategory.icon.startsWith('data:image/') ? newCategory.icon : 'data:image/png;base64,' + newCategory.icon"
+        alt="Preview"
       />
+      </div>
+
+      <!-- Drag-and-Drop Area -->
+      <div
+      class="drag-drop-area"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()"
+      >
+      <p>Drag and drop an image here or click to browse and choose.</p>
+      </div>
+
+      <!-- Hidden File Input -->
+      <input
+      type="file"
+      accept="image/*"
+      style="display: none"
+      #fileInput
+      (change)="onIconChange($event)"
+      />
+
 
       <button type="submit">{{ editMode ? 'Update Category' : 'Save Category' }}</button>
       <button type="button" (click)="resetForm()" class="btn btn-secondary" style="margin-left: 5%;">Reset</button>
