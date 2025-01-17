@@ -6,6 +6,7 @@ import {LoginComponent} from './login/login.component';
 import {RegisterComponent} from './register/register.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {EditProfileComponent} from './edit-profile/edit-profile.component';
+import { PollsComponent } from './polls/polls.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,7 @@ const routes: Routes = [
       {path:'register',component: RegisterComponent},
       {path:'userProfile',component: UserProfileComponent},
       {path:'editProfile',component: EditProfileComponent},
+      {path:'polls',component: PollsComponent},
 
     ]
   },

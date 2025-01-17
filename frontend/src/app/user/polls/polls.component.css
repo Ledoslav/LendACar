@@ -1,0 +1,43 @@
+.poll-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* 3 columns */
+    gap: 1rem;  /* spacing between cards */
+    padding: 1rem;
+  }
+  
+  .poll-card {
+    background: #353A40;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .poll-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .poll-card ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .poll-card ul li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .poll-card button {
+    background-color: #545B62;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 95%;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .poll-card button:hover {
+    background-color: lightblue;
+  }

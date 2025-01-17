@@ -1,0 +1,88 @@
+.poll-list {
+    display: flex;
+    flex-wrap: wrap;  /* Allow wrapping of elements */
+    gap: 20px;        /* Space between cards */
+    justify-content: space-between;
+  }
+  
+  .poll-card {
+    width: 23%;        /* Each card takes up 23% of the container width */
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #545B62;
+    border-radius: 5px;
+  }
+  
+  .poll-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .poll-card {
+      width: 48%;     /* On smaller screens, each card takes up 48% */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .poll-card {
+      width: 100%;    /* On very small screens, each card takes up 100% */
+    }
+  }
+  
+  .poll-management {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  max-width: 100%; /* Allow the content to stretch fully */
+}
+
+.poll-form {
+  width: 45%; /* Set the form width to be smaller */
+  margin-right: 20px; /* Add some space on the right side */
+
+  padding: 20px;
+  border-radius: 5px;
+  
+}
+
+.poll-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.poll-card {
+  width: 23%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: transparent;
+  border-radius: 5px;
+}
+
+.poll-card h4 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .poll-card {
+    width: 48%;
+  }
+
+  .poll-form {
+    width: 100%; /* On smaller screens, form takes full width */
+    margin-right: 0;
+    margin-bottom: 20px; /* Ensure the form doesn't overlap with poll cards */
+  }
+}
+
+@media (max-width: 480px) {
+  .poll-card {
+    width: 100%;
+  }
+}

@@ -1,6 +1,8 @@
 ﻿using LendACarAPI.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 
 
 
@@ -32,6 +34,8 @@ namespace LendACarAPI.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Administrator> Administrators { get; set; }
         public DbSet<VerificationRequest> VerificationRequests { get; set; }
+        public DbSet<Poll> Polls { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -68,6 +72,25 @@ namespace LendACarAPI.Data
 
             // opcija kod nasljeđivanja
             // modelBuilder.Entity<NekaBaznaKlasa>().UseTpcMappingStrategy();
+
+            // glasanje
+            var dictionaryComparer = new ValueComparer<Dictionary<string, int>>(
+                (d1, d2) => JsonSerializer.Serialize(d1, (JsonSerializerOptions)null) == JsonSerializer.Serialize(d2, (JsonSerializerOptions)null),
+                d => JsonSerializer.Serialize(d, (JsonSerializerOptions)null).GetHashCode(),
+                d => JsonSerializer.Deserialize<Dictionary<string, int>>(JsonSerializer.Serialize(d, (JsonSerializerOptions)null), (JsonSerializerOptions)null)
+            );
+
+            modelBuilder.Entity<Poll>()
+                .Property(p => p.Votes)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null), // Serialize to JSON string
+                    v => JsonSerializer.Deserialize<Dictionary<string, int>>(v, (JsonSerializerOptions)null) // Deserialize back to Dictionary
+                )
+                .Metadata
+                .SetValueComparer(dictionaryComparer);
+
+            base.OnModelCreating(modelBuilder);
         }
+
     }
 }

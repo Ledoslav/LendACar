@@ -20,12 +20,18 @@ import {CountryService} from '../../services/country.service';
   styleUrls: ['./verification-request.component.css']
 })
 export class VerificationRequestComponent implements OnInit {
-
   employeeService=inject(EmployeeService);
+  router=inject(Router);
+
+  logout() {
+    this.employeeService.currentEmployee.set(null);
+    localStorage.removeItem('employee');
+    void this.router.navigateByUrl('/employee/login');
+  }
+
   userService=inject(UserService);
   cityService=inject(CityService);
   verificationService=inject(VerificationRequestService);
-  router=inject(Router);
 
 
   requests: VerificationRequestDto[] = [];

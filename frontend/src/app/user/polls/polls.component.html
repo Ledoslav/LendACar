@@ -1,0 +1,10 @@
+<div class="poll-container">
+    <div class="poll-card" *ngFor="let poll of polls; trackBy: trackByIndex">
+      <h3 style="text-align: left;">{{ poll.question }}</h3>
+      <ul>
+        <li *ngFor="let option of poll.options">
+          <button (click)="castVote(poll.id, option)">{{ option }}</button>
+        </li>
+      </ul>
+    </div>
+  </div>
