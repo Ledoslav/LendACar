@@ -11,6 +11,7 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import {MatStep, MatStepper, MatStepperNext, MatStepperPrevious} from "@angular/material/stepper";
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {NgxCaptchaModule} from 'ngx-captcha';
+import { PollsComponent } from './polls/polls.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import {NgxCaptchaModule} from 'ngx-captcha';
     RegisterComponent,
     UserProfileComponent,
     EditProfileComponent,
+    PollsComponent,
   ],
   imports: [
     CommonModule,

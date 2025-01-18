@@ -243,6 +243,31 @@ namespace LendACarAPI.Migrations
                     b.UseTpcMappingStrategy();
                 });
 
+            modelBuilder.Entity("LendACarAPI.Data.Models.Poll", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Options")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Votes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Polls");
+                });
+
             modelBuilder.Entity("LendACarAPI.Data.Models.UserReview", b =>
                 {
                     b.Property<int>("ReviewerId")

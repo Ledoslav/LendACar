@@ -8,6 +8,7 @@ import { ProfileOverviewComponent } from './profile-overview/profile-overview.co
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { VerificationRequestComponent } from './verification-request/verification-request.component';
+import { PollManagementComponent } from './poll-management/poll-management.component';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import { VerificationRequestComponent } from './verification-request/verificatio
     ProfileOverviewComponent,
     EditProfileComponent,
     VerificationRequestComponent,
+    PollManagementComponent,
   ],
   imports: [
     CommonModule,

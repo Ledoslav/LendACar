@@ -1,6 +1,7 @@
 using LendACarAPI.Data;
 using LendACarAPI.Helper.Auth;
 using Microsoft.EntityFrameworkCore;
+using LendACarAPI.Hubs;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", false)
@@ -18,6 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(x => x.OperationFilter<MyAuthorizationSwaggerHeader>());
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -43,6 +45,8 @@ app.UseSwaggerUI();
 app.UseCors("AllowEverything");  // Apply the CORS policy
 
 app.UseAuthorization();
+
+app.MapHub<PollHub>("/pollHub");
 
 app.MapControllers();
 

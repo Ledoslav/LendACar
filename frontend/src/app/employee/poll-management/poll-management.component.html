@@ -1,0 +1,107 @@
+<div class="poll-management">
+<!-- Header with Navbar -->
+<header class="bg-dark text-white py-2">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <img src="LAC_logo.png" alt="Logo" style="height: 40px;" class="me-3">
+        <span>LendACar</span>
+      </div>
+  
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link" href="#" routerLink="/employee/dashboard" >Dashboard</a>
+                </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" routerLink="/employee/verificationRequests" >Verification Requests</a>
+              </li>
+              <li class="nav-item">
+            </li>
+              <a class="nav-link" href="#">Vehicle Data Overview</a>
+              <li class="nav-item">
+                <a class="nav-link" href="#" routerLink="/employee/pollManagement" >Polls</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div>
+        <span class="me-3" routerLink="/employee/profileOverview" style="cursor: pointer; font-weight: bold">
+          {{employeeService.currentEmployee()?.firstName}} {{employeeService.currentEmployee()?.lastName}}
+        </span>
+        <button class="btn btn-sm btn-outline-light" routerLink="/employee/login" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </header>
+  
+
+    <!-- Form to create a poll -->
+    <form class="poll-form" (submit)="createPoll()">
+      <div class="form-group">
+        <label for="question">Poll Question:</label>
+        <input
+          id="question"
+          type="text"
+          [(ngModel)]="newPoll.question"
+          name="question"
+          class="form-control"
+          placeholder="Enter your poll question"
+          required
+        />
+      </div>
+  
+      <div *ngFor="let option of newPoll.options; let i = index; trackBy: trackByIndex" class="form-group option-group">
+        <label for="option{{ i }}">Option {{ i + 1 }}:</label>
+        
+        <!-- Use Flexbox to align input and button side by side -->
+        <div class="input-group">
+          <input
+            id="option{{ i }}"
+            type="text"
+            [(ngModel)]="newPoll.options[i]"
+            name="option{{ i }}"
+            class="form-control"
+            placeholder="Enter option text"
+            required
+          />
+          <button type="button" class="btn btn-danger btn-sm remove-btn" (click)="removeOption(i)">
+            Remove
+          </button>
+        </div>
+      </div>
+  
+      <!-- Button to add new option -->
+      <button type="button" class="btn btn-secondary add-option-btn" (click)="addOption()">
+        Add Option
+      </button>
+      
+      <!-- Submit button to create the poll -->
+      <button type="submit" class="btn btn-primary create-btn" style="">Create Poll</button>
+    </form>
+  
+    <!-- List of created polls -->
+    <h3>Existing Polls</h3>
+    <div *ngIf="polls.length > 0; else noPolls" class="poll-list">
+      <div *ngFor="let poll of polls" class="poll-card">
+        <h4>{{ poll.question }}</h4>
+        <div class="poll-options">
+          <div *ngFor="let option of poll.options" class="poll-option">
+            <p><strong>{{ option.option }}:</strong> {{ option.votes }} votes ( {{ option.percentage | number: '1.0-2' }}% )</p>
+          </div>
+        </div>
+  
+        <!-- Graph for the poll -->
+        <canvas *ngIf="poll.chartData" id="pollChart{{poll.id}}" width="400" height="400"></canvas>
+      </div>
+    </div>
+  
+    <ng-template #noPolls>
+      <p class="no-polls">No polls have been created yet.</p>
+    </ng-template>
+  </div>
+  
