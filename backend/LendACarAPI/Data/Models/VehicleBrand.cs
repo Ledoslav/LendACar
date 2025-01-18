@@ -11,6 +11,6 @@ namespace LendACarAPI.Data.Models
         public string BrandName { get; set; }
 
         // Potrebno dodati sliku sa logotipom brenda 
-        // public string BrandLogo {get;set;}
+        public byte[]? Icon { get; set; }
     }
 }

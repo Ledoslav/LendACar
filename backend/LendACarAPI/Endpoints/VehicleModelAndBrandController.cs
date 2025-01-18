@@ -3,6 +3,7 @@ using LendACarAPI.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Http;
 
 namespace LendACarAPI.Endpoints{
     [ApiController]
@@ -34,7 +35,7 @@ namespace LendACarAPI.Endpoints{
         public async Task<ActionResult<IEnumerable<VehicleModel>>> GetAllVehicleBrands()
         {
             var VehicleBrands = await _context.VehicleBrands
-                .ToListAsync();
+            .ToListAsync();
 
             if (VehicleBrands.IsNullOrEmpty())
                 return NotFound(new { message = "No vehicle brands found!" });
@@ -83,7 +84,8 @@ namespace LendACarAPI.Endpoints{
                 // Create a new brand if it doesn't exist
                 brand = new VehicleBrand
                 {
-                    BrandName = request.BrandName
+                    BrandName = request.BrandName,
+                    Icon = request.Icon
                 };
 
                 _context.VehicleBrands.Add(brand);
@@ -183,6 +185,7 @@ namespace LendACarAPI.Endpoints{
 
             vehicleModelToUpdate.ModelName = request.newModelName;
             vehicleBrandToUpdate.BrandName = request.newBrandName;
+            vehicleBrandToUpdate.Icon = request.Icon;
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Update of vehicle is successful!" });

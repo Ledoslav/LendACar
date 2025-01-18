@@ -9,5 +9,6 @@ namespace LendACarAPI.Data.Models
         public string newModelName { get; set; }
         public string BrandName {  get; set; }
         public string newBrandName { get; set; }
+        public byte[]? Icon { get; set; }
     }
 }

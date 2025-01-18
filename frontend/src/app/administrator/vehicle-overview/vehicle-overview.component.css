@@ -40,4 +40,43 @@ tr{
   text-align: center;       /* Center align the text */
 }
 
+.drag-drop-area {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.drag-drop-area:hover {
+  border-color: #007bff;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 150px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.search-bar-container {
+  width: 50%; /* Adjust width as necessary */
+  margin: 0 auto; /* Center align */
+}
+
+.filter-container{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 1rem 0;
+  color: #fff;
+}
+
+.filter-container>input,select,option{
+  padding: 5px;
+}
+
+
+
 

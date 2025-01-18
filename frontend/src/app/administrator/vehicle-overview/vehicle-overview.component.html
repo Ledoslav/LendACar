@@ -6,17 +6,45 @@
       <div class="mask d-flex align-items-center h-100">
         <div class="container">
           <div class="row justify-content-center">
+            <div class="search-bar-container mb-3">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search by Brand or Model"
+                (input)="onSearch($event)"
+              />
+            </div>
             <div class="col-12">
               <!--            <div class="container my-2">
                             <input type="text" placeholder="Search employee" id="empSearch" style="width: 20%">
                             <button class="btn btn-default btn-outline-light mx-3">Search</button>
                           </div>-->
               <div class="filter-container">
-                <label for="brandFilter" class="filter-label">Filter by Brand:</label>
-                <select id="brandFilter" class="filter-select" (change)="applyFilter($event)">
-                  <option value="">All</option>
+                <!-- Filter by Brand -->
+                <select [(ngModel)]="filter.brandName" (ngModelChange)="onBrandChange()">
+                  <option value="">All Brands</option>
                   <option *ngFor="let brand of uniqueBrands" [value]="brand">{{ brand }}</option>
                 </select>
+
+                <!-- Filter by Vehicle ID -->
+                <input
+                  type="number"
+                  [(ngModel)]="filter.vehicleId"
+                  placeholder="Filter by Vehicle ID"
+                  (ngModelChange)="applyFilters()"
+                />
+
+                <!-- Dropdown for Model selection -->
+                <select [(ngModel)]="filter.modelName" (ngModelChange)="applyFilters()">
+                  <option value="">All Models</option>
+                  <option *ngFor="let model of filteredModels" [value]="model">{{ model }}</option>
+                </select>
+
+                <!-- Checkbox for "Has Image" filter -->
+                <label>
+                  <input type="checkbox" [(ngModel)]="filter.hasImage" (ngModelChange)="applyFilters()" />
+                  Has Image
+                </label>
               </div>
 
               <div class="card">
@@ -47,6 +75,20 @@
                         <th mat-header-cell *matHeaderCellDef>BrandName</th>
                         <td mat-cell *matCellDef="let element">{{ element.vehicleBrand.brandName }}</td>
                       </ng-container>
+
+                      <!-- Icon Column -->
+                      <ng-container matColumnDef="Icon">
+                        <th mat-header-cell *matHeaderCellDef>Icon</th>
+                        <td mat-cell *matCellDef="let element">
+                          <img
+                            *ngIf="element.vehicleBrand?.icon"
+                            [src]="'data:image/png;base64,' + element.vehicleBrand.icon"
+                            alt="{{ element.vehicleBrand.brandName }} Icon"
+                            style="width: 50px; height: 50px; object-fit: cover;"
+                          />
+                        </td>
+                      </ng-container>
+
 
                       <!-- Actions Column -->
                       <ng-container matColumnDef="Actions">
@@ -100,6 +142,40 @@
           [(ngModel)]="formVehicle.vehicleBrandName"
           name="vehicleBrandName"
           required
+        />
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="vehicleIcon">Vehicle Icon</label>
+
+        <!-- Image Preview -->
+        <div *ngIf="formVehicle.icon" class="image-preview mb-2">
+          <img
+            [src]="formVehicle.icon"
+            alt="Vehicle Icon Preview"
+            style="max-width: 100%; max-height: 150px;"
+          />
+        </div>
+
+        <!-- Drag-and-Drop Area -->
+        <div
+          class="drag-drop-area"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event, 'formVehicle')"
+          (click)="fileInput.click()"
+          style="border: 2px dashed #ccc; padding: 20px; text-align: center; cursor: pointer;"
+        >
+          <p>Drag and drop an image here or click to browse and choose.</p>
+        </div>
+
+        <!-- Hidden File Input -->
+        <input
+          type="file"
+          accept="image/*"
+          style="display: none"
+          #fileInput
+          (change)="onIconChange($event, 'formVehicle')"
         />
       </div>
 
@@ -166,12 +242,46 @@
         />
       </div>
 
+      <div class="form-group mb-3">
+        <label for="vehicleIcon">Vehicle Icon</label>
+
+        <!-- Image Preview -->
+        <div *ngIf="updateFormVehicle.icon" class="image-preview mb-2">
+          <img
+            [src]="updateFormVehicle.icon"
+            alt="Vehicle Icon Preview"
+            style="max-width: 100%; max-height: 150px;"
+          />
+        </div>
+
+        <!-- Drag-and-Drop Area -->
+        <div
+          class="drag-drop-area"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event, 'updateFormVehicle')"
+          (click)="fileInput.click()"
+          style="border: 2px dashed #ccc; padding: 20px; text-align: center; cursor: pointer;"
+        >
+          <p>Drag and drop an image here or click to browse and choose.</p>
+        </div>
+
+        <!-- Hidden File Input -->
+        <input
+          type="file"
+          accept="image/*"
+          style="display: none"
+          #fileInput
+          (change)="onIconChange($event, 'updateFormVehicle')"
+        />
+      </div>
       <!-- Submit and Cancel Buttons -->
       <div class="d-flex justify-content-between mt-4">
         <button type="submit" class="btn btn-primary buttonForm w-25">Submit</button>
         <button type="button" (click)="cancelUpdateForm()" class="btn btn-danger buttonForm w-25">Cancel</button>
       </div>
-    </form>
+
+      </form>
   </div>
 </ng-container>
 
