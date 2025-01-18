@@ -1,10 +1,55 @@
-<div class="poll-container">
-    <div class="poll-card" *ngFor="let poll of polls; trackBy: trackByIndex">
-      <h3 style="text-align: left;">{{ poll.question }}</h3>
-      <ul>
-        <li *ngFor="let option of poll.options">
-          <button (click)="castVote(poll.id, option)">{{ option }}</button>
-        </li>
-      </ul>
+<nav class="navbar navbar-expand" aria-label="Second navbar example">
+    <div class="container-fluid">
+
+        <div class="d-flex align-items-center">
+            <img src="LAC_logo.png" alt="Logo" style="height: 40px;" class="me-3">
+            <span>LendACar</span>
+        </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <div class="collapse navbar-collapse" id="navbarsExample02">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/user/dashboard">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/user/polls">Polls</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+        </ul>
+        @if (accountService.currentUser()==null){
+          <div>
+            <a routerLink="/user/login" style="margin-right: 5px; text-decoration: none">Login</a>
+            <a routerLink="/user/register" style="margin-left: 5px; text-decoration: none">Register</a>
+          </div>
+        } @else {
+          <div>
+            <a routerLink="/user/userProfile" style="margin-right: 5px; text-decoration: none">View account</a>
+            <a (click)="logout()" style="margin-left: 5px; text-decoration: none; cursor: pointer">Logout</a>
+          </div>
+        }
+  
+      </div>
     </div>
+  </nav>
+<div class="poll-container">
+  <div class="poll-card" *ngFor="let poll of polls; trackBy: trackByIndex">
+    <h3 style="text-align: left;">{{ poll.question }}</h3>
+    <ul>
+      <li *ngFor="let option of poll.options">
+        <button
+          (click)="castVote(poll.id, option.option)"
+          [style.background]="'linear-gradient(to right, #353A40 ' + option.percentage + '%, #545B62 ' + option.percentage + '%)'"
+        >
+          {{ option.option }} ({{ option.percentage ? (option.percentage | number: '1.0-2') : 0 }}%)
+        </button>
+      </li>
+    </ul>
   </div>
+</div>
+
+  

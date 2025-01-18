@@ -1,8 +1,8 @@
 .poll-list {
-    display: flex;
-    flex-wrap: wrap;  /* Allow wrapping of elements */
-    gap: 20px;        /* Space between cards */
-    justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 1rem; /* spacing between cards */
+  padding: 1rem;
   }
   
   .poll-card {

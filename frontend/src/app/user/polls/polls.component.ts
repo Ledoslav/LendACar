@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {UserService} from '../../services/user.service';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 
 @Component({
@@ -8,6 +9,13 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
   styleUrls: ['./polls.component.css']
 })
 export class PollsComponent implements OnInit {
+  accountService=inject(UserService);
+  
+  logout() {
+    this.accountService.currentUser.set(null);
+    localStorage.removeItem('user');
+  }
+
   polls: any[] = [];
   private apiUrl = 'http://localhost:7000/api/Poll'; // API URL for the poll data
   private hubConnection: HubConnection;
@@ -33,7 +41,7 @@ export class PollsComponent implements OnInit {
   loadPolls(): void {
     this.http.get<any[]>(this.apiUrl).subscribe(
       (data) => {
-        this.polls = data;
+        this.polls = data.map((poll) => this.calculateVotePercentages(poll));
       },
       (error) => {
         console.error('Error fetching polls:', error);
@@ -41,6 +49,29 @@ export class PollsComponent implements OnInit {
       }
     );
   }
+
+  updatePollList(updatedPoll: any): void {
+    const pollIndex = this.polls.findIndex((poll) => poll.id === updatedPoll.id);
+    if (pollIndex !== -1) {
+      this.polls[pollIndex] = this.calculateVotePercentages(updatedPoll);
+    } else {
+      this.polls.push(this.calculateVotePercentages(updatedPoll));
+    }
+  }
+
+  calculateVotePercentages(poll: any): any {
+    const votes: { [key: string]: number } = poll.votes || {};
+    const totalVotes: number = Object.values(votes).reduce((acc: number, voteCount: number) => acc + (voteCount || 0), 0);
+  
+    poll.options = poll.options.map((option: string) => ({
+      option: option,
+      votes: votes[option] || 0,
+      percentage: totalVotes > 0 ? ((votes[option] || 0) / totalVotes) * 100 : 0, // Set percentage to 0 if no votes
+    }));
+  
+    return poll;
+  }
+  
 
   castVote(pollId: number, option: string): void {
     const voteUrl = `http://localhost:7000/api/Poll/${pollId}/vote`;
@@ -55,7 +86,7 @@ export class PollsComponent implements OnInit {
       headers: { 'Content-Type': 'application/json' }
     }).subscribe({
       next: (response) => {
-        alert('Vote casted successfully!');
+        //alert('Vote casted successfully!');
       },
       error: (error) => {
         console.error('Error casting vote:', error);
@@ -64,13 +95,13 @@ export class PollsComponent implements OnInit {
     });
   }
 
-  updatePoll(updatedPoll: any) {
-    // Update the poll with the new vote data
+  updatePoll(updatedPoll: any): void {
     const pollIndex = this.polls.findIndex(poll => poll.id === updatedPoll.id);
     if (pollIndex !== -1) {
-      this.polls[pollIndex] = updatedPoll;
+        this.polls[pollIndex] = this.calculateVotePercentages(updatedPoll);
     }
-  }
+}
+
 
   // Start the SignalR connection
   startConnection(): void {
