@@ -7,6 +7,8 @@ namespace LendACarAPI.Data.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
+        public string Title { get; set; }
         public float? EngineDisplacement { get; set; }
         public int? EnginePower { get; set; }
         [Required]
@@ -37,10 +39,16 @@ namespace LendACarAPI.Data.Models
         public VehicleCategory? VehicleCategory { get; set; }
 
 
-        [ForeignKey(nameof(VehicleOwner))]
+        [ForeignKey(nameof(User))]
         [Required]
-        public int VehicleOwnerID { get; set; }
-        public User? VehicleOwner { get; set; }
+        public int UserID { get; set; }
+        public User? User { get; set; }
+
+
+        [ForeignKey(nameof(City))]
+        [Required]
+        public int CityID { get; set; }
+        public City? City { get; set; }
 
     }
 }
