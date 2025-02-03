@@ -12,6 +12,8 @@ import {MatStep, MatStepper, MatStepperNext, MatStepperPrevious} from "@angular/
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {NgxCaptchaModule} from 'ngx-captcha';
 import { PollsComponent } from './polls/polls.component';
+import { VehicleUploadComponent } from './vehicle-upload/vehicle-upload.component';
+import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
 
 
 @NgModule({
@@ -23,6 +25,8 @@ import { PollsComponent } from './polls/polls.component';
     UserProfileComponent,
     EditProfileComponent,
     PollsComponent,
+    VehicleUploadComponent,
+    MyVehiclesComponent,
   ],
   imports: [
     CommonModule,

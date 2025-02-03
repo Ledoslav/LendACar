@@ -7,6 +7,8 @@ import {RegisterComponent} from './register/register.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {EditProfileComponent} from './edit-profile/edit-profile.component';
 import { PollsComponent } from './polls/polls.component';
+import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
+import { VehicleUploadComponent } from './vehicle-upload/vehicle-upload.component';
 
 const routes: Routes = [
   {
@@ -19,6 +21,8 @@ const routes: Routes = [
       {path:'userProfile',component: UserProfileComponent},
       {path:'editProfile',component: EditProfileComponent},
       {path:'polls',component: PollsComponent},
+      {path:'vehicleUpload', component: VehicleUploadComponent},
+      {path:'myVehicles', component: MyVehiclesComponent},
 
     ]
   },

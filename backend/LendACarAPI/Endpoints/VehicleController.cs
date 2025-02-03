@@ -107,6 +107,49 @@ namespace LendACarAPI.Endpoints
             return Ok(vehicleCategoryDto);
         }
 
+        [HttpGet("getByUser/{userId}")]
+        public async Task<IActionResult> GetVehiclesByUser(int userId, CancellationToken cancellationToken)
+        {
+            var vehicles = await db.Vehicles
+                .Where(v => v.UserID == userId)
+                .Include(v => v.VehicleModel)
+                .Include(v => v.VehicleCategory)
+                .Include(v => v.User)
+                .Include(v => v.City)
+                .ThenInclude(c => c.Country)
+                .ToListAsync(cancellationToken);
+
+            if (!vehicles.Any()) return NotFound("No vehicles found for this user");
+
+            var vehicleDtos = vehicles.Select(vehicle => new VehicleDto
+            {
+                Id = vehicle.Id,
+                Title = vehicle.Title,
+                EngineDisplacement = vehicle.EngineDisplacement,
+                EnginePower = vehicle.EnginePower,
+                TransmissionType = vehicle.TransmissionType,
+                FuelType = vehicle.FuelType,
+                AirConditioning = vehicle.AirConditioning,
+                NumberOfSeats = vehicle.NumberOfSeats,
+                TowingHitch = vehicle.TowingHitch,
+                MaximumLoad = vehicle.MaximumLoad,
+                Description = vehicle.Description,
+                Avaliable = vehicle.Avaliable,
+                AverageRating = vehicle.AverageRating,
+                PricePerDay = vehicle.PricePerDay,
+                VehicleCategoryID = vehicle.VehicleCategoryID,
+                VehicleCategory = vehicle.VehicleCategory,
+                VehicleModelID = vehicle.VehicleModelID,
+                VehicleModel = vehicle.VehicleModel,
+                UserID = vehicle.UserID,
+                User = vehicle.User,
+                CityID = vehicle.CityID,
+            }).ToList();
+
+            return Ok(vehicleDtos);
+        }
+
+
         [HttpPost("addNew")]
         public async Task<IActionResult> AddVehicle([FromBody] VehicleDto vehicleDto)
         {
