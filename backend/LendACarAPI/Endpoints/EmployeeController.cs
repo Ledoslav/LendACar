@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 using LendACarAPI.Filters;
+using LendACarAPI.Services;
+using LendACarAPI.Helper;
 
 namespace LendACarAPI.Endpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController(ApplicationDbContext db) : ControllerBase
+    public class EmployeeController(ApplicationDbContext db, IRenderPDFReport renderPDF) : ControllerBase
     {
         [HttpPost("register")]
         public async Task<ActionResult<string>> RegisterEmployee([FromBody] RegisterEmployeeDto registerEmployee)
@@ -20,6 +22,8 @@ namespace LendACarAPI.Endpoints
             using var hmac = new HMACSHA256();
 
             if (await EmployeeExists(registerEmployee.Username, registerEmployee.EmailAddress)) { return BadRequest("Username or email is taken"); }
+
+            var password = MyExtensionMethods.RandomString(10);
 
             var employee = new Employee
             {
@@ -32,7 +36,7 @@ namespace LendACarAPI.Endpoints
                 Username = registerEmployee.Username,
                 JobTitle = registerEmployee.JobTitle,
                 WorkingHourId = registerEmployee.WorkingHourId,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerEmployee.Password)),
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
                 PasswordSalt = hmac.Key,
                 DateOfHire = registerEmployee.DateOfHire
             };
@@ -40,7 +44,9 @@ namespace LendACarAPI.Endpoints
             db.Employees.Add(employee);
             await db.SaveChangesAsync();
 
-            return Created();
+            var pdf =renderPDF.RednderEmployeeRegitserPDF(registerEmployee.EmailAddress,password,$"{registerEmployee.FirstName} {registerEmployee.LastName}");
+
+            return File(pdf, "application/pdf", $"employee_{registerEmployee.FirstName}_{registerEmployee.LastName}.pdf");
         }
 
         [HttpPost("login")]

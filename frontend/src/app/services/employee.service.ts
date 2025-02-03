@@ -17,7 +17,7 @@ export class EmployeeService {
   private router=inject(Router);
 
   Register(model:EmployeeDto){
-    return this.http.post(this.baseUrl+'employee/register',model);
+    return this.http.post(this.baseUrl+'employee/register',model,{responseType:'blob'});
   }
 
   Login(model:any){

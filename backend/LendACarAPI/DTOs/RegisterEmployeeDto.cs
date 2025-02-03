@@ -26,9 +26,6 @@ namespace LendACarAPI.DTOs
         [Required]
         public string? Username { get; set; }
 
-        [Required]
-        public string? Password { get; set; }
-
         public string? JobTitle { get; set; }
 
         public int WorkingHourId { get; set; }
