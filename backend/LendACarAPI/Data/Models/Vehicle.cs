@@ -12,11 +12,11 @@ namespace LendACarAPI.Data.Models
         public float? EngineDisplacement { get; set; }
         public int? EnginePower { get; set; }
         [Required]
-        public string TransmissionType { get; set; }
+        public int TransmissionType { get; set; } // 0 - Manual, 1 - Automatic, 2 - AutomatedManual, 3 - DCT, 4 - CVT
         [Required]
-        public string FuelType { get; set; }
+        public int FuelType { get; set; } // 0 - Petrol , 1 - Diesel, 2 - Electric, 3 - Hybrid, 4 - LPG, 5 - CNG
         [Required]
-        public string AirConditioning { get; set; }
+        public int AirConditioning { get; set; } // 0 - None, 1 - Single-Zone, 2 - Double-Zone, 3 - Triple-Zone, 4 - Quad-Zone
         public int NumberOfSeats { get; set; }
         public bool TowingHitch { get; set; }
         public int? MaximumLoad { get; set; }
