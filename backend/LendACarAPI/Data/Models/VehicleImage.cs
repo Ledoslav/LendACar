@@ -14,6 +14,6 @@ namespace LendACarAPI.Data.Models
         public Vehicle? Vehicle { get; set; }
 
         [Required]
-        public byte[] Image { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

@@ -51,6 +51,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 new VehicleCategory { Name = "Other" , Description = "No specific vehicle category was chosen."},
             };
 
+
             var workingHours = new List<WorkingHour>
             {
                 new WorkingHour { StartTime = new TimeOnly(9, 00), EndTime = new TimeOnly(17, 00), Saturday = false, Sunday = false },
@@ -59,12 +60,21 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
             };
 
 
+            var vehicleBrands = new List<VehicleBrand> { new VehicleBrand { BrandName = "Other" } };
+
+
             // Dodavanje podataka u bazu
             await db.WorkingHours.AddRangeAsync(workingHours, cancellationToken);
             await db.Countries.AddRangeAsync(countries, cancellationToken);
             await db.Cities.AddRangeAsync(cities, cancellationToken);
             await db.VehicleCategories.AddRangeAsync(vehicleCategories, cancellationToken);
+            await db.VehicleBrands.AddRangeAsync(vehicleBrands, cancellationToken);
 
+            await db.SaveChangesAsync(cancellationToken);
+
+
+            var vehicleModels = new List<VehicleModel> { new VehicleModel { ModelName = "Other", VehicleBrand = vehicleBrands[0] } };
+            await db.VehicleModels.AddRangeAsync( vehicleModels, cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
 
             return "Data generation completed successfully.";
