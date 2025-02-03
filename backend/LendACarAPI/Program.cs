@@ -2,6 +2,7 @@ using LendACarAPI.Data;
 using LendACarAPI.Helper.Auth;
 using Microsoft.EntityFrameworkCore;
 using LendACarAPI.Hubs;
+using LendACarAPI.Services;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", false)
@@ -20,6 +21,7 @@ builder.Services.AddSwaggerGen(x => x.OperationFilter<MyAuthorizationSwaggerHead
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<IRenderPDFReport, RenderPDFReport>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>

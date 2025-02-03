@@ -20,6 +20,15 @@ import { AdminUserUpdateComponent } from './admin-user-update/admin-user-update.
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import {PaginationComponent} from "ngx-bootstrap/pagination";
+import {MatLabel} from "@angular/material/form-field";
+import {
+  MatDatepicker,
+  MatDatepickerInput,
+  MatDatepickerModule,
+  MatDatepickerToggle
+} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
+import {MatInputModule} from '@angular/material/input';
 
 
 
@@ -40,14 +49,19 @@ import {PaginationComponent} from "ngx-bootstrap/pagination";
     AdminCountryOverviewComponent,
     AdminUserUpdateComponent
   ],
-    imports: [
-        CommonModule,
-        AdministratorRoutingModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatPaginatorModule,
-        MatTableModule,
-        PaginationComponent,
-    ]
+  imports: [
+    CommonModule,
+    AdministratorRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatPaginatorModule,
+    MatTableModule,
+    PaginationComponent,
+    MatLabel,
+    MatDatepicker,
+    MatDatepickerModule,
+    MatNativeDateModule, // Ensures the DateAdapter is provided
+    MatInputModule,
+  ]
 })
 export class AdministratorModule { }
