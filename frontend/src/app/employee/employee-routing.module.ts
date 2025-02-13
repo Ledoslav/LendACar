@@ -6,16 +6,27 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {ProfileOverviewComponent} from './profile-overview/profile-overview.component';
 import {EditProfileComponent} from './edit-profile/edit-profile.component';
 import { PollManagementComponent } from './poll-management/poll-management.component';
+import {AuthGuard} from '../guards/auth.guard';
 
 const routes: Routes = [
-  {path:'',redirectTo:'login' ,pathMatch:'full'},
   {path:'login', component: LoginComponent},
-  {path:'dashboard', component: DashboardComponent},
-  {path:'profileOverview', component: ProfileOverviewComponent},
-  {path:'profileEdit',component:EditProfileComponent},
-  {path:'verificationRequests',component:VerificationRequestComponent},
-  {path:'pollManagement', component:PollManagementComponent},
+
+  {
+    path:'',
+    canActivate:[AuthGuard],
+    data:{isEmployee:true},
+    children:[
+      {path:'',redirectTo:'dashboard' ,pathMatch:'full'},
+      {path:'dashboard', component: DashboardComponent},
+      {path:'profileOverview', component: ProfileOverviewComponent},
+      {path:'profileEdit',component:EditProfileComponent},
+      {path:'verificationRequests',component:VerificationRequestComponent},
+      {path:'pollManagement', component:PollManagementComponent},
+    ]
+  }
 ];
+
+
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

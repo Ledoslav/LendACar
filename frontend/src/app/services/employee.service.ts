@@ -4,6 +4,8 @@ import {EmployeeDto} from '../Models/EmployeeDto';
 import {map} from 'rxjs';
 import {Router} from '@angular/router';
 import {EmployeeFilter} from '../Models/EmployeeFilter';
+import {MyAuthServiceService} from './auth-service/my-auth-service.service';
+import {AuthResponse} from '../Models/auth-models/AuthResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -15,19 +17,21 @@ export class EmployeeService {
   baseUrl:string="http://localhost:7000/api/";
   currentEmployee=signal<EmployeeDto | null>(null);
   private router=inject(Router);
-
+  private myAuthService=inject(MyAuthServiceService)
   Register(model:EmployeeDto){
     return this.http.post(this.baseUrl+'employee/register',model,{responseType:'blob'});
   }
 
   Login(model:any){
-    return this.http.post<EmployeeDto>(this.baseUrl+'employee/login',model).pipe(
-      map(employee=>{
-        if(employee){
+    return this.http.post<AuthResponse>(this.baseUrl+'employee/login',model).pipe(
+      map(response=>{
+        if(response){
+          this.myAuthService.setLoggedInUser(response)
+          const { token, ...employee } = response;
           localStorage.setItem('employee',JSON.stringify(employee));
           this.currentEmployee.set(employee);
         }
-        return employee;
+        return response;
       })
     )
   }

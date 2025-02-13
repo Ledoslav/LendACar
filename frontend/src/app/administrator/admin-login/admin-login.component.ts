@@ -26,8 +26,7 @@ export class AdminLoginComponent implements OnInit  {
   login(){
     this.adminService.Login(this.model).subscribe({
       next:res=>{
-        alert("Admin login successfull!");
-        console.log(res);
+        alert("Admin login successfully!");
         void this.router.navigateByUrl('/admin/dashboard');
       },
       error:err=>{

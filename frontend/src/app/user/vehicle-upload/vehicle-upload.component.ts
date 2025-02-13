@@ -1,3 +1,4 @@
+/*
 import { Component, OnInit, inject } from '@angular/core';
 import { CityService } from '../../services/city.service';
 import { CountryService } from '../../services/country.service';
@@ -19,7 +20,7 @@ export class VehicleUploadComponent implements OnInit {
           this.loadCountries();
           this.loadCities();
       }
-  
+
      model:any = {};
       cities:City[]=[];
       filteredCities:City[]=[]
@@ -32,7 +33,7 @@ export class VehicleUploadComponent implements OnInit {
     fb=inject(FormBuilder);
     passwordShow: boolean=false;
     captchaSuccess:boolean=false;
-  
+
     vehicleUploadForm=this.fb.group({
       basicInfo:this.fb.group({
         firstName: ['', [Validators.required,Validators.min(2),Validators.max(15)]],
@@ -54,22 +55,22 @@ export class VehicleUploadComponent implements OnInit {
       }
       ),
     });
-  
-  
+
+
     matchValues(matchTo: string): ValidatorFn {
       return (control: AbstractControl) => {
         return control.value === control.parent?.get(matchTo)?.value ? null : {isMatching: true}
       }
     }
-  
+
     UpdateRepeatPasswordValidity(){
       this.passwords.controls['password'].valueChanges.subscribe({
         next: value => {this.passwords.controls['repeatPassword'].updateValueAndValidity()}
       })
     }
-  
-  
-  
+
+
+
     get basicInfo(): FormGroup {
       return this.vehicleUploadForm.get('basicInfo') as FormGroup;
     }
@@ -82,33 +83,35 @@ export class VehicleUploadComponent implements OnInit {
     get passwords(): FormGroup {
       return this.vehicleUploadForm.get('images') as FormGroup;
     }
-  
-  
-  
+
+
+
+
+
     loadCountries(){
       this.countryService.getAllCountries().subscribe(res=>{
           this.countries=res;
         })
     }
-  
+
     loadCities(){
       this.cityService.GetAllCities().subscribe(res=>{
         this.cities = res;
       })
     }
-  
-  
+
+
     register() {
       this.model = {
         ...this.basicInfo.value,
         ...this.contactDetails.value,
         ...this.address.value,
-        ...this.images.value,
+        ...this.passwords.value,
       };
-  
+
       console.log(this.model);
-  
-  
+
+
       this.accountService.Register(this.model).subscribe({
         next: result =>{
           alert("User created successfully");
@@ -118,20 +121,20 @@ export class VehicleUploadComponent implements OnInit {
         error: err => console.log(err)
       })
     }
-  
-  
+
+
     FilterCities($event:any) {
       let countryId=$event.target.value;
         this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
     }
-  
+
     handleSuccess(token: string) {
       console.log(token)
-  
+
       const obj={
         ResponseToken:token
       }
-  
+
       this.httpClient.post("http://localhost:7000/api/Captcha/verify",obj ).subscribe({
         next: result => {
           this.captchaSuccess=true;
@@ -140,3 +143,4 @@ export class VehicleUploadComponent implements OnInit {
       })
     }
 }
+*/

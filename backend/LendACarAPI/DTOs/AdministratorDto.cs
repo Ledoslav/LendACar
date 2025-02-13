@@ -30,5 +30,7 @@ namespace LendACarAPI.DTOs
         [Required]
         public string? Username { get; set; }
 
+        public string? Token { get; set; }
+
     }
 }

@@ -3,6 +3,7 @@ using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
 using LendACarAPI.Filters;
 using LendACarAPI.Helper;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,11 @@ namespace LendACarAPI.Endpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(ApplicationDbContext db) : ControllerBase
+    public class UserController(ApplicationDbContext db,IAuthService authService) : ControllerBase
     {
 
         [HttpGet("getById/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: true)]
         public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
             var user= await db.Users
@@ -49,6 +51,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpGet("getAll")]
+        [MyAuthorization(IsAdmin:true,IsEmployee:false,isAppUser:true)]
         [TypeFilter(typeof(UserFilterAttribute))]
         public async Task<ActionResult<MyPagedList<UserDto[]>>> GetAllUsers([FromQuery]MyPagingRequest pagedParams, CancellationToken cancellationToken)
         {
@@ -101,6 +104,7 @@ namespace LendACarAPI.Endpoints
                 PasswordSalt = hmac.Key,
                 CreatedDate=DateTime.Now,
                 IsVerified = false,
+                IsAppUser = true
             };
 
             db.Users.Add(createdUser);
@@ -129,6 +133,8 @@ namespace LendACarAPI.Endpoints
                 if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid credentials");
             }
 
+            var token = authService.CreatToken(user);
+
             return Ok(new UserDto
             {
                 Id= user.Id,
@@ -141,17 +147,19 @@ namespace LendACarAPI.Endpoints
                 EmailAddress = user.EmailAdress,
                 Username = user.Username,
                 AverageRating = user.AverageRating,
-                IsVerified = user.IsVerified
+                IsVerified = user.IsVerified,
+                Token= token,
             });
         }
 
 
 
         [HttpPut("update/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false,isAppUser:true)]
         public async Task<IActionResult> EditUser([FromBody]UserDto updatedUser,int id, CancellationToken cancellationToken)
         {
             var user = await db.Users
-            .FirstOrDefaultAsync(u => u.Id == id);
+            .FirstOrDefaultAsync(u => u.Id == id,cancellationToken);
 
 
             if (user == null) return NotFound("User not found");
@@ -165,13 +173,6 @@ namespace LendACarAPI.Endpoints
             user.Username = updatedUser.Username;
 
             await db.SaveChangesAsync(cancellationToken);
-
-            var returnUser = await db.Users
-            .Include(u => u.City)
-            .Include(u => u.City != null ? u.City.Country : null)
-            .FirstOrDefaultAsync(u => u.Id == id,cancellationToken);
-
-
 
             return Ok(new UserDto
             {
@@ -190,6 +191,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpPut("verifyUser/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<IActionResult> VerifyUser([FromBody] UserDto verifiedUser, int id)
         {
             var user = await db.Users
@@ -228,6 +230,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpDelete("remove/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: true)]
         public async Task<ActionResult<string>> RemoveUser(int id,CancellationToken cancellationToken)
         {
             var user = await db.Users
@@ -252,6 +255,7 @@ namespace LendACarAPI.Endpoints
 
         [HttpGet("filter")]
         [TypeFilter(typeof(UserFilterAttribute))]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: true)]
         public async Task<ActionResult<MyPagedList<UserDto[]>>> FilterUser([FromQuery] UserFilterDto filterDto,[FromQuery]MyPagingRequest pagingRequest, CancellationToken token)
         {
             var query = HttpContext.Items["users"] as IQueryable<UserDto>;

@@ -1,5 +1,6 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPost("create")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult> CreateCountry([FromBody] Country country,CancellationToken cancellationToken)
         {
             var searchCountry = db.Countries
@@ -34,6 +36,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpDelete("remove/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult> RemoveCountry([FromRoute] int id, CancellationToken cancellationToken)
         {
             var country = await db.Countries.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
@@ -53,6 +56,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPut("update/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult> UpdateCountry([FromBody] Country country, int id,CancellationToken cancellationToken)
         {
             var searchCountry = await db.Countries

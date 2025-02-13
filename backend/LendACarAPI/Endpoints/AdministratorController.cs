@@ -1,6 +1,7 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace LendACarAPI.Endpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdministratorController(ApplicationDbContext db) : ControllerBase
+    public class AdministratorController(ApplicationDbContext db, IAuthService authService) : ControllerBase
     {
         [HttpPost("register")]
         public async Task<ActionResult<string>> RegisterAdministrator([FromBody] AdministratorRegisterDto registerAdmin)
@@ -30,7 +31,8 @@ namespace LendACarAPI.Endpoints
                 EmailAdress = registerAdmin.EmailAdress,
                 Username = registerAdmin.Username,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerAdmin.Password)),
-                PasswordSalt = hmac.Key
+                PasswordSalt = hmac.Key,
+                IsAdmin=true
             };
 
             db.Administrators.Add(newAdmin);
@@ -55,6 +57,8 @@ namespace LendACarAPI.Endpoints
 
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(adminLogin.Password));
 
+            var token = authService.CreatToken(admin);
+
             for (var i = 0; i < computedHash.Length; i++)
             {
                 if (computedHash[i] != admin.PasswordHash[i]) 
@@ -72,11 +76,14 @@ namespace LendACarAPI.Endpoints
                 CityId = admin.CityId,
                 EmailAddress = admin.EmailAdress,
                 Username = admin.Username,
+                Token=token
+
             });
 
         }
 
         [HttpPut("update/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<IActionResult> EditAdministrator(int id, [FromBody] AdministratorDto adminDto, CancellationToken cancellationToken)
         {
             var admin = await db.Administrators
@@ -114,6 +121,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpDelete("remove/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult<string>> RemoveAdmin(int id)
         {
             var admin = await db.Administrators

@@ -14,6 +14,7 @@ export class DashboardComponent{
   logout() {
     this.employeeService.currentEmployee.set(null);
     localStorage.removeItem('employee');
+    localStorage.removeItem('auth-token')
     void this.router.navigateByUrl('/employee/login');
   }
 

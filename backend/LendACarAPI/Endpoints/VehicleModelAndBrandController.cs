@@ -24,7 +24,7 @@ namespace LendACarAPI.Endpoints{
                 .Include(ce => ce.VehicleBrand)
                 .ToListAsync();
 
-            if (VehicleModels.IsNullOrEmpty())
+            if (VehicleModels.Count<1)
                 return NotFound(new { message = "No vehicle models found!" });
 
             return Ok(VehicleModels);
@@ -37,7 +37,7 @@ namespace LendACarAPI.Endpoints{
             var VehicleBrands = await _context.VehicleBrands
             .ToListAsync();
 
-            if (VehicleBrands.IsNullOrEmpty())
+            if (VehicleBrands.Count < 1)
                 return NotFound(new { message = "No vehicle brands found!" });
 
             return Ok(VehicleBrands);
@@ -51,7 +51,7 @@ namespace LendACarAPI.Endpoints{
                 .Where(ce => ce.Id == vehicleId)
                 .ToListAsync();
 
-            if(VehicleModels.IsNullOrEmpty())
+            if (VehicleModels.Count < 1)
                 return NotFound(new { message = "No vehicle models found!" });
 
             return Ok(VehicleModels);
@@ -64,7 +64,7 @@ namespace LendACarAPI.Endpoints{
                 .Where(ce => ce.Id == brandId)
                 .ToListAsync();
 
-            if (VehicleBrands.IsNullOrEmpty())
+            if (VehicleBrands.Count<1)
                 return NotFound(new { message = "No vehicle brands found!" });
 
             return Ok(VehicleBrands);
