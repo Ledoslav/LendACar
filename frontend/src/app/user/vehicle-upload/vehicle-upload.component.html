@@ -1,3 +1,4 @@
+<!--
 
 <div class="container mt-4" id="stepperContainer">
     <mat-stepper   #stepper>
@@ -5,14 +6,14 @@
         <div class="container mt-4">
           <h3 class="text-center mb-2">Basic Information</h3>
           <form [formGroup]="basicInfo">
-  
+
             <div class="form-group mb-2">
               <label for="firstName">Listing title*</label>
               <input type="text" id="firstName" class="form-control" formControlName="firstName" >
               <mat-error *ngIf="basicInfo.get('firstName')?.invalid && basicInfo.get('firstName')?.touched" style="color: red">
                 First name required </mat-error>
             </div>
-  
+
             <div class="form-group mb-2">
               <label for="lastName">Manufacturer*</label>
               <input formControlName="lastName" id="lastName" type="text"  class="form-control" >
@@ -20,8 +21,8 @@
                 Last name required
               </mat-error>
             </div>
-  
-  
+
+
             <div class="form-group mb-2">
               <label for="lastName">Model*</label>
               <input formControlName="username" id="username" type="text"  class="form-control" >
@@ -29,7 +30,7 @@
                 Username required
               </mat-error>
             </div>
-  
+
             <div class="form-group mb-2">
               <label for="birthDate">Year*</label>
               <input formControlName="birthDate" id="birthDate" type="date" class="form-control" >
@@ -37,14 +38,14 @@
                 Birth date required
               </mat-error>
             </div>
-  
+
             <div class="d-flex justify-content-end">
             <button [disabled]="basicInfo.invalid" class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
             </div>
           </form>
         </div>
       </mat-step>
-  
+
       <mat-step  label="Technical Details"  [stepControl]="basicInfo">
         <form [formGroup]="basicInfo">
           <div class="container mt-4">
@@ -56,7 +57,7 @@
               Email is required
             </mat-error>
           </div>
-  
+
           <div class="form-group mb-2">
             <label for="firstName">Phone number*</label>
             <input type="text" id="phoneNumber" class="form-control" formControlName="phoneNumber" placeholder="+38761888999">
@@ -64,16 +65,16 @@
               Phone number required
             </mat-error>
           </div>
-  
+
             <div class="d-flex justify-content-between">
               <button class="btn btn-outline-light mt-2" matStepperPrevious type="button">Back</button>
               <button [disabled]="contactDetails.invalid" class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
             </div>
           </div>
-  
+
         </form>
       </mat-step>
-  
+
       <mat-step  label="Description"  [stepControl]="description">
         <form [formGroup]="description">
           <div class="container mt-4">
@@ -84,7 +85,7 @@
                 <option *ngFor="let country of countries"  id="country" value="{{country.id}}">{{country.name}}</option>
               </select>
             </div>
-  
+
             <div class="form-group mb-2">
               <label for="city">City*</label>
               <select  class="form-select" aria-label="Default select example" formControlName="cityId" >
@@ -96,15 +97,15 @@
               <button [disabled]="address.invalid" class="btn btn-outline-light mt-2" matStepperNext type="button">Next</button>
             </div>
           </div>
-  
+
         </form>
       </mat-step>
-  
+
       <mat-step  label="Images"  [stepControl]="images">
         <div class="container mt-4">
           <h3 class="text-center mb-2">Images</h3>
           <form [formGroup]="images">
-  
+
             <div class="form-group mb-2">
               <label for="password">Password*</label>
               <input [type]="passwordShow ? 'text': 'password'" (change)="UpdateRepeatPasswordValidity()" id="password" class="form-control" formControlName="password" required>
@@ -112,20 +113,20 @@
                 Password required
               </mat-error>
             </div>
-  
-  
+
+
             <div class="form-group mb-2">
               <label for="repeatPassword">Repeat password*</label>
               <input [type]="passwordShow ? 'text': 'password'" id="repeatPassword" class="form-control" formControlName="repeatPassword" required>
               <mat-error *ngIf="passwords.get('repeatPassword')?.invalid"></mat-error>
             </div>
-  
+
           </form>
           <div class="d-flex justify-content-begin">
             <input [(ngModel)]="passwordShow" type="checkbox" id="check" name="showPassword"/>
             <label class="form-label px-2" for="check">Show password</label>
           </div>
-  
+
           <div class="d-flex justify-content-begin">
             <ngx-recaptcha2
               siteKey="6LfhF7IqAAAAAKIisGRplBZAtXNEuXzJ_ZGsjkdW"
@@ -134,16 +135,16 @@
             >
             </ngx-recaptcha2>
           </div>
-  
+
           <div class="d-flex justify-content-between mt-3">
             <button class="btn btn-outline-light"  matStepperPrevious>Back</button>
             <button [disabled]="captchaSuccess==false || passwords.invalid==true" class="btn btn-outline-light" (click)="register()">Finish</button>
           </div>
         </div>
       </mat-step>
-  
+
     </mat-stepper>
   </div>
-  
-  
-  
+
+
+-->

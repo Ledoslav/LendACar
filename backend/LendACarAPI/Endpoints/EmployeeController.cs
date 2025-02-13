@@ -13,9 +13,11 @@ using LendACarAPI.Helper;
 namespace LendACarAPI.Endpoints
 {
     [Route("api/[controller]")]
+
     [ApiController]
-    public class EmployeeController(ApplicationDbContext db, IRenderPDFReport renderPDF) : ControllerBase
+    public class EmployeeController(ApplicationDbContext db, IRenderPDFReport renderPDF,IAuthService authService) : ControllerBase
     {
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         [HttpPost("register")]
         public async Task<ActionResult<string>> RegisterEmployee([FromBody] RegisterEmployeeDto registerEmployee)
         {
@@ -38,7 +40,8 @@ namespace LendACarAPI.Endpoints
                 WorkingHourId = registerEmployee.WorkingHourId,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
                 PasswordSalt = hmac.Key,
-                DateOfHire = registerEmployee.DateOfHire
+                DateOfHire = registerEmployee.DateOfHire,
+                IsEmployee=true
             };
 
             db.Employees.Add(employee);
@@ -66,6 +69,8 @@ namespace LendACarAPI.Endpoints
 
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(employeeLogin.Password));
 
+            var token = authService.CreatToken(employee);
+
             for (var i = 0; i < computedHash.Length; i++)
             {
                 if (computedHash[i] != employee.PasswordHash[i])
@@ -86,12 +91,14 @@ namespace LendACarAPI.Endpoints
                 JobTitle = employee.JobTitle,
                 WorkingHour = employee.WorkingHour,
                 WorkingHourId = employee.WorkingHourId,
+                Token=token,
             });
 
         }
 
 
         [HttpDelete("remove/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<ActionResult<string>> RemoveEmployee(int id)
         {
             var employee = await db.Employees
@@ -106,6 +113,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPut("update/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<IActionResult> EditEmployee(int id, [FromBody] EmployeeDto employeeDto, CancellationToken cancellationToken)
         {
             var employee = await db.Employees
@@ -155,6 +163,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpGet("getAll")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<ActionResult> GetAllEmployees(CancellationToken cancellationToken)
         {
             var employees = await db.Employees
@@ -181,6 +190,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpGet("{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<ActionResult<EmployeeDto>> GetEmployeeById(int id, CancellationToken cancellation)
         {
             var employee = await db.Employees
@@ -209,6 +219,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpGet("filter")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         [TypeFilter(typeof(EmployeeFilterAttribute))]
         public ActionResult<EmployeeDto[]> FilterEmployee([FromQuery] EmployeeFilterDto filterDto)
         {

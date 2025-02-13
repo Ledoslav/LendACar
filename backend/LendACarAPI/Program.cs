@@ -22,6 +22,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IRenderPDFReport, RenderPDFReport>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>

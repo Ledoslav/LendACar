@@ -35,5 +35,7 @@ namespace LendACarAPI.DTOs
 
         public string? JobTitle { get; set; }
         public DateOnly DateOfHire { get; set; }
+
+        public string? Token { get; set; }
     }
 }

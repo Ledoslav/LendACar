@@ -14,6 +14,7 @@ export class NavComponent {
   logout() {
     this.adminService.currentAdmin.set(null);
     localStorage.removeItem('administrator');
+    localStorage.removeItem('auth-token');
     void this.router.navigateByUrl('/admin/login');
   }
 }

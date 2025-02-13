@@ -1,5 +1,6 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
@@ -10,7 +11,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DataSeedGenerateEndpoint(ApplicationDbContext db):ControllerBase
+    public class DataSeedGenerateEndpoint(ApplicationDbContext db,IAuthService authService):ControllerBase
     {
 
         [HttpPost("generateReferalData")]
@@ -85,7 +86,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
         {
 
 
-            var adminController = new AdministratorController(db);
+            var adminController = new AdministratorController(db,authService);
             await adminController.RegisterAdministrator(new DTOs.AdministratorRegisterDto
             {
                 FirstName = "LendACar",
@@ -98,7 +99,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 Password = "admin"
             });
 
-            var controller = new UserController(db);
+            var controller = new UserController(db, authService);
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
                 Username = "KalloX",
@@ -110,7 +111,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 PhoneNumber = "123-456-7890",
                 EmailAdress = "denis@edu.fit.ba",
                 IsVerified = false
-            },cancellationToken);
+            }, cancellationToken);
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
                 Username = "LedoSlav",
@@ -137,7 +138,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 IsVerified = false
             }, cancellationToken);
 
-            
+
 
             await db.SaveChangesAsync(cancellationToken);
 

@@ -1,5 +1,6 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace LendACarAPI.Endpoints.CityEndpoints
         }
 
         [HttpPost("add")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult<City>> CreateCity([FromBody] City city,CancellationToken cancellationToken)
         {
             var searchCity=db.Cities
@@ -33,6 +35,7 @@ namespace LendACarAPI.Endpoints.CityEndpoints
         }
 
         [HttpDelete("remove/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult> RemoveCity([FromRoute]int id,CancellationToken cancellationToken)
         {
             var city=await db.Cities.FirstOrDefaultAsync(c => c.Id == id,cancellationToken);
@@ -44,6 +47,7 @@ namespace LendACarAPI.Endpoints.CityEndpoints
         }
 
         [HttpPut("update/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult> UpdateCity([FromBody] City city, int id, CancellationToken cancellationToken)
         {
             var cityExists = await db.Cities

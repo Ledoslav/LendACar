@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { LayoutComponent } from './layout/layout.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
@@ -14,6 +14,8 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import {DatePipe} from '@angular/common';
 import {MatStepperModule} from '@angular/material/stepper';
 import { NgxCaptchaModule } from 'ngx-captcha';
+import { JwtModule } from "@auth0/angular-jwt";
+import {TokenInterceptor} from './interceptors/token.interceptor';
 
 
 
@@ -34,11 +36,22 @@ import { NgxCaptchaModule } from 'ngx-captcha';
     TooltipModule,
     DatePipe,
     MatStepperModule,
-    NgxCaptchaModule
+    NgxCaptchaModule,
+    JwtModule.forRoot({
+      config:{
+        headerName:"my-auth-token"
+        //allowedDomains:["localhost:7000"]
+      }
+    })
   ],
   providers: [
     provideAnimationsAsync(),
-    DatePipe
+    DatePipe,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass:TokenInterceptor,
+      multi: true,
+    }
   ],
   bootstrap: [AppComponent]
 })

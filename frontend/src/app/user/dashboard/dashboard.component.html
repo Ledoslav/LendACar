@@ -23,7 +23,7 @@
           <a class="nav-link" href="#">Link</a>
         </li>
       </ul>
-      @if (accountService.currentUser()==null){
+      @if (!isAppUser){
         <div>
           <a routerLink="/user/login" style="margin-right: 5px; text-decoration: none">Login</a>
           <a routerLink="/user/register" style="margin-left: 5px; text-decoration: none">Register</a>

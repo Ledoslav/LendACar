@@ -11,7 +11,7 @@
                 <input type="text" id="name" class="form-control" name="name" required [ngModel]="city?.name" />
               </div>
               <div class="form-group mb-3">
-                <label for="country">County </label>
+                <label for="country">Country </label>
                 <select class="form-select" aria-label="Default select example" name="countryId" [ngModel]="city?.countryId">
                   @for (country of countries; track country.id){
                     <option  id="country" value="{{country.id}}">{{country.name}}</option>
