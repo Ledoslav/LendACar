@@ -24,6 +24,7 @@ const routes: Routes = [
     data:{isAdmin:true},
     component: AdminDashboardComponent
     ,children:[
+      { path: '**', redirectTo: 'not-found', pathMatch: 'full' },
       {path:'',redirectTo:'home',pathMatch:'full'},
       {path:'profileOverview', component: AdminProfileOverviewComponent},
       {path:'profileEdit',component:AdminEditOwnProfileComponent},

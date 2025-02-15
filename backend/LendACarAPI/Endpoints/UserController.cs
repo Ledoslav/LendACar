@@ -51,7 +51,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpGet("getAll")]
-        [MyAuthorization(IsAdmin:true,IsEmployee:false,isAppUser:true)]
+        [MyAuthorization(IsAdmin:true,IsEmployee:true,isAppUser:true)]
         [TypeFilter(typeof(UserFilterAttribute))]
         public async Task<ActionResult<MyPagedList<UserDto[]>>> GetAllUsers([FromQuery]MyPagingRequest pagedParams, CancellationToken cancellationToken)
         {

@@ -119,7 +119,7 @@ namespace LendACarAPI.Endpoints
                 .ThenInclude(c => c.Country)
                 .ToListAsync(cancellationToken);
 
-            if (!vehicles.Any()) return NotFound("No vehicles found for this user");
+            if (!vehicles.Any()) return BadRequest("No vehicles found for this user");
 
             var vehicleDtos = vehicles.Select(vehicle => new VehicleDto
             {

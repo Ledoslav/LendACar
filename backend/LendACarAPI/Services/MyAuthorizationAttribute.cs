@@ -14,7 +14,7 @@ namespace LendACarAPI.Services
             bool isCurrentUserAppUser=false;
             bool isCurrentUserAdmin=false;
             bool isCurrentUserEmployee = false;
-           // bool isCurrentUserLoggedIn=false;
+
 
             if (authService == null)
             {
@@ -29,8 +29,7 @@ namespace LendACarAPI.Services
                 return;
             }
 
-            //if (isLoggedIn && claims.IsLoggedIn)
-            //    isCurrentUserLoggedIn = true;
+
 
             if (isAppUser && claims.IsAppUser)
                 isCurrentUserAppUser = true;
@@ -43,9 +42,19 @@ namespace LendACarAPI.Services
                 isCurrentUserEmployee= true;
 
 
-            if(!isCurrentUserEmployee && !isCurrentUserAdmin && !isCurrentUserAppUser)
+            //if (!isCurrentUserEmployee && !isCurrentUserAdmin && !isCurrentUserAppUser)
+            //{
+            //    context.Result = new ForbidResult();
+            //    return;
+            //}
+
+
+            if (!isCurrentUserEmployee && !isCurrentUserAdmin && !isCurrentUserAppUser)
             {
-                context.Result = new UnauthorizedResult();
+                context.Result = new ObjectResult(new { message = "You are not authorized to access this resource." })
+                {
+                    StatusCode = 403 
+                };
                 return;
             }
         }

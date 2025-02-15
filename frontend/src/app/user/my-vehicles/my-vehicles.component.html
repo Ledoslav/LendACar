@@ -7,11 +7,11 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-  
+
       <div class="collapse navbar-collapse" id="navbarsExample02">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link active" aria-current="page" routerLink="/user/dashboard" routerLinkActive>Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/user/polls">Polls</a>
@@ -33,7 +33,7 @@
             <a routerLink="/user/userProfile" style="margin-right: 5px; text-decoration: none">View account</a>
           </div>
         }
-  
+
       </div>
     </div>
   </nav>
@@ -54,7 +54,7 @@
         Upload Vehicle
       </button>
     </div>
-  
+
     <!-- Vehicle List Card -->
     <div class="vehicle-list-card">
       <div class="search-bar">
@@ -65,15 +65,15 @@
           <option value="unavailable">Unavailable</option>
         </select>
       </div>
-  
+
       <div *ngIf="!user?.isVerified" class="verification-message">
         <p>Unverified users cannot upload vehicles</p>
       </div>
-  
+
       <div *ngIf="user?.isVerified && vehicles?.length === 0" class="no-vehicles-message">
         <p>You don't have any uploaded vehicles</p>
       </div>
-  
+
       <div class="vehicle-cards" *ngIf="user?.isVerified && vehicles">
         <div *ngFor="let vehicle of filteredVehicles" class="vehicle-card">
           <div class="vehicle-image">
@@ -90,4 +90,3 @@
       </div>
     </div>
   </div>
-  

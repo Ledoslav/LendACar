@@ -27,7 +27,7 @@ namespace LendACarAPI.Endpoints
         {
             var searchCountry = db.Countries
                 .FirstOrDefault(c => c.Name == country.Name);
-            if (searchCountry != null) return BadRequest();
+            if (searchCountry != null) return BadRequest("Country already exists");
 
             db.Countries.Add(country);
             await db.SaveChangesAsync(cancellationToken);
@@ -40,11 +40,11 @@ namespace LendACarAPI.Endpoints
         public async Task<ActionResult> RemoveCountry([FromRoute] int id, CancellationToken cancellationToken)
         {
             var country = await db.Countries.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
-            if (country == null) return BadRequest();
+            if (country == null) return NotFound("Country not found");
 
             var cities=await db.Cities
                 .Where(c=>c.CountryId== id)
-                .ToArrayAsync();
+                .ToArrayAsync(cancellationToken);
 
 
             db.RemoveRange(cities);
@@ -63,7 +63,7 @@ namespace LendACarAPI.Endpoints
                 .Where(c => c.Id == id && !db.Countries.Any(other => other.Name == country.Name && other.Id != id))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (searchCountry == null) return BadRequest();
+            if (searchCountry == null) return NotFound("Country not found");
 
             searchCountry.Name = country.Name;
             await db.SaveChangesAsync(cancellationToken);

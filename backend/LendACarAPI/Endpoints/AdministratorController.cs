@@ -91,7 +91,7 @@ namespace LendACarAPI.Endpoints
                 .Include(u => u.City != null ? u.City.Country : null)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-            if (admin == null) return NotFound();
+            if (admin == null) return NotFound("Administrator not found");
 
             admin.PhoneNumber = adminDto.PhoneNumber;
             admin.CityId = adminDto.CityId;

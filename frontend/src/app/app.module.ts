@@ -16,6 +16,7 @@ import {MatStepperModule} from '@angular/material/stepper';
 import { NgxCaptchaModule } from 'ngx-captcha';
 import { JwtModule } from "@auth0/angular-jwt";
 import {TokenInterceptor} from './interceptors/token.interceptor';
+import {ErrorInterceptor} from './interceptors/error.interceptor';
 
 
 
@@ -50,6 +51,11 @@ import {TokenInterceptor} from './interceptors/token.interceptor';
     {
       provide: HTTP_INTERCEPTORS,
       useClass:TokenInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass:ErrorInterceptor,
       multi: true,
     }
   ],
