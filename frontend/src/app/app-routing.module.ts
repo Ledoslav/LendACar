@@ -4,8 +4,20 @@ import { RouterModule, Routes } from '@angular/router';
 import {LoginComponent} from './user/login/login.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 import {AuthGuard} from './guards/auth.guard';
+import {NotFoundComponent} from './shared/not-found/not-found.component';
+import {NotAuthorizedComponent} from './shared/not-authorized/not-authorized.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'public/home', pathMatch: 'full' },
+  {
+    path:'not-found',
+    component: NotFoundComponent
+  },
+  {
+    path:'not-authorized',
+    component: NotAuthorizedComponent
+  },
+
   {
     path: 'public',
     loadChildren: () => import('./public/public.module').then(m => m.PublicModule)  // Lazy load admin modula
@@ -34,7 +46,8 @@ const routes: Routes = [
     path:'resetPassword',
     component: ForgotPasswordComponent
   },
-  {path: '**', redirectTo: 'public', pathMatch: 'full'}
+  {path: '**', redirectTo: 'not-found', pathMatch: 'full'},
+
 ];
 
 @NgModule({

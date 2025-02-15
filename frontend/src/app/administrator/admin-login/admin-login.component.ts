@@ -30,7 +30,7 @@ export class AdminLoginComponent implements OnInit  {
         void this.router.navigateByUrl('/admin/dashboard');
       },
       error:err=>{
-        alert("Invalid login credentials");
+        //alert("Invalid login credentials");
         console.log(err);
       }
     })

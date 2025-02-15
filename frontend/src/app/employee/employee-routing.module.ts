@@ -17,6 +17,7 @@ const routes: Routes = [
     data:{isEmployee:true},
     children:[
       {path:'',redirectTo:'dashboard' ,pathMatch:'full'},
+      { path: '**', redirectTo: 'not-found', pathMatch: 'full' },
       {path:'dashboard', component: DashboardComponent},
       {path:'profileOverview', component: ProfileOverviewComponent},
       {path:'profileEdit',component:EditProfileComponent},

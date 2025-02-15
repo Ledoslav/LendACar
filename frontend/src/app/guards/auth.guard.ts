@@ -62,7 +62,7 @@ export class AuthGuard implements CanActivate {
       if(guardData.isLoggedIn) {
         if(!this.authService.isLoggedIn()){
           console.log("Nema loggin")
-          this.router.navigate(['/public/home']); // treba se napraviti unauthorized komponenta, privremeno rjesenje
+          this.router.navigate(['not-authorized']);
           return false;
         }
       }
@@ -70,7 +70,7 @@ export class AuthGuard implements CanActivate {
       if(guardData.isEmployee){
         if(!this.authService.isEmployee()){
           console.log("Nije employee")
-          this.router.navigate(['/public/home']); // treba se napraviti unauthorized komponenta, privremeno rjesenje
+          this.router.navigate(['not-authorized']);
           return false;
         }
       }
@@ -78,7 +78,7 @@ export class AuthGuard implements CanActivate {
       if(guardData.isAdmin){
         if(!this.authService.isAdmin()){
           console.log("Nije admin")
-          this.router.navigate(['/public/home']); // treba se napraviti unauthorized komponenta, privremeno rjesenje
+          this.router.navigate(['not-authorized']);
           return false;
         }
       }
