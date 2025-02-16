@@ -3,10 +3,20 @@ import {UserService} from '../../services/user.service';
 import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
 import {Router} from '@angular/router';
-import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 import {CountryService} from '../../services/country.service';
 import {Country} from '../../Models/Country';
 import {HttpClient} from '@angular/common/http';
+import {usernameAsyncValidator} from '../../validators/username-async-validator';
+import {catchError, map, Observable, of} from 'rxjs';
 
 
 @Component({
@@ -20,29 +30,29 @@ export class RegisterComponent implements OnInit {
         this.loadCities();
     }
 
-   model:any = {};
+    model:any = {};
     cities:City[]=[];
     filteredCities:City[]=[]
     countries:Country[]=[];
     httpClient=inject(HttpClient)
-  accountService=inject(UserService);
-  cityService=inject(CityService);
-  countryService=inject(CountryService)
-  router=inject(Router);
-  fb=inject(FormBuilder);
-  passwordShow: boolean=false;
-  captchaSuccess:boolean=false;
+    accountService=inject(UserService);
+    cityService=inject(CityService);
+    countryService=inject(CountryService)
+    router=inject(Router);
+    fb=inject(FormBuilder);
+    passwordShow: boolean=false;
+    captchaSuccess:boolean=false;
 
   registrationForm=this.fb.group({
     personalInfo:this.fb.group({
       firstName: ['', [Validators.required,Validators.min(2),Validators.max(15)]],
       lastName: ['', [Validators.required,Validators.min(2),Validators.max(15)]],
-      username: ['', [Validators.required,Validators.min(5),Validators.max(20)]],
+      username: ['', [Validators.required,Validators.minLength(4),Validators.maxLength(20)],[usernameAsyncValidator()]],
       birthDate: ['', Validators.required],
     }),
     contactDetails:this.fb.group({
       emailAdress: ['', [Validators.required,Validators.email]],
-      phoneNumber: ['', [Validators.required,Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
+      phoneNumber: ['', [Validators.required,Validators.pattern("^(\\+?[0-9][0-9\\s\\-\\(\\)]*)$")]],
     }),
     address:this.fb.group({
       countryId: ['', Validators.required],
@@ -67,8 +77,6 @@ export class RegisterComponent implements OnInit {
       next: value => {this.passwords.controls['repeatPassword'].updateValueAndValidity()}
     })
   }
-
-
 
   get personalInfo(): FormGroup {
     return this.registrationForm.get('personalInfo') as FormGroup;

@@ -1,7 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {UserDto} from '../Models/UserDto';
-import {map} from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {Router} from '@angular/router';
 import {UserFilter} from '../Models/UserFilter';
 import {City} from '../Models/City';
@@ -119,5 +119,19 @@ export class UserService {
       console.log(params);
 
       return this.http.get<UserDto[]>(`${this.baseUrl}user/filter`,{observe:'response',params});
+  }
+
+  CheckUsernameAvailability(username:string):Observable<boolean>
+  {
+    const object={
+      username:username
+    }
+    console.log(object);
+    return this.http.post<{ isTaken: boolean }>(this.baseUrl+'Validator/check-username',object)
+      .pipe(map(response => {
+        console.log("Server response",response);
+        return response.isTaken
+      }
+      ));
   }
 }
