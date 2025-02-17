@@ -2,6 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {City} from '../../Models/City';
 import {CityService} from '../../services/city.service';
 import {EmployeeService} from '../../services/employee.service';
+import {PasswordResetService} from '../../services/password-reset.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -13,6 +14,7 @@ export class EditProfileComponent implements OnInit {
   model:any={};
   cityService=inject(CityService);
   employeeService=inject(EmployeeService);
+  private passwordResetService=inject(PasswordResetService)
 
   passwordShow: boolean=false;
   passwordSame: boolean=true;
@@ -44,7 +46,7 @@ export class EditProfileComponent implements OnInit {
     if(!this.passwordSame){
       alert("Passwords must match");
     }else
-      this.employeeService.ChangePassword(passwordChangeModel);
+      this.passwordResetService.ChangePassword(passwordChangeModel);
   }
 
   ComparePassword() {

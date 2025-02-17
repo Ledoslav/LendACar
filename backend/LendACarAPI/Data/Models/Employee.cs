@@ -27,5 +27,8 @@ namespace LendACarAPI.Data.Models
         public int WorkingHourId { get; set; }
         public WorkingHour? WorkingHour { get; set; }
 
+        public string? ResetPasswordToken { get; set; }
+        public DateTime? ResetPasswordTokenExpiry { get; set; }
+
     }
 }

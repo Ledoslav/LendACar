@@ -9,5 +9,7 @@ namespace LendACarAPI.DTOs
         public string? CurrentPassword { get; set; }
         [Required]
         public string? NewPassword { get; set; }
+
+        public string? ResetToken { get; set; }
     }
 }

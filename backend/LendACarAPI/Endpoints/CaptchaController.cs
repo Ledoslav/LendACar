@@ -21,7 +21,7 @@ namespace LendACarAPI.Endpoints
 
             HttpClient client = new HttpClient();
 
-            string secretKey = "6LfhF7IqAAAAAIuHgcOteCdtU8kriPV_yS1X2YZ9";
+            string? secretKey = Environment.GetEnvironmentVariable("CaptchaSecretKey");
 
             string verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
 

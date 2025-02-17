@@ -22,5 +22,14 @@ namespace LendACarAPI.Endpoints
         }
 
 
+        [HttpGet("env-test")]
+        public IActionResult TestEndpoint2()
+        {
+            var test=Environment.GetEnvironmentVariable("SecretKey");
+
+            return Ok(test);
+        }
+
+
     }
 }
