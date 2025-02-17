@@ -1,11 +1,13 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 
 namespace LendACarAPI.Endpoints
 {
@@ -22,8 +24,72 @@ namespace LendACarAPI.Endpoints
     /// 
 
 
-    public class ResetPasswordController(ApplicationDbContext db) : ControllerBase
+    public class ResetPasswordController(ApplicationDbContext db,IEmailService emailService) : ControllerBase
     {
+        //Samo radi za usere jer employees nemaju validnu email adresu
+        //Implementacija za employee i usere ce biti slican kao i za reset password metodu
+        [HttpPost("send-reset-token")]
+        public async Task<ActionResult> SendEmail([FromBody] EmailSendPasswordResetRequest request,CancellationToken cancellationToken)
+        {
+            var emailToken = RandomNumberGenerator.GetInt32(100000, 999999);
+
+            var user = await db.Users.FirstOrDefaultAsync(u => u.EmailAdress == request.EmailTo);
+            if (user == null)
+                return BadRequest("User with given email was not found");
+
+
+            user.ResetPasswordToken = emailToken.ToString();
+            user.ResetPasswordTokenExpiry = DateTime.Now.AddMinutes(15);
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            string emailBody = $@"
+                         <html>
+                         <body style='font-family: Arial, sans-serif;'>
+                             <h3>Password Reset Request</h3>
+                             <h2>Hello,</h2>
+                             <h3>Use the code below to reset your password:</h3>
+                             <h3>{emailToken}</h3>
+                             <p>This code will expire in 15 minutes.</p>
+                             <p>If you didn’t request a password reset, please ignore this email.</p>
+                         </body>
+                         </html>";
+
+            var email = new EmailDto()
+            {
+                To = request.EmailTo,
+                Subject = $"Password reset verification code",
+                Body = emailBody
+            };
+
+            await emailService.SendEmailAsync(email);
+            bool isSent = true;
+
+
+            return Ok(new {isSent});
+        }
+
+        [HttpPost("validate-password-token")]
+        public async Task<ActionResult> ValidateToken([FromBody] EmailSendPasswordResetRequest resetRequest,CancellationToken cancellationToken)
+        {
+            var user = await db.Users.FirstOrDefaultAsync(u => u.EmailAdress == resetRequest.EmailTo, cancellationToken);
+            bool isValidToken = true;
+
+            if (user == null)
+                return BadRequest("User was with given email was not found");
+
+            if (user.ResetPasswordToken != resetRequest.ResetToken || user.ResetPasswordTokenExpiry < DateTime.Now)
+            {
+                isValidToken = false;
+                return BadRequest(new { isValidToken});
+            }
+
+            return Ok(new { isValidToken });
+        }
+
+
+
+
 
         [HttpPut("reset")]
         public async Task<IActionResult> ResetPassword([FromBody] PasswordResetDto resetDto,CancellationToken cancellationToken)
@@ -39,6 +105,11 @@ namespace LendACarAPI.Endpoints
 
             if (user != null)
             {
+                if(user.ResetPasswordToken!=resetDto.ResetToken || user.ResetPasswordTokenExpiry < DateTime.Now)
+                    return BadRequest("Invalid reset token");
+                
+
+
                 var hashedPassword = GeneratePasswordHash(resetDto.NewPassword);
 
                 var salt = hashedPassword.Item1;
@@ -171,6 +242,12 @@ namespace LendACarAPI.Endpoints
 
             return true;
 
+        }
+
+        public class EmailSendPasswordResetRequest
+        {
+            public string? EmailTo { get; set; }
+            public string? ResetToken { get; set;}
         }
     }
 }

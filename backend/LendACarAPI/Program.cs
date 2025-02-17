@@ -3,6 +3,7 @@ using LendACarAPI.Helper.Auth;
 using Microsoft.EntityFrameworkCore;
 using LendACarAPI.Hubs;
 using LendACarAPI.Services;
+using DotNetEnv;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", false)
@@ -14,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(config.GetConnectionString("db")));
 
+Env.Load();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -23,6 +26,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IRenderPDFReport, RenderPDFReport>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, GmailService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>

@@ -26,12 +26,10 @@ export class MyAuthServiceService {
     localStorage.setItem('auth-token',JSON.stringify(tokenObject));
   }
 
-
   getMyAuthInfo(): TokenClaims | null {
     const tokenClaims:TokenClaims | null=this.getToken()?.claims ?? null;
     return tokenClaims;
   }
-
 
   getToken():TokenObject | null{
     const tokenString=localStorage.getItem('auth-token') ?? '';

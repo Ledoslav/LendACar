@@ -71,6 +71,7 @@ export class UserService {
       next:()=>{
         alert("Password change successful");
         localStorage.removeItem('user');
+        localStorage.removeItem('auth-token')
         void this.router.navigateByUrl("/user/dashboard");
         this.currentUser.set(null);
       },

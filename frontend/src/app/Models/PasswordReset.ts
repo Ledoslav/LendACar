@@ -3,4 +3,5 @@ export interface PasswordReset {
   currentPassword?: string;
   newPassword: string;
   userType?:string;
+  resetToken:string|null;
 }

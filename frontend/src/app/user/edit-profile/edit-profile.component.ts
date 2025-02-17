@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {Country} from '../../Models/Country';
 import {CountryService} from '../../services/country.service';
+import {PasswordResetService} from '../../services/password-reset.service';
 
 
 @Component({
@@ -45,6 +46,7 @@ export class EditProfileComponent implements OnInit {
   accountService=inject(UserService);
   cityService=inject(CityService);
   router=inject(Router);
+  private passwordResetService=inject(PasswordResetService);
 
 
   //passwordShow: boolean=false;
@@ -117,7 +119,8 @@ export class EditProfileComponent implements OnInit {
     delete passwordChangeModel.passwordShow
     console.log(passwordChangeModel);
 
-    this.accountService.ChangePassword(passwordChangeModel)
+    this.passwordResetService.ChangePassword(passwordChangeModel)
+    //this.accountService.ChangePassword(passwordChangeModel)
   }
 
   loadCountries(){

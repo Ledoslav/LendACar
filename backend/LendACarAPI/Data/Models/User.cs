@@ -31,6 +31,8 @@ namespace LendACarAPI.Data.Models
         [Required]
         public bool IsBanned { get; set; } = false;
 
+        public string? ResetPasswordToken { get; set; }
+        public DateTime? ResetPasswordTokenExpiry { get; set; }
 
         // Najvjerovatnije cemo koristiti string sa URL-om koji prikazuje sliku vozacke dozvole
         public DriversLicense DriversLicense { get; set; }
