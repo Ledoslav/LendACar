@@ -3,6 +3,26 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { VehicleDto } from '../Models/VehicleDto';
 import { Observable } from 'rxjs';
 
+export interface VehicleUploadDto {
+  title: string;
+  engineDisplacement: number;
+  enginePower: number;
+  transmissionType: number; // 0 - Manual, 1 - Automatic, 2 - AutomatedManual, 3 - DCT, 4 - CVT
+  fuelType: number; // 0 - Petrol , 1 - Diesel, 2 - Electric, 3 - Hybrid, 4 - LPG, 5 - CNG
+  airConditioning: number; // 0 - None, 1 - Single-Zone, 2 - Double-Zone, 3 - Triple-Zone, 4 - Quad-Zone
+  numberOfSeats: number;
+  towingHitch: boolean;
+  description: string;
+  productionYear: number;
+  avaliable: boolean;
+  averageRating: number;
+  pricePerDay: number;
+  vehicleCategoryID: number;
+  vehicleModelID: number;
+  userID: number;
+  cityID: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,8 +43,8 @@ export class VehicleListingService {
   }
 
   // Upload a new vehicle
-  uploadVehicle(vehicle: VehicleDto): Observable<VehicleDto> {
-    return this.http.post<VehicleDto>(`${this.baseUrl}vehicle/upload`, vehicle);
+  uploadVehicle(vehicle: VehicleUploadDto): Observable<VehicleUploadDto> {
+    return this.http.post<VehicleDto>(`${this.baseUrl}vehicle/addNew`, vehicle);
   }
 
   // Update an existing vehicle

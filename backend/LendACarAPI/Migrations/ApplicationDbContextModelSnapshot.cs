@@ -387,14 +387,14 @@ namespace LendACarAPI.Migrations
                     b.Property<int>("FuelType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MaximumLoad")
-                        .HasColumnType("int");
-
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
 
                     b.Property<double>("PricePerDay")
                         .HasColumnType("float");
+
+                    b.Property<int>("ProductionYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()

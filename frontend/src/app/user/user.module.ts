@@ -12,8 +12,15 @@ import {MatStep, MatStepper, MatStepperNext, MatStepperPrevious} from "@angular/
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {NgxCaptchaModule} from 'ngx-captcha';
 import { PollsComponent } from './polls/polls.component';
-//import { VehicleUploadComponent } from './vehicle-upload/vehicle-upload.component';
+import { VehicleUploadComponent } from './vehicle-upload/vehicle-upload.component';
 import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 @NgModule({
@@ -25,7 +32,7 @@ import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
     UserProfileComponent,
     EditProfileComponent,
     PollsComponent,
-    //VehicleUploadComponent,
+    VehicleUploadComponent,
     MyVehiclesComponent,
   ],
   imports: [
@@ -40,7 +47,15 @@ import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
     MatStepperNext,
     MatError,
     MatStepperPrevious,
-    NgxCaptchaModule
+    NgxCaptchaModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatStepperModule,
+    MatButtonModule,
+    MatCheckboxModule,
+
   ]
 })
 export class UserModule { }

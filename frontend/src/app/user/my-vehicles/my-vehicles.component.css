@@ -64,7 +64,7 @@
   
   .vehicle-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
   }
   
@@ -74,6 +74,7 @@
     border-radius: 8px;
     background-color: #fff;
     position: relative;
+    background-color: inherit;
   }
   
   .vehicle-card .vehicle-image {

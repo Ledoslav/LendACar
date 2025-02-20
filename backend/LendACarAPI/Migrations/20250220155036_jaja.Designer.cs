@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LendACarAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250205202957_PersonTableJWTChanges2")]
-    partial class PersonTableJWTChanges2
+    [Migration("20250220155036_jaja")]
+    partial class jaja
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -232,6 +232,9 @@ namespace LendACarAPI.Migrations
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsAppUser")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsEmployee")
                         .HasColumnType("bit");
 
@@ -335,14 +338,14 @@ namespace LendACarAPI.Migrations
                     b.Property<int>("FuelType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MaximumLoad")
-                        .HasColumnType("int");
-
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
 
                     b.Property<double>("PricePerDay")
                         .HasColumnType("float");
+
+                    b.Property<int>("ProductionYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -611,6 +614,12 @@ namespace LendACarAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResetPasswordTokenExpiry")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -650,6 +659,12 @@ namespace LendACarAPI.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResetPasswordTokenExpiry")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Username")
                         .IsRequired()

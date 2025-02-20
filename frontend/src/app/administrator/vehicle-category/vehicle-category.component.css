@@ -1,14 +1,17 @@
+/* General container styles */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
 
+/* Title styling */
 h2 {
   text-align: center;
   margin-bottom: 20px;
 }
 
+/* Table styling */
 .vehicle-categories-table {
   width: 100%;
   border-collapse: collapse;
@@ -18,11 +21,12 @@ h2 {
 .vehicle-categories-table th, .vehicle-categories-table td {
   padding: 12px;
   text-align: left;
-  border: 1px solid white;
+  border: 1px solid #ddd;
 }
 
 .vehicle-categories-table th {
   background-color: #353A40;
+  color: white;
 }
 
 .vehicle-categories-table td button {
@@ -32,12 +36,14 @@ h2 {
   color: white;
   border: none;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 .vehicle-categories-table td button:hover {
   background-color: #0056b3;
 }
 
+/* Form styles */
 .add-category-form {
   max-width: 600px;
   margin: 0 auto;
@@ -50,6 +56,7 @@ h2 {
 .add-category-form label {
   display: block;
   margin-bottom: 8px;
+  color: white;
 }
 
 .add-category-form input {
@@ -59,6 +66,12 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: rgb(33, 37, 41);
+  color: white;
+}
+
+.add-category-form input:focus {
+  border-color: #007bff;
+  outline: none;
 }
 
 .add-category-form button {
@@ -74,6 +87,7 @@ h2 {
   background-color: #0056b3;
 }
 
+/* Category icon */
 .category-icon {
   width: 50px;
   height: 50px;
@@ -81,41 +95,78 @@ h2 {
   border-radius: 5px; /* Optional for rounded icons */
 }
 
+/* Ensure drag-drop-area is displayed as a block with proper dimensions */
 .drag-drop-area {
-  border: 2px dashed white;
-  border-radius: 5px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  color: white;
-  transition: background-color 0.3s ease;
-  margin-bottom: 10px;
+  display: block !important;  /* Make it a block-level element */
+  width: 100% !important; /* Full width of the parent */
+  height: 200px !important; /* Set a fixed height to make it square-ish */
+  border: 3px dashed #007bff !important;  /* Blue dashed border */
+  border-radius: 10px !important;
+  background-color: rgba(0, 123, 255, 0.1) !important;  /* Light background */
+  color: #007bff !important; /* Text color */
+  font-weight: bold !important;
+  text-align: center !important;
+  line-height: 200px !important;  /* Vertically center the text */
+  cursor: pointer !important;
+  transition: background-color 0.3s ease !important;
+  margin-bottom: 20px !important;  /* Add spacing below */
 }
 
 .drag-drop-area:hover {
-  border: 2px dashed #ccc;
-  border-radius: 5px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  color: #ccc;
-  transition: background-color 0.3s ease;
-  margin-bottom: 10px;
+  background-color: rgba(0, 123, 255, 0.2) !important;  /* Lighter background on hover */
+  border-color: #0056b3 !important; /* Darker blue on hover */
 }
 
+.drag-drop-area span {
+  font-size: 18px !important; /* Larger font for the drag-drop text */
+}
+
+/* Handling drag state for the drop area */
 .drag-drop-area.dragging {
-  background-color: #ccc;
+  background-color: rgba(0, 123, 255, 0.3) !important;  /* Darker background when dragging */
+  color: #ffffff !important;  /* White text when dragging */
 }
 
-.drag-drop-area p {
-  margin: 15px;
-  font-size: 16px;
+/* Image Preview section */
+.image-upload-section {
+  position: relative;
+  margin-top: 20px;
+}
+
+/* Styling for preview images */
+.image-preview-container {
+  display: flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+}
+
+.image-preview {
+  position: relative !important;
 }
 
 .image-preview img {
-  width: 33%;
-  height: 33%;
-  object-fit: cover;
-  border-radius: 5px;
-  margin-top: 10px;
+  width: 100px !important;
+  height: 100px !important;
+  object-fit: cover !important;
+  border-radius: 5px !important;
+  border: 2px solid #ddd !important; /* Optional border for preview */
+}
+
+/* Remove button for image preview */
+.image-preview button {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  color: white !important;
+  border: none !important;
+  padding: 5px !important;
+  cursor: pointer !important;
+  border-radius: 50% !important;
+  font-size: 14px !important;  /* Make the button a bit larger */
+}
+
+.image-preview button:hover {
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }

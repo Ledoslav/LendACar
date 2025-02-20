@@ -9,7 +9,8 @@ import {EditProfileComponent} from './edit-profile/edit-profile.component';
 import { PollsComponent } from './polls/polls.component';
 import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
 import {AuthGuard} from '../guards/auth.guard';
-//import { VehicleUploadComponent } from './vehicle-upload/vehicle-upload.component';
+import { VehicleUploadComponent } from './vehicle-upload/vehicle-upload.component';
+
 
 const routes: Routes = [
   {
@@ -32,7 +33,7 @@ const routes: Routes = [
           { path: 'userProfile', component: UserProfileComponent },
           { path: 'editProfile', component: EditProfileComponent },
           { path: 'myVehicles', component: MyVehiclesComponent },
-          //{path:'vehicleUpload', component: VehicleUploadComponent},
+          { path:'vehicleUpload', component: VehicleUploadComponent},
         ]
       }
     ]

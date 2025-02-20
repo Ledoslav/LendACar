@@ -57,6 +57,19 @@ namespace LendACarAPI.Endpoints{
             return Ok(VehicleModels);
         }
 
+        [HttpGet("getModelsByBrandId/{brandId}")]
+        public async Task<ActionResult<VehicleModel>> GetVehicleModelByBrandId(int brandId)
+        {
+            var VehicleModels = await _context.VehicleModels
+                .Where(vm => vm.VehicleBrandId == brandId)
+                .ToListAsync();
+
+            if (VehicleModels.Count < 1)
+                return NotFound(new { message = "No vehicle models found!" });
+
+            return Ok(VehicleModels);
+        }
+
         [HttpGet("getBrand/{brandId}")]
         public async Task<ActionResult<VehicleModel>> GetVehicleBrandById(int brandId)
         {

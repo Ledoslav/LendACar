@@ -43,8 +43,8 @@ namespace LendACarAPI.Endpoints
                     AirConditioning = vehicle.AirConditioning,
                     NumberOfSeats = vehicle.NumberOfSeats,
                     TowingHitch = vehicle.TowingHitch,
-                    MaximumLoad = vehicle.MaximumLoad,
                     Description = vehicle.Description,
+                    ProductionYear = vehicle.ProductionYear,
                     Avaliable = vehicle.Avaliable,
                     AverageRating = vehicle.AverageRating,
                     PricePerDay = vehicle.PricePerDay,
@@ -90,8 +90,8 @@ namespace LendACarAPI.Endpoints
                 AirConditioning = vehicle.AirConditioning,
                 NumberOfSeats = vehicle.NumberOfSeats,
                 TowingHitch = vehicle.TowingHitch,
-                MaximumLoad = vehicle.MaximumLoad,
                 Description = vehicle.Description,
+                ProductionYear = vehicle.ProductionYear,
                 Avaliable = vehicle.Avaliable,
                 AverageRating = vehicle.AverageRating,
                 PricePerDay = vehicle.PricePerDay,
@@ -132,8 +132,8 @@ namespace LendACarAPI.Endpoints
                 AirConditioning = vehicle.AirConditioning,
                 NumberOfSeats = vehicle.NumberOfSeats,
                 TowingHitch = vehicle.TowingHitch,
-                MaximumLoad = vehicle.MaximumLoad,
                 Description = vehicle.Description,
+                ProductionYear = vehicle.ProductionYear,
                 Avaliable = vehicle.Avaliable,
                 AverageRating = vehicle.AverageRating,
                 PricePerDay = vehicle.PricePerDay,
@@ -151,7 +151,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpPost("addNew")]
-        public async Task<IActionResult> AddVehicle([FromBody] VehicleDto vehicleDto)
+        public async Task<IActionResult> AddVehicle([FromBody] VehicleUploadDto vehicleDto)
         {
             // Check if the User with the provided UserID exists and is verified
             var user = await db.Users.FirstOrDefaultAsync(u => u.Id == vehicleDto.UserID);
@@ -169,7 +169,6 @@ namespace LendACarAPI.Endpoints
             // If the user exists and is verified, proceed with adding the vehicle
             var newVehicle = new Vehicle
             {
-                Id = vehicleDto.Id,
                 Title = vehicleDto.Title,
                 EngineDisplacement = vehicleDto.EngineDisplacement,
                 EnginePower = vehicleDto.EnginePower,
@@ -178,8 +177,8 @@ namespace LendACarAPI.Endpoints
                 AirConditioning = vehicleDto.AirConditioning,
                 NumberOfSeats = vehicleDto.NumberOfSeats,
                 TowingHitch = vehicleDto.TowingHitch,
-                MaximumLoad = vehicleDto.MaximumLoad,
                 Description = vehicleDto.Description,
+                ProductionYear = vehicleDto.ProductionYear,
                 Avaliable = vehicleDto.Avaliable,
                 AverageRating = vehicleDto.AverageRating,
                 PricePerDay = vehicleDto.PricePerDay,
@@ -211,8 +210,8 @@ namespace LendACarAPI.Endpoints
             vehicle.AirConditioning = vehicleDto.AirConditioning;
             vehicle.NumberOfSeats = vehicleDto.NumberOfSeats;
             vehicle.TowingHitch = vehicleDto.TowingHitch;
-            vehicle.MaximumLoad = vehicleDto.MaximumLoad;
             vehicle.Description = vehicleDto.Description;
+            vehicle.ProductionYear = vehicleDto.ProductionYear;
             vehicle.Avaliable = vehicleDto.Avaliable;
             vehicle.AverageRating = vehicleDto.AverageRating;
             vehicle.PricePerDay = vehicleDto.PricePerDay;
@@ -241,8 +240,8 @@ namespace LendACarAPI.Endpoints
                 AirConditioning = returnVehicle.AirConditioning,
                 NumberOfSeats = returnVehicle.NumberOfSeats,
                 TowingHitch = returnVehicle.TowingHitch,
-                MaximumLoad = returnVehicle.MaximumLoad,
                 Description = returnVehicle.Description,
+                ProductionYear = returnVehicle.ProductionYear,
                 Avaliable = returnVehicle.Avaliable,
                 AverageRating = returnVehicle.AverageRating,
                 PricePerDay = returnVehicle.PricePerDay,

@@ -8,8 +8,8 @@ export interface VehicleDto {
   airConditioning: number; // 0 - None, 1 - Single-Zone, 2 - Double-Zone, 3 - Triple-Zone, 4 - Quad-Zone
   numberOfSeats: number;
   towingHitch: boolean;
-  maximumLoad: number;
   description: string;
+  productionYear: number;
   avaliable: boolean;
   averageRating: number;
   pricePerDay: number;
