@@ -90,22 +90,60 @@ namespace LendACarAPI.Endpoints
 
             using var hmac=new HMACSHA256();
 
+            User createdUser;
 
-            var createdUser = new User()
+
+
+            if (user.SecurityQuestionId != null)
             {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                BirthDate = DateTime.Parse(user.BirthDate),
-                CityId = user.CityId,
-                EmailAdress = user.EmailAdress,
-                Username = user.Username,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
-                PasswordSalt = hmac.Key,
-                CreatedDate=DateTime.Now,
-                IsVerified = false,
-                IsAppUser = true
-            };
+                var questionAnswer = new UserSecurityQuestionAnswer
+                {
+                    SecurityQuestionId = user.SecurityQuestionId.Value,
+                    AnswerHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.QuestionAnswer)),
+                    AnswerSalt = hmac.Key,
+                    AnswerAttempts = 0,
+                    IsDisabled = false
+                };
+
+                db.UserSecurityQuestionAnswers.Add(questionAnswer);
+                await db.SaveChangesAsync(cancellationToken);
+
+                createdUser = new User()
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    BirthDate = DateTime.Parse(user.BirthDate),
+                    CityId = user.CityId,
+                    EmailAdress = user.EmailAdress,
+                    Username = user.Username,
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
+                    PasswordSalt = hmac.Key,
+                    CreatedDate = DateTime.Now,
+                    UserSecurityQuestionAnswerId = questionAnswer.Id,
+                    IsVerified = false,
+                    IsAppUser = true
+                };
+            }
+
+            else
+            {
+                createdUser = new User()
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    BirthDate = DateTime.Parse(user.BirthDate),
+                    CityId = user.CityId,
+                    EmailAdress = user.EmailAdress,
+                    Username = user.Username,
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
+                    PasswordSalt = hmac.Key,
+                    CreatedDate=DateTime.Now,
+                    IsVerified = false,
+                    IsAppUser = true
+                };
+            }
 
             db.Users.Add(createdUser);
             await db.SaveChangesAsync(cancellationToken);    
@@ -149,6 +187,7 @@ namespace LendACarAPI.Endpoints
                 AverageRating = user.AverageRating,
                 IsVerified = user.IsVerified,
                 Token= token,
+                UserSecurityQuestionAnswerId = user.UserSecurityQuestionAnswerId
             });
         }
 
@@ -245,6 +284,9 @@ namespace LendACarAPI.Endpoints
 
             if (companyEmployee.Count > 0) 
                  db.RemoveRange(companyEmployee);
+
+            var userSecurityQuestionAnswer = user.UserSecurityQuestionAnswer;
+            db.UserSecurityQuestionAnswers.Remove(userSecurityQuestionAnswer);
 
 
             db.Remove(user);

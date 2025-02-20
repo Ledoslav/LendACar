@@ -33,5 +33,9 @@ namespace LendACarAPI.DTOs
         public bool IsVerified { get; set; }
 
         public string? Token { get; set; }
+
+
+        public int? UserSecurityQuestionAnswerId { get; set; }
+        public UserSecurityQuestionAnswer? SecurityQuestion { get; set; }
     }
 }

@@ -102,43 +102,87 @@
         </div>
       </form> <!-- Form END -->
 
-      <!-- change password -->
-      <form [formGroup]="changePasswordForm" (ngSubmit)="ChangePassword()">
-        <div class="col-xxl-6">
-          <div class="bg-secondary-soft px-4 py-5 rounded">
-            <div class="row g-3">
-              <h4 class="my-4">Change Password</h4>
-              <!-- Old password -->
-              <div class="col-md-6">
-                <label for="exampleInputPassword1" class="form-label">Current password *</label>
-                <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control" id="exampleInputPassword1"
-                       formControlName="currentPassword" name="currentpassword">
-              </div>
-              <!-- New password -->
-              <div class="col-md-6">
-                <label for="exampleInputPassword2" class="form-label">New password *</label>
-                <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'"  class="form-control" id="exampleInputPassword2"
-                      formControlName="newPassword" name="newpassword">
-              </div>
-              <!-- Confirm password -->
-              <div class="col-md-12">
-                <label for="exampleInputPassword3" class="form-label">Confirm Password *</label>
-                <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control" id="exampleInputPassword3"
-                       name="repeatPassword" formControlName="repeatPassword">
 
-                <div class="d-flex" *ngIf="changePasswordForm.get('repeatPassword')?.invalid && changePasswordForm.get('repeatPassword')?.touched">
-                  <span style="color: red;" class="text-danger">Passwords don't match</span>
+      <div class="d-flex  align-items-end pt-4">
+        <!-- change password -->
+        <form [formGroup]="changePasswordForm" (ngSubmit)="ChangePassword()">
+          <div class="col-xxl-11">
+            <div class="bg-secondary-soft px-4 py-5 rounded">
+              <div class="row g-3">
+                <h4 class="my-4">Change Password</h4>
+                <!-- Old password -->
+                <div class="col-md-6">
+                  <label for="exampleInputPassword1" class="form-label">Current password *</label>
+                  <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control" id="exampleInputPassword1"
+                         formControlName="currentPassword" name="currentpassword">
                 </div>
+                <!-- New password -->
+                <div class="col-md-6">
+                  <label for="exampleInputPassword2" class="form-label">New password *</label>
+                  <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'"  class="form-control" id="exampleInputPassword2"
+                         formControlName="newPassword" name="newpassword">
+                </div>
+                <!-- Confirm password -->
+                <div class="col-md-12">
+                  <label for="exampleInputPassword3" class="form-label">Confirm Password *</label>
+                  <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control" id="exampleInputPassword3"
+                         name="repeatPassword" formControlName="repeatPassword">
 
-                <input formControlName="passwordShow" type="checkbox" id="check" name="check"/>
-                <label class="form-label px-2" for="check">Show password</label>
+                  <div class="d-flex" *ngIf="changePasswordForm.get('repeatPassword')?.invalid && changePasswordForm.get('repeatPassword')?.touched">
+                    <span style="color: red;" class="text-danger">Passwords don't match</span>
+                  </div>
+
+                  <input formControlName="passwordShow" type="checkbox" id="check" name="check"/>
+                  <label class="form-label px-2" for="check">Show password</label>
+                </div>
               </div>
+              <button type="submit" class="btn btn-primary btn-lg mt-5" [disabled]="changePasswordForm.invalid">Change password</button>
             </div>
-            <button type="submit" class="btn btn-primary btn-lg mt-5" [disabled]="changePasswordForm.invalid">Change password</button>
           </div>
-        </div>
-      </form>
+        </form>
 
+        <!-- security question -->
+        <form [formGroup]="securityQuestionForm">
+          <div class="col-xxl-11">
+            <div class="bg-secondary-soft px-4 py-5 rounded">
+              <div class="row g-3">
+                <h4 *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId!=null" class="my-4">Change security question</h4>
+                <h4 *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId==null" class="my-4">Add security question</h4>
+                <!-- Old password -->
+                <div class="col-md-12">
+                  <label for="exampleInputPassword1" class="form-label">Current password *</label>
+                  <input type="password" class="form-control" id="exampleInputPassword5"
+                         formControlName="currentPassword">
+                </div>
+                <!-- Security Questions-->
+                <div class="col-md-12">
+                  <label for="questions">Security Questions</label>
+                  <select class="form-select bg-light"  style="color: black;" aria-label="Default select example" formControlName="securityQuestionId" >
+                    <option style="color: black" *ngFor="let question of questions" id="questions" value="{{question.id}}">{{question.questionText}}</option>
+                  </select>
+                </div>
+                <!-- Confirm password -->
+                <div class="col-md-12">
+                  <label for="exampleInputPassword3" class="form-label">Question Answer *</label>
+                  <input  class="form-control" id="exampleInputPassword4"
+                         name="repeatPassword" formControlName="questionAnswer">
+                </div>
+              </div>
+              <p style="font-size: 13px">If you want to remove the question you need to enter the fields correct</p>
+              <div *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId!=null">
+                <button type="button" class="btn btn-primary btn-lg mt-4 mx-3" (click)="ChangeQuestion()" [disabled]="securityQuestionForm.invalid">Change question</button>
+                <button type="button" class="btn btn-danger btn-lg mt-4" (click)="RemoveQuestion()" [disabled]="securityQuestionForm.invalid">Remove question</button>
+              </div>
+
+              <div *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId==null">
+                <button type="button" class="btn btn-primary btn-lg mt-4 mx-3" (click)="AddQuestion()" [disabled]="securityQuestionForm.invalid">Add question</button>
+              </div>
+
+            </div>
+          </div>
+        </form>
+
+      </div>
     </div>
   </div>
 </div>

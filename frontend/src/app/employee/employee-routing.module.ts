@@ -7,10 +7,12 @@ import {ProfileOverviewComponent} from './profile-overview/profile-overview.comp
 import {EditProfileComponent} from './edit-profile/edit-profile.component';
 import { PollManagementComponent } from './poll-management/poll-management.component';
 import {AuthGuard} from '../guards/auth.guard';
+import {VehicleCategoriesComponent} from '../administrator/vehicle-category/vehicle-category.component';
+import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 
 const routes: Routes = [
   {path:'login', component: LoginComponent},
-
+  {path:'forgotPassword', component:ForgotPasswordComponent},
   {
     path:'',
     canActivate:[AuthGuard],
@@ -23,6 +25,7 @@ const routes: Routes = [
       {path:'profileEdit',component:EditProfileComponent},
       {path:'verificationRequests',component:VerificationRequestComponent},
       {path:'pollManagement', component:PollManagementComponent},
+
     ]
   }
 ];

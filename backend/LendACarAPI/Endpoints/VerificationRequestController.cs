@@ -78,7 +78,7 @@ namespace LendACarAPI.Endpoints
             if (user == null) return NotFound("User doesn't exist.");
 
             var request = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.UserId == user.Id);
-            if (request == null) return NotFound("User hasn't submited a request.");
+            if (request == null) return BadRequest("User hasn't submited a request.");
 
 
             var verificationRequest = new VerificationDto

@@ -7,6 +7,8 @@ import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '
 import {Country} from '../../Models/Country';
 import {CountryService} from '../../services/country.service';
 import {PasswordResetService} from '../../services/password-reset.service';
+import {SecurityQuestion, SecurityQuestionService} from '../../services/security-question.service';
+import {UserSecurityQuestionAnswerService} from '../../services/user-security-question-answer.service';
 
 
 @Component({
@@ -39,6 +41,7 @@ export class EditProfileComponent implements OnInit {
   model:any={};
   filteredCities:City[] = [];
   countries: Country[]=[];
+  questions:SecurityQuestion[]=[]
   userEditForm:FormGroup;
 
   fb=inject(FormBuilder)
@@ -47,7 +50,8 @@ export class EditProfileComponent implements OnInit {
   cityService=inject(CityService);
   router=inject(Router);
   private passwordResetService=inject(PasswordResetService);
-
+  private securityQuestionService=inject(SecurityQuestionService);
+  private userSecurityQuestionAnswerService=inject(UserSecurityQuestionAnswerService);
 
   //passwordShow: boolean=false;
 
@@ -57,6 +61,13 @@ export class EditProfileComponent implements OnInit {
     repeatPassword: ['', [Validators.required,this.matchValues('newPassword')]],
     passwordShow:[false],
     emailAddress: '',
+  })
+
+
+  securityQuestionForm=this.fb.group({
+    securityQuestionId:[0,Validators.required],
+    questionAnswer: ['', Validators.required],
+    currentPassword: ['',Validators.required],
   })
 
   matchValues(matchTo: string): ValidatorFn {
@@ -70,6 +81,7 @@ export class EditProfileComponent implements OnInit {
 
     this.loadCountries();
     this.loadCities();
+    this.loadSecurityQuestion()
 
     this.userEditForm.get('countryId')?.valueChanges.subscribe(val=>{
       this.FilterCities(val);
@@ -138,12 +150,69 @@ export class EditProfileComponent implements OnInit {
     })
   }
 
+  loadSecurityQuestion() {
+    this.securityQuestionService.GetAllQuestions().subscribe(res => {
+      this.questions = res;
+      console.log(this.questions)
+    })
+  }
 
 FilterCities(countryId:any) {
       console.log(countryId);
       this.filteredCities=this.cities.filter(city=>city.countryId==countryId);
       console.log("Filtered cities")
       console.log(this.filteredCities);
+  }
+
+  ChangeQuestion(){
+    const userId=this.accountService.currentUser()?.id ?? 0 ;
+    const changeQuestionModel={... this.securityQuestionForm.value};
+    console.log(changeQuestionModel);
+    if(confirm("Are you sure you want to change security questions?")){
+        this.userSecurityQuestionAnswerService.ChangeSecurityQuestion(userId,changeQuestionModel).subscribe({
+          next:res=>{
+            alert("Question changed successfully")
+            this.accountService.currentUser.set(null);
+            localStorage.removeItem('user');
+            localStorage.removeItem('auth-token');
+            void this.router.navigateByUrl('/user/dashboard');
+          },
+          error:err=>console.log(err)
+        })
+    }
+  }
+
+  AddQuestion(){
+    const userId=this.accountService.currentUser()?.id ?? 0 ;
+    const changeQuestionModel={... this.securityQuestionForm.value};
+    console.log(changeQuestionModel);
+    this.userSecurityQuestionAnswerService.CreateAnswer(userId,changeQuestionModel).subscribe({
+      next:res=>{
+        alert("Security question added successfully");
+        this.accountService.currentUser.set(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('auth-token');
+        void this.router.navigateByUrl('/user/dashboard');
+      },
+      error:err=>console.log(err)
+    })
+  }
+
+  RemoveQuestion(){
+    const userId=this.accountService.currentUser()?.id ?? 0 ;
+    const changeQuestionModel={... this.securityQuestionForm.value};
+    if(confirm("Are you sure you want to remove security questions?")){
+      this.userSecurityQuestionAnswerService.RemoveSecurityQuestion(userId,changeQuestionModel).subscribe({
+        next:res=>{
+          alert("Question removed successfully")
+          this.accountService.currentUser.set(null);
+          localStorage.removeItem('user');
+          localStorage.removeItem('auth-token');
+          void this.router.navigateByUrl('/user/dashboard');
+        },
+        error:err=>console.log(err)
+      })
+    }
   }
 
 }
