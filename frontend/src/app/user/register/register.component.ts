@@ -17,6 +17,8 @@ import {Country} from '../../Models/Country';
 import {HttpClient} from '@angular/common/http';
 import {usernameAsyncValidator} from '../../validators/username-async-validator';
 import {catchError, map, Observable, of} from 'rxjs';
+import {SecurityQuestion, SecurityQuestionService} from '../../services/security-question.service';
+import {StepperSelectionEvent} from '@angular/cdk/stepper';
 
 
 @Component({
@@ -28,16 +30,19 @@ export class RegisterComponent implements OnInit {
     ngOnInit(): void {
         this.loadCountries();
         this.loadCities();
+        this.loadSecurityQuestion();
     }
 
     model:any = {};
     cities:City[]=[];
     filteredCities:City[]=[]
     countries:Country[]=[];
+    questions:SecurityQuestion[]=[];
     httpClient=inject(HttpClient)
     accountService=inject(UserService);
     cityService=inject(CityService);
-    countryService=inject(CountryService)
+    countryService=inject(CountryService);
+    private securityQuestionService=inject(SecurityQuestionService);
     router=inject(Router);
     fb=inject(FormBuilder);
     passwordShow: boolean=false;
@@ -61,8 +66,11 @@ export class RegisterComponent implements OnInit {
     passwords:this.fb.group({
       password: ['', Validators.required],
       repeatPassword: ['', [Validators.required,this.matchValues('password')]],
-    }
-    ),
+    }),
+    securityQuestion:this.fb.group({
+      securityQuestionId:[''],
+      questionAnswer:[''],
+    })
   });
 
 
@@ -90,7 +98,9 @@ export class RegisterComponent implements OnInit {
   get passwords(): FormGroup {
     return this.registrationForm.get('passwords') as FormGroup;
   }
-
+  get securityQuestion(): FormGroup {
+    return this.registrationForm.get('securityQuestion') as FormGroup;
+  }
 
 
   loadCountries(){
@@ -105,6 +115,16 @@ export class RegisterComponent implements OnInit {
     })
   }
 
+  loadSecurityQuestion(){
+    this.securityQuestionService.GetAllQuestions().subscribe(res=>{
+      this.questions=res;
+      console.log(this.questions)
+    })
+}
+
+showQuestions:boolean=true;
+isSelectSecurityQuestionShown=false;
+showJustCaptcha=false
 
   register() {
     this.model = {
@@ -112,6 +132,7 @@ export class RegisterComponent implements OnInit {
       ...this.contactDetails.value,
       ...this.address.value,
       ...this.passwords.value,
+      ...this.securityQuestion.value
     };
 
     console.log(this.model);
@@ -134,7 +155,6 @@ export class RegisterComponent implements OnInit {
   }
 
   handleSuccess(token: string) {
-    console.log(token)
 
     const obj={
       ResponseToken:token
@@ -147,6 +167,28 @@ export class RegisterComponent implements OnInit {
       error: err => {console.log(err)},
     })
   }
+
+
+  onStepChange(event: StepperSelectionEvent) {
+    // If moving back to Step 1, reset its form
+    if (event.previouslySelectedIndex > event.selectedIndex) {
+      if (event.selectedIndex === 3) {
+       this.showQuestions=false;
+      }
+    }
+  }
+
+  showSelectSecurityQuestion(){
+    this.isSelectSecurityQuestionShown=!this.isSelectSecurityQuestionShown;
+    this.showQuestions=!this.showQuestions;
+  }
+
+  showCaptcha(){
+    this.showJustCaptcha=!this.showJustCaptcha;
+    this.showQuestions=!this.showQuestions;
+  }
+
+
 }
 
 

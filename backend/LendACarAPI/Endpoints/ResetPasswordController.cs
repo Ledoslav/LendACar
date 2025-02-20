@@ -39,7 +39,7 @@ namespace LendACarAPI.Endpoints
 
 
             user.ResetPasswordToken = emailToken.ToString();
-            user.ResetPasswordTokenExpiry = DateTime.Now.AddMinutes(15);
+            user.ResetPasswordTokenExpiry = DateTime.Now.AddMinutes(1);
 
             await db.SaveChangesAsync(cancellationToken);
 
@@ -81,7 +81,7 @@ namespace LendACarAPI.Endpoints
             if (user.ResetPasswordToken != resetRequest.ResetToken || user.ResetPasswordTokenExpiry < DateTime.Now)
             {
                 isValidToken = false;
-                return BadRequest(new { isValidToken});
+                return Ok(new { isValidToken});
             }
 
             return Ok(new { isValidToken });

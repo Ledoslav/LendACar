@@ -35,6 +35,8 @@ namespace LendACarAPI.Data
         public DbSet<Administrator> Administrators { get; set; }
         public DbSet<VerificationRequest> VerificationRequests { get; set; }
         public DbSet<Poll> Polls { get; set; }
+        public DbSet<SecurityQuestion> SecurityQuestions { get; set; }
+        public DbSet<UserSecurityQuestionAnswer> UserSecurityQuestionAnswers { get; set; }
 
 
 

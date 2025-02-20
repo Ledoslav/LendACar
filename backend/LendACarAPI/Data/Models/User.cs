@@ -34,6 +34,12 @@ namespace LendACarAPI.Data.Models
         public string? ResetPasswordToken { get; set; }
         public DateTime? ResetPasswordTokenExpiry { get; set; }
 
+
+        [ForeignKey(nameof(UserSecurityQuestionAnswer))]
+        public int? UserSecurityQuestionAnswerId { get; set; }
+        public UserSecurityQuestionAnswer? UserSecurityQuestionAnswer { get; set; }
+
+
         // Najvjerovatnije cemo koristiti string sa URL-om koji prikazuje sliku vozacke dozvole
         public DriversLicense DriversLicense { get; set; }
 

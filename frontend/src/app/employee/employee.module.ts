@@ -9,6 +9,7 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { VerificationRequestComponent } from './verification-request/verification-request.component';
 import { PollManagementComponent } from './poll-management/poll-management.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { PollManagementComponent } from './poll-management/poll-management.compo
     EditProfileComponent,
     VerificationRequestComponent,
     PollManagementComponent,
+    ForgotPasswordComponent,
   ],
   imports: [
     CommonModule,

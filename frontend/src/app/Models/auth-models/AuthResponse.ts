@@ -17,4 +17,5 @@ export interface AuthResponse {
   workingHour:WorkingHour | null,
   workingHourId:number | null,
   jobTitle:string | null,
+  userSecurityQuestionAnswerId:number | null,
 }
