@@ -1,21 +1,91 @@
-<div class="container text-center" id="HomeDiv">
-  <div class="row align-items-center">
-    <div class="MainHomeDiv col d-flex justify-content-center align-items-center" id="EminBrankovicDiv">
-      <button type="button" class="btn btn-outline-primary" routerLink="/user/dashboard">User</button>
+<div class="landing-page">
+  <img class="vector" src="Vector.png" />
+  <div class="side-bar">
+    <div class="menu-item"><img src="Home.svg" alt="Home"> <span>Home</span></div>
+    <div class="menu-item"><img src="Bell.svg" alt="Activity"> <span>Activity</span></div>
+    <div class="menu-item"><img src="Messagesquare.svg" alt="Chats"> <span>Chats</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div class="menu-item"><img src="Bookmark.svg" alt="Saved"> <span>Saved</span></div>
+    <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>Reserved</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>My Vehicles</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div class="menu-item" routerLink="/company/dashboard"><img src="Plussquare.svg" alt="Create Company"> <span>Create Company</span></div>
+  </div>
+
+  <div class="content">
+    <div class="nav-bar">
+      <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
+      <div class="right-section">
+        <span class="text-wrapper-17">User</span>
+        <img class="profile-icon" src="User.svg" alt="Profile" routerLink="/user/dashboard">
+      </div>
     </div>
 
-    <div class="MainHomeDiv col d-flex justify-content-center align-items-center" id="EdinTabakDiv">
-      <button type="button" class="btn btn-outline-primary" routerLink="/vehicle/dashboard">Vehicle</button>
+    <!-- New Header Section with Background -->
+    <div class="header-section">
+      <img class="lendacar-landingpage" src="backgroundcar.png" />
+
+      <div class="title">
+        <div class="overlap-group">
+          <p class="text-wrapper">Looking for rent? Get ready to lend...</p>
+          <p class="p">Explore a wide range of vehicles and get started</p>
+        </div>
+      </div>
     </div>
 
-    <div class="MainHomeDiv col d-flex justify-content-center align-items-center" id="DenisKundoDiv">
-      <button type="button" class="btn btn-outline-primary" routerLink="/company/dashboard">Company</button>
-    </div>
-    <div class="MainHomeDiv col d-flex justify-content-center align-items-center" id="EminDiv">
-      <button type="button" class="btn btn-outline-primary" routerLink="/employee/login">Employee</button>
-    </div>
-    <div class="MainHomeDiv col d-flex justify-content-center align-items-center" id="EdinDiv">
-      <button type="button" class="btn btn-outline-primary" routerLink="/admin/login">Administrator</button>
+    <!-- Form Section (Positioned Below) -->
+    <div class="form-section">
+      <div class="search-bar">
+        <mat-form-field appearance="outline" class="small">
+          <input matInput placeholder="Search a vehicle">
+        </mat-form-field>
+      </div>
+
+      <div class="pick-up-return">
+        <mat-form-field appearance="outline" class="small">
+          <mat-label>Pick-up & Return Location</mat-label>
+          <input matInput>
+        </mat-form-field>
+      </div>
+
+      <div class="pick-up-time">
+        <mat-form-field appearance="outline" class="small">
+          <mat-label>Pick-up Date & Time</mat-label>
+          <input matInput [matDatepicker]="picker1">
+          <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="drop-off-time">
+        <mat-form-field appearance="outline" class="small">
+          <mat-label>Drop-off Date & Time</mat-label>
+          <input matInput [matDatepicker]="picker2">
+          <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="age-dropdown">
+        <mat-form-field appearance="outline" class="small">
+          <mat-label>Age</mat-label>
+          <mat-select>
+            <mat-option *ngFor="let age of [18, 19, 20, 21, 22, 23, 24, 25]" [value]="age">{{ age }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="location-dropdown">
+        <mat-form-field appearance="outline" class="small">
+          <mat-label>Location</mat-label>
+          <mat-select>
+            <mat-option *ngFor="let country of ['Bosnia and Hercegovina', 'Croatia', 'Serbia']" [value]="country">
+              {{ country }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
   </div>
 </div>

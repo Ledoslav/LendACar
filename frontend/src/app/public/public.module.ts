@@ -5,6 +5,11 @@ import { PublicRoutingModule } from './public-routing.module';
 import {HomeComponent} from './home/home.component';
 import {LayoutComponent} from './layout/layout.component';
 import {DataRowOutlet} from "@angular/cdk/table";
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
+import {MatIconModule} from '@angular/material/icon';
 
 
 @NgModule({
@@ -15,7 +20,12 @@ import {DataRowOutlet} from "@angular/cdk/table";
     imports: [
         CommonModule,
         PublicRoutingModule,
-        DataRowOutlet
+        DataRowOutlet,
+        MatInputModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatIconModule
     ]
 })
 export class PublicModule { }
