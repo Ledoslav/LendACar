@@ -1,5 +1,6 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
@@ -10,7 +11,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DataSeedGenerateEndpoint(ApplicationDbContext db):ControllerBase
+    public class DataSeedGenerateEndpoint(ApplicationDbContext db,IAuthService authService):ControllerBase
     {
 
         [HttpPost("generateReferalData")]
@@ -51,6 +52,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 new VehicleCategory { Name = "Other" , Description = "No specific vehicle category was chosen."},
             };
 
+
             var workingHours = new List<WorkingHour>
             {
                 new WorkingHour { StartTime = new TimeOnly(9, 00), EndTime = new TimeOnly(17, 00), Saturday = false, Sunday = false },
@@ -59,12 +61,21 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
             };
 
 
+            var vehicleBrands = new List<VehicleBrand> { new VehicleBrand { BrandName = "Other" } };
+
+
             // Dodavanje podataka u bazu
             await db.WorkingHours.AddRangeAsync(workingHours, cancellationToken);
             await db.Countries.AddRangeAsync(countries, cancellationToken);
             await db.Cities.AddRangeAsync(cities, cancellationToken);
             await db.VehicleCategories.AddRangeAsync(vehicleCategories, cancellationToken);
+            await db.VehicleBrands.AddRangeAsync(vehicleBrands, cancellationToken);
 
+            await db.SaveChangesAsync(cancellationToken);
+
+
+            var vehicleModels = new List<VehicleModel> { new VehicleModel { ModelName = "Other", VehicleBrand = vehicleBrands[0] } };
+            await db.VehicleModels.AddRangeAsync( vehicleModels, cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
 
             return "Data generation completed successfully.";
@@ -75,7 +86,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
         {
 
 
-            var adminController = new AdministratorController(db);
+            var adminController = new AdministratorController(db,authService);
             await adminController.RegisterAdministrator(new DTOs.AdministratorRegisterDto
             {
                 FirstName = "LendACar",
@@ -88,7 +99,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 Password = "admin"
             });
 
-            var controller = new UserController(db);
+            var controller = new UserController(db, authService);
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
                 Username = "KalloX",
@@ -100,7 +111,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 PhoneNumber = "123-456-7890",
                 EmailAdress = "denis@edu.fit.ba",
                 IsVerified = false
-            },cancellationToken);
+            }, cancellationToken);
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
                 Username = "LedoSlav",
@@ -127,7 +138,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 IsVerified = false
             }, cancellationToken);
 
-            
+
 
             await db.SaveChangesAsync(cancellationToken);
 

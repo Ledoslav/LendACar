@@ -1,6 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {EmployeeService} from '../../services/employee.service';
 import {Router} from '@angular/router';
+import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
 
 @Component({
   selector: 'app-login',
@@ -10,9 +11,10 @@ import {Router} from '@angular/router';
 export class LoginComponent implements OnInit{
 
   ngOnInit(): void {
-      let employee=localStorage.getItem('employee');
-      if(employee){
-        this.router.navigateByUrl('/employee/dashboard');
+      //let employee=localStorage.getItem('auth-token');
+      let isEmployee=this.authService.isEmployee()
+      if(isEmployee){
+        void this.router.navigateByUrl('/employee/dashboard');
       }
   }
   passwordShow:boolean = false;
@@ -20,12 +22,12 @@ export class LoginComponent implements OnInit{
   employeeService=inject(EmployeeService);
   model:any={};
   router=inject(Router);
+  authService=inject(MyAuthServiceService)
 
   login(){
     this.employeeService.Login(this.model).subscribe({
       next:res=>{
         alert("User login successfully");
-        console.log(res);
         void this.router.navigateByUrl('/employee/dashboard');
       },
       error:err=>{

@@ -8,6 +8,7 @@
 # C# Build
 bin/
 obj/
+.env
 
 # Visual Studio Code
 .vscode/

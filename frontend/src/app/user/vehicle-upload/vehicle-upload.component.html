@@ -1,0 +1,156 @@
+<mat-horizontal-stepper #stepper>
+  <!-- Step 1: Basic Info -->
+  <mat-step [stepControl]="vehicleForm">
+    <form [formGroup]="vehicleForm">
+      <ng-template matStepLabel>Basic Info</ng-template>
+
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" formControlName="title" class="form-control" required />
+      </div>
+
+      <div class="form-group">
+        <label for="vehicleBrand">Vehicle Brand</label>
+        <select id="vehicleBrand" formControlName="vehicleBrandID" (change)="onBrandChange()" class="form-control" required>
+          <option *ngFor="let brand of vehicleBrands" [value]="brand.id">{{ brand.brandName }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="vehicleModel">Vehicle Model</label>
+        <select id="vehicleModel" formControlName="vehicleModelID" class="form-control" required>
+          <option *ngFor="let model of vehicleModels" [value]="model.id">{{ model.modelName }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="pricePerDay">Price per Day</label>
+        <input type="number" id="pricePerDay" formControlName="pricePerDay" class="form-control" required />
+      </div>
+
+      <div class="dugmici">
+        <button type="button" class="btn btn-secondary" routerLink="/user/myVehicles">Cancel</button>
+        <button type="button" class="btn btn-primary" matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- Step 2: Technical Data -->
+  <mat-step [stepControl]="vehicleForm">
+    <form [formGroup]="vehicleForm">
+      <ng-template matStepLabel>Technical Data</ng-template>
+
+      <div class="form-group">
+        <label for="fuelType">Fuel Type</label>
+        <select id="fuelType" formControlName="fuelType" (change)="onFuelTypeChange()" class="form-control" required>
+          <option *ngFor="let fuel of fuelTypes" [value]="fuel.value">{{ fuel.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="transmissionType">Transmission Type</label>
+        <select id="transmissionType" formControlName="transmissionType" class="form-control" required>
+          <option *ngFor="let transmission of transmissionTypes" [value]="transmission.value">{{ transmission.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="engineDisplacement">Engine Displacement (cc)</label>
+        <input type="number" id="engineDisplacement" formControlName="engineDisplacement" class="form-control" required />
+      </div>
+
+      <div class="form-group">
+        <label for="enginePower">Engine Power (HP)</label>
+        <input type="number" id="enginePower" formControlName="enginePower" class="form-control" required />
+      </div>
+
+      <div class="form-group">
+        <label for="airConditioning">Air Conditioning</label>
+        <select id="airConditioning" formControlName="airConditioning" class="form-control" required>
+          <option *ngFor="let ac of airConditioningOptions" [value]="ac.value">{{ ac.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="numberOfSeats">Number of Seats</label>
+        <input type="number" id="numberOfSeats" formControlName="numberOfSeats" class="form-control" />
+      </div>
+
+      <div class="form-group form-check">
+        <input type="checkbox" id="towingHitch" formControlName="towingHitch" class="form-check-input" />
+        <label for="towingHitch" class="form-check-label">Towing Hitch</label>
+      </div>
+
+      <div class="form-group">
+        <label for="productionYear">Production Year</label>
+        <select id="productionYear" formControlName="productionYear" class="form-control" required>
+          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        </select>
+      </div>
+
+      <div class="dugmici">
+        <button type="button" class="btn btn-secondary" matStepperPrevious>Back</button>
+        <button type="button" class="btn btn-primary" matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- Step 3: Description -->
+  <mat-step [stepControl]="vehicleForm">
+    <form [formGroup]="vehicleForm">
+      <ng-template matStepLabel>Description</ng-template>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" formControlName="description" class="form-control"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="vehicleCategory">Vehicle Category</label>
+        <select id="vehicleCategory" formControlName="vehicleCategoryID" class="form-control" required>
+          <option *ngFor="let category of vehicleCategories" [value]="category.id">{{ category.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="city">Location (City)</label>
+        <select id="city" formControlName="cityID" class="form-control" required>
+          <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group form-check">
+        <input type="checkbox" id="available" formControlName="available" class="form-check-input" />
+        <label for="available" class="form-check-label">Available for Rent</label>
+      </div>
+
+      <div class="dugmici">
+        <button type="button" class="btn btn-secondary" matStepperPrevious>Back</button>
+        <button type="button" class="btn btn-primary" matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- Step 4: Images -->
+  <mat-step>
+    <ng-template matStepLabel>Images</ng-template>
+
+    <div class="image-upload-section">
+      <input type="file" (change)="onImageChange($event)" multiple accept="image/*" />
+      <p>You can upload up to 15 images.</p>
+    </div>
+
+    <!-- Image Preview -->
+    <div class="image-preview-container">
+      <div *ngFor="let image of uploadedImages" class="image-preview">
+        <img [src]="image" alt="Vehicle Image" />
+      </div>
+    </div>
+
+    <div class="dugmici">
+      <button type="button" class="btn btn-secondary" matStepperPrevious>Back</button>
+      <button type="button" class="btn btn-primary" (click)="onSubmit()">Upload</button>
+    </div>
+  </mat-step>
+
+</mat-horizontal-stepper>

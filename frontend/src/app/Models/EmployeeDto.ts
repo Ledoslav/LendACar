@@ -11,7 +11,7 @@ export interface EmployeeDto {
   city: City;
   emailAddress: string;
   username: string;
-  workingHour:WorkingHour
-  workingHourId:number
-  jobTitle: string;
+  workingHour:WorkingHour | null
+  workingHourId:number | null
+  jobTitle: string | null
 }

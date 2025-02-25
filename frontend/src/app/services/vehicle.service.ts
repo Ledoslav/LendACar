@@ -2,6 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {VehiclesDto} from '../Models/VehiclesDto';
+import { VehicleBrandDto } from '../Models/VehicleBrandDto';
 
 
 @Injectable({
@@ -9,6 +10,17 @@ import {VehiclesDto} from '../Models/VehiclesDto';
 })
 export class VehicleService{
   private http = inject(HttpClient);
+  baseUrl:string="http://localhost:7000/api/";
+
+  GetVehicleBrands(){
+    return this.http.get<VehicleBrandDto[]>("http://localhost:7000/api/VehicleModelAndBrand/getBrand/all");
+  }
+
+  GetVehicleModelsByBrandId(brandId:number){
+    return this.http.get<VehiclesDto[]>( this.baseUrl + `VehicleModelAndBrand/getModelsByBrandId/${brandId}`);
+  }
+
+
   LoadVehicles(){
     return this.http.get("http://localhost:7000/api/VehicleModelAndBrand/getModel/all");
   }

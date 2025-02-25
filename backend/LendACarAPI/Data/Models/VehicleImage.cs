@@ -13,8 +13,7 @@ namespace LendACarAPI.Data.Models
         public int VehicleID { get; set; }
         public Vehicle? Vehicle { get; set; }
 
-        // Korisitit cemo string sa URL-om od slike vozila
         [Required]
-        public byte[] Image { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

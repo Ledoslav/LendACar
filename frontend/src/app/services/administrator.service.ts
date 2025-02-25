@@ -3,6 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {AdministratorDto} from '../Models/AdministratorDto';
 import {map} from 'rxjs';
 import {EmployeeDto} from '../Models/EmployeeDto';
+import {AuthResponse} from '../Models/auth-models/AuthResponse';
+import {MyAuthServiceService} from './auth-service/my-auth-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,17 +13,20 @@ export class AdminService {
   constructor() { }
 
   private http=inject(HttpClient);
+  private myAuthService=inject(MyAuthServiceService)
   baseUrl:string="http://localhost:7000/api/";
   currentAdmin=signal<AdministratorDto | null>(null)
 
   Login(model:any){
-    return this.http.post<AdministratorDto>(this.baseUrl+'administrator/login',model).pipe(
-      map(administrator=>{
-        if(administrator){
+    return this.http.post<AuthResponse>(this.baseUrl+'administrator/login',model).pipe(
+      map(response=>{
+        if(response){
+          this.myAuthService.setLoggedInUser(response)
+          const { token, ...administrator } = response;
           localStorage.setItem('administrator',JSON.stringify(administrator));
           this.currentAdmin.set(administrator);
         }
-        return administrator;
+        return response;
       })
     )
   }

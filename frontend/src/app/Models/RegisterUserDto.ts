@@ -1,3 +1,5 @@
+import {SecurityQuestion} from '../services/security-question.service';
+
 export interface RegisterUserDto {
   firstName: string;
   lastName: string;
@@ -8,4 +10,7 @@ export interface RegisterUserDto {
   username: string;
   password: string;
   workingHourId:number;
+  securityQuestionId?: number;
+  securityQuestion?: SecurityQuestion;
+  questionAnswer?: string;
 }

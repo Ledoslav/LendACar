@@ -17,15 +17,18 @@ public static class MyExtensionMethods
 
     public static string RandomString(int size)
     {
-        System.Text.StringBuilder builder = new System.Text.StringBuilder();
+        const string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*-_?";
+        string result = string.Empty;
+        int charactersLength = characters.Length;
+
         Random random = new Random();
-        char ch;
         for (int i = 0; i < size; i++)
         {
-            ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
-            builder.Append(ch);
+            int randomIndex = random.Next(charactersLength);
+            result += characters[randomIndex];
         }
-        return builder.ToString();
+
+        return result;
     }
 
     public static byte[] MyParseBase64(this string base64string)

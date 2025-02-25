@@ -1,0 +1,31 @@
+import {Component, inject} from '@angular/core';
+import {Router} from '@angular/router';
+import {UserService} from '../../services/user.service';
+import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
+
+@Component({
+  selector: 'app-not-found',
+  templateUrl: './not-found.component.html',
+  styleUrl: './not-found.component.css'
+})
+export class NotFoundComponent {
+
+  private authService=inject(MyAuthServiceService)
+  private router=inject(Router);
+
+  navigateUserToHomePage(){
+    const isAdmin=this.authService.isAdmin();
+    const isEmployee=this.authService.isEmployee();
+    const isUser=this.authService.isAppUser();
+
+    if(isAdmin)
+     void this.router.navigateByUrl('/admin/dashboard/home');
+    else if(isEmployee)
+     void this.router.navigateByUrl('/employee/dashboard')
+    else if(isUser)
+      void this.router.navigateByUrl('/user/dashboard');
+    else
+      void this.router.navigateByUrl('/user/dashboard');
+
+  }
+}

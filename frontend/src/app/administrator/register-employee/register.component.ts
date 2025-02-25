@@ -31,7 +31,6 @@ export class RegisterComponent implements OnInit {
       birthDate: [undefined,Validators.required],
       jobTitle:[undefined,Validators.required],
       dateOfHire:[undefined,Validators.required],
-      password:'password',
       workingHourId:1
     })
   }
@@ -87,7 +86,6 @@ export class RegisterComponent implements OnInit {
 
   initForm(){
     this.employeeForm.get('id')?.enable()
-    this.employeeForm.get('password')?.disable()
     this.employeeForm.patchValue({
       id:this.employee.id,
       firstName: this.employee.firstName,
@@ -137,19 +135,6 @@ export class RegisterComponent implements OnInit {
     })
   }
 
-  generateRandomString(length:number):string{
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&';
-    let result = '';
-    const charactersLength = characters.length;
-
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * charactersLength);
-      result += characters[randomIndex];
-    }
-
-    return result;
-  }
-
   formatEmail(email:string):string{
     return email
       .replace(/š/g, 's')
@@ -190,7 +175,11 @@ export class RegisterComponent implements OnInit {
     console.log('Employee Registered:', this.employee);
     console.log(this.employeeForm.value)
     this.employeeService.Register(this.employeeForm.value).subscribe({
-      next:result => {alert('Employee successfully registered!');}
+      next:result => {
+        alert("Employee created successfully");
+        const pdfUrl=URL.createObjectURL(result);
+        window.open(pdfUrl);
+      }
     })
   }
 

@@ -1,34 +1,43 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {UserDto} from '../Models/UserDto';
-import {map} from 'rxjs';
-import {PasswordReset} from '../Models/PasswordReset';
+import {map, Observable} from 'rxjs';
 import {Router} from '@angular/router';
-import {EmployeeFilter} from '../Models/EmployeeFilter';
 import {UserFilter} from '../Models/UserFilter';
-import {PaginatedResult} from '../Models/Pagination';
+import {City} from '../Models/City';
+import {JwtHelperService} from '@auth0/angular-jwt';
+import {AuthResponse} from '../Models/auth-models/AuthResponse';
+import {TokenClaims} from '../Models/auth-models/TokenClaims';
+import {TokenObject} from '../Models/auth-models/TokenObject';
+import {MyAuthServiceService} from './auth-service/my-auth-service.service';
+
 
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class UserService {
 
   constructor() { }
   private http=inject(HttpClient);
   private router=inject(Router);
+  private jwtHelper=inject(JwtHelperService);
+  private myAuthService=inject(MyAuthServiceService)
   baseUrl:string="http://localhost:7000/api/";
   currentUser=signal<UserDto | null>(null)
 
   Login(model:any){
-   return this.http.post<UserDto>(this.baseUrl+'user/login',model).pipe(
-     map(user=>{
-       if(user){
-         localStorage.setItem('user',JSON.stringify(user));
-         this.currentUser.set(user)
+   return this.http.post<AuthResponse>(this.baseUrl+'user/login',model).pipe(
+     map(response=>{
+       if(response){
+         this.myAuthService.setLoggedInUser(response)
+         const { token, ...user } = response;
+         localStorage.setItem('user', JSON.stringify(user));
+         this.currentUser.set(user);
          console.log("Current user set:", this.currentUser());
-         console.log("User service 1");
        }
-       return user;
+       return response;
      })
    );
   }
@@ -62,6 +71,7 @@ export class UserService {
       next:()=>{
         alert("Password change successful");
         localStorage.removeItem('user');
+        localStorage.removeItem('auth-token')
         void this.router.navigateByUrl("/user/dashboard");
         this.currentUser.set(null);
       },
@@ -110,5 +120,19 @@ export class UserService {
       console.log(params);
 
       return this.http.get<UserDto[]>(`${this.baseUrl}user/filter`,{observe:'response',params});
+  }
+
+  CheckUsernameAvailability(username:string):Observable<boolean>
+  {
+    const object={
+      username:username
+    }
+    console.log(object);
+    return this.http.post<{ isTaken: boolean }>(this.baseUrl+'Validator/check-username',object)
+      .pipe(map(response => {
+        console.log("Server response",response);
+        return response.isTaken
+      }
+      ));
   }
 }

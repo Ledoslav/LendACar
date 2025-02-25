@@ -226,6 +226,15 @@ namespace LendACarAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAppUser")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmployee")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -268,6 +277,23 @@ namespace LendACarAPI.Migrations
                     b.ToTable("Polls");
                 });
 
+            modelBuilder.Entity("LendACarAPI.Data.Models.SecurityQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityQuestions");
+                });
+
             modelBuilder.Entity("LendACarAPI.Data.Models.UserReview", b =>
                 {
                     b.Property<int>("ReviewerId")
@@ -293,6 +319,41 @@ namespace LendACarAPI.Migrations
                     b.ToTable("UserReviews");
                 });
 
+            modelBuilder.Entity("LendACarAPI.Data.Models.UserSecurityQuestionAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnswerAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("AnswerHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("AnswerSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime?>("DisabledUntil")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SecurityQuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SecurityQuestionId");
+
+                    b.ToTable("UserSecurityQuestionAnswers");
+                });
+
             modelBuilder.Entity("LendACarAPI.Data.Models.Vehicle", b =>
                 {
                     b.Property<int>("Id")
@@ -301,15 +362,17 @@ namespace LendACarAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AirConditioning")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AirConditioning")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Avaliable")
                         .HasColumnType("bit");
 
                     b.Property<double>("AverageRating")
                         .HasColumnType("float");
+
+                    b.Property<int>("CityID")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -321,11 +384,7 @@ namespace LendACarAPI.Migrations
                     b.Property<int?>("EnginePower")
                         .HasColumnType("int");
 
-                    b.Property<string>("FuelType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("MaximumLoad")
+                    b.Property<int>("FuelType")
                         .HasColumnType("int");
 
                     b.Property<int>("NumberOfSeats")
@@ -334,12 +393,21 @@ namespace LendACarAPI.Migrations
                     b.Property<double>("PricePerDay")
                         .HasColumnType("float");
 
+                    b.Property<int>("ProductionYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("TowingHitch")
                         .HasColumnType("bit");
 
-                    b.Property<string>("TransmissionType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TransmissionType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
 
                     b.Property<int>("VehicleCategoryID")
                         .HasColumnType("int");
@@ -347,16 +415,15 @@ namespace LendACarAPI.Migrations
                     b.Property<int>("VehicleModelID")
                         .HasColumnType("int");
 
-                    b.Property<int>("VehicleOwnerID")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CityID");
+
+                    b.HasIndex("UserID");
 
                     b.HasIndex("VehicleCategoryID");
 
                     b.HasIndex("VehicleModelID");
-
-                    b.HasIndex("VehicleOwnerID");
 
                     b.ToTable("Vehicles");
                 });
@@ -412,9 +479,9 @@ namespace LendACarAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<byte[]>("Image")
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VehicleID")
                         .HasColumnType("int");
@@ -596,6 +663,12 @@ namespace LendACarAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResetPasswordTokenExpiry")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -636,9 +709,20 @@ namespace LendACarAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResetPasswordTokenExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserSecurityQuestionAnswerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("UserSecurityQuestionAnswerId");
 
                     b.ToTable("Users");
                 });
@@ -760,8 +844,31 @@ namespace LendACarAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("LendACarAPI.Data.Models.UserSecurityQuestionAnswer", b =>
+                {
+                    b.HasOne("LendACarAPI.Data.Models.SecurityQuestion", "SecurityQuestion")
+                        .WithMany()
+                        .HasForeignKey("SecurityQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SecurityQuestion");
+                });
+
             modelBuilder.Entity("LendACarAPI.Data.Models.Vehicle", b =>
                 {
+                    b.HasOne("LendACarAPI.Data.Models.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LendACarAPI.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LendACarAPI.Data.Models.VehicleCategory", "VehicleCategory")
                         .WithMany()
                         .HasForeignKey("VehicleCategoryID")
@@ -774,17 +881,13 @@ namespace LendACarAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LendACarAPI.Data.Models.User", "VehicleOwner")
-                        .WithMany()
-                        .HasForeignKey("VehicleOwnerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("City");
+
+                    b.Navigation("User");
 
                     b.Navigation("VehicleCategory");
 
                     b.Navigation("VehicleModel");
-
-                    b.Navigation("VehicleOwner");
                 });
 
             modelBuilder.Entity("LendACarAPI.Data.Models.VehicleImage", b =>
@@ -848,6 +951,16 @@ namespace LendACarAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("WorkingHour");
+                });
+
+            modelBuilder.Entity("LendACarAPI.Data.Models.User", b =>
+                {
+                    b.HasOne("LendACarAPI.Data.Models.UserSecurityQuestionAnswer", "UserSecurityQuestionAnswer")
+                        .WithMany()
+                        .HasForeignKey("UserSecurityQuestionAnswerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("UserSecurityQuestionAnswer");
                 });
 
             modelBuilder.Entity("LendACarAPI.Data.Models.User", b =>

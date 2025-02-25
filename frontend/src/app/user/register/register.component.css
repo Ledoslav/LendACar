@@ -11,3 +11,40 @@
  #stepperContainer{
    max-width: 1200px !important ;
  }
+
+ .captcha-container {
+   transform: scale(0.85); /* Adjust size */
+ }
+
+ .clickable-text {
+   color: #007bff; /* Bootstrap link color */
+   text-decoration: underline;
+   cursor: pointer;
+ }
+
+ .clickable-text:hover {
+   color: #0056b3; /* Darker shade on hover */
+   cursor: pointer;
+ }
+
+ #securityQuestionYes{
+   color: royalblue;
+   text-decoration: underline;
+   cursor: pointer;
+ }
+
+ #securityQuestionYes:hover{
+   color: #3158B1;
+
+ }
+
+ #securityQuestionNo{
+   color: lightcoral;
+   text-decoration: underline;
+   cursor: pointer;
+ }
+
+ #securityQuestionNo:hover{
+   color: #D36969;
+
+ }

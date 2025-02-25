@@ -13,11 +13,18 @@ import {HomeComponent} from './home/home.component';
 import {AdminCityOverviewComponent} from './admin-city-overview/admin-city-overview.component';
 import {AdminCountryOverviewComponent} from './admin-country-overview/admin-country-overview.component';
 import {AdminUserUpdateComponent} from './admin-user-update/admin-user-update.component';
+import {AuthGuard} from '../guards/auth.guard';
 
 const routes: Routes = [
   {path:'',redirectTo:'login' ,pathMatch:'full'},
   {path:'login', component: AdminLoginComponent},
-  {path:'dashboard', component: AdminDashboardComponent,children:[
+  {
+    path:'dashboard',
+    canActivate:[AuthGuard],
+    data:{isAdmin:true},
+    component: AdminDashboardComponent
+    ,children:[
+      { path: '**', redirectTo: 'not-found', pathMatch: 'full' },
       {path:'',redirectTo:'home',pathMatch:'full'},
       {path:'profileOverview', component: AdminProfileOverviewComponent},
       {path:'profileEdit',component:AdminEditOwnProfileComponent},
