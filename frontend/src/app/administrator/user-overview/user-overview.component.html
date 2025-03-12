@@ -1,49 +1,50 @@
-
 <section class="intro">
   <h2 class="text-center pt-3">User Information</h2>
-  <div class="bg-image h-100" >
+  <div class="bg-image h-100">
     <div class="mask d-flex align-items-center h-100">
-      <div class="container">
+      <div class="container-fluid px-5">
         <div class="row justify-content-center">
           <div class="col-12">
             <form [formGroup]="userSearchForm" (ngSubmit)="onSearch()">
-              <div class="container d-inline-block border p-2 my-3">
-                <div class="row align-items-center">
-                  <div class="col-auto">
-                    <input class="form-control" formControlName="name" placeholder="Name">
-                  </div>
+              <div class="row mb-3">
+                <div class="col-3">
+                  <input class="form-control" (keyup)="onNameUsernameSearch()" formControlName="name" placeholder="Name / Username">
+                </div>
+              </div>
+              <div class="container-fluid p-3 border rounded mb-3">
+                <div class="row align-items-center g-3">
                   <div class="col-auto">
                     <input class="form-control" formControlName="ageFrom" type="number" placeholder="Age from">
                   </div>
                   <div class="col-auto">
-                    <input class="form-control"  formControlName="ageTo" type="number" placeholder="Age to">
+                    <input class="form-control" formControlName="ageTo" type="number" placeholder="Age to">
                   </div>
-                  <div class="col-auto">
+                  <div *ngIf="showCityField" class="col-auto">
                     <select class="form-select" id="city" formControlName="cityId">
                       <option *ngFor="let city of filteredCities" value="{{city.id}}">{{city.name}}</option>
                     </select>
                   </div>
                   <div class="col-auto">
-                    <select class="form-select" (change)="filterCities($event)"  formControlName="countryId">
-                      <option  *ngFor="let country of countries" value="{{country.id}}">{{country.name}}</option>
+                    <select class="form-select" (change)="filterCities($event)" formControlName="countryId">
+                      <option *ngFor="let country of countries" value="{{country.id}}">{{country.name}}</option>
                     </select>
                   </div>
                   <div class="col-auto">
                     <select class="form-select" formControlName="isVerified">
-                      <option  *ngFor="let option of verifiedFilterOptions" >{{option}}</option>
+                      <option *ngFor="let option of verifiedFilterOptions">{{option}}</option>
                     </select>
                   </div>
-                  <div class="col-3 mt-2">
+                  <!-- Buttons aligned to the end -->
+                  <div class="col-auto ms-auto"> <!-- Added ms-auto here -->
                     <button class="btn btn-primary" type="submit">Search</button>
-                    <button class="btn btn-secondary mx-2" type="button" (click)="userSearchForm.reset()">Clear filters</button>
+                    <button class="btn btn-secondary mx-2" type="button" (click)="resetForm()">Clear filters</button>
                   </div>
                 </div>
               </div>
             </form>
             <div class="card">
               <div class="card-body p-0">
-                <div class="table-responsive table-scroll" data-mdb-perfect-scrollbar="true"
-                     style="position: relative">
+                <div class="table-responsive">
                   <table class="table table-striped mb-0">
                     <thead>
                     <tr>
@@ -76,8 +77,10 @@
                       } @else {
                         <td>No</td>
                       }
-                      <td><button class="btn btn-outline-light mx-1 " value="{{user.id}}" (click)="Update($event)" >Edit</button>
-                        <button class="btn btn-outline-danger" value="{{user.id}}" (click)="DeleteUser($event)" >Delete</button></td>
+                      <td>
+                        <button class="btn btn-outline-light mx-1" value="{{user.id}}" (click)="Update($event)">Edit</button>
+                        <button class="btn btn-outline-danger" value="{{user.id}}" (click)="DeleteUser($event)">Delete</button>
+                      </td>
                     </tr>
                     </tbody>
                   </table>
@@ -86,7 +89,6 @@
             </div>
           </div>
         </div>
-        <!--<button class="btn btn-outline-light btn-secondary my-3" routerLink="/admin/register">Add user</button>-->
         <div *ngIf="users.pagination && users.pagination.totalCount>pageSize" class="d-flex justify-content-center mt-3">
           <pagination
             [boundaryLinks]="true"
@@ -98,7 +100,6 @@
             nextText="&rsaquo;"
             firstText="&laquo;"
             lastText="&raquo;">
-          >
           </pagination>
         </div>
       </div>

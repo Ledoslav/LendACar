@@ -101,12 +101,14 @@ export class UserService {
   FilterUsers(filter:UserFilter,pageNumber?:number,pageSize?:number){
       let params=new HttpParams();
 
+      console.log(filter);
+
       if (filter.name) params = params.set('name', filter.name);
       if (filter.ageFrom) params = params.set('ageFrom', filter.ageFrom.toString());
       if(filter.ageTo) params = params.set('ageTo', filter.ageTo.toString());
       if(filter.cityId) params = params.set('cityId', filter.cityId.toString());
       if(filter.countryId) params = params.set('countryId', filter.countryId.toString());
-      if(filter.isVerified){
+      if(filter.isVerified!="Verified users"){
         if(filter.isVerified=="Yes") {
          params=params.set('isVerified', "true");
         }else{

@@ -9,6 +9,7 @@ import {CountryService} from '../../services/country.service';
 import {Router} from '@angular/router';
 import {HttpParams, HttpResponse} from '@angular/common/http';
 import {PaginatedResult} from '../../Models/Pagination';
+import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 
 @Component({
   selector: 'app-user-overview',
@@ -17,10 +18,26 @@ import {PaginatedResult} from '../../Models/Pagination';
 })
 export class UserOverviewComponent  implements OnInit {
   private router=inject(Router);
+  showCityField: boolean=false;
   ngOnInit(): void {
+      this.initSearchListener();
       this.loadUsers();
       this.loadCities();
       this.loadCountries();
+
+    this.userSearchForm.get('countryId')?.valueChanges.subscribe((value) => {
+      console.log(value);
+      if (value == 0) {
+        this.showCityField = false;
+        this.userSearchForm.get('cityId')?.disable();
+        console.log(this.showCityField);
+      } else {
+        this.showCityField = true;
+        this.userSearchForm.get('cityId')?.enable();
+        console.log(this.showCityField);
+
+      }
+    });
   }
   fb=inject(FormBuilder);
   userService=inject(UserService)
@@ -30,12 +47,24 @@ export class UserOverviewComponent  implements OnInit {
   cities: City[]=[];
   countries: Country[]=[];
   filteredCities:City[]=[];
-  verifiedFilterOptions:string[]=[" ","Yes","No"];
+  verifiedFilterOptions:string[]=["Verified users","Yes","No"];
+
+  private searchSubject: Subject<string> = new Subject();
 
   users:PaginatedResult<UserDto[]>=new PaginatedResult()
 
   pageNumber:number=1;
-  pageSize:number=3;
+  pageSize:number=5;
+
+
+  initSearchListener(): void {
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+    ).subscribe((filterValue) => {
+      this.filterUsers();
+    });
+  }
 
   loadUsers(){
     this.userService.GetAllUsers(this.pageNumber,this.pageSize).subscribe({
@@ -69,7 +98,7 @@ export class UserOverviewComponent  implements OnInit {
     countryId: 0,
     ageFrom:[undefined],
     ageTo:[undefined],
-    isVerified:[undefined],
+    isVerified:["Verified users"],
   })
 
 
@@ -103,25 +132,52 @@ export class UserOverviewComponent  implements OnInit {
 
 
   onSearch() {
-
      console.log(this.userSearchForm.value);
+    if(this.userSearchForm.value.countryId==0 && this.userSearchForm.value.cityId!=undefined)
+      this.userSearchForm.value.cityId=undefined;
      if(this.userSearchForm.value.countryId==0) this.userSearchForm.value.countryId=undefined;
-     this.userService.FilterUsers(this.userSearchForm.value,this.pageNumber,this.pageSize).subscribe({
-       next:res=>this.users={
-         items:res.body as UserDto[],
-         pagination:JSON.parse(res.headers.get('Pagination')!)
-       },
-       error:err=>console.log(err),
-     })
+     this.filterUsers();
+  }
 
+  onNameUsernameSearch(){
+    const searchValue = this.userSearchForm.get('name')?.value || '';
+    if(this.userSearchForm.value.countryId==0) this.userSearchForm.value.countryId=undefined;
+    if(this.userSearchForm.value.countryId==0 && this.userSearchForm.value.cityId!=undefined)
+      this.userSearchForm.value.cityId=undefined;
 
+    if (searchValue.trim().length > 0) {
+      this.searchSubject.next(searchValue);
+    }
+  }
+
+  filterUsers(): void {
+    this.userService.FilterUsers(this.userSearchForm.value, this.pageNumber, this.pageSize)
+      .subscribe({
+        next: (res) => {
+          this.users = {
+            items: res.body as UserDto[],
+            pagination: JSON.parse(res.headers.get('Pagination')!)
+          };
+        },
+        error: (err) => console.log(err),
+      });
   }
 
   pageChanged($event: any) {
     if(this.pageNumber!==$event.page){
       this.pageNumber=$event.page;
-      this.loadUsers();
+      this.filterUsers();
     }
+  }
 
+  resetForm(){
+    this.userSearchForm.patchValue({
+      name: undefined,
+      cityId: undefined,
+      countryId: 0,
+      ageFrom: undefined,
+      ageTo: undefined,
+      isVerified: "Verified users",
+    });
   }
 }
