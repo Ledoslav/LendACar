@@ -55,24 +55,24 @@ namespace LendACarAPI.Endpoints
         [TypeFilter(typeof(UserFilterAttribute))]
         public async Task<ActionResult<MyPagedList<UserDto[]>>> GetAllUsers([FromQuery]MyPagingRequest pagedParams, CancellationToken cancellationToken)
         {
-
-            var query = db.Users
-                .Include(u => u.City)
-                .Include(u => u.City != null ? u.City.Country : null)
-                .Select(user => new UserDto()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    PhoneNumber = user.PhoneNumber,
-                    BirthDate = user.BirthDate.ToString("yyyy-MM-dd"),
-                    City = user.City,
-                    CityId = user.CityId,
-                    EmailAddress = user.EmailAdress,
-                    Username = user.Username,
-                    AverageRating = user.AverageRating,
-                    IsVerified = user.IsVerified
-                });
+            var query = HttpContext.Items["users"] as IQueryable<UserDto>;
+            //var query = db.Users
+            //    .Include(u => u.City)
+            //    .Include(u => u.City != null ? u.City.Country : null)
+            //    .Select(user => new UserDto()
+            //    {
+            //        Id = user.Id,
+            //        FirstName = user.FirstName,
+            //        LastName = user.LastName,
+            //        PhoneNumber = user.PhoneNumber,
+            //        BirthDate = user.BirthDate.ToString("yyyy-MM-dd"),
+            //        City = user.City,
+            //        CityId = user.CityId,
+            //        EmailAddress = user.EmailAdress,
+            //        Username = user.Username,
+            //        AverageRating = user.AverageRating,
+            //        IsVerified = user.IsVerified
+            //    });
 
             var users = await MyPagedList<UserDto>.CreateAsync(query, pagedParams, cancellationToken);
 

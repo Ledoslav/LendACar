@@ -58,7 +58,7 @@ namespace LendACarAPI.Filters
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
                 query=query.Where(u=>u.FirstName.ToLower().Contains(filter.Name.ToLower()) 
-                || u.LastName.ToLower().Contains(filter.Name.ToLower()));
+                || u.LastName.ToLower().Contains(filter.Name.ToLower()) || u.Username.ToLower().Contains(filter.Name.ToLower()));
             }
 
             if (filter.CityId != null)
