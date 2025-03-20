@@ -1,0 +1,79 @@
+<div class="landing-page">
+  <img class="vector" src="Vector.png" />
+  <div class="side-bar">
+    <div class="menu-item"><img src="Home.svg" alt="Home"> <span>Home</span></div>
+    <div class="menu-item"><img src="Bell.svg" alt="Activity"> <span>Activity</span></div>
+    <div class="menu-item"><img src="Messagesquare.svg" alt="Chats"> <span>Chats</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div class="menu-item"><img src="Bookmark.svg" alt="Saved"> <span>Saved</span></div>
+    <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>Reserved</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>My Vehicles</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div class="menu-item" routerLink="/company/dashboard"><img src="Plussquare.svg" alt="Create Company"> <span>Create Company</span></div>
+  </div>
+
+  <div class="content">
+    <div class="nav-bar">
+      <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
+      <div class="right-section">
+        <span class="text-wrapper-17">User</span>
+        <img class="profile-icon" src="User.svg" alt="Profile" routerLink="/user/dashboard">
+      </div>
+    </div>
+
+    <!-- New Header Section with Background -->
+    <div class="col-md-11 my-3">
+      <div class="d-flex">
+        <!-- Profile Sidebar (Card) -->
+        <div class="col-md-3">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-center mb-3">
+                <div class="profile-pic">
+                  <img src="/defaultProfilePic.png" alt="Profile pic">
+                </div>
+              </div>
+              <h5 class="text-center mb-3">{{accountService.currentUser()?.firstName}} {{accountService.currentUser()?.lastName}}</h5>
+
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item p-2 mb-2">
+                  <button class="btn w-100 text-center list-button" routerLink="edit-profile" routerLinkActive="active-link">Profile</button>
+                </li>
+                <li class="list-group-item p-2 mb-2">
+                  <button class="btn w-100 text-center list-button"  routerLink="edit-photo" routerLinkActive="active-link" >Photo</button>
+                </li>
+                <li class="list-group-item p-2 mb-2">
+                  <button class="btn w-100 text-center list-button" routerLink="edit-account-security" routerLinkActive="active-link">Account Security</button>
+                </li>
+                <li class="list-group-item p-2 mb-2">
+                  <button class="btn w-100 text-center list-button" routerLink="my-vehicles" routerLinkActive="active-link">My Vehicles</button>
+                </li>
+                <li class="list-group-item p-2 mb-2">
+                  <button class="btn w-100 text-center list-button" routerLink="reservation-history" routerLinkActive="active-link">Reservation History</button>
+                </li>
+                <li class="list-group-item p-2 mb-2">
+                  <button class="btn w-100 text-center list-button" routerLink="close-account" routerLinkActive="active-link">Close account</button>
+                </li>
+              </ul>
+              <div class="d-flex justify-content-center">
+                <button class="btn w-75 mt-4 p-2"
+                        style="border-radius: 50px;background-color: #ffffff; color: black" (click)="logout()">Log out</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="col-md-9 ms-md-4">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <router-outlet></router-outlet>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

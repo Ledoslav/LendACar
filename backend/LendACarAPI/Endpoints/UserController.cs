@@ -198,7 +198,9 @@ namespace LendACarAPI.Endpoints
         public async Task<IActionResult> EditUser([FromBody]UserDto updatedUser,int id, CancellationToken cancellationToken)
         {
             var user = await db.Users
-            .FirstOrDefaultAsync(u => u.Id == id,cancellationToken);
+                .Include(u => u.City)
+                .Include(u => u.City != null ? u.City.Country : null)
+                .FirstOrDefaultAsync(u => u.Id == id,cancellationToken);
 
 
             if (user == null) return NotFound("User not found");
@@ -210,6 +212,7 @@ namespace LendACarAPI.Endpoints
             user.CityId = updatedUser.CityId;
             user.BirthDate =DateTime.Parse(updatedUser.BirthDate);
             user.Username = updatedUser.Username;
+            user.EmailAdress = updatedUser.EmailAddress;
 
             await db.SaveChangesAsync(cancellationToken);
 
@@ -225,6 +228,8 @@ namespace LendACarAPI.Endpoints
                 EmailAddress = user.EmailAdress,
                 Username = user.Username,
                 AverageRating = user.AverageRating,
+                IsVerified = user.IsVerified,
+                UserSecurityQuestionAnswerId = user.UserSecurityQuestionAnswerId
             });
         }
 

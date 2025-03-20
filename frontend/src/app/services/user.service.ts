@@ -51,7 +51,7 @@ export class UserService {
     return this.http.put<UserDto>(this.baseUrl+`user/update/${model.id}`,model).pipe(
       map(user=>{
         if(user){
-          localStorage.clear();
+          localStorage.removeItem('user');
           localStorage.setItem('user',JSON.stringify(user));
           this.currentUser.set(user)
           console.log("Current user set:", this.currentUser());

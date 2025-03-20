@@ -1,0 +1,85 @@
+<h2 class="mb-2 text-center">Account Security</h2>
+<hr>
+
+<!-- Password reset form -->
+<h5>Change password </h5>
+<form [formGroup]="changePasswordForm" (ngSubmit)="ChangePassword()" class="d-flex flex-column align-items-center">
+
+  <div class="form-group mb-2 w-75">
+    <label for="currentPassword">Current password *</label>
+    <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control small-input" id="currentPassword"
+           formControlName="currentPassword" name="currentPassword">
+  </div>
+
+  <div class="form-group mb-2 w-75">
+    <label for="newPassword">New password *</label>
+    <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'"  class="form-control small-input" id="newPassword"
+           formControlName="newPassword" name="newPassword">
+  </div>
+
+  <div class="form-group mb-1 w-75">
+    <label for="repeatPassword"> Confirm password *</label>
+    <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control small-input" id="repeatPassword"
+           name="repeatPassword" formControlName="repeatPassword">
+
+    <div class="d-flex" *ngIf="changePasswordForm.get('repeatPassword')?.invalid && changePasswordForm.get('repeatPassword')?.touched">
+      <span style="color: red;" class="text-danger">Passwords don't match</span>
+    </div>
+    <div class="mt-2">
+      <input formControlName="passwordShow" type="checkbox" id="check" name="check"/>
+      <label class="px-2" for="check">Show password</label>
+    </div>
+
+  </div>
+
+
+
+  <div class="w-75 d-flex justify-content-end">
+    <button type="submit" class="btn mt-2 p-2"
+            style="border-radius: 30px;background-color: #ffffff; color: black" [disabled]="changePasswordForm.invalid">Change password</button>
+  </div>
+</form>
+
+<!-- Security question form -->
+
+<hr>
+<h5 *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId!=null" >Change security question</h5>
+<h5 *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId==null" >Add security question</h5>
+<form [formGroup]="securityQuestionForm"  class="d-flex flex-column align-items-center">
+  <div class="form-group mb-2 w-75">
+    <label for="currentPasswordQuestion">Current password*</label>
+    <input type="password" class="form-control small-input" id="currentPasswordQuestion"
+           formControlName="currentPassword">
+  </div>
+
+  <div class="form-group mb-2 w-75">
+    <label for="questions">Security Questions*</label>
+    <select class="form-select bg-light"  style="color: black;" aria-label="Default select example" formControlName="securityQuestionId" >
+      <option style="color: black" *ngFor="let question of questions" id="questions" value="{{question.id}}">{{question.questionText}}</option>
+    </select>
+  </div>
+
+  <div class="form-group mb-2 w-75">
+    <label for="questionAnswer">Question Answer*</label>
+    <input  class="form-control small-input" id="questionAnswer"
+            name="questionAnswer" formControlName="questionAnswer">
+  </div>
+  <ng-container *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId!=null">
+    <p style="font-size: 13px">If you want to remove the question you need to enter the fields correct</p>
+  </ng-container>
+
+
+  <!-- Button aligned to the end -->
+  <div class="w-75 d-flex justify-content-end">
+    <div *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId!=null">
+      <button type="button" class="btn mt-2 p-2"
+              style="border-radius: 30px;background-color: #ffffff; color: black" (click)="ChangeQuestion()" [disabled]="securityQuestionForm.invalid">Change question</button>
+      <button type="button" class="btn mt-2 p-2"
+              style="border-radius: 30px;background-color: #ffffff; color: black" (click)="RemoveQuestion()" [disabled]="securityQuestionForm.invalid">Remove question</button>
+    </div>
+    <div *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId==null">
+      <button type="button" class="btn mt-2 p-2"
+              style="border-radius: 30px;background-color: #ffffff; color: black" (click)="AddQuestion()" [disabled]="securityQuestionForm.invalid">Add question</button>
+    </div>
+  </div>
+</form>

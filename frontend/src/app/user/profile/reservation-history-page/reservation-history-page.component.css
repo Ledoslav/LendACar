@@ -1,0 +1,50 @@
+/* Card Styling */
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(160, 160, 160, 1.0); /* Gradient with opacity */
+
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color:black;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: black;
+}
+
+.card-text strong {
+  color: black; /* Darker color for emphasis */
+}
+
+.btn-outline-primary {
+  border-color: #007bff;
+  color: #007bff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  color: white;
+}
+/*hr{*/
+/*  border:1px solid black;*/
+/*  margin-top:5px;*/
+/*}*/
+
+.view-details{
+ background-color: white;
+  width: 80%;
+  color: black;
+}

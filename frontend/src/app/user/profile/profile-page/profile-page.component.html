@@ -1,0 +1,49 @@
+<h2 class="mb-2 text-center">Profile</h2>
+<hr>
+<form [formGroup]="userEditForm" (ngSubmit)="UpdateProfile()" class="d-flex flex-column align-items-center">
+
+  <div class="form-group my-2 w-75">
+    <label for="firstName">First Name*</label>
+    <input formControlName="firstName" id="firstName" type="text" class="form-control small-input">
+  </div>
+
+  <div class="form-group m-2 w-75">
+    <label for="lastName">Last Name*</label>
+    <input formControlName="lastName" id="lastName" type="text" class="form-control small-input">
+  </div>
+
+  <div class="form-group mb-2 w-75">
+    <label for="email">Email*</label>
+    <input formControlName="emailAddress" id="email" type="email" class="form-control small-input">
+  </div>
+
+  <div class="form-group mb-2 w-75">
+    <label for="phone">Phone*</label>
+    <input formControlName="phoneNumber" id="phone" type="text" class="form-control small-input">
+  </div>
+
+  <div class="form-group mb-2 w-75">
+    <label for="address">Birth date*</label>
+    <input formControlName="birthDate" id="address" type="text" class="form-control disabled-small-input" readonly>
+  </div>
+
+  <div class="form-group mb-2 w-75">
+    <label for="country">Country*</label>
+    <select class="form-select"  aria-label="Default select example" formControlName="countryId" >
+      <option *ngFor="let country of countries"   id="country" value="{{country.id}}">{{country.name}}</option>
+    </select>
+  </div>
+
+  <div class="form-group mb-2 w-75">
+    <label for="country">City*</label>
+    <select class="form-select"  aria-label="Default select example" formControlName="cityId" >
+      <option *ngFor="let city of filteredCities"  id="city" value="{{city.id}}">{{city.name}}</option>
+    </select>
+  </div>
+
+  <!-- Button aligned to the end -->
+  <div class="w-75 d-flex justify-content-end">
+    <button type="submit" class="btn mt-2 p-2"
+            style="border-radius: 30px;background-color: #ffffff; color: black" [disabled]="userEditForm.invalid" >Save changes</button>
+  </div>
+</form>

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { UserRoutingModule } from './user-routing.module';
 import {LayoutComponent} from './layout/layout.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
@@ -21,6 +21,14 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ProfileLayoutComponent } from './profile/profile-layout/profile-layout.component';
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+import { ProfilePageComponent } from './profile/profile-page/profile-page.component';
+import { PhotoPageComponent } from './profile/photo-page/photo-page.component';
+import { AccountSecurityPageComponent } from './profile/account-security-page/account-security-page.component';
+import { MyVehiclesPageComponent } from './profile/my-vehicles-page/my-vehicles-page.component';
+import { ReservationHistoryPageComponent } from './profile/reservation-history-page/reservation-history-page.component';
+import { CloseAccountPageComponent } from './profile/close-account-page/close-account-page.component';
 
 
 @NgModule({
@@ -34,6 +42,13 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     PollsComponent,
     VehicleUploadComponent,
     MyVehiclesComponent,
+    ProfileLayoutComponent,
+    ProfilePageComponent,
+    PhotoPageComponent,
+    AccountSecurityPageComponent,
+    MyVehiclesPageComponent,
+    ReservationHistoryPageComponent,
+    CloseAccountPageComponent,
   ],
   imports: [
     CommonModule,
@@ -55,6 +70,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatStepperModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    NgOptimizedImage,
 
   ]
 })
