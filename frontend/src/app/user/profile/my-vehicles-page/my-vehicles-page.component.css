@@ -1,0 +1,51 @@
+/* Scrollable Container */
+.scrollable-container {
+  overflow-y: auto; /* Enable vertical scrolling */
+  scroll-behavior: smooth; /* Smooth scrolling */
+}
+
+/* Card Styling */
+.car-card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%; /* Ensure all cards have the same height */
+  display: flex;
+  flex-direction: column;
+  background: #D9D9D9;
+}
+
+.car-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+  width: 100%; /* Ensure the image takes up the full width */
+  height: 200px; /* Fixed height for all images */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.card-body {
+  flex: 1; /* Ensure the card body takes up remaining space */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Space out content evenly */
+}
+
+.card-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: black;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: black;
+}
+
+.vehicle-icons{
+  width: 20px;
+}
