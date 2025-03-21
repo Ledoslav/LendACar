@@ -23,6 +23,10 @@ const routes: Routes = [
     loadChildren: () => import('./public/public.module').then(m => m.PublicModule)  // Lazy load admin modula
   },
   {
+    path: 'chat',
+    loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule)
+  },
+  {
     path: 'user',
     loadChildren: () => import('./user/user.module').then(m => m.UserModule)
   },
@@ -47,7 +51,6 @@ const routes: Routes = [
     component: ForgotPasswordComponent
   },
   {path: '**', redirectTo: 'not-found', pathMatch: 'full'},
-
 ];
 
 @NgModule({
