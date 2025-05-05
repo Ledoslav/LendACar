@@ -29,6 +29,9 @@ import { AccountSecurityPageComponent } from './profile/account-security-page/ac
 import { MyVehiclesPageComponent } from './profile/my-vehicles-page/my-vehicles-page.component';
 import { ReservationHistoryPageComponent } from './profile/reservation-history-page/reservation-history-page.component';
 import { CloseAccountPageComponent } from './profile/close-account-page/close-account-page.component';
+import {FileUploadModule} from "ng2-file-upload";
+import {ImageCropperComponent} from 'ngx-image-cropper';
+import { VerificationRequestPageComponent } from './profile/verification-request-page/verification-request-page.component';
 
 
 @NgModule({
@@ -49,6 +52,7 @@ import { CloseAccountPageComponent } from './profile/close-account-page/close-ac
     MyVehiclesPageComponent,
     ReservationHistoryPageComponent,
     CloseAccountPageComponent,
+    VerificationRequestPageComponent,
   ],
   imports: [
     CommonModule,
@@ -74,6 +78,8 @@ import { CloseAccountPageComponent } from './profile/close-account-page/close-ac
     MatDatepickerInput,
     MatDatepickerToggle,
     NgOptimizedImage,
+    FileUploadModule,
+    ImageCropperComponent,
 
   ]
 })

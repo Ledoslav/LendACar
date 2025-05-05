@@ -1,33 +1,42 @@
-import { Component } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-
+import {VehicleService} from '../../../services/vehicle.service';
+import {UserService} from '../../../services/user.service';
+import {VehicleDto} from '../../../Models/VehicleDto';
+import { transmissionTypes } from '../../../shared/shared-data';
 @Component({
   selector: 'app-my-vehicles-page',
   templateUrl: './my-vehicles-page.component.html',
   styleUrl: './my-vehicles-page.component.css'
 })
-export class MyVehiclesPageComponent {
-  profileForm: FormGroup;
-
+export class MyVehiclesPageComponent implements OnInit{
+  userVehicles:VehicleDto[]=[];
+  vehiclesService=inject(VehicleService);
+  accountService=inject(UserService);
+  transmisionTypes= transmissionTypes;
   constructor(private fb: FormBuilder) {
-    this.profileForm = this.fb.group({
-      firstName: ['Denis', Validators.required],
-      lastName: ['Kundo', Validators.required],
-      email: ['deni.kundo@edu.fri.ba', [Validators.required, Validators.email]],
-      username: ['Denis123', Validators.required],
-      phoneNumber: ['062-225-663', Validators.required],
-      location: ['Scorpion, Bonfia and Transportation', Validators.required]
-    });
+
   }
 
-  ngOnInit(): void {}
-
-  onSubmit(): void {
-    if (this.profileForm.valid) {
-      console.log('Profile updated:', this.profileForm.value);
-      alert('Profile updated successfully!');
-    } else {
-      alert('Please fill out all fields correctly.');
-    }
+  ngOnInit(): void {
+    this.loadUserVehicles();
   }
+
+
+  loadUserVehicles(): void {
+    const userId=this.accountService.currentUser()!.id
+    this.vehiclesService.GetVehiclesByUser(userId).subscribe({
+      next:res=>{
+        this.userVehicles=res;
+      },
+      error:err=>{
+        console.log(err);
+      }
+    })
+  }
+
+  findTransmissionType(type:any){
+    return this.transmisionTypes.find(t=>t.value==type)?.label
+  }
+
 }

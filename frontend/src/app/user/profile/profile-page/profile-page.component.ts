@@ -9,6 +9,7 @@ import {CityService} from '../../../services/city.service';
 import {Router} from '@angular/router';
 import {PasswordResetService} from '../../../services/password-reset.service';
 import {UserSecurityQuestionAnswerService} from '../../../services/user-security-question-answer.service';
+import {MySnackbarService} from '../../../services/snackbars/my-snackbar.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -52,14 +53,21 @@ export class ProfilePageComponent implements OnInit{
   accountService=inject(UserService);
   cityService=inject(CityService);
   router=inject(Router);
+  snackBarService=inject(MySnackbarService)
 
 
   UpdateProfile() {
-    console.log(this.userEditForm.value);
-    this.accountService.Update(this.userEditForm.value).subscribe({
+    let city=this.cities.find(c=>c.id==this.userEditForm.get('cityId')?.value)
+    let updateUser={
+      ...this.userEditForm.value,
+      city:city
+    };
+    console.log(updateUser);
+    this.accountService.Update(updateUser).subscribe({
       next: result => {
-        this.accountService.currentUser.set(result)
-        alert("User updated successfully");
+        this.accountService.currentUser.set(result);
+        //alert("User updated successfully");
+        this.snackBarService.showSuccessMessage("Profile updated successfully!");
       },
       error: err => console.log(err)
     })

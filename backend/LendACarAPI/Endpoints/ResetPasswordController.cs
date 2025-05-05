@@ -39,7 +39,7 @@ namespace LendACarAPI.Endpoints
 
 
             user.ResetPasswordToken = emailToken.ToString();
-            user.ResetPasswordTokenExpiry = DateTime.Now.AddMinutes(1);
+            user.ResetPasswordTokenExpiry = DateTime.Now.AddMinutes(15);
 
             await db.SaveChangesAsync(cancellationToken);
 

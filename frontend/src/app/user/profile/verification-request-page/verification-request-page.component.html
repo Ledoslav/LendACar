@@ -1,0 +1,61 @@
+<h2 class="mb-2 text-center">Verification Request</h2>
+<hr>
+
+<div class="container mt-4">
+  <!-- Unverified User -->
+  <div *ngIf="verificationStatus === 3">
+    <h4 class="mb-4">Submit Verification Request</h4>
+
+    <form (ngSubmit)="SubmitVerificationRequest()" #verificationForm="ngForm">
+      <div class="mb-3">
+        <label for="comment" class="form-label">Comment</label>
+        <textarea
+          id="comment"
+          class="form-control"
+          [(ngModel)]="comment"
+          name="comment"
+          rows="4"
+          placeholder="Write your comment here..."
+          required
+        ></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="!verificationForm.form.valid">Submit</button>
+    </form>
+  </div>
+
+  <!-- Verified User -->
+  <div *ngIf="verificationStatus === 1 && verificationRequest !== null">
+    <h4 class="mb-4">You are Verified!</h4>
+
+    <div class="mb-3">
+      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate }}</p>
+      <p><strong>Your Comment:</strong> {{ verificationRequest.requestComment || 'No comment provided' }}</p>
+      <p><strong>Approved Date:</strong> {{ verificationRequest.requestReviewDate  }}</p>
+      <p><strong>Comment from employee:</strong> {{ verificationRequest.denialComment || 'No comment provided' }}</p>
+    </div>
+  </div>
+
+  <!-- Denied Verification User -->
+  <div *ngIf="verificationStatus === 0 && verificationRequest !== null">
+    <h4 class="mb-4">Your Verification Request was denied!</h4>
+
+    <div class="mb-3">
+      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate }}</p>
+      <p><strong>Your Comment:</strong> {{ verificationRequest.requestComment || 'No comment provided' }}</p>
+      <p><strong>Denial Date:</strong> {{ verificationRequest.requestReviewDate  }}</p>
+      <p><strong>Denial Reason:</strong> {{ verificationRequest.denialComment || 'No comment provided' }}</p>
+    </div>
+  </div>
+
+  <!-- Pending Verification User -->
+  <div *ngIf="verificationStatus === 2 && verificationRequest !== null">
+    <h4 class="mb-4">Pending Verification Request</h4>
+
+    <div class="mb-3">
+      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate }}</p>
+      <p><strong>Your Comment:</strong> {{ verificationRequest.requestComment || 'No comment provided' }}</p>
+    </div>
+    <button class="btn btn-primary" (click)="DeleteRequest()">Delete Request</button>
+  </div>
+
+</div>

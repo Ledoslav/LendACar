@@ -1,21 +1,54 @@
 <h2 class="mb-2 text-center">Photo</h2>
 <hr>
-<div class="d-flex justify-content-center">
-  <div class="bg-secondary-soft px-4 py-5 rounded">
-    <div class="row g-03">
-      <h4 class="mb-4 mt-0 text-center">Upload your profile photo</h4>
-      <div class="text-center">
-        <!-- Image upload -->
-        <div class="mb-3" style="background-color: whitesmoke; width: auto">
-          <img src="/defaultProfilePic.png" alt="Profile pic">
-        </div>
-        <!-- Button -->
-        <input type="file" id="customFile" name="file" hidden="">
-        <label class="btn btn-success-soft btn-block" for="customFile">Upload</label>
-        <button type="button" class="btn btn-danger-soft">Remove</button>
-        <!-- Content -->
-        <p class="text-muted mt-3 mb-0"><span class="me-1">Note:</span>Minimum size 300px x 300px</p>
-      </div>
+<div class="container">
+  <ng-container *ngIf="accountService.currentUser()?.profilePhotoUrl==null">
+  <h2>Upload Profile Picture</h2>
+    <div *ngIf="!showCropper" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+      <p>Drag & drop an image here or click to browse.</p>
+      <input type="file" accept="image/*" #fileInput (change)="onFileChange($event)" hidden />
+      <button (click)="fileInput.click()">Choose File</button>
+    </div>
+  </ng-container>
+
+  <div *ngIf="showCropper" class="cropper-modal">
+    <image-cropper
+      [imageChangedEvent]="imageChangedEvent"
+      [maintainAspectRatio]="true"
+      [aspectRatio]="1 / 1"
+      [roundCropper]="true"
+      [cropperStaticWidth]="250"
+      [cropperStaticHeight]="250"
+      [resizeToWidth]="400"
+      [resizeToHeight]="400"
+      [imageQuality]="0.8"
+      format="jpeg"
+      (imageCropped)="imageCropped($event)"
+      (imageLoaded)="imageLoaded($event)"
+      (cropperReady)="cropperReady()"
+      (loadImageFailed)="loadImageFailed()"
+    ></image-cropper>
+
+    <div class="mt-2">
+      <button class="btn btn-outline-light " (click)="uploadCroppedImage()">Upload</button>
+      <button class="btn btn-outline-light mx-2" (click)="cancelCrop()">Cancel</button>
     </div>
   </div>
+
+
+  <ng-container *ngIf="!showCropper && accountService.currentUser()?.profilePhotoUrl!=null">
+    <h2>Edit Profile Picture</h2>
+    <div class="d-flex justify-content-center mb-3">
+      <div class="profile-pic">
+        <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile pic">
+      </div>
+    </div>
+    <div class="d-flex justify-content-center mb-3">
+      <div class="mt-2">
+        <input type="file" accept="image/*" #fileInput (change)="onFileChange($event)" hidden />
+        <button class="btn btn-outline-light" (click)="fileInput.click()">Change</button>
+        <button class="btn btn-outline-danger mx-2" style="color: red" (click)="removeProfilePhoto()">Remove</button>
+      </div>
+    </div>
+  </ng-container>
+
 </div>

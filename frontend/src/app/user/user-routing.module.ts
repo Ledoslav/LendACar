@@ -17,6 +17,9 @@ import {AccountSecurityPageComponent} from './profile/account-security-page/acco
 import {MyVehiclesPageComponent} from './profile/my-vehicles-page/my-vehicles-page.component';
 import {ReservationHistoryPageComponent} from './profile/reservation-history-page/reservation-history-page.component';
 import {CloseAccountPageComponent} from './profile/close-account-page/close-account-page.component';
+import {
+  VerificationRequestPageComponent
+} from './profile/verification-request-page/verification-request-page.component';
 
 
 const routes: Routes = [
@@ -50,7 +53,7 @@ const routes: Routes = [
                 { path:'my-vehicles', component: MyVehiclesPageComponent},
                 { path:'reservation-history', component: ReservationHistoryPageComponent},
                 { path:'close-account', component: CloseAccountPageComponent},
-
+                { path:'verification-request', component: VerificationRequestPageComponent},
               ]
           },
 

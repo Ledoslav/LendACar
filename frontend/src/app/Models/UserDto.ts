@@ -13,4 +13,5 @@ export interface UserDto {
   averageRating: number;
   isVerified: boolean;
   userSecurityQuestionAnswerId:number|null;
+  profilePhotoUrl:string|null;
 }
