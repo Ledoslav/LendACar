@@ -17,8 +17,8 @@
     <div class="nav-bar">
       <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
       <div class="right-section">
-        <span class="text-wrapper-17">User</span>
-        <img class="profile-icon" src="User.svg" alt="Profile" routerLink="/user/dashboard">
+        <span class="text-wrapper-17">{{ accountService.currentUser()?.username }}</span>
+        <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" class="profile-icon" style="border-radius: 20px" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile" routerLink="/user/dashboard">
       </div>
     </div>
 
@@ -31,7 +31,8 @@
             <div class="card-body">
               <div class="d-flex justify-content-center mb-3">
                 <div class="profile-pic">
-                  <img src="/defaultProfilePic.png" alt="Profile pic">
+                  <img *ngIf="accountService.currentUser()?.profilePhotoUrl==null" src="/defaultProfilePic.png" alt="Profile pic">
+                  <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile pic">
                 </div>
               </div>
               <h5 class="text-center mb-3">{{accountService.currentUser()?.firstName}} {{accountService.currentUser()?.lastName}}</h5>
@@ -45,6 +46,9 @@
                 </li>
                 <li class="list-group-item p-2 mb-2">
                   <button class="btn w-100 text-center list-button" routerLink="edit-account-security" routerLinkActive="active-link">Account Security</button>
+                </li>
+                <li class="list-group-item p-2 mb-2">
+                  <button class="btn w-100 text-center list-button" routerLink="verification-request" routerLinkActive="active-link">Verification Request</button>
                 </li>
                 <li class="list-group-item p-2 mb-2">
                   <button class="btn w-100 text-center list-button" routerLink="my-vehicles" routerLinkActive="active-link">My Vehicles</button>

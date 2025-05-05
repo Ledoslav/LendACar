@@ -18,4 +18,5 @@ export interface AuthResponse {
   workingHourId:number | null,
   jobTitle:string | null,
   userSecurityQuestionAnswerId:number | null,
+  profilePhotoUrl:string|null;
 }

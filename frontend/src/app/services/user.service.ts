@@ -10,6 +10,7 @@ import {AuthResponse} from '../Models/auth-models/AuthResponse';
 import {TokenClaims} from '../Models/auth-models/TokenClaims';
 import {TokenObject} from '../Models/auth-models/TokenObject';
 import {MyAuthServiceService} from './auth-service/my-auth-service.service';
+import {Form} from '@angular/forms';
 
 
 @Injectable({
@@ -137,4 +138,33 @@ export class UserService {
       }
       ));
   }
+
+  UploadProfilePhoto(formData:FormData,userId:any){
+    return this.http.post<UserDto>(this.baseUrl+`User/add-profile-pic/${userId}`,formData).pipe(
+      map(user=>{
+        if(user){
+          localStorage.removeItem('user');
+          localStorage.setItem('user',JSON.stringify(user));
+          this.currentUser.set(user)
+          console.log("Current user set:", this.currentUser());
+        }
+        return user;
+      })
+    );
+  }
+
+  RemoveProfilePhoto(userId:any){
+    return this.http.delete<UserDto>(this.baseUrl+`User/remove-profile-pic/${userId}`).pipe(
+      map(user=>{
+        if(user){
+          localStorage.removeItem('user');
+          localStorage.setItem('user',JSON.stringify(user));
+          this.currentUser.set(user)
+          console.log("Current user set:", this.currentUser());
+        }
+        return user;
+      })
+    );
+  }
+
 }

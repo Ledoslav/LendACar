@@ -27,6 +27,7 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<IRenderPDFReport, RenderPDFReport>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, GmailService>();
+builder.Services.AddScoped<IPhotoService,PhotoService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>

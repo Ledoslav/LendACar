@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {VehiclesDto} from '../Models/VehiclesDto';
 import { VehicleBrandDto } from '../Models/VehicleBrandDto';
+import {VehicleDto} from '../Models/VehicleDto';
 
 
 @Injectable({
@@ -72,5 +73,9 @@ export class VehicleService{
   LoadVehiclesWithFilters(params: any): Observable<VehiclesDto[]> {
     const queryParams = new URLSearchParams(params).toString();
     return this.http.get<VehiclesDto[]>(`http://localhost:7000/api/VehicleModelAndBrand/getModel/all?${queryParams}`);
+  }
+
+  GetVehiclesByUser(userId:any){
+    return this.http.get<VehicleDto[]>(`http://localhost:7000/api/Vehicle/getByUser/${userId}`);
   }
 }

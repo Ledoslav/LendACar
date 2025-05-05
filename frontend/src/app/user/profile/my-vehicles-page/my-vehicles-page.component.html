@@ -1,293 +1,48 @@
 <h2 class="mb-2 text-center">My Vehicles</h2>
 <hr>
 <div class="container">
-  <div class="row justify-content-between overflow-auto scrollable-container" style="max-height: 80vh;"> <!-- Added scrollable container -->
+  <div class="row justify-content-between overflow-auto scrollable-container" style="max-height: 80vh;">
     <!-- Seat Altea 2.0 TDI Card -->
-    <div class="col-md-5 mb-3">
+    <div class="col-md-5 mb-3" *ngFor="let vehicle of userVehicles">
       <div class="card shadow-sm car-card">
-        <img src="https://www.automoli.com/common/vehicles/_assets/img/gallery/f39/seat-altea-xl-facelift-2009.jpg"  class="card-img-top" alt="Seat Altea">
+        <img src="/Image-not-found.png"  class="card-img-top" alt="">
         <div class="card-body">
           <div class="row justify-content-between">
             <div class="col-auto">
-              <h5 class="card-title mb-0">Seat Altea 2.0 TDI</h5>
+              <h5 class="card-title mb-0">{{ vehicle.title }}</h5>
             </div>
             <div class="col-auto">
-              <p class="card-text mb-0">$24/day</p>
+              <p class="card-text mb-0">${{vehicle.pricePerDay}}/day</p>
             </div>
           </div>
-          <div class="d-flex align-items-center"> <!-- Use d-flex for horizontal alignment -->
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2"> <!-- Added me-2 for right margin -->
+          <div class="d-flex align-items-center">
+
+            <div class="d-flex align-items-center me-2">
               <img class="vehicle-icons" src="/people.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p> <!-- Added ms-2 for left margin -->
+              <p style="color: black"  class="mb-0 ms-2">{{ vehicle.numberOfSeats }}</p>
             </div>
 
-            <!-- Image with Number -->
             <div class="d-flex align-items-center me-2">
               <img class="vehicle-icons" src="/door.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p>
+              <p style="color: black"  class="mb-0 ms-2">{{ vehicle.numberOfSeats +1 }}</p>
             </div>
 
             <!-- Image with Number -->
             <div class="d-flex align-items-center me-2">
               <img class="vehicle-icons" src="/gear-shift.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">M</p>
+              <p style="color: black"  class="mb-0 ms-2">{{ findTransmissionType(vehicle.transmissionType) }}</p>
             </div>
 
-            <!-- Image with Number -->
             <div class="d-flex align-items-center me-2">
               <img class="vehicle-icons" src="/gears.png" alt="gsa">
-              <p style="color: black" class="mb-0 ms-2">103</p>
+              <p style="color: black" class="mb-0 ms-2">{{ vehicle.enginePower }}</p>
             </div>
 
-            <!-- Image with Number -->
             <div class="d-flex align-items-center me-2">
               <img class="vehicle-icons" src="/drivers-license.png" alt="gsa">
               <p style="color: black"   class="mb-0 ms-2">21</p>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Skoda Octavia 1.6 TDI Card -->
-    <div class="col-md-5 mb-3">
-      <div class="card shadow-sm car-card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Skoda_Octavia_IV_RS_IMG_4251.jpg/330px-Skoda_Octavia_IV_RS_IMG_4251.jpg" class="card-img-top" alt="Skoda Octavia">
-        <div class="card-body">
-          <div class="row justify-content-between">
-            <div class="col-auto">
-              <h5 class="card-title">Škoda Octavia 1.6 TDI</h5>
-            </div>
-            <div class="col-auto">
-              <p class="card-text">$22/day</p>
-            </div>
-          </div>
-          <div class="d-flex align-items-center"> <!-- Use d-flex for horizontal alignment -->
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2"> <!-- Added me-2 for right margin -->
-              <img class="vehicle-icons" src="/people.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p> <!-- Added ms-2 for left margin -->
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/door.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gear-shift.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">M</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gears.png" alt="gsa">
-              <p style="color: black" class="mb-0 ms-2">103</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/drivers-license.png" alt="gsa">
-              <p style="color: black"   class="mb-0 ms-2">21</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mazda 6 Card -->
-    <div class="col-md-5 mb-3">
-      <div class="card shadow-sm car-card">
-        <img src="https://gofatherhood.com/wp-content/uploads/2019/04/2018-mazda6-signature-1.jpg" class="card-img-top" alt="Mazda 6">
-        <div class="card-body">
-          <div class="row justify-content-between">
-            <div class="col-auto">
-              <h5 class="card-title">Mazda 6</h5>
-            </div>
-            <div class="col-auto">
-              <p class="card-text">$24/day</p>
-            </div>
-          </div>
-          <div class="d-flex align-items-center"> <!-- Use d-flex for horizontal alignment -->
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2"> <!-- Added me-2 for right margin -->
-              <img class="vehicle-icons" src="/people.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p> <!-- Added ms-2 for left margin -->
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/door.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gear-shift.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">M</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gears.png" alt="gsa">
-              <p style="color: black" class="mb-0 ms-2">103</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/drivers-license.png" alt="gsa">
-              <p style="color: black"   class="mb-0 ms-2">21</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Skoda Octavia 1.6 TDI Card -->
-    <div class="col-md-5 mb-3">
-      <div class="card shadow-sm car-card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Skoda_Octavia_IV_RS_IMG_4251.jpg/330px-Skoda_Octavia_IV_RS_IMG_4251.jpg" class="card-img-top" alt="Skoda Octavia">
-        <div class="card-body">
-          <div class="row justify-content-between">
-            <div class="col-auto">
-              <h5 class="card-title">Škoda Octavia 1.6 TDI</h5>
-            </div>
-            <div class="col-auto">
-              <p class="card-text">$22/day</p>
-            </div>
-          </div>
-          <div class="d-flex align-items-center"> <!-- Use d-flex for horizontal alignment -->
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2"> <!-- Added me-2 for right margin -->
-              <img class="vehicle-icons" src="/people.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p> <!-- Added ms-2 for left margin -->
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/door.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gear-shift.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">M</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gears.png" alt="gsa">
-              <p style="color: black" class="mb-0 ms-2">103</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/drivers-license.png" alt="gsa">
-              <p style="color: black"   class="mb-0 ms-2">21</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Skoda Octavia 1.6 TDI Card -->
-    <div class="col-md-5 mb-3">
-      <div class="card shadow-sm car-card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Skoda_Octavia_IV_RS_IMG_4251.jpg/330px-Skoda_Octavia_IV_RS_IMG_4251.jpg" class="card-img-top" alt="Skoda Octavia">
-        <div class="card-body">
-          <div class="row justify-content-between">
-            <div class="col-auto">
-              <h5 class="card-title">Škoda Octavia 1.6 TDI</h5>
-            </div>
-            <div class="col-auto">
-              <p class="card-text">$22/day</p>
-            </div>
-          </div>
-          <div class="d-flex align-items-center"> <!-- Use d-flex for horizontal alignment -->
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2"> <!-- Added me-2 for right margin -->
-              <img class="vehicle-icons" src="/people.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p> <!-- Added ms-2 for left margin -->
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/door.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gear-shift.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">M</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gears.png" alt="gsa">
-              <p style="color: black" class="mb-0 ms-2">103</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/drivers-license.png" alt="gsa">
-              <p style="color: black"   class="mb-0 ms-2">21</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Skoda Octavia 1.6 TDI Card -->
-    <div class="col-md-5 mb-3">
-      <div class="card shadow-sm car-card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Skoda_Octavia_IV_RS_IMG_4251.jpg/330px-Skoda_Octavia_IV_RS_IMG_4251.jpg" class="card-img-top" alt="Skoda Octavia">
-        <div class="card-body">
-          <div class="row justify-content-between">
-            <div class="col-auto">
-              <h5 class="card-title">Škoda Octavia 1.6 TDI</h5>
-            </div>
-            <div class="col-auto">
-              <p style="color: black"  class="card-text">$22/day</p>
-            </div>
-          </div>
-
-          <div class="d-flex align-items-center"> <!-- Use d-flex for horizontal alignment -->
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2"> <!-- Added me-2 for right margin -->
-              <img class="vehicle-icons" src="/people.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p> <!-- Added ms-2 for left margin -->
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/door.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">5</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gear-shift.png" alt="gsa">
-              <p style="color: black"  class="mb-0 ms-2">M</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/gears.png" alt="gsa">
-              <p style="color: black" class="mb-0 ms-2">103</p>
-            </div>
-
-            <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
-              <img class="vehicle-icons" src="/drivers-license.png" alt="gsa">
-              <p style="color: black"   class="mb-0 ms-2">21</p>
-            </div>
-          </div>
-
         </div>
       </div>
     </div>

@@ -18,4 +18,13 @@ export class MySnackbarService {
     });
   }
 
+  showSuccessMessage(message:string,duration:number=4000):MatSnackBarRef<TextOnlySnackBar>{
+    return this.snackBar.open(message,undefined,{
+      duration:duration,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
+  }
+
+
 }

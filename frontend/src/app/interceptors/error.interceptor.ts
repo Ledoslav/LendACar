@@ -25,6 +25,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                      modalStateErrors.push(err.error.errors[key])
                    }
                  }
+                 this.snackBar.showMessage(modalStateErrors.flat().toString());
                  throw modalStateErrors.flat()
                }
                else if(typeof (err.error)==='object'){

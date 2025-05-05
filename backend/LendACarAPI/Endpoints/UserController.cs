@@ -5,10 +5,12 @@ using LendACarAPI.Filters;
 using LendACarAPI.Helper;
 using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -17,7 +19,7 @@ namespace LendACarAPI.Endpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(ApplicationDbContext db,IAuthService authService) : ControllerBase
+    public class UserController(ApplicationDbContext db,IAuthService authService,IPhotoService photoService) : ControllerBase
     {
 
         [HttpGet("getById/{id}")]
@@ -25,8 +27,8 @@ namespace LendACarAPI.Endpoints
         public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
             var user= await db.Users
-                .Include(u=>u.City)
-                .Include(u => u.City != null ? u.City.Country : null)
+                .Include(u => u.City)
+                .ThenInclude(c => c.Country)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null) throw new Exception("User not found");
@@ -43,7 +45,8 @@ namespace LendACarAPI.Endpoints
                 EmailAddress = user.EmailAdress,
                 Username=user.Username,
                 AverageRating = user.AverageRating,
-                IsVerified = user.IsVerified
+                IsVerified = user.IsVerified,
+                ProfilePhotoUrl= user.ProfilePhotoUrl,
             };
 
             return Ok(userDto);
@@ -56,23 +59,6 @@ namespace LendACarAPI.Endpoints
         public async Task<ActionResult<MyPagedList<UserDto[]>>> GetAllUsers([FromQuery]MyPagingRequest pagedParams, CancellationToken cancellationToken)
         {
             var query = HttpContext.Items["users"] as IQueryable<UserDto>;
-            //var query = db.Users
-            //    .Include(u => u.City)
-            //    .Include(u => u.City != null ? u.City.Country : null)
-            //    .Select(user => new UserDto()
-            //    {
-            //        Id = user.Id,
-            //        FirstName = user.FirstName,
-            //        LastName = user.LastName,
-            //        PhoneNumber = user.PhoneNumber,
-            //        BirthDate = user.BirthDate.ToString("yyyy-MM-dd"),
-            //        City = user.City,
-            //        CityId = user.CityId,
-            //        EmailAddress = user.EmailAdress,
-            //        Username = user.Username,
-            //        AverageRating = user.AverageRating,
-            //        IsVerified = user.IsVerified
-            //    });
 
             var users = await MyPagedList<UserDto>.CreateAsync(query, pagedParams, cancellationToken);
 
@@ -122,7 +108,7 @@ namespace LendACarAPI.Endpoints
                     CreatedDate = DateTime.Now,
                     UserSecurityQuestionAnswerId = questionAnswer.Id,
                     IsVerified = false,
-                    IsAppUser = true
+                    IsAppUser = true,
                 };
             }
 
@@ -156,8 +142,8 @@ namespace LendACarAPI.Endpoints
         public async Task<ActionResult<UserDto>> LoginUser([FromBody] LoginUserDto userLogin,CancellationToken cancellationToken)
         {
             var user = await db.Users
-                .Include(u=>u.City)
-                .Include(u => u.City != null ? u.City.Country : null)
+                .Include(u => u.City)
+                .ThenInclude(c => c.Country)
                 .FirstOrDefaultAsync(u => u.Username.ToLower() == userLogin.Username.ToLower(),cancellationToken);
 
             if (user == null) return Unauthorized("Invalid credentials");
@@ -187,7 +173,8 @@ namespace LendACarAPI.Endpoints
                 AverageRating = user.AverageRating,
                 IsVerified = user.IsVerified,
                 Token= token,
-                UserSecurityQuestionAnswerId = user.UserSecurityQuestionAnswerId
+                UserSecurityQuestionAnswerId = user.UserSecurityQuestionAnswerId,
+                ProfilePhotoUrl = user.ProfilePhotoUrl,
             });
         }
 
@@ -199,7 +186,7 @@ namespace LendACarAPI.Endpoints
         {
             var user = await db.Users
                 .Include(u => u.City)
-                .Include(u => u.City != null ? u.City.Country : null)
+                .ThenInclude(c => c.Country)
                 .FirstOrDefaultAsync(u => u.Id == id,cancellationToken);
 
 
@@ -215,6 +202,9 @@ namespace LendACarAPI.Endpoints
             user.EmailAdress = updatedUser.EmailAddress;
 
             await db.SaveChangesAsync(cancellationToken);
+            //await db.Entry(user).Reference(u => u.City).LoadAsync();
+            //if(user.City!=null)
+            //    await db.Entry(user.City).Reference(c => c.Country).LoadAsync();
 
             return Ok(new UserDto
             {
@@ -223,13 +213,15 @@ namespace LendACarAPI.Endpoints
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
                 BirthDate = user.BirthDate.ToString("dd.MM.yyyy"),
-                City = user.City,
+                City = updatedUser.City,
                 CityId = user.CityId,
                 EmailAddress = user.EmailAdress,
                 Username = user.Username,
                 AverageRating = user.AverageRating,
                 IsVerified = user.IsVerified,
-                UserSecurityQuestionAnswerId = user.UserSecurityQuestionAnswerId
+                UserSecurityQuestionAnswerId = user.UserSecurityQuestionAnswerId,
+                ProfilePhotoUrl = user.ProfilePhotoUrl,
+
             });
         }
 
@@ -314,6 +306,78 @@ namespace LendACarAPI.Endpoints
 
             return Ok(users.DataItems);
         }
+
+
+        [HttpPost("add-profile-pic/{id}")]
+        public async Task<ActionResult<UserDto>> AddUserProfilePic(int id,IFormFile file ,CancellationToken cancellationToken)
+        {
+            var user = await db.Users
+                .Include(u => u.City)
+                .Include(u => u.City != null ? u.City.Country : null)
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            if (user == null) return BadRequest();
+
+            var result = await photoService.AddPhotoAsync(file);
+
+            user.ProfilePhotoPublicId = result.PublicId;
+            user.ProfilePhotoUrl = result.SecureUrl.AbsoluteUri;
+
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            return Ok(new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                BirthDate = user.BirthDate.ToString("dd.MM.yyyy"),
+                City = user.City,
+                CityId = user.CityId,
+                EmailAddress = user.EmailAdress,
+                Username = user.Username,
+                AverageRating = user.AverageRating,
+                IsVerified = user.IsVerified,
+                UserSecurityQuestionAnswerId = user.UserSecurityQuestionAnswerId,
+                ProfilePhotoUrl = user.ProfilePhotoUrl,
+            });
+        }
+
+        [HttpDelete("remove-profile-pic/{id}")]
+        public async Task<ActionResult<UserDto>> RemoveUserProfilePic(int id, CancellationToken cancellationToken)
+        {
+            var user = await db.Users
+                .Include(u => u.City)
+                .Include(u => u.City != null ? u.City.Country : null)
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            if (user == null) return BadRequest();
+
+            user.ProfilePhotoPublicId = null;
+            user.ProfilePhotoUrl = null;
+
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            return Ok(new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                BirthDate = user.BirthDate.ToString("dd.MM.yyyy"),
+                City = user.City,
+                CityId = user.CityId,
+                EmailAddress = user.EmailAdress,
+                Username = user.Username,
+                AverageRating = user.AverageRating,
+                IsVerified = user.IsVerified,
+                UserSecurityQuestionAnswerId = user.UserSecurityQuestionAnswerId,
+                ProfilePhotoUrl = user.ProfilePhotoUrl,
+            });
+        }
+
 
 
 

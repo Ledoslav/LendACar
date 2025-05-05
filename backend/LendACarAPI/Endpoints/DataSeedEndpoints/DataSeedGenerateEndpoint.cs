@@ -11,7 +11,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DataSeedGenerateEndpoint(ApplicationDbContext db,IAuthService authService):ControllerBase
+    public class DataSeedGenerateEndpoint(ApplicationDbContext db,IAuthService authService,IPhotoService photoService):ControllerBase
     {
 
         [HttpPost("generateReferalData")]
@@ -99,7 +99,7 @@ namespace LendACarAPI.Endpoints.DataSeedEndpoints
                 Password = "admin"
             });
 
-            var controller = new UserController(db, authService);
+            var controller = new UserController(db, authService, photoService);
             await controller.RegisterUser(new DTOs.RegisterUserDto
             {
                 Username = "KalloX",

@@ -23,6 +23,8 @@ namespace LendACarAPI.DTOs
         public int CityId { get; set; }
         public City? City { get; set; }
 
+        public int? CountryId { get; set; }
+
         [Required]
         [EmailAddress]
         public string? EmailAddress { get; set; }
@@ -33,6 +35,8 @@ namespace LendACarAPI.DTOs
         public bool IsVerified { get; set; }
 
         public string? Token { get; set; }
+
+        public string? ProfilePhotoUrl { get; set; }
 
 
         public int? UserSecurityQuestionAnswerId { get; set; }
