@@ -25,32 +25,32 @@ export class ErrorInterceptor implements HttpInterceptor {
                      modalStateErrors.push(err.error.errors[key])
                    }
                  }
-                 this.snackBar.showMessage(modalStateErrors.flat().toString());
+                 this.snackBar.showErrorMessage(modalStateErrors.flat().toString());
                  throw modalStateErrors.flat()
                }
                else if(typeof (err.error)==='object'){
-                 this.snackBar.showMessage(err.statusText)
+                 this.snackBar.showErrorMessage(err.statusText)
                }
                else{
-                 this.snackBar.showMessage(err.error)
+                 this.snackBar.showErrorMessage(err.error)
                }
                break;
              case 401:
-               this.snackBar.showMessage(err.error)
+               this.snackBar.showErrorMessage(err.error)
                break;
              case 403:
-               this.snackBar.showMessage(err.error.message) // redirect na forbidden page
+               this.snackBar.showErrorMessage(err.error.message) // redirect na forbidden page
                void this.router.navigateByUrl('/not-authorized');
                break;
              case 404: //redirect the user to a not found page
-               this.snackBar.showMessage(err.error)
+               this.snackBar.showErrorMessage(err.error)
                void this.router.navigateByUrl('/not-found');
                break;
              case 500:
-               this.snackBar.showMessage(err.statusText)
+               this.snackBar.showErrorMessage(err.statusText)
                break;
              default:
-               this.snackBar.showMessage("Something went wrong");
+               this.snackBar.showErrorMessage("Something went wrong");
                console.log(err);
                break;
            }

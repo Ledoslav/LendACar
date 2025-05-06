@@ -281,7 +281,8 @@ namespace LendACarAPI.Endpoints
                  db.RemoveRange(companyEmployee);
 
             var userSecurityQuestionAnswer = user.UserSecurityQuestionAnswer;
-            db.UserSecurityQuestionAnswers.Remove(userSecurityQuestionAnswer);
+            if(userSecurityQuestionAnswer != null)
+                db.UserSecurityQuestionAnswers.Remove(userSecurityQuestionAnswer);
 
 
             db.Remove(user);

@@ -17,7 +17,9 @@ import { NgxCaptchaModule } from 'ngx-captcha';
 import { JwtModule } from "@auth0/angular-jwt";
 import {TokenInterceptor} from './interceptors/token.interceptor';
 import {ErrorInterceptor} from './interceptors/error.interceptor';
-
+import {
+  MatDialogModule,
+} from '@angular/material/dialog';
 
 
 @NgModule({
@@ -38,6 +40,7 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
     DatePipe,
     MatStepperModule,
     NgxCaptchaModule,
+    MatDialogModule,
     JwtModule.forRoot({
       config:{
         headerName:"my-auth-token"

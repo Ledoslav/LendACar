@@ -10,11 +10,12 @@ export class MySnackbarService {
 
   private snackBar=inject(MatSnackBar);
 
-  showMessage(message:string,duration:number=4000):MatSnackBarRef<TextOnlySnackBar>{
+  showErrorMessage(message:string, duration:number=4000):MatSnackBarRef<TextOnlySnackBar>{
     return this.snackBar.open(message,undefined,{
       duration:duration,
       horizontalPosition: 'center',
-      verticalPosition: 'top'
+      verticalPosition: 'top',
+      panelClass: 'error-snack-bar'
     });
   }
 
@@ -23,8 +24,16 @@ export class MySnackbarService {
       duration:duration,
       horizontalPosition: 'center',
       verticalPosition: 'top',
+      panelClass: 'success-snack-bar'
     });
   }
 
+  showMessage(message:string, duration:number=4000):MatSnackBarRef<TextOnlySnackBar>{
+    return this.snackBar.open(message,undefined,{
+      duration:duration,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
+  }
 
 }

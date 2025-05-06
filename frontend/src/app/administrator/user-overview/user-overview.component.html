@@ -79,7 +79,7 @@
                       }
                       <td>
                         <button class="btn btn-outline-light mx-1" value="{{user.id}}" (click)="Update($event)">Edit</button>
-                        <button class="btn btn-outline-danger" value="{{user.id}}" (click)="DeleteUser($event)">Delete</button>
+                        <button class="btn btn-outline-danger" value="{{user.id}}" (click)="openMyConfirmDialog($event)">Delete</button>
                       </td>
                     </tr>
                     </tbody>
