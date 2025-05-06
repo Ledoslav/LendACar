@@ -10,6 +10,9 @@ import {Router} from '@angular/router';
 import {HttpParams, HttpResponse} from '@angular/common/http';
 import {PaginatedResult} from '../../Models/Pagination';
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog-confirm.component';
+import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 @Component({
   selector: 'app-user-overview',
@@ -18,6 +21,8 @@ import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 })
 export class UserOverviewComponent  implements OnInit {
   private router=inject(Router);
+  private dialog=inject(MatDialog);
+  private snackBarService=inject(MySnackbarService)
   showCityField: boolean=false;
   ngOnInit(): void {
       this.initSearchListener();
@@ -112,17 +117,19 @@ export class UserOverviewComponent  implements OnInit {
 
   DeleteUser($event: any) {
     console.log($event.target.value);
-    if(window.confirm("Are you sure you want to delete this user?")){
       if(this.userService.currentUser()?.id==$event.target.value){
         localStorage.removeItem('user');
         this.userService.currentUser.set(null);
       }
       this.userService.Delete($event.target.value).subscribe({
-        next:_ => {window.location.reload();},
+        next:_ => {
+          this.snackBarService.showSuccessMessage("Successfully deleted user!");
+          setTimeout(() => {
+            window.location.reload();
+          }, 4000);
+          },
         error:err=>console.log(err),
       })
-    }
-    else return;
   }
 
   filterCities($event:any){
@@ -178,6 +185,25 @@ export class UserOverviewComponent  implements OnInit {
       ageFrom: undefined,
       ageTo: undefined,
       isVerified: "Verified users",
+    });
+  }
+
+  openMyConfirmDialog(event:any) {
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm deletion',
+        message: 'Are you sure you want to delete this user',
+        confirmButtonText:'Confirm'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.DeleteUser(event)
+      } else {
+        console.log('Korisnik je otkazao brisanje');
+      }
     });
   }
 }

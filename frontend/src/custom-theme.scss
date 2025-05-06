@@ -12,7 +12,7 @@
 // Define the theme object.
 $frontend-theme: mat.define-theme((
   color: (
-    theme-type: light,
+    theme-type: dark,
     primary: mat.$azure-palette,
     tertiary: mat.$blue-palette,
   ),
@@ -26,6 +26,20 @@ $frontend-theme: mat.define-theme((
 // that you are using.
 :root {
   @include mat.all-component-themes($frontend-theme);
+}
+
+
+.success-snack-bar {
+  @include mat.snack-bar-overrides((
+    container-color: #5fa052,
+    supporting-text-color: white,
+  ));
+}
+.error-snack-bar{
+  @include mat.snack-bar-overrides((
+    container-color: #bc2020,
+    supporting-text-color: white,
+  ));
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
