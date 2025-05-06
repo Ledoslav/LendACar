@@ -50,7 +50,7 @@
       <input type="checkbox" class="mx-2" id="verified" formControlName="isVerified" />
     </div>
 
-    <button type="button" class="btn btn-primary w-100"  *ngIf="!this.userEditForm.invalid" (click)="UpdateUser()">Update</button>
+    <button type="button" class="btn btn-primary w-100" [disabled]="this.userEditForm.invalid"   (click)="UpdateUser()">Update</button>
 
   </form>
 </div>

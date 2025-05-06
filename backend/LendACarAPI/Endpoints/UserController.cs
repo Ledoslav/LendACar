@@ -200,11 +200,9 @@ namespace LendACarAPI.Endpoints
             user.BirthDate =DateTime.Parse(updatedUser.BirthDate);
             user.Username = updatedUser.Username;
             user.EmailAdress = updatedUser.EmailAddress;
+            user.IsVerified = updatedUser.IsVerified;
 
             await db.SaveChangesAsync(cancellationToken);
-            //await db.Entry(user).Reference(u => u.City).LoadAsync();
-            //if(user.City!=null)
-            //    await db.Entry(user.City).Reference(c => c.Country).LoadAsync();
 
             return Ok(new UserDto
             {

@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {UserService} from '../../services/user.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Country} from '../../Models/Country';
 import {City} from '../../Models/City';
@@ -8,8 +8,7 @@ import {CityService} from '../../services/city.service';
 import {CountryService} from '../../services/country.service';
 import {DatePipe} from '@angular/common';
 import {AdminService} from '../../services/administrator.service';
-import {concatMap, Observable, of} from 'rxjs';
-import {UserDto} from '../../Models/UserDto';
+import {concatMap, Observable} from 'rxjs';
 
 @Component({
   selector: 'app-admin-user-update',
@@ -39,7 +38,6 @@ export class AdminUserUpdateComponent implements OnInit {
           this.getCitiesAndUsers(IdString).subscribe({
               next: result => {
                 this.user = result;
-                console.log(result);
                 this.formatDate();
                 this.createForm();
               }
@@ -75,13 +73,6 @@ export class AdminUserUpdateComponent implements OnInit {
     )
   }
 
-/*  loadCities():Observable<City[]>{
-    this.cityService.GetAllCities().subscribe({
-      next:res=>this.cities=res,
-      error:err=>console.log(err)
-    })
-    return of(this.cities);
-  }*/
 
   loadCountries(){
     this.countryService.getAllCountries().subscribe({
@@ -113,24 +104,19 @@ export class AdminUserUpdateComponent implements OnInit {
 
     if(country){
       countryId=country;
-      console.log(countryId);
       this.filteredCities=this.cities.filter(city=>city.countryId==country)
     }
     else{
       countryId=Number.parseInt($event.target.value);
       this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
-      console.log(this.cities);
     }
   }
 
   UpdateUser() {
-    //console.log(this.userEditForm.value);
     let userObject={...this.userEditForm.value};
     userObject.id=this.user.id;
-    console.log(userObject);
     this.adminService.UpdateUser(userObject).subscribe({
       next:result => {
-        console.log(result);
         alert("User Updated Successfully");
         window.location.reload();
       },
