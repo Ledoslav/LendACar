@@ -75,10 +75,12 @@ export class UserOverviewComponent  implements OnInit {
     this.userService.GetAllUsers(this.pageNumber,this.pageSize).subscribe({
      next:res=> {
        this.users={
-         items:res.body as UserDto[],
+         dataItems:res.body as UserDto[],
          pagination:JSON.parse(res.headers.get('Pagination')!)
        };
-       console.log(this.users.pagination);
+       // console.log(this.users.dataItems)
+       // console.log(this.users.pagination);
+       console.log(res)
      },
       error:err=>console.log(err),
     })
@@ -162,7 +164,7 @@ export class UserOverviewComponent  implements OnInit {
       .subscribe({
         next: (res) => {
           this.users = {
-            items: res.body as UserDto[],
+            dataItems: res.body as UserDto[],
             pagination: JSON.parse(res.headers.get('Pagination')!)
           };
         },

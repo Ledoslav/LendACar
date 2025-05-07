@@ -10,16 +10,18 @@
                 <label for="name">Country Name</label>
                 <input type="text" id="name" class="form-control" name="name" required [ngModel]="country?.name" />
               </div>
-              <button *ngIf="!editMode" (click)="CreateCountry()" class="btn btn-outline-light btn-secondary my-3" type="submit">Add Country</button>
+              <button *ngIf="!editMode" [disabled]="countryForm.invalid" (click)="CreateCountry()" class="btn btn-outline-light btn-secondary my-3" type="submit">Add Country</button>
               <button *ngIf="editMode" (click)="EditCountry()" class="btn btn-outline-light btn-secondary my-3" >Update</button>
+              <button *ngIf="editMode" (click)="CancelCountryEdit()" class="btn btn-outline-light btn-secondary my-3 mx-2" >Cancel</button>
             </form>
           </div>
 
           <div class="col-5">
-            <!--<div class="container my-2">
-                          <input type="text" placeholder="Search employee" id="empSearch" style="width: 20%">
-                          <button class="btn btn-default btn-outline-light mx-3">Search</button>
-                        </div>-->
+            <div class="row mb-2">
+              <div class="col-10">
+                <input class="form-control" (keyup)="onCountryNameSearch()" [(ngModel)]="countryNameSearch" placeholder="Search country">
+              </div>
+            </div>
             <div class="card">
               <div class="card-body p-0">
                 <div class="table-responsive table-scroll" data-mdb-perfect-scrollbar="true"
@@ -27,23 +29,36 @@
                   <table class="table table-striped mb-0">
                     <thead>
                     <tr>
-                      <th>#</th>
+                      <th>Id</th>
                       <th>Name</th>
                       <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let country of countries; let i=index">
-                      <td>{{i+1}}</td>
+                    <tr *ngFor="let country of countries.dataItems; let i=index">
+                      <td>{{country.id}}</td>
                       <td>{{ country.name }}</td>
                       <td><button class="btn btn-outline-light mx-1" [value]="i" (click)="LoadCountry($event)" >Edit</button>
-                        <button class="btn btn-outline-danger mx-1" [value]="country.id" (click)="removeCountry($event)">Delete</button></td>
+                        <button class="btn btn-outline-danger mx-1" [value]="country.id" (click)="openMyConfirmDialog($event)">Delete</button></td>
                     </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
+          <div  class="d-flex justify-content-center mt-3">
+            <pagination
+              [boundaryLinks]="true"
+              [totalItems]="countries.pagination!.totalCount"
+              [itemsPerPage]="countries.pagination!.pageSize"
+              [maxSize]="10"
+              (pageChanged)="pageChanged($event)"
+              previousText="&lsaquo;"
+              nextText="&rsaquo;"
+              firstText="&laquo;"
+              lastText="&raquo;">
+            </pagination>
+          </div>
           </div>
         </div>
 

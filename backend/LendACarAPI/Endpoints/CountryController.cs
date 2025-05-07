@@ -1,9 +1,12 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
+using LendACarAPI.DTOs;
+using LendACarAPI.Helper;
 using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace LendACarAPI.Endpoints
 {
@@ -12,13 +15,36 @@ namespace LendACarAPI.Endpoints
     public class CountryController(ApplicationDbContext db) : ControllerBase
     {
         [HttpGet("getAll")]
-        public async Task<ActionResult<Country[]>> GetAllCountries(CancellationToken cancellationToken)
+        public async Task<ActionResult<Country[]>> GetAllCountries([FromQuery] string? countryName,CancellationToken cancellationToken)
         {
-            var countries = await db.Countries
+            var query= db.Countries.AsQueryable();
+
+            if (!string.IsNullOrEmpty(countryName))
+                query = query.Where(c => c.Name.ToLower().Contains(countryName.ToLower()));
+
+
+            var countries = await query
                 .OrderBy(c=>c.Name)
                 .ToArrayAsync(cancellationToken);
 
             return Ok(countries);
+        }
+
+        [HttpGet("getAllPaged")]
+        public async Task<ActionResult<MyPagedList<Country[]>>> GetAllPagedCountries([FromQuery] string? countryName, [FromQuery] MyPagingRequest pagingRequest, CancellationToken cancellationToken)
+        {
+            var query = db.Countries.AsQueryable();
+
+            if (!string.IsNullOrEmpty(countryName))
+                query = query.Where(c => c.Name.ToLower().Contains(countryName.ToLower()));
+
+            query = query
+            .OrderBy(c => c.Name);
+
+            var countries = await MyPagedList<Country>.CreateAsync(query, pagingRequest, cancellationToken);
+            Response.AddPaginationHeader(countries);
+
+            return Ok(countries.DataItems);
         }
 
         [HttpPost("create")]
