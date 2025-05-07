@@ -54,6 +54,9 @@ export class AdminCountryOverviewComponent implements OnInit {
 
   LoadCountry($event: any) {
     this.country=this.countries.dataItems![$event.target.value];
+    this.countryForm?.setValue({
+      'name':this.country.name,
+    })
     this.editMode=true;
 
   }
@@ -62,7 +65,8 @@ export class AdminCountryOverviewComponent implements OnInit {
       next:_=>{
         this.snackBarService.showSuccessMessage("Successfully edited country!");
         this.LoadCountries();
-        this.editMode=false; },
+        this.CancelCountryEdit();
+        },
       error:err=>console.log(err)
     })
   }
@@ -87,7 +91,6 @@ export class AdminCountryOverviewComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged(),
     ).subscribe((filterValue) => {
-      console.log(filterValue);
       this.LoadCountries();
     });
   }

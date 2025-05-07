@@ -1,5 +1,6 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
+using LendACarAPI.Helper;
 using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +66,30 @@ namespace LendACarAPI.Endpoints.CityEndpoints
             await db.SaveChangesAsync(cancellationToken);
 
             return Ok();
+        }
+
+
+        [HttpGet("getAllPaged")]
+        public async Task<ActionResult<MyPagedList<City[]>>> GetAllPagedCountries([FromQuery] string? cityName,
+            [FromQuery] int? countryId, [FromQuery] MyPagingRequest pagingRequest, CancellationToken cancellationToken)
+        {
+            var query = db.Cities
+                .Include(c=>c.Country)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(cityName))
+                query = query.Where(c => c.Name.ToLower().Contains(cityName.ToLower()));
+
+            if(countryId > 0)
+                query = query.Where(c => c.CountryId == countryId);
+
+            query = query
+            .OrderBy(c => c.Country.Name);
+
+            var countries = await MyPagedList<City>.CreateAsync(query, pagingRequest, cancellationToken);
+            Response.AddPaginationHeader(countries);
+
+            return Ok(countries.DataItems);
         }
 
     }
