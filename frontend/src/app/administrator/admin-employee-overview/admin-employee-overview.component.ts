@@ -5,6 +5,9 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
 import {Router} from '@angular/router';
+import {CountryService} from '../../services/country.service';
+import {Country} from '../../Models/Country';
+import {UserDto} from '../../Models/UserDto';
 
 
 @Component({
@@ -13,32 +16,58 @@ import {Router} from '@angular/router';
   styleUrl: './admin-employee-overview.component.css'
 })
 export class AdminEmployeeOverviewComponent implements OnInit {
-  ngOnInit(): void {
-    this.loadEmployees();
-    this.loadCities();
 
-  }
-
+  showCityField: boolean=false;
   router=inject(Router);
   fb=inject(FormBuilder);
 
+  countryService=inject(CountryService);
+  countries: Country[]=[];
   cityService=inject(CityService);
   cities:City[]=[];
   filteredCities:City[]=[];
-
-
 
   employees: EmployeeDto[] = [];
   jobTitles:string[]=[" ","Customer support","Developer"];
   employeeService=inject(EmployeeService);
 
+  pageNumber:number=1;
+  pageSize:number=5;
 
+
+  ngOnInit(): void {
+    this.loadEmployees();
+    this.loadCities();
+    this.loadCountries();
+
+
+    this.employeeSearchForm.get('countryId')?.valueChanges.subscribe((value) => {
+      console.log(value);
+      if (value == 0) {
+        this.showCityField = false;
+        this.employeeSearchForm.get('cityId')?.disable();
+        console.log(this.showCityField);
+      } else {
+        this.showCityField = true;
+        this.employeeSearchForm.get('cityId')?.enable();
+        console.log(this.showCityField);
+
+      }
+    });
+  }
 
   loadEmployees(){
     this.employeeService.GetAllEmployees().subscribe({
       next: data =>{ this.employees = data }
     })
   }
+
+  loadCountries(){
+    this.countryService.getAllCountries().subscribe({
+      next:res=>this.countries = [{id:0, name:'Select Country'},...res],
+    })
+  }
+
 
   loadCities(){
     this.cityService.GetAllCities().subscribe({
@@ -87,10 +116,29 @@ export class AdminEmployeeOverviewComponent implements OnInit {
 
   onSearch() {
       console.log(this.employeeSearchForm.value);
+    if(this.employeeSearchForm.value.countryId==0 && this.employeeSearchForm.value.cityId!=undefined)
+      this.employeeSearchForm.value.cityId=undefined;
+    if(this.employeeSearchForm.value.countryId==0) this.employeeSearchForm.value.countryId=undefined;
+
       this.employeeService.FilterEmployees(this.employeeSearchForm.value).subscribe({
           next:data=>this.employees = data,
         error:err => console.log(err)
       })
   }
 
+  filterCities($event:any){
+    const countryId=$event.target.value;
+    this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
+  }
+
+  resetForm(){
+    this.employeeSearchForm.patchValue({
+      name: undefined,
+      cityId: undefined,
+      countryId: 0,
+      ageFrom: undefined,
+      ageTo: undefined,
+      jobTitle: undefined
+    });
+  }
 }

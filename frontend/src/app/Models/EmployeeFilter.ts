@@ -5,4 +5,5 @@ export interface EmployeeFilter {
   ageTo?:number | null;
   cityId?:number | null;
   jobTitle?:string | null;
+  countryId?:number | null;
 }
