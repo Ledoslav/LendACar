@@ -76,7 +76,7 @@ export class EmployeeService {
     return this.http.delete(this.baseUrl+`employee/remove/${id}`);
   }
 
-  FilterEmployees(filter:EmployeeFilter){
+  FilterEmployees(filter:EmployeeFilter,pageNumber?:number,pageSize?:number){
     let params = new HttpParams();
 
     // Dynamically append query parameters if they have values
