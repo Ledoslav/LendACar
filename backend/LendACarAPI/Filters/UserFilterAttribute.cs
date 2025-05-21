@@ -76,14 +76,23 @@ namespace LendACarAPI.Filters
                 query=query.Where(u=>u.IsVerified == filter.IsVerified);
             }
 
-            if(filter.AgeFrom != null)
+            if (filter.AgeFrom != null)
             {
-                query = query.Where(u => EF.Functions.DateDiffYear(u.BirthDate, DateTime.Today) >= filter.AgeFrom);
+                query = query.Where(u =>
+                    DateTime.Today.Year - u.BirthDate.Year
+                    - (DateTime.Today < u.BirthDate.AddYears(DateTime.Today.Year - u.BirthDate.Year) ? 1 : 0)
+                    >= filter.AgeFrom);
+
             }
 
             if (filter.AgeTo != null)
             {
-                query = query.Where(u => EF.Functions.DateDiffYear(u.BirthDate, DateTime.Today) <= filter.AgeTo);
+                query = query.Where(u =>
+                    DateTime.Today.Year - u.BirthDate.Year
+                    - (DateTime.Today < u.BirthDate.AddYears(DateTime.Today.Year - u.BirthDate.Year) ? 1 : 0)
+                    <= filter.AgeTo);
+
+
             }
 
             var result = query

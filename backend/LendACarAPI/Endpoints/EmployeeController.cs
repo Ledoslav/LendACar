@@ -221,9 +221,11 @@ namespace LendACarAPI.Endpoints
         [HttpGet("filter")]
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         [TypeFilter(typeof(EmployeeFilterAttribute))]
-        public ActionResult<EmployeeDto[]> FilterEmployee([FromQuery] EmployeeFilterDto filterDto)
+        public async Task<ActionResult<EmployeeDto[]>> FilterEmployee([FromQuery] EmployeeFilterDto filterDto)
         {
-            var result = HttpContext.Items["result"] as EmployeeDto[];
+            var query = HttpContext.Items["result"] as IQueryable<EmployeeDto>;
+
+            var result=await query.ToArrayAsync();
 
             return Ok(result);
         }

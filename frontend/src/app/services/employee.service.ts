@@ -83,6 +83,7 @@ export class EmployeeService {
     if (filter.name) params = params.set('name', filter.name);
     if (filter.ageFrom !== null && filter.ageFrom !== undefined) params = params.set('ageFrom', filter.ageFrom.toString());
     if (filter.ageTo !== null && filter.ageTo !== undefined) params = params.set('ageTo', filter.ageTo.toString());
+    if (filter.countryId !== null && filter.countryId !== undefined) params = params.set('countryId', filter.countryId.toString());
     if (filter.cityId !== null && filter.cityId !== undefined) params = params.set('cityId', filter.cityId.toString());
     if (filter.jobTitle) params = params.set('jobTitle', filter.jobTitle);
 

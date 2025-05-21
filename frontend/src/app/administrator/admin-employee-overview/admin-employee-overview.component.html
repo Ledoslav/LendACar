@@ -2,24 +2,29 @@
   <h2 class="text-center pt-3">Employee Information</h2>
   <div class="bg-image h-100" >
     <div class="mask d-flex align-items-center h-100">
-      <div class="container">
+      <div class="container-fluid px-5">
         <div class="row justify-content-center">
           <div class="col-12">
             <form [formGroup]="employeeSearchForm" (ngSubmit)="onSearch()">
-              <div class="container d-inline-block border p-2 my-3">
-                <div class="row align-items-center">
+              <div class="container-fluid p-3 border rounded mb-3">
+                <div class="row align-items-center g-3">
                   <div class="col-auto">
                     <input class="form-control" formControlName="name" placeholder="Name">
                   </div>
-                  <div class="col-auto">
-                    <input class="form-control" formControlName="ageFrom" type="number" placeholder="Age from">
+                  <div class="col-2">
+                    <input class="form-control" formControlName="ageFrom" type="number" placeholder="Age from" min="0" max="100">
                   </div>
-                  <div class="col-auto">
-                    <input class="form-control"  formControlName="ageTo" type="number" placeholder="Age to">
+                  <div class="col-1">
+                    <input class="form-control"  formControlName="ageTo" type="number" placeholder="Age to" min="0" max="100">
                   </div>
-                  <div class="col-auto">
+                  <div *ngIf="showCityField" class="col-auto">
                     <select class="form-select" id="city" formControlName="cityId">
-                      <option *ngFor="let city of cities" [value]="city.id">{{city.name}}</option>
+                      <option *ngFor="let city of filteredCities" value="{{city.id}}">{{city.name}}</option>
+                    </select>
+                  </div>
+                  <div class="col-auto">
+                    <select class="form-select" (change)="filterCities($event)" formControlName="countryId">
+                      <option *ngFor="let country of countries" value="{{country.id}}">{{country.name}}</option>
                     </select>
                   </div>
                   <div class="col-auto">
@@ -28,8 +33,8 @@
                     </select>
                   </div>
                   <div class="col-auto">
-                    <button class="btn btn-primary" type="submit">Search</button>
-                    <button class="btn btn-secondary mx-2" type="button" (click)="employeeSearchForm.reset()">Clear filters</button>
+                    <button class="btn btn-primary" type="submit" [disabled]="employeeSearchForm.invalid">Search</button>
+                    <button class="btn btn-secondary mx-2" type="button" (click)="resetForm()">Clear filters</button>
                   </div>
                 </div>
               </div>
@@ -41,7 +46,6 @@
                   <table class="table table-striped mb-0">
                     <thead>
                     <tr>
-                      <th>#</th>
                       <th>Id</th>
                       <th>First Name</th>
                       <th>Last Name</th>
@@ -56,7 +60,6 @@
                     </thead>
                     <tbody>
                     <tr *ngFor="let employee of employees; let i=index">
-                      <td>{{i+1}}</td>
                       <td>{{ employee.id }}</td>
                       <td>{{ employee.firstName }}</td>
                       <td>{{ employee.lastName }}</td>
@@ -66,8 +69,10 @@
                       <td>{{employee.city.name}}</td>
                       <td>{{employee.username}}</td>
                       <td>{{ employee.jobTitle }}</td>
-                      <td><button class="btn btn-outline-light mx-1 " value="{{employee.id}}" (click)="EditEmployee($event)">Edit</button>
-                        <button class="btn btn-outline-danger" value="{{employee.id}}" (click)="DeleteEmployee($event)">Delete</button></td>
+                      <td>
+                        <button class="btn btn-outline-light mx-1 " value="{{employee.id}}" (click)="EditEmployee($event)">Edit</button>
+                        <button class="btn btn-outline-danger" value="{{employee.id}}" (click)="DeleteEmployee($event)">Delete</button>
+                      </td>
                     </tr>
                     </tbody>
                   </table>
