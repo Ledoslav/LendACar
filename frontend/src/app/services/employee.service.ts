@@ -87,7 +87,12 @@ export class EmployeeService {
     if (filter.cityId !== null && filter.cityId !== undefined) params = params.set('cityId', filter.cityId.toString());
     if (filter.jobTitle) params = params.set('jobTitle', filter.jobTitle);
 
-    return this.http.get<EmployeeDto[]>(`${this.baseUrl}employee/filter`, { params });
+    if(pageNumber && pageSize){
+      params = params.set('pageSize',pageSize);
+      params=params.set('pageNumber',pageNumber);
+    }
+
+    return this.http.get<EmployeeDto[]>(`${this.baseUrl}employee/filter`, {observe:'response',params});
   }
 
 }
