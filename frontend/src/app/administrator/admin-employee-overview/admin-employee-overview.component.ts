@@ -8,6 +8,7 @@ import {Router} from '@angular/router';
 import {CountryService} from '../../services/country.service';
 import {Country} from '../../Models/Country';
 import {UserDto} from '../../Models/UserDto';
+import {PaginatedResult} from '../../Models/Pagination';
 
 
 @Component({
@@ -27,7 +28,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   cities:City[]=[];
   filteredCities:City[]=[];
 
-  employees: EmployeeDto[] = [];
+  employees:PaginatedResult<EmployeeDto[]>=new PaginatedResult()
   jobTitles:string[]=[" ","Customer support","Developer"];
   employeeService=inject(EmployeeService);
 
@@ -37,6 +38,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadEmployees();
+    //this.filterEmployees()
     this.loadCities();
     this.loadCountries();
 
@@ -57,8 +59,18 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   }
 
   loadEmployees(){
-    this.employeeService.GetAllEmployees().subscribe({
-      next: data =>{ this.employees = data }
+    let filter={... this.employeeSearchForm.value,
+      countryId:null,
+    };
+    console.log(filter);
+    this.employeeService.FilterEmployees(filter,this.pageNumber,this.pageSize).subscribe({
+      next:res=> {
+        this.employees={
+          dataItems:res.body as EmployeeDto[],
+          pagination:JSON.parse(res.headers.get('Pagination')!)
+        }
+      },
+      error:err => console.log(err)
     })
   }
 
@@ -120,10 +132,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
       this.employeeSearchForm.value.cityId=undefined;
     if(this.employeeSearchForm.value.countryId==0) this.employeeSearchForm.value.countryId=undefined;
 
-      this.employeeService.FilterEmployees(this.employeeSearchForm.value).subscribe({
-          next:data=>this.employees = data,
-        error:err => console.log(err)
-      })
+    this.filterEmployees();
   }
 
   filterCities($event:any){
@@ -141,4 +150,31 @@ export class AdminEmployeeOverviewComponent implements OnInit {
       jobTitle: undefined
     });
   }
+
+  filterEmployees(): void {
+    console.log(this.employeeSearchForm.value);
+    if(this.employeeSearchForm.value.countryId==0 && this.employeeSearchForm.value.cityId!=undefined)
+      this.employeeSearchForm.value.cityId=undefined;
+    if(this.employeeSearchForm.value.countryId==0) this.employeeSearchForm.value.countryId=undefined;
+
+    this.employeeService.FilterEmployees(this.employeeSearchForm.value,this.pageNumber,this.pageSize).subscribe({
+      next:res=> {
+        this.employees={
+          dataItems:res.body as EmployeeDto[],
+          pagination:JSON.parse(res.headers.get('Pagination')!)
+        }
+      },
+      error:err => console.log(err)
+    })
+  }
+
+
+
+  pageChanged($event: any) {
+    if(this.pageNumber!==$event.page){
+      this.pageNumber=$event.page;
+      this.filterEmployees();
+    }
+  }
+
 }

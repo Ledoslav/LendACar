@@ -9,6 +9,7 @@ using System.Text;
 using LendACarAPI.Filters;
 using LendACarAPI.Services;
 using LendACarAPI.Helper;
+using Newtonsoft.Json.Linq;
 
 namespace LendACarAPI.Endpoints
 {
@@ -221,13 +222,14 @@ namespace LendACarAPI.Endpoints
         [HttpGet("filter")]
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         [TypeFilter(typeof(EmployeeFilterAttribute))]
-        public async Task<ActionResult<EmployeeDto[]>> FilterEmployee([FromQuery] EmployeeFilterDto filterDto)
+        public async Task<ActionResult<EmployeeDto[]>> FilterEmployee([FromQuery] EmployeeFilterDto filterDto, [FromQuery] MyPagingRequest pagingRequest, CancellationToken token)
         {
             var query = HttpContext.Items["result"] as IQueryable<EmployeeDto>;
 
-            var result=await query.ToArrayAsync();
+            var result= await MyPagedList<EmployeeDto>.CreateAsync(query, pagingRequest, token);
+            Response.AddPaginationHeader(result);
 
-            return Ok(result);
+            return Ok(result.DataItems);
         }
 
 

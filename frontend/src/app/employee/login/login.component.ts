@@ -27,11 +27,9 @@ export class LoginComponent implements OnInit{
   login(){
     this.employeeService.Login(this.model).subscribe({
       next:res=>{
-        alert("User login successfully");
         void this.router.navigateByUrl('/employee/dashboard');
       },
       error:err=>{
-        alert("Invalid login credentials");
         console.log(err);
       }
     })
