@@ -23,19 +23,13 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
   employeeService=inject(EmployeeService);
   router=inject(Router);
 
-  logout() {
-    this.employeeService.currentEmployee.set(null);
-    localStorage.removeItem('employee');
-    void this.router.navigateByUrl('/employee/login');
-  }
-
   polls: any[] = [];
   newPoll = {
     question: '',
     options: [''],
   };
 
-  private apiUrl = 'http://localhost:7000/api/Poll'; 
+  private apiUrl = 'http://localhost:7000/api/Poll';
   private hubConnection!: HubConnection;
   private isChartsRendered = false;
 
@@ -121,13 +115,13 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
           if (canvasElement.chartInstance) {
             canvasElement.chartInstance.destroy();
           }
-  
+
           // Cast the canvas element to ChartItem
           const chartInstance = new Chart(canvasElement as ChartItem, {
             type: 'pie',
             data: poll.chartData
           });
-  
+
           // Store the chart instance in the canvas element to reuse later
           canvasElement.chartInstance = chartInstance;
         }

@@ -37,5 +37,7 @@ namespace LendACarAPI.DTOs
         public DateOnly DateOfHire { get; set; }
 
         public string? Token { get; set; }
+
+        public string? ProfilePhotoUrl { get; set; }
     }
 }

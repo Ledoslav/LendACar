@@ -11,7 +11,8 @@ export interface EmployeeDto {
   city: City;
   emailAddress: string;
   username: string;
-  workingHour:WorkingHour | null
-  workingHourId:number | null
-  jobTitle: string | null
+  workingHour:WorkingHour | null;
+  workingHourId:number | null;
+  jobTitle: string | null;
+  profilePhotoUrl:string|null;
 }

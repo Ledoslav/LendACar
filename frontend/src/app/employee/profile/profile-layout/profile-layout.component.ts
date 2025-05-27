@@ -1,0 +1,20 @@
+import {Component, inject} from '@angular/core';
+import {UserService} from '../../../services/user.service';
+import {Router} from '@angular/router';
+import {EmployeeService} from "../../../services/employee.service";
+
+@Component({
+  selector: 'app-profile-layout',
+  templateUrl: './profile-layout.component.html',
+  styleUrl: './profile-layout.component.css'
+})
+export class ProfileLayoutComponent {
+  employeeService=inject(EmployeeService);
+  router=inject(Router);
+  logout() {
+    this.employeeService.currentEmployee.set(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('auth-token');
+    void this.router.navigate(['public/home']);
+  }
+}

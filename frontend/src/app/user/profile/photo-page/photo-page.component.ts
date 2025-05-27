@@ -2,6 +2,9 @@ import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
 import {UserService} from '../../../services/user.service';
 import {ImageCroppedEvent, LoadedImage} from 'ngx-image-cropper';
 import {HttpClient} from '@angular/common/http';
+import {MySnackbarService} from '../../../services/snackbars/my-snackbar.service';
+import {MatDialog} from '@angular/material/dialog';
+import {DialogConfirmComponent} from '../../../shared/dialogs/dialog-confirm/dialog-confirm.component';
 
 @Component({
   selector: 'app-photo-page',
@@ -14,13 +17,13 @@ export class PhotoPageComponent implements OnInit{
 
   accountService = inject(UserService);
   http = inject(HttpClient);
+  snackbarService=inject(MySnackbarService);
 
+  private dialog=inject(MatDialog);
   imageChangedEvent: any = '';
   croppedImage: any = null;
   showCropper = false;
   croppedImageUrl: any = null;
-
-  private uploadUrl = `http://localhost:7000/api/User/add-profile-pic/${this.accountService.currentUser()?.id}`;
 
   constructor() {}
 
@@ -73,11 +76,11 @@ export class PhotoPageComponent implements OnInit{
       console.log('Upload successful:', response);
       this.showCropper = false;
       this.accountService.currentUser.set(response);
-      alert('Profile picture updated successfully!');
+      this.snackbarService.showSuccessMessage('Profile picture updated successfully!')
     },
     error:(error) => {
       console.error('Upload failed:', error);
-      alert('Failed to upload profile picture.');
+      this.snackbarService.showErrorMessage('Failed to upload profile picture')
     }
    }
     );
@@ -89,21 +92,7 @@ export class PhotoPageComponent implements OnInit{
       return;
     }
 
-    if(confirm('Are you sure you want to remove profile photo?')){
-      this.accountService.RemoveProfilePhoto(this.accountService.currentUser()?.id).subscribe({
-          next:(response: any) => {
-            console.log('Removal successful:', response);
-            this.showCropper = false;
-            this.accountService.currentUser.set(response);
-            alert('Profile picture removed successfully!');
-          },
-          error:(error) => {
-            console.error('Removal failed:', error);
-            alert('Failed to remove profile picture.');
-          }
-        }
-      );
-    }
+    this.openMyConfirmDialog();
   }
 
 
@@ -122,5 +111,36 @@ export class PhotoPageComponent implements OnInit{
   }
   loadImageFailed() {
     // show message
+  }
+
+  openMyConfirmDialog() {
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm removal',
+        message: 'Are you sure you want to remove your profile picture',
+        confirmButtonText:'Confirm'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.accountService.RemoveProfilePhoto(this.accountService.currentUser()?.id).subscribe({
+            next:(response: any) => {
+              console.log('Removal successful:', response);
+              this.showCropper = false;
+              this.accountService.currentUser.set(response);
+              this.snackbarService.showSuccessMessage('Profile picture removed successfully!')
+            },
+            error:(error) => {
+              console.error('Removal failed:', error);
+              this.snackbarService.showErrorMessage('Failed to remove profile picture.')
+            }
+          }
+        );
+      } else {
+        console.log('Korisnik je otkazao brisanje');
+      }
+    });
   }
 }

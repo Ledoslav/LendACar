@@ -17,16 +17,13 @@ accountService=inject(UserService);
   login() {
     this.accountService.Login(this.model).subscribe({
       next:res=>{
-        alert("User login successfully");
         console.log(res);
         void this.router.navigateByUrl('/user/dashboard');
       },
       error:err=>{
-        //alert("Invalid login credentials");
         console.log(err);
       }
     })
     console.log(this.accountService.currentUser());
-    console.log("Login 2");
   }
 }

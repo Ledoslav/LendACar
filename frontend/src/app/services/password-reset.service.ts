@@ -3,8 +3,9 @@ import {HttpClient} from '@angular/common/http';
 import {UserService} from './user.service';
 import {Router} from '@angular/router';
 import {MyAuthServiceService} from './auth-service/my-auth-service.service';
-import {catchError} from 'rxjs';
+import {catchError, timeout} from 'rxjs';
 import {EmployeeService} from './employee.service';
+import {MySnackbarService} from './snackbars/my-snackbar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,13 +20,13 @@ export class PasswordResetService {
     private accountService=inject(UserService);
     private employeeService=inject(EmployeeService);
     private authService=inject(MyAuthServiceService);
-
+    private snackBarService=inject(MySnackbarService);
 
 
   ResetPassword(model:any){
       this.http.put<{ userType: string }>(this.baseUrl+'resetpassword/reset',model).subscribe({
       next:(res)=>{
-        alert("Password change successful");
+        this.snackBarService.showSuccessMessage("Password change successful")
         if(res.userType==="user"){
           void this.router.navigateByUrl("/user/login");
         }
@@ -41,15 +42,17 @@ export class PasswordResetService {
   ChangePassword(model:any){
     this.http.put<{ userType: string }>(this.baseUrl+'resetpassword/change',model).subscribe({
       next:(res)=>{
-        alert("Password change successful");
+        this.snackBarService.showSuccessMessage("Password change successful")
         localStorage.removeItem('auth-token')
         if(res.userType==="user"){
           localStorage.removeItem('user');
+          localStorage.removeItem('auth-token')
           this.accountService.currentUser.set(null);
           void this.router.navigateByUrl("/user/login");
         }
         else {
           localStorage.removeItem('employee');
+          localStorage.removeItem('auth-token')
           this.employeeService.currentEmployee.set(null);
           void this.router.navigateByUrl("/employee/login");
         }
