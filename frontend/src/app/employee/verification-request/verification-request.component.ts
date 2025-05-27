@@ -23,12 +23,6 @@ export class VerificationRequestComponent implements OnInit {
   employeeService=inject(EmployeeService);
   router=inject(Router);
 
-  logout() {
-    this.employeeService.currentEmployee.set(null);
-    localStorage.removeItem('employee');
-    void this.router.navigateByUrl('/employee/login');
-  }
-
   userService=inject(UserService);
   cityService=inject(CityService);
   verificationService=inject(VerificationRequestService);
@@ -49,9 +43,9 @@ export class VerificationRequestComponent implements OnInit {
   comment: string = ''; // komentar koji uposlenik unosi kao razlog odobrenja ili odbijanja
 
   // Pagination
-  currentPage: number = 1; 
-  pageSize: number = 10; 
-  totalPages: number = 1; 
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalPages: number = 1;
 
   constructor(private http: HttpClient) {}
 
@@ -145,10 +139,10 @@ export class VerificationRequestComponent implements OnInit {
     if (!request) return '';
     if (request.requestStatus === 1) {
       return 'Approved';
-    } 
+    }
     else if (request.requestStatus === 0) {
       return 'Denied';
-    } 
+    }
     else if (request.requestStatus === 2){
       return 'Active';
     }
@@ -161,7 +155,7 @@ export class VerificationRequestComponent implements OnInit {
     const user = this.users.find(res => res.id === userId);
     return user?.username || 'Unknown';
   }
-  
+
   getCityName(cityId:number): string{
     const city = this.cities.find(res => res.id === cityId);
     return city?.name || 'Unknown';

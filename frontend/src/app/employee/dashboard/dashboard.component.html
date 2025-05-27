@@ -1,40 +1,4 @@
 <body>
-<!-- Header with Navbar -->
-<header class="bg-dark text-white py-2">
-  <div class="container d-flex justify-content-between align-items-center">
-    <div class="d-flex align-items-center">
-      <img src="LAC_logo.png" alt="Logo" style="height: 40px;" class="me-3">
-      <span>LendACar</span>
-    </div>
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="#" routerLink="/employee/verificationRequests" >Verification Requests</a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link"  routerLink="/employee/vehicleDataOverview">Vehicle Data Overview</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#" routerLink="/employee/pollManagement" >Polls</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-    <div>
-      <span class="me-3" routerLink="/employee/profileOverview" style="cursor: pointer; font-weight: bold">
-        {{employeeService.currentEmployee()?.firstName}} {{employeeService.currentEmployee()?.lastName}}
-      </span>
-      <button class="btn btn-sm btn-outline-light" routerLink="/employee/login" (click)="logout()">Logout</button>
-    </div>
-  </div>
-</header>
 
 <!-- Main Content -->
 <div class="container-fluid mt-3">

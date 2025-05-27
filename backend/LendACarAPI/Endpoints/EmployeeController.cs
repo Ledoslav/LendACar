@@ -16,7 +16,7 @@ namespace LendACarAPI.Endpoints
     [Route("api/[controller]")]
 
     [ApiController]
-    public class EmployeeController(ApplicationDbContext db, IRenderPDFReport renderPDF,IAuthService authService) : ControllerBase
+    public class EmployeeController(ApplicationDbContext db, IRenderPDFReport renderPDF,IAuthService authService, IPhotoService photoService) : ControllerBase
     {
         [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         [HttpPost("register")]
@@ -59,7 +59,7 @@ namespace LendACarAPI.Endpoints
         {
             var employee = await db.Employees
             .Include(e => e.City)
-            .Include(e => e.City != null ? e.City.Country : null)
+                .ThenInclude(c => c.Country)
             .Include(e => e.WorkingHour)
             .FirstOrDefaultAsync(e => e.EmailAdress.ToLower() == employeeLogin.EmailAddress.ToLower());
 
@@ -93,6 +93,7 @@ namespace LendACarAPI.Endpoints
                 WorkingHour = employee.WorkingHour,
                 WorkingHourId = employee.WorkingHourId,
                 Token=token,
+                ProfilePhotoUrl=employee.ProfilePhotoUrl
             });
 
         }
@@ -119,7 +120,7 @@ namespace LendACarAPI.Endpoints
         {
             var employee = await db.Employees
                 .Include(e => e.City)
-                .Include(u => u.City != null ? u.City.Country : null)
+                    .ThenInclude(c => c.Country)
                 .Include(e => e.WorkingHour)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
@@ -139,7 +140,7 @@ namespace LendACarAPI.Endpoints
 
             var returnEmployee = await db.Employees
                .Include(e => e.City)
-               .Include(u => u.City != null ? u.City.Country : null)
+                .ThenInclude(c => c.Country)
                .Include(e => e.WorkingHour)
                .Select(e => new EmployeeDto
                {
@@ -155,7 +156,8 @@ namespace LendACarAPI.Endpoints
                    JobTitle = e.JobTitle,
                    WorkingHour = e.WorkingHour,
                    WorkingHourId = e.WorkingHourId,
-                   DateOfHire = e.DateOfHire
+                   DateOfHire = e.DateOfHire,
+                   ProfilePhotoUrl=e.ProfilePhotoUrl
                })
                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
@@ -182,7 +184,8 @@ namespace LendACarAPI.Endpoints
                     JobTitle = e.JobTitle,
                     WorkingHour = e.WorkingHour,
                     WorkingHourId = e.WorkingHourId,
-                    DateOfHire = e.DateOfHire
+                    DateOfHire = e.DateOfHire,
+                    ProfilePhotoUrl=e.ProfilePhotoUrl
 
                 })
                 .ToArrayAsync(cancellationToken);
@@ -209,7 +212,8 @@ namespace LendACarAPI.Endpoints
                     JobTitle = e.JobTitle,
                     WorkingHour = e.WorkingHour,
                     WorkingHourId = e.WorkingHourId,
-                    DateOfHire = e.DateOfHire
+                    DateOfHire = e.DateOfHire,
+                    ProfilePhotoUrl=e.ProfilePhotoUrl
 
                 })
                 .FirstOrDefaultAsync(x => x.Id == id, cancellation);
@@ -231,6 +235,79 @@ namespace LendACarAPI.Endpoints
 
             return Ok(result.DataItems);
         }
+
+        [HttpPost("add-profile-pic/{id}")]
+        public async Task<ActionResult<EmployeeDto>> AddEmployeeProfilePic(int id, IFormFile file, CancellationToken cancellationToken)
+        {
+            var employee = await db.Employees
+                .Include(u => u.City)
+                .ThenInclude(c => c.Country)
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            if (employee == null) return BadRequest();
+
+            var result = await photoService.AddPhotoAsync(file);
+
+            employee.ProfilePhotoPublicId = result.PublicId;
+            employee.ProfilePhotoUrl = result.SecureUrl.AbsoluteUri;
+
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            return Ok(new EmployeeDto
+            {
+                Id = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                PhoneNumber = employee.PhoneNumber,
+                BirthDate = employee.BirthDate.ToString("yyyy-MM-dd"),
+                City = employee.City,
+                CityId = employee.CityId,
+                EmailAddress = employee.EmailAdress,
+                Username = employee.Username,
+                JobTitle = employee.JobTitle,
+                WorkingHour = employee.WorkingHour,
+                WorkingHourId = employee.WorkingHourId,
+                DateOfHire = employee.DateOfHire,
+                ProfilePhotoUrl = employee.ProfilePhotoUrl
+            });
+        }
+
+        [HttpDelete("remove-profile-pic/{id}")]
+        public async Task<ActionResult<EmployeeDto>> RemoveEmployeeProfilePic(int id, CancellationToken cancellationToken)
+        {
+            var employee = await db.Employees
+                .Include(u => u.City)
+                .ThenInclude(c => c.Country)
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            if (employee == null) return BadRequest();
+
+            employee.ProfilePhotoPublicId = null;
+            employee.ProfilePhotoUrl = null;
+
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            return Ok(new EmployeeDto
+            {
+                Id = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                PhoneNumber = employee.PhoneNumber,
+                BirthDate = employee.BirthDate.ToString("yyyy-MM-dd"),
+                City = employee.City,
+                CityId = employee.CityId,
+                EmailAddress = employee.EmailAdress,
+                Username = employee.Username,
+                JobTitle = employee.JobTitle,
+                WorkingHour = employee.WorkingHour,
+                WorkingHourId = employee.WorkingHourId,
+                DateOfHire = employee.DateOfHire,
+                ProfilePhotoUrl = employee.ProfilePhotoUrl
+            });
+        }
+
 
 
 

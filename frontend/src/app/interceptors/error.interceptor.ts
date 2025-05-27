@@ -25,14 +25,14 @@ export class ErrorInterceptor implements HttpInterceptor {
                      modalStateErrors.push(err.error.errors[key])
                    }
                  }
-                 this.snackBar.showErrorMessage(modalStateErrors.flat().toString());
+                 this.snackBar.showErrorMessage("Something went wrong, bad request");
                  throw modalStateErrors.flat()
                }
                else if(typeof (err.error)==='object'){
                  this.snackBar.showErrorMessage(err.statusText)
                }
                else{
-                 this.snackBar.showErrorMessage(err.error)
+                 this.snackBar.showErrorMessage(err.error,err.statusText);
                }
                break;
              case 401:

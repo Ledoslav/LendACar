@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {EmployeeFilter} from '../Models/EmployeeFilter';
 import {MyAuthServiceService} from './auth-service/my-auth-service.service';
 import {AuthResponse} from '../Models/auth-models/AuthResponse';
+import {UserDto} from '../Models/UserDto';
 
 @Injectable({
   providedIn: 'root'
@@ -93,6 +94,34 @@ export class EmployeeService {
     }
 
     return this.http.get<EmployeeDto[]>(`${this.baseUrl}employee/filter`, {observe:'response',params});
+  }
+
+  UploadProfilePhoto(formData:FormData,employeeId:any){
+    return this.http.post<EmployeeDto>(this.baseUrl+`Employee/add-profile-pic/${employeeId}`,formData).pipe(
+      map(employee=>{
+        if(employee){
+          localStorage.removeItem('employee');
+          localStorage.setItem('employee',JSON.stringify(employee));
+          this.currentEmployee.set(employee)
+          console.log("Current employee set:", this.currentEmployee());
+        }
+        return employee;
+      })
+    );
+  }
+
+  RemoveProfilePhoto(employeeId:any){
+    return this.http.delete<EmployeeDto>(this.baseUrl+`Employee/remove-profile-pic/${employeeId}`).pipe(
+      map(employee=>{
+        if(employee){
+          localStorage.removeItem('employee');
+          localStorage.setItem('employee',JSON.stringify(employee));
+          this.currentEmployee.set(employee)
+          console.log("Current employee set:", this.currentEmployee());
+        }
+        return employee;
+      })
+    );
   }
 
 }
