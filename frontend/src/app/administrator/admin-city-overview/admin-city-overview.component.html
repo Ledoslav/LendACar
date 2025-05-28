@@ -59,7 +59,7 @@
                 </div>
               </div>
             </div>
-            <div  class="d-flex justify-content-center mt-3">
+            <div *ngIf="cities.pagination && cities.pagination.totalCount>pageSize" class="d-flex justify-content-center mt-3">
               <pagination
                 [boundaryLinks]="true"
                 [totalItems]="cities.pagination!.totalCount"

@@ -9,6 +9,7 @@ import {CountryService} from '../../services/country.service';
 import {DatePipe} from '@angular/common';
 import {AdminService} from '../../services/administrator.service';
 import {concatMap, Observable} from 'rxjs';
+import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 @Component({
   selector: 'app-admin-user-update',
@@ -54,6 +55,7 @@ export class AdminUserUpdateComponent implements OnInit {
     cityService=inject(CityService);
     countryService=inject(CountryService);
     adminService=inject(AdminService);
+    private snackBarService=inject(MySnackbarService);
 
   cities: City[]=[];
   filteredCities:City[]=[];
@@ -117,8 +119,10 @@ export class AdminUserUpdateComponent implements OnInit {
     userObject.id=this.user.id;
     this.adminService.UpdateUser(userObject).subscribe({
       next:result => {
-        alert("User Updated Successfully");
-        window.location.reload();
+        this.snackBarService.showSuccessMessage("User Updated Successfully");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2500);
       },
       error:err => console.log(err)
     })

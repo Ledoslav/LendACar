@@ -4,13 +4,10 @@ import {UserDto} from '../Models/UserDto';
 import {map, Observable} from 'rxjs';
 import {Router} from '@angular/router';
 import {UserFilter} from '../Models/UserFilter';
-import {City} from '../Models/City';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {AuthResponse} from '../Models/auth-models/AuthResponse';
-import {TokenClaims} from '../Models/auth-models/TokenClaims';
-import {TokenObject} from '../Models/auth-models/TokenObject';
 import {MyAuthServiceService} from './auth-service/my-auth-service.service';
-import {Form} from '@angular/forms';
+import {buildHttpParams} from  '../helper/http-params.helper'
 
 
 @Injectable({
@@ -100,27 +97,22 @@ export class UserService {
   }
 
   FilterUsers(filter:UserFilter,pageNumber?:number,pageSize?:number){
-      let params=new HttpParams();
+      let request={
+        ...filter,
+        pageSize:pageSize,
+        pageNumber:pageNumber
+      }
 
-      console.log(filter);
+      let params= buildHttpParams(request)
 
-      if (filter.name) params = params.set('name', filter.name);
-      if (filter.ageFrom) params = params.set('ageFrom', filter.ageFrom.toString());
-      if(filter.ageTo) params = params.set('ageTo', filter.ageTo.toString());
-      if(filter.cityId) params = params.set('cityId', filter.cityId.toString());
-      if(filter.countryId) params = params.set('countryId', filter.countryId.toString());
-      if(filter.isVerified!="Verified users"){
-        if(filter.isVerified=="Yes") {
-         params=params.set('isVerified', "true");
-        }else{
-          params=params.set('isVerified', "false");
+     params=params.delete('isVerified');
+      if(filter.isVerified!="Verified users") {
+        if (filter.isVerified == "Yes") {
+          params = params.set('isVerified', "true");
+        } else {
+          params = params.set('isVerified', "false");
         }
       }
-      if(pageNumber && pageSize){
-        params = params.set('pageSize',pageSize);
-        params=params.set('pageNumber',pageNumber);
-      }
-      console.log(params);
 
       return this.http.get<UserDto[]>(`${this.baseUrl}user/filter`,{observe:'response',params});
   }

@@ -71,7 +71,7 @@
                       <td>{{ employee.jobTitle }}</td>
                       <td>
                         <button class="btn btn-outline-light mx-1 " value="{{employee.id}}" (click)="EditEmployee($event)">Edit</button>
-                        <button class="btn btn-outline-danger" value="{{employee.id}}" (click)="DeleteEmployee($event)">Delete</button>
+                        <button class="btn btn-outline-danger" value="{{employee.id}}" (click)="openMyConfirmDialog($event)">Delete</button>
                       </td>
                     </tr>
                     </tbody>
@@ -86,7 +86,7 @@
             Add employee
           </button>
 
-          <div class="d-flex justify-content-center flex-grow-1">
+          <div *ngIf="employees.pagination && employees.pagination.totalCount>pageSize" class="d-flex justify-content-center flex-grow-1">
             <pagination
               [boundaryLinks]="true"
               [totalItems]="employees.pagination!.totalCount"
