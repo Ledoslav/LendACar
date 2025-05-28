@@ -13,8 +13,8 @@ export class ProfileLayoutComponent {
   router=inject(Router);
   logout() {
     this.employeeService.currentEmployee.set(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('auth-token');
-    void this.router.navigate(['public/home']);
+    localStorage.removeItem('employee');
+    localStorage.removeItem('auth-token')
+    void this.router.navigateByUrl('/employee/login');
   }
 }

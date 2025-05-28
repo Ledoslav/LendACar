@@ -23,9 +23,9 @@ export class NotFoundComponent {
     else if(isEmployee)
      void this.router.navigateByUrl('/employee/dashboard')
     else if(isUser)
-      void this.router.navigateByUrl('/user/dashboard');
+      void this.router.navigateByUrl('/public/home');
     else
-      void this.router.navigateByUrl('/user/dashboard');
+      void this.router.navigateByUrl('/public/home');
 
   }
 }

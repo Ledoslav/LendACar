@@ -1,10 +1,8 @@
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpInterceptorFn, HttpRequest} from '@angular/common/http';
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import {catchError, Observable, throwError} from 'rxjs';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {MySnackbarService} from '../services/snackbars/my-snackbar.service';
 import {Router} from '@angular/router';
-import {JwtHelperService} from '@auth0/angular-jwt';
 
 @Injectable()
 
@@ -25,7 +23,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                      modalStateErrors.push(err.error.errors[key])
                    }
                  }
-                 this.snackBar.showErrorMessage("Something went wrong, bad request");
+                 this.snackBar.showErrorMessage("Bad request");
                  throw modalStateErrors.flat()
                }
                else if(typeof (err.error)==='object'){
