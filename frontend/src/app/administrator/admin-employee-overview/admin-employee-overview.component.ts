@@ -1,14 +1,15 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {EmployeeDto} from '../../Models/EmployeeDto';
 import {EmployeeService} from '../../services/employee.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
 import {Router} from '@angular/router';
 import {CountryService} from '../../services/country.service';
 import {Country} from '../../Models/Country';
-import {UserDto} from '../../Models/UserDto';
 import {PaginatedResult} from '../../Models/Pagination';
+import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog-confirm.component';
+import {MatDialog} from '@angular/material/dialog';
 
 
 @Component({
@@ -18,163 +19,171 @@ import {PaginatedResult} from '../../Models/Pagination';
 })
 export class AdminEmployeeOverviewComponent implements OnInit {
 
-  showCityField: boolean=false;
-  router=inject(Router);
-  fb=inject(FormBuilder);
+  showCityField: boolean = false;
+  router = inject(Router);
+  fb = inject(FormBuilder);
 
-  countryService=inject(CountryService);
-  countries: Country[]=[];
-  cityService=inject(CityService);
-  cities:City[]=[];
-  filteredCities:City[]=[];
+  countryService = inject(CountryService);
+  countries: Country[] = [];
+  cityService = inject(CityService);
+  cities: City[] = [];
+  filteredCities: City[] = [];
 
-  employees:PaginatedResult<EmployeeDto[]>=new PaginatedResult()
-  jobTitles:string[]=[" ","Customer support","Developer"];
-  employeeService=inject(EmployeeService);
+  employees: PaginatedResult<EmployeeDto[]> = new PaginatedResult()
+  jobTitles: string[] = ["Select Job Title", "Customer support", "Developer"];
+  employeeService = inject(EmployeeService);
+  private dialog = inject(MatDialog);
 
-  pageNumber:number=1;
-  pageSize:number=5;
+  pageNumber: number = 1;
+  pageSize: number = 5;
 
 
   ngOnInit(): void {
     this.loadEmployees();
-    //this.filterEmployees()
     this.loadCities();
     this.loadCountries();
 
 
     this.employeeSearchForm.get('countryId')?.valueChanges.subscribe((value) => {
-      console.log(value);
       if (value == 0) {
         this.showCityField = false;
         this.employeeSearchForm.get('cityId')?.disable();
-        console.log(this.showCityField);
       } else {
         this.showCityField = true;
         this.employeeSearchForm.get('cityId')?.enable();
-        console.log(this.showCityField);
 
       }
     });
   }
 
-  loadEmployees(){
-    let filter={... this.employeeSearchForm.value,
-      countryId:null,
+  loadEmployees() {
+    let filter = {
+      ...this.employeeSearchForm.value,
+      countryId: null,
     };
-    console.log(filter);
-    this.employeeService.FilterEmployees(filter,this.pageNumber,this.pageSize).subscribe({
-      next:res=> {
-        this.employees={
-          dataItems:res.body as EmployeeDto[],
-          pagination:JSON.parse(res.headers.get('Pagination')!)
+    this.employeeService.FilterEmployees(filter, this.pageNumber, this.pageSize).subscribe({
+      next: res => {
+        this.employees = {
+          dataItems: res.body as EmployeeDto[],
+          pagination: JSON.parse(res.headers.get('Pagination')!)
         }
       },
-      error:err => console.log(err)
+      error: err => console.log(err)
     })
   }
 
-  loadCountries(){
+  loadCountries() {
     this.countryService.getAllCountries().subscribe({
-      next:res=>this.countries = [{id:0, name:'Select Country'},...res],
+      next: res => this.countries = [{id: 0, name: 'Select Country'}, ...res],
     })
   }
 
 
-  loadCities(){
+  loadCities() {
     this.cityService.GetAllCities().subscribe({
       next: data => {
         this.cities = data;
-        console.log(this.cities)
       }
     })
   }
 
-  employeeSearchForm=this.fb.group({
+  employeeSearchForm = this.fb.group({
     name: [undefined],
     cityId: [undefined],
     countryId: 0,
-    jobTitle:[undefined],
-    ageFrom:[undefined],
-    ageTo:[undefined]
+    jobTitle: this.jobTitles[0],
+    ageFrom: [undefined],
+    ageTo: [undefined]
   })
 
   DeleteEmployee($event: any) {
-    console.log(this.employeeService.currentEmployee());
-
-    if(window.confirm("Are you sure you want to delete employee")){
-      if(this.employeeService.currentEmployee()?.id==$event.target.value){
-        localStorage.removeItem('employee');
-        this.employeeService.currentEmployee.set(null);
-      }
-      this.employeeService.DeleteEmployee($event.target.value).subscribe({
-        next: _ => {window.location.reload()},
-        error: err => {console.log(err)}
-      });
+    if (this.employeeService.currentEmployee()?.id == $event.target.value) {
+      localStorage.removeItem('employee');
+      this.employeeService.currentEmployee.set(null);
     }
-    else return;
-
+    this.employeeService.DeleteEmployee($event.target.value).subscribe({
+      next: _ => {
+        window.location.reload()
+      },
+      error: err => {
+        console.log(err)
+      }
+    });
   }
 
   EditEmployee($event: any) {
-    const employeeId=$event.target.value;
+    const employeeId = $event.target.value;
 
-    const params={id:employeeId.toString()};
+    const params = {id: employeeId.toString()};
 
-    void this.router.navigate(['/admin/register/'],{queryParams:params});
+    void this.router.navigate(['/admin/register/'], {queryParams: params});
   }
 
 
-
   onSearch() {
-      console.log(this.employeeSearchForm.value);
-    if(this.employeeSearchForm.value.countryId==0 && this.employeeSearchForm.value.cityId!=undefined)
-      this.employeeSearchForm.value.cityId=undefined;
-    if(this.employeeSearchForm.value.countryId==0) this.employeeSearchForm.value.countryId=undefined;
+    if (this.employeeSearchForm.value.countryId == 0 && this.employeeSearchForm.value.cityId != undefined)
+      this.employeeSearchForm.value.cityId = undefined;
+    if (this.employeeSearchForm.value.countryId == 0) this.employeeSearchForm.value.countryId = undefined;
 
     this.filterEmployees();
   }
 
-  filterCities($event:any){
-    const countryId=$event.target.value;
-    this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
+  filterCities($event: any) {
+    const countryId = $event.target.value;
+    this.filteredCities = this.cities.filter(city => city.countryId == countryId)
   }
 
-  resetForm(){
+  resetForm() {
     this.employeeSearchForm.patchValue({
       name: undefined,
       cityId: undefined,
       countryId: 0,
       ageFrom: undefined,
       ageTo: undefined,
-      jobTitle: undefined
+      jobTitle: this.jobTitles[0]
     });
   }
 
   filterEmployees(): void {
-    console.log(this.employeeSearchForm.value);
-    if(this.employeeSearchForm.value.countryId==0 && this.employeeSearchForm.value.cityId!=undefined)
-      this.employeeSearchForm.value.cityId=undefined;
-    if(this.employeeSearchForm.value.countryId==0) this.employeeSearchForm.value.countryId=undefined;
+    if (this.employeeSearchForm.value.countryId == 0 && this.employeeSearchForm.value.cityId != undefined)
+      this.employeeSearchForm.value.cityId = undefined;
+    if (this.employeeSearchForm.value.countryId == 0) this.employeeSearchForm.value.countryId = undefined;
 
-    this.employeeService.FilterEmployees(this.employeeSearchForm.value,this.pageNumber,this.pageSize).subscribe({
-      next:res=> {
-        this.employees={
-          dataItems:res.body as EmployeeDto[],
-          pagination:JSON.parse(res.headers.get('Pagination')!)
+    this.employeeService.FilterEmployees(this.employeeSearchForm.value, this.pageNumber, this.pageSize).subscribe({
+      next: res => {
+        this.employees = {
+          dataItems: res.body as EmployeeDto[],
+          pagination: JSON.parse(res.headers.get('Pagination')!)
         }
       },
-      error:err => console.log(err)
+      error: err => console.log(err)
     })
   }
 
 
-
   pageChanged($event: any) {
-    if(this.pageNumber!==$event.page){
-      this.pageNumber=$event.page;
+    if (this.pageNumber !== $event.page) {
+      this.pageNumber = $event.page;
       this.filterEmployees();
     }
   }
 
+  openMyConfirmDialog(event:any) {
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm removal',
+        message: 'Are you sure you want to remove user',
+        confirmButtonText: 'Confirm'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.DeleteEmployee(event)
+      } else {
+        console.log('Korisnik je otkazao brisanje');
+      }
+    });
+  }
 }

@@ -31,15 +31,12 @@ export class UserOverviewComponent  implements OnInit {
       this.loadCountries();
 
     this.userSearchForm.get('countryId')?.valueChanges.subscribe((value) => {
-      console.log(value);
       if (value == 0) {
         this.showCityField = false;
         this.userSearchForm.get('cityId')?.disable();
-        console.log(this.showCityField);
       } else {
         this.showCityField = true;
         this.userSearchForm.get('cityId')?.enable();
-        console.log(this.showCityField);
 
       }
     });
@@ -78,9 +75,6 @@ export class UserOverviewComponent  implements OnInit {
          dataItems:res.body as UserDto[],
          pagination:JSON.parse(res.headers.get('Pagination')!)
        };
-       // console.log(this.users.dataItems)
-       // console.log(this.users.pagination);
-       console.log(res)
      },
       error:err=>console.log(err),
     })
@@ -118,7 +112,6 @@ export class UserOverviewComponent  implements OnInit {
   }
 
   DeleteUser($event: any) {
-    console.log($event.target.value);
       if(this.userService.currentUser()?.id==$event.target.value){
         localStorage.removeItem('user');
         this.userService.currentUser.set(null);
@@ -141,7 +134,6 @@ export class UserOverviewComponent  implements OnInit {
 
 
   onSearch() {
-     console.log(this.userSearchForm.value);
     if(this.userSearchForm.value.countryId==0 && this.userSearchForm.value.cityId!=undefined)
       this.userSearchForm.value.cityId=undefined;
      if(this.userSearchForm.value.countryId==0) this.userSearchForm.value.countryId=undefined;

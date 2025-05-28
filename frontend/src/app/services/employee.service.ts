@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
 import {EmployeeFilter} from '../Models/EmployeeFilter';
 import {MyAuthServiceService} from './auth-service/my-auth-service.service';
 import {AuthResponse} from '../Models/auth-models/AuthResponse';
-import {UserDto} from '../Models/UserDto';
+import {buildHttpParams} from '../helper/http-params.helper';
 
 @Injectable({
   providedIn: 'root'
@@ -78,20 +78,18 @@ export class EmployeeService {
   }
 
   FilterEmployees(filter:EmployeeFilter,pageNumber?:number,pageSize?:number){
-    let params = new HttpParams();
-
-    // Dynamically append query parameters if they have values
-    if (filter.name) params = params.set('name', filter.name);
-    if (filter.ageFrom !== null && filter.ageFrom !== undefined) params = params.set('ageFrom', filter.ageFrom.toString());
-    if (filter.ageTo !== null && filter.ageTo !== undefined) params = params.set('ageTo', filter.ageTo.toString());
-    if (filter.countryId !== null && filter.countryId !== undefined) params = params.set('countryId', filter.countryId.toString());
-    if (filter.cityId !== null && filter.cityId !== undefined) params = params.set('cityId', filter.cityId.toString());
-    if (filter.jobTitle) params = params.set('jobTitle', filter.jobTitle);
-
-    if(pageNumber && pageSize){
-      params = params.set('pageSize',pageSize);
-      params=params.set('pageNumber',pageNumber);
+    let request={
+      ...filter,
+      pageSize:pageSize,
+      pageNumber:pageNumber
     }
+    let params= buildHttpParams(request)
+
+    if(filter.jobTitle=="Select Job Title") {
+      params=params.delete('jobTitle');
+    }
+    else
+      params = params.set('jobTitle', filter.jobTitle!);
 
     return this.http.get<EmployeeDto[]>(`${this.baseUrl}employee/filter`, {observe:'response',params});
   }

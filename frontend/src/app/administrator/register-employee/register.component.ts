@@ -9,6 +9,7 @@ import {City} from '../../Models/City';
 import {Country} from '../../Models/Country';
 import {CountryService} from '../../services/country.service';
 import {concatMap, Observable} from 'rxjs';
+import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 @Component({
   selector: 'app-register-employee',
@@ -46,7 +47,7 @@ export class RegisterComponent implements OnInit {
   adminService=inject(AdminService);
   fb=inject(FormBuilder);
   private countryService=inject(CountryService);
-
+  private snackBarService=inject(MySnackbarService);
   employeeForm!:FormGroup;
 
   editMode=false;
@@ -176,7 +177,7 @@ export class RegisterComponent implements OnInit {
     console.log(this.employeeForm.value)
     this.employeeService.Register(this.employeeForm.value).subscribe({
       next:result => {
-        alert("Employee created successfully");
+        this.snackBarService.showSuccessMessage("Employee created successfully")
         const pdfUrl=URL.createObjectURL(result);
         window.open(pdfUrl);
       }
@@ -189,9 +190,9 @@ export class RegisterComponent implements OnInit {
       next:result=> {
         this.employee = result;
         this.formatDate();
-        alert("Successfully updated employee");
+        this.snackBarService.showSuccessMessage("Successfully updated employee")
       },
-      error:err=>{alert("Error"); console.log(err) }
+      error:err=>{console.log(err) }
     })
   }
 
