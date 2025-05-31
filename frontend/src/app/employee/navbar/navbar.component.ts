@@ -11,10 +11,4 @@ export class NavbarComponent {
   employeeService=inject(EmployeeService);
   router=inject(Router);
 
-  logout() {
-    this.employeeService.currentEmployee.set(null);
-    localStorage.removeItem('employee');
-    localStorage.removeItem('auth-token')
-    void this.router.navigateByUrl('/employee/login');
-  }
 }

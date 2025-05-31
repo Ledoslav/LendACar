@@ -2,13 +2,10 @@ import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {City} from '../../../Models/City';
 import {Country} from '../../../Models/Country';
-import {SecurityQuestion, SecurityQuestionService} from '../../../services/security-question.service';
 import {CountryService} from '../../../services/country.service';
 import {UserService} from '../../../services/user.service';
 import {CityService} from '../../../services/city.service';
 import {Router} from '@angular/router';
-import {PasswordResetService} from '../../../services/password-reset.service';
-import {UserSecurityQuestionAnswerService} from '../../../services/user-security-question-answer.service';
 import {MySnackbarService} from '../../../services/snackbars/my-snackbar.service';
 
 @Component({
@@ -66,7 +63,6 @@ export class ProfilePageComponent implements OnInit{
     this.accountService.Update(updateUser).subscribe({
       next: result => {
         this.accountService.currentUser.set(result);
-        //alert("User updated successfully");
         this.snackBarService.showSuccessMessage("Profile updated successfully!");
       },
       error: err => console.log(err)

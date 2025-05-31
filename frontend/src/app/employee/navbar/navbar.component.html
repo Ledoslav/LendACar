@@ -32,7 +32,7 @@
       <span class="me-3" routerLink="/employee/profile/overview" style="cursor: pointer; font-weight: bold">
         {{employeeService.currentEmployee()?.firstName}} {{employeeService.currentEmployee()?.lastName}}
       </span>
-      <button class="btn btn-sm btn-outline-light" routerLink="/employee/login" (click)="logout()">Logout</button>
+      <button class="btn btn-sm btn-outline-light" routerLink="/employee/login" (click)="employeeService.Logout()">Logout</button>
     </div>
   </div>
 </header>

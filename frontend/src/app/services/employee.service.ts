@@ -19,6 +19,8 @@ export class EmployeeService {
   currentEmployee=signal<EmployeeDto | null>(null);
   private router=inject(Router);
   private myAuthService=inject(MyAuthServiceService)
+
+
   Register(model:EmployeeDto){
     return this.http.post(this.baseUrl+'employee/register',model,{responseType:'blob'});
   }
@@ -35,6 +37,13 @@ export class EmployeeService {
         return response;
       })
     )
+  }
+
+  Logout(){
+    this.currentEmployee.set(null);
+    localStorage.removeItem('employee');
+    localStorage.removeItem('auth-token')
+    void this.router.navigateByUrl('/employee/login');
   }
 
   Update(model:any){
