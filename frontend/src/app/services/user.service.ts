@@ -40,6 +40,13 @@ export class UserService {
    );
   }
 
+  Logout(){
+    this.currentUser.set(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('auth-token');
+    void this.router.navigateByUrl("public/home");
+  }
+
   Register(model:any){
     return this.http.post(this.baseUrl+`user/register/`,model);
   }
@@ -158,5 +165,8 @@ export class UserService {
       })
     );
   }
+
+
+
 
 }

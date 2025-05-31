@@ -15,10 +15,4 @@ export class ProfileLayoutComponent implements OnInit{
 
   accountService=inject(UserService);
   router=inject(Router);
-  logout() {
-    this.accountService.currentUser.set(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('auth-token');
-    void this.router.navigate(['public/home']);
-  }
 }

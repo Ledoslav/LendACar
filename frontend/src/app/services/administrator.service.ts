@@ -5,6 +5,7 @@ import {map} from 'rxjs';
 import {EmployeeDto} from '../Models/EmployeeDto';
 import {AuthResponse} from '../Models/auth-models/AuthResponse';
 import {MyAuthServiceService} from './auth-service/my-auth-service.service';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class AdminService {
   constructor() { }
 
   private http=inject(HttpClient);
+  private router=inject(Router);
   private myAuthService=inject(MyAuthServiceService)
   baseUrl:string="http://localhost:7000/api/";
   currentAdmin=signal<AdministratorDto | null>(null)
@@ -29,6 +31,13 @@ export class AdminService {
         return response;
       })
     )
+  }
+
+  Logout(){
+    this.currentAdmin.set(null);
+    localStorage.removeItem('administrator');
+    localStorage.removeItem('auth-token');
+    void this.router.navigateByUrl('/admin/login');
   }
 
   Update(model:any){

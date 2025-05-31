@@ -18,12 +18,7 @@ export class DashboardComponent implements OnInit {
   isAppUser:boolean=false;
   accountService=inject(UserService);
   authService=inject(MyAuthServiceService);
-  logout() {
-    this.accountService.currentUser.set(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('auth-token');
-    window.location.reload();
-  }
+
 }
 
 

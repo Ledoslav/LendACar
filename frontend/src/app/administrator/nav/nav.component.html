@@ -12,32 +12,32 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/employeeOverview" href="#">Employees</a>
+              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/employeeOverview">Employees</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/userOverview" href="#">Users</a>
+              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/userOverview">Users</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/vehicleOverview" href="#">Vehicles</a>
+              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/vehicleOverview">Vehicles</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/vehicleCategories" href="#">Vehicle-Categories</a>
+              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/vehicleCategories">Vehicle-Categories</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/country" href="#">Countries</a>
+              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/country">Countries</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/city" href="#">Cities</a>
+              <a class="nav-link" routerLinkActive="active" routerLink="/admin/dashboard/city">Cities</a>
             </li>
           </ul>
         </div>
       </div>
         <div>
-          <span class="me-3" routerLinkActive="active" routerLink="/admin/profileOverview" style="cursor: pointer; font-weight: bold">
+          <span class="me-3" routerLinkActive="active" routerLink="/admin/dashboard/profileEdit" style="cursor: pointer; font-weight: bold">
             {{adminService.currentAdmin()?.firstName}} {{adminService.currentAdmin()?.lastName}}
           </span>
         </div>
-        <button class="btn btn-sm btn-secondary" routerLink="/admin/login" (click)="logout()">Logout</button>
+        <button class="btn btn-sm btn-secondary" routerLink="/admin/login" (click)="adminService.Logout()">Logout</button>
       </div>
     </nav>
 
