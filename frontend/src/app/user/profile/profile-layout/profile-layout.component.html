@@ -1,27 +1,4 @@
 <div class="landing-page">
-  <img class="vector" src="Vector.png" />
-  <div class="side-bar">
-    <div class="menu-item"><img src="Home.svg" alt="Home"> <span>Home</span></div>
-    <div class="menu-item"><img src="Bell.svg" alt="Activity"> <span>Activity</span></div>
-    <div class="menu-item"><img src="Messagesquare.svg" alt="Chats"> <span>Chats</span></div>
-    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item"><img src="Bookmark.svg" alt="Saved"> <span>Saved</span></div>
-    <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>Reserved</span></div>
-    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>My Vehicles</span></div>
-    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item" routerLink="/company/dashboard"><img src="Plussquare.svg" alt="Create Company"> <span>Create Company</span></div>
-  </div>
-
-  <div class="content">
-    <div class="nav-bar">
-      <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
-      <div class="right-section">
-        <span class="text-wrapper-17">{{ accountService.currentUser()?.username }}</span>
-        <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" class="profile-icon" style="border-radius: 20px" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile" routerLink="/user/dashboard">
-      </div>
-    </div>
-
     <!-- New Header Section with Background -->
     <div class="col-md-11 my-3">
       <div class="d-flex">
@@ -79,5 +56,5 @@
         </div>
       </div>
     </div>
-  </div>
+
 </div>

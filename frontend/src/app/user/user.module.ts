@@ -32,6 +32,7 @@ import { CloseAccountPageComponent } from './profile/close-account-page/close-ac
 import {FileUploadModule} from "ng2-file-upload";
 import {ImageCropperComponent} from 'ngx-image-cropper';
 import { VerificationRequestPageComponent } from './profile/verification-request-page/verification-request-page.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 
 @NgModule({
@@ -53,6 +54,7 @@ import { VerificationRequestPageComponent } from './profile/verification-request
     ReservationHistoryPageComponent,
     CloseAccountPageComponent,
     VerificationRequestPageComponent,
+    NavbarComponent,
   ],
   imports: [
     CommonModule,
