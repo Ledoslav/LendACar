@@ -2,12 +2,11 @@ import {Component, inject, OnInit} from '@angular/core';
 import {UserDto} from '../../Models/UserDto';
 import {City} from '../../Models/City';
 import {Country} from '../../Models/Country';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 import {UserService} from '../../services/user.service';
 import {CityService} from '../../services/city.service';
 import {CountryService} from '../../services/country.service';
 import {Router} from '@angular/router';
-import {HttpParams, HttpResponse} from '@angular/common/http';
 import {PaginatedResult} from '../../Models/Pagination';
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
@@ -26,7 +25,7 @@ export class UserOverviewComponent  implements OnInit {
   showCityField: boolean=false;
   ngOnInit(): void {
       this.initSearchListener();
-      this.loadUsers();
+      this.filterUsers();
       this.loadCities();
       this.loadCountries();
 
@@ -45,7 +44,6 @@ export class UserOverviewComponent  implements OnInit {
   userService=inject(UserService)
   cityService=inject(CityService);
   countryService=inject(CountryService);
-  newUsers: UserDto[]=[];
   cities: City[]=[];
   countries: Country[]=[];
   filteredCities:City[]=[];
@@ -66,18 +64,6 @@ export class UserOverviewComponent  implements OnInit {
     ).subscribe((filterValue) => {
       this.filterUsers();
     });
-  }
-
-  loadUsers(){
-    this.userService.GetAllUsers(this.pageNumber,this.pageSize).subscribe({
-     next:res=> {
-       this.users={
-         dataItems:res.body as UserDto[],
-         pagination:JSON.parse(res.headers.get('Pagination')!)
-       };
-     },
-      error:err=>console.log(err),
-    })
   }
 
   loadCities(){
@@ -132,14 +118,6 @@ export class UserOverviewComponent  implements OnInit {
     this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
   }
 
-
-  onSearch() {
-    if(this.userSearchForm.value.countryId==0 && this.userSearchForm.value.cityId!=undefined)
-      this.userSearchForm.value.cityId=undefined;
-     if(this.userSearchForm.value.countryId==0) this.userSearchForm.value.countryId=undefined;
-     this.filterUsers();
-  }
-
   onNameUsernameSearch(){
     const searchValue = this.userSearchForm.get('name')?.value || '';
     if(this.userSearchForm.value.countryId==0) this.userSearchForm.value.countryId=undefined;
@@ -152,6 +130,10 @@ export class UserOverviewComponent  implements OnInit {
   }
 
   filterUsers(): void {
+    if(this.userSearchForm.value.countryId==0 && this.userSearchForm.value.cityId!=undefined)
+      this.userSearchForm.value.cityId=undefined;
+    if(this.userSearchForm.value.countryId==0) this.userSearchForm.value.countryId=undefined;
+
     this.userService.FilterUsers(this.userSearchForm.value, this.pageNumber, this.pageSize)
       .subscribe({
         next: (res) => {
