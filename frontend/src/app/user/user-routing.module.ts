@@ -20,21 +20,24 @@ import {CloseAccountPageComponent} from './profile/close-account-page/close-acco
 import {
   VerificationRequestPageComponent
 } from './profile/verification-request-page/verification-request-page.component';
+import {NavbarComponent} from './navbar/navbar.component';
 
 
 const routes: Routes = [
-  {
-    path: '', component: LayoutComponent, children: [
+
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'polls', component: PollsComponent },
+      { path: 'nav', component: NavbarComponent },
       { path: '**', redirectTo: 'not-found', pathMatch: 'full' },
+
 
       {
         path: '',
         canActivate: [AuthGuard],
+         component:LayoutComponent,
         data:{
           isLoggedIn:true,
           isAppUser:true
@@ -59,8 +62,6 @@ const routes: Routes = [
 
         ]
       }
-    ]
-  }
 ];
 
 

@@ -1,43 +1,3 @@
-<nav class="navbar navbar-expand" aria-label="Second navbar example">
-    <div class="container-fluid">
-      <div class="d-flex align-items-center">
-        <img src="LAC_logo.png" alt="Logo" style="height: 40px;" class="me-3">
-        <span>LendACar</span>
-      </div>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarsExample02">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" routerLink="/user/dashboard" routerLinkActive>Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/user/polls">Polls</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/user/myVehicles">My Vehicles</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-        </ul>
-        @if (user==null){
-          <div>
-            <a routerLink="/user/login" style="margin-right: 5px; text-decoration: none">Login</a>
-            <a routerLink="/user/register" style="margin-left: 5px; text-decoration: none">Register</a>
-          </div>
-        } @else {
-          <div>
-            <a routerLink="/user/userProfile" style="margin-right: 5px; text-decoration: none">View account</a>
-          </div>
-        }
-
-      </div>
-    </div>
-  </nav>
-
 <div class="dashboard-container">
     <!-- User Info Card -->
     <div class="user-info-card">
@@ -50,13 +10,13 @@
         <p>{{ user?.emailAddress }}</p>
         <p>{{ user?.averageRating }} stars</p>
       </div>
-      <button [disabled]="!user?.isVerified" class="upload-button" routerLink="/user/vehicleUpload">
+      <button class="upload-button" [routerLink]="['/user/vehicleUpload']">
         Upload Vehicle
       </button>
     </div>
 
     <!-- Vehicle List Card -->
-    <div class="vehicle-list-card">
+    <div class="vehicle-list-card" style="max-width: 800px;">
       <div class="search-bar">
         <input type="text" placeholder="Search by vehicle title..." [(ngModel)]="searchText" style="width: 80%;"/>
         <select [(ngModel)]="availabilityFilter">
@@ -90,3 +50,4 @@
       </div>
     </div>
   </div>
+

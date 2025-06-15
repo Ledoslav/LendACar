@@ -1,0 +1,13 @@
+body {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container-fluid {
+  flex: 1;
+}
+
+footer {
+  margin-top: auto;
+}
