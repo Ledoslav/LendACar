@@ -237,6 +237,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPost("add-profile-pic/{id}")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: true, isAppUser: false)]
         public async Task<ActionResult<EmployeeDto>> AddEmployeeProfilePic(int id, IFormFile file, CancellationToken cancellationToken)
         {
             var employee = await db.Employees
@@ -274,6 +275,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpDelete("remove-profile-pic/{id}")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: true, isAppUser: false)]
         public async Task<ActionResult<EmployeeDto>> RemoveEmployeeProfilePic(int id, CancellationToken cancellationToken)
         {
             var employee = await db.Employees

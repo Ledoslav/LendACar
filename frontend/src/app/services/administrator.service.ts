@@ -17,11 +17,11 @@ export class AdminService {
   private http=inject(HttpClient);
   private router=inject(Router);
   private myAuthService=inject(MyAuthServiceService)
-  private baseUrl = MyConfig.api_address + 'administrator';
+  private baseUrl = MyConfig.api_address;
   currentAdmin=signal<AdministratorDto | null>(null)
 
   Login(model:any){
-    return this.http.post<AuthResponse>(this.baseUrl+'/login',model).pipe(
+    return this.http.post<AuthResponse>(this.baseUrl+'administrator/login',model).pipe(
       map(response=>{
         if(response){
           this.myAuthService.setLoggedInUser(response)
@@ -43,7 +43,7 @@ export class AdminService {
 
   Update(model:any){
     console.log(model);
-    return this.http.put<AdministratorDto>(this.baseUrl+`/update/${model.id}`,model).pipe(
+    return this.http.put<AdministratorDto>(this.baseUrl+`administrator/update/${model.id}`,model).pipe(
       map(admin=>{
         if(admin){
           localStorage.clear();
@@ -57,10 +57,10 @@ export class AdminService {
   }
 
   UpdateUser(model:any){
-    return this.http.put<EmployeeDto>(this.baseUrl+`/user/update/${model.id}`,model);
+    return this.http.put<EmployeeDto>(this.baseUrl+`user/update/${model.id}`,model);
   }
 
   UpdateEmployee(model: any) {
-    return this.http.put<EmployeeDto>(this.baseUrl+`/employee/update/${model.id}`,model)
+    return this.http.put<EmployeeDto>(this.baseUrl+`employee/update/${model.id}`,model)
   }
 }

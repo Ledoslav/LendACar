@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Http;
+using LendACarAPI.Services;
 
 namespace LendACarAPI.Endpoints{
     [ApiController]
@@ -84,6 +85,7 @@ namespace LendACarAPI.Endpoints{
         }
 
         [HttpPost("add")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult<VehicleModel>> AddVehicleModel([FromBody] AddVehicleModelRequest request)
         {
             // Check if the brand already exists
@@ -127,7 +129,7 @@ namespace LendACarAPI.Endpoints{
         }
 
         [HttpDelete("deleteModel/{vehicleModelId}")]
-
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult> DeleteVehicleModelById(int vehicleModelId)
         {
             var vehicleModelToDelete = await _context.VehicleModels
@@ -145,7 +147,7 @@ namespace LendACarAPI.Endpoints{
         }
 
         [HttpDelete("deleteBrand/{vehicleBrandId}")]
-
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult> DeleteVehicleBrandById(int vehicleBrandId)
         {
             var vehicleBrandToDelete = await _context.VehicleBrands
@@ -178,6 +180,7 @@ namespace LendACarAPI.Endpoints{
         }
 
         [HttpPut("update/vehicle")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<IActionResult> UpdateModelById([FromBody] UpdateVehicleRequest request)
         {
             var vehicleModelToUpdate = await _context.VehicleModels

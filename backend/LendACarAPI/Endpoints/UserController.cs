@@ -54,7 +54,6 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpGet("getAll")]
-        [MyAuthorization(IsAdmin:true,IsEmployee:true,isAppUser:true)]
         [TypeFilter(typeof(UserFilterAttribute))]
         public async Task<ActionResult<MyPagedList<UserDto[]>>> GetAllUsers([FromQuery]MyPagingRequest pagedParams, CancellationToken cancellationToken)
         {
@@ -308,6 +307,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpPost("add-profile-pic/{id}")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<ActionResult<UserDto>> AddUserProfilePic(int id,IFormFile file ,CancellationToken cancellationToken)
         {
             var user = await db.Users
@@ -344,6 +344,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpDelete("remove-profile-pic/{id}")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<ActionResult<UserDto>> RemoveUserProfilePic(int id, CancellationToken cancellationToken)
         {
             var user = await db.Users

@@ -92,6 +92,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpPut("reset")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> ResetPassword([FromBody] PasswordResetDto resetDto,CancellationToken cancellationToken)
         {
             User? user = null;
@@ -149,6 +150,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPut("change")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> ChangePassword([FromBody] PasswordResetDto resetDto, CancellationToken cancellationToken)
         {
             User? user=null;

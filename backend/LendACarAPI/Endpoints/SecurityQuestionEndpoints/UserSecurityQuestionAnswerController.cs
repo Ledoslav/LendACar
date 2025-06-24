@@ -1,6 +1,7 @@
 ﻿using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace LendACarAPI.Endpoints.SecurityQuestionEndpoints
 {
     [Route("api/[controller]")]
     [ApiController]
+    [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
     public class UserSecurityQuestionAnswerController(ApplicationDbContext db) : ControllerBase
     {
         [HttpPost("create-answer/{userID}")]

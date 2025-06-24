@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using LendACarAPI.Services;
 
 namespace LendACarAPI.Endpoints
 {
@@ -16,6 +17,7 @@ namespace LendACarAPI.Endpoints
     public class VerificationRequestController(ApplicationDbContext db) : ControllerBase
     {
         [HttpGet("get")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<ActionResult<VehicleCategory[]>> GetAllVerificationRequests()
         {
             var requests = await db.VerificationRequests.ToArrayAsync();
@@ -23,6 +25,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpGet("getById/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> GetVerificationRequestById(int id)
         {
             var request = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.Id == id);
@@ -46,6 +49,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpGet("getByUsername/{username}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> GetVerificationRequestByUsername(string username)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Username == username);
@@ -72,6 +76,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpGet("getByUserId/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> GetVerificationRequestByUserId(int id)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
@@ -98,6 +103,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPost("addNew")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<IActionResult> AddVerificationRequest([FromBody] VerificationSubmitDto verificationSubmitDto)
         {
             if (await VerificationRequestExists(verificationSubmitDto.UserId))
@@ -117,6 +123,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPut("approve/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<IActionResult> ApproveVerificationRequest(int id, [FromBody] VerificationDto approvedVerificationRequest)
         {
             var verificationRequest = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.Id == id);
@@ -151,6 +158,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPut("deny/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<IActionResult> DenyVerificationRequest(int id, [FromBody] VerificationDto approvedVerificationRequest)
         {
             var verificationRequest = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.Id == id);
@@ -185,6 +193,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpDelete("remove/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> DeleteVerificationRequest(int id)
         {
             var verificationRequest = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.Id == id);

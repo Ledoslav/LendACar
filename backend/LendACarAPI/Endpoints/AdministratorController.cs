@@ -12,6 +12,7 @@ namespace LendACarAPI.Endpoints
 {
     [Route("api/[controller]")]
     [ApiController]
+    [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
     public class AdministratorController(ApplicationDbContext db, IAuthService authService) : ControllerBase
     {
         [HttpPost("register")]

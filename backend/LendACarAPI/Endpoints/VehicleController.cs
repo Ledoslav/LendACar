@@ -4,6 +4,7 @@ using LendACarAPI.DTOs;
 using LendACarAPI.Filters;
 using LendACarAPI.Helper;
 using LendACarAPI.Migrations;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -151,6 +152,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpPost("addNew")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<IActionResult> AddVehicle([FromBody] VehicleUploadDto vehicleDto)
         {
             // Check if the User with the provided UserID exists and is verified
@@ -196,6 +198,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpPut("update/{id}")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<IActionResult> EditVehicle(int id, [FromBody] VehicleDto vehicleDto)
         {
             var vehicle = await db.Vehicles.FirstOrDefaultAsync(v => v.Id == id);

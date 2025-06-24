@@ -1,5 +1,6 @@
 using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -50,6 +51,7 @@ namespace LendACarAPI.Endpoints
 
         // CompanyController.cs
         [HttpPost("create")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<ActionResult<Company>> CreateCompany([FromForm] CompanyCreateRequest request)
         {
             // Check if the user already has a company
@@ -153,6 +155,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpDelete("deleteByUser/{userId}")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<IActionResult> DeleteCompanyByUserId(int userId)
         {
             // Fetch the company associated with the user/owner
@@ -213,6 +216,7 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpPut("updateByUser/{userId}")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<IActionResult> UpdateCompanyByUserId(int userId, [FromForm] CompanyUpdateRequest request)
         {
             var company = await _context.Companies.FirstOrDefaultAsync(c => c.UserId == userId);

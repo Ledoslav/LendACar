@@ -1,6 +1,7 @@
 using Azure.Core.GeoJson;
 using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace LendACarAPI.Endpoints
 {
     [ApiController]
     [Route("api/[controller]")]
+    [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: true)]
 
     public class CompanyEmployeeController : ControllerBase
     {

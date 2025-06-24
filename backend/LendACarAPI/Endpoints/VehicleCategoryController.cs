@@ -2,6 +2,7 @@
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
 using LendACarAPI.Migrations;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPost("addNew")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<IActionResult> AddVehicleCategory([FromBody] VehicleCategoryDto vehicleCategoryDto)
         {
             if (await VehicleCategoryExists(vehicleCategoryDto.Name))
@@ -59,6 +61,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPut("update/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<IActionResult> EditVehicleCategory(int id, [FromBody] VehicleCategoryDto updatedCategoryDto)
         {
             var vehicleCategory = await db.VehicleCategories.FirstOrDefaultAsync(vc => vc.Id == id);
@@ -81,6 +84,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpDelete("remove/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<IActionResult> RemoveVehicleCategory(int id)
         {
             var vehicleCategory = await db.VehicleCategories.FirstOrDefaultAsync(vc => vc.Id == id);
