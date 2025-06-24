@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {catchError, map, Observable, of, throwError} from 'rxjs';
+import { MyConfig } from '../my-config';
 
 // Define the interface for the Employee data
 interface Employee {
@@ -15,6 +16,8 @@ interface Employee {
   providedIn: 'root'
 })
 export class CompanyEmployeeService {
+  private baseUrl = MyConfig.api_address + 'CompanyEmployee';
+
   constructor(private http: HttpClient) {}
 
   // POST method to add an employee
@@ -26,12 +29,12 @@ export class CompanyEmployeeService {
     title: string;
     email: string
   }): Observable<any> {
-    return this.http.post<any>(`http://localhost:7000/api/CompanyEmployee/add`, employee);
+    return this.http.post<any>(`${this.baseUrl}/add`, employee);
   }
 
   getCompanyAdminEmail(userId: number): Observable<string | null> {
     return this.http.get<{ companyAdminEmail: string | null }>(
-      `http://localhost:7000/api/CompanyEmployee/admin-email/${userId}`
+      `${this.baseUrl}/admin-email/${userId}`
     ).pipe(
       map((response) => response.companyAdminEmail || null),
       catchError((error) => {
@@ -54,7 +57,7 @@ export class CompanyEmployeeService {
     }
 
     // Pass the email address as a header to the API
-    return this.http.get<any>(`http://localhost:7000/api/CompanyEmployee/get/all`, {
+    return this.http.get<any>(`${this.baseUrl}/get/all`, {
       headers: {
         'EmailAddress': emailAddress,  // Send emailAddress in the headers
       },
@@ -62,15 +65,15 @@ export class CompanyEmployeeService {
   }
 
   getEmployeeForAdmin(userId: number): Observable<any> {
-    return this.http.get<any>(`http://localhost:7000/api/CompanyEmployee/get/${userId}`)
+    return this.http.get<any>(`${this.baseUrl}/get/${userId}`)
   }
 
   deleteEmployee(userId: number): Observable<any> {
-    return this.http.delete(`http://localhost:7000/api/CompanyEmployee/delete/${userId}`);
+    return this.http.delete(`${this.baseUrl}/delete/${userId}`);
   }
 
   updateEmployee(employee: any): Observable<any> {
-    return this.http.put(`http://localhost:7000/api/CompanyEmployee/UpdateEmployee`, employee);
+    return this.http.put(`${this.baseUrl}/UpdateEmployee`, employee);
   }
 
 }

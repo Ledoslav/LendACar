@@ -7,6 +7,7 @@ import {EmployeeFilter} from '../Models/EmployeeFilter';
 import {MyAuthServiceService} from './auth-service/my-auth-service.service';
 import {AuthResponse} from '../Models/auth-models/AuthResponse';
 import {buildHttpParams} from '../helper/http-params.helper';
+import { MyConfig } from '../my-config';
 
 @Injectable({
   providedIn: 'root'
@@ -15,18 +16,18 @@ export class EmployeeService {
   constructor() { }
 
   private http=inject(HttpClient);
-  baseUrl:string="http://localhost:7000/api/";
+  private baseUrl = MyConfig.api_address + 'employee';
   currentEmployee=signal<EmployeeDto | null>(null);
   private router=inject(Router);
   private myAuthService=inject(MyAuthServiceService)
 
 
   Register(model:EmployeeDto){
-    return this.http.post(this.baseUrl+'employee/register',model,{responseType:'blob'});
+    return this.http.post(this.baseUrl+'/register',model,{responseType:'blob'});
   }
 
   Login(model:any){
-    return this.http.post<AuthResponse>(this.baseUrl+'employee/login',model).pipe(
+    return this.http.post<AuthResponse>(this.baseUrl+'/login',model).pipe(
       map(response=>{
         if(response){
           this.myAuthService.setLoggedInUser(response)
@@ -47,7 +48,7 @@ export class EmployeeService {
   }
 
   Update(model:any){
-    return this.http.put<EmployeeDto>(this.baseUrl+`employee/update/${model.id}`,model).pipe(
+    return this.http.put<EmployeeDto>(this.baseUrl+`/update/${model.id}`,model).pipe(
       map(employee=>{
         if(employee){
           localStorage.setItem('employee',JSON.stringify(employee));
@@ -59,7 +60,7 @@ export class EmployeeService {
   }
 
   ChangePassword(model:any){
-    return this.http.put<any>(this.baseUrl+'resetpassword/change',model).subscribe({
+    return this.http.put<any>(this.baseUrl+'/resetpassword/change',model).subscribe({
       next:()=>{
         alert("Password change successful");
         localStorage.removeItem('employee');
@@ -75,15 +76,15 @@ export class EmployeeService {
   }
 
   GetAllEmployees(){
-    return this.http.get<EmployeeDto[]>(this.baseUrl+'employee/getAll')
+    return this.http.get<EmployeeDto[]>(this.baseUrl+'/getAll')
   }
 
   GetEmployeeById(id:number){
-    return this.http.get<EmployeeDto[]>(this.baseUrl+`employee/${id}`);
+    return this.http.get<EmployeeDto[]>(this.baseUrl+`/${id}`);
   }
 
   DeleteEmployee(id:number){
-    return this.http.delete(this.baseUrl+`employee/remove/${id}`);
+    return this.http.delete(this.baseUrl+`/remove/${id}`);
   }
 
   FilterEmployees(filter:EmployeeFilter,pageNumber?:number,pageSize?:number){
@@ -100,11 +101,11 @@ export class EmployeeService {
     else
       params = params.set('jobTitle', filter.jobTitle!);
 
-    return this.http.get<EmployeeDto[]>(`${this.baseUrl}employee/filter`, {observe:'response',params});
+    return this.http.get<EmployeeDto[]>(`${this.baseUrl}/filter`, {observe:'response',params});
   }
 
   UploadProfilePhoto(formData:FormData,employeeId:any){
-    return this.http.post<EmployeeDto>(this.baseUrl+`Employee/add-profile-pic/${employeeId}`,formData).pipe(
+    return this.http.post<EmployeeDto>(this.baseUrl+`/add-profile-pic/${employeeId}`,formData).pipe(
       map(employee=>{
         if(employee){
           localStorage.removeItem('employee');
@@ -118,7 +119,7 @@ export class EmployeeService {
   }
 
   RemoveProfilePhoto(employeeId:any){
-    return this.http.delete<EmployeeDto>(this.baseUrl+`Employee/remove-profile-pic/${employeeId}`).pipe(
+    return this.http.delete<EmployeeDto>(this.baseUrl+`/remove-profile-pic/${employeeId}`).pipe(
       map(employee=>{
         if(employee){
           localStorage.removeItem('employee');

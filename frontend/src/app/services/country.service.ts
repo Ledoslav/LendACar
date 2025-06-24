@@ -2,15 +2,17 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
 import {Country} from '../Models/Country';
 import {Observable} from 'rxjs';
+import { MyConfig } from '../my-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CountryService {
   private http=inject(HttpClient)
-  baseUrl:string="http://localhost:7000/api/";
+  private baseUrl = MyConfig.api_address + 'country';
+
   getAllCountries(countryName:string=""):Observable<Country[]>{
-    return this.http.get<Country[]>(this.baseUrl + 'country/getAll',{params:{countryName:countryName}});
+    return this.http.get<Country[]>(this.baseUrl + '/getAll',{params:{countryName:countryName}});
   }
 
   getAllCountriesPaged(countryName:string="",pageNumber?:number,pageSize?:number):Observable<HttpResponse<Country[]>>{
@@ -22,18 +24,18 @@ export class CountryService {
       params=params.set('pageNumber',pageNumber);
     }
 
-    return this.http.get<Country[]>(this.baseUrl + 'country/getAllPaged',{observe:'response',params});
+    return this.http.get<Country[]>(this.baseUrl + '/getAllPaged',{observe:'response',params});
   }
 
   CreateCountry(model:Country){
-    return this.http.post(this.baseUrl+'country/create',model);
+    return this.http.post(this.baseUrl+'/create',model);
   }
 
   RemoveCountry(id:number){
-    return this.http.delete(this.baseUrl+`country/remove/${id}`);
+    return this.http.delete(this.baseUrl+`/remove/${id}`);
   }
 
   UpdateCountry(model:Country, id:number){
-    return this.http.put(this.baseUrl+`country/update/${id}`,model);
+    return this.http.put(this.baseUrl+`/update/${id}`,model);
   }
 }

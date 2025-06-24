@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { VehicleDto } from '../Models/VehicleDto';
 import { Observable } from 'rxjs';
+import { MyConfig } from '../my-config';
 
 export interface VehicleUploadDto {
   title: string;
@@ -28,7 +29,7 @@ export interface VehicleUploadDto {
 })
 export class VehicleListingService {
 
-  private baseUrl: string = 'http://localhost:7000/api/';
+  private baseUrl = MyConfig.api_address + 'vehiclelisting';
   
   constructor(private http: HttpClient) {}
 

@@ -8,6 +8,7 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 import {AuthResponse} from '../Models/auth-models/AuthResponse';
 import {MyAuthServiceService} from './auth-service/my-auth-service.service';
 import {buildHttpParams} from  '../helper/http-params.helper'
+import { MyConfig } from '../my-config';
 
 
 @Injectable({
@@ -22,7 +23,7 @@ export class UserService {
   private router=inject(Router);
   private jwtHelper=inject(JwtHelperService);
   private myAuthService=inject(MyAuthServiceService)
-  baseUrl:string="http://localhost:7000/api/";
+  private baseUrl = MyConfig.api_address;
   currentUser=signal<UserDto | null>(null)
 
   Login(model:any){

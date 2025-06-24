@@ -1,22 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { MyConfig } from '../my-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompanyService {
 
+  private baseUrl = MyConfig.api_address + 'company';
+
   constructor(private http: HttpClient) {}
 
   // Check if a company exists for the user
   checkIfCompanyExists(userId: number): Observable<boolean> {
-    return this.http.get<boolean>(`http://localhost:7000/api/company/check/${userId}`);
+    return this.http.get<boolean>(`${this.baseUrl}/check/${userId}`);
   }
 
   // Get company details if needed
   getCompanyByUserId(userId: number): Observable<any> {
-    return this.http.get<any>(`http://localhost:7000/api/company/get/${userId}`);
+    return this.http.get<any>(`${this.baseUrl}/get/${userId}`);
   }
 
 // API call to create a company
@@ -36,11 +39,11 @@ export class CompanyService {
       formData.append('companyAvatar', companyData.avatar, companyData.avatar.name);
     }
 
-    return this.http.post<any>(`http://localhost:7000/api/company/create`, formData);
+    return this.http.post<any>(`${this.baseUrl}/create`, formData);
   }
 
   deleteCompanyByUserId(userId: number): Observable<void> {
-    return this.http.delete<void>(`http://localhost:7000/api/company/deleteByUser/${userId}`);
+    return this.http.delete<void>(`${this.baseUrl}/deleteByUser/${userId}`);
   }
 
   updateCompanyByUserId(userId: number, companyData: any): Observable<void> {
@@ -59,6 +62,6 @@ export class CompanyService {
       formData.append('companyAvatar', companyData.companyAvatar, companyData.companyAvatar.name);
     }
 
-    return this.http.put<void>(`http://localhost:7000/api/company/updateByUser/${userId}`, formData);
+    return this.http.put<void>(`${this.baseUrl}/updateByUser/${userId}`, formData);
   }
 }

@@ -3,6 +3,7 @@ import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
 import {City} from '../Models/City';
 import {Observable} from 'rxjs';
 import {Country} from '../Models/Country';
+import { MyConfig } from '../my-config';
 
 @Injectable({
   providedIn: 'root'
@@ -11,21 +12,21 @@ export class CityService {
 
   constructor() { }
   private http=inject(HttpClient);
-  baseUrl:string="http://localhost:7000/api/";
+  private baseUrl = MyConfig.api_address + 'city';
 
   GetAllCities(){
-    return this.http.get<City[]>(this.baseUrl + 'city/get')
+    return this.http.get<City[]>(this.baseUrl + '/get')
   }
   AddCity(model:City){
-    return this.http.post(this.baseUrl+'city/add',model);
+    return this.http.post(this.baseUrl+'/add',model);
   }
 
   RemoveCity(id:number){
-    return this.http.delete(this.baseUrl+`city/remove/${id}`);
+    return this.http.delete(this.baseUrl+`/remove/${id}`);
   }
 
   UpdateCity(model:City,id:number){
-    return this.http.put(this.baseUrl+`city/update/${id}`,model);
+    return this.http.put(this.baseUrl+`/update/${id}`,model);
   }
 
 
@@ -41,7 +42,7 @@ export class CityService {
     if(countryId)
       params=params.set('countryId',countryId);
 
-    return this.http.get<Country[]>(this.baseUrl + 'city/getAllPaged',{observe:'response',params});
+    return this.http.get<Country[]>(this.baseUrl + '/getAllPaged',{observe:'response',params});
   }
 
 }

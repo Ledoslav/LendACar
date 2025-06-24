@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {VehiclesDto} from '../Models/VehiclesDto';
 import { VehicleBrandDto } from '../Models/VehicleBrandDto';
 import {VehicleDto} from '../Models/VehicleDto';
+import { MyConfig } from '../my-config';
 
 
 @Injectable({
@@ -11,7 +12,7 @@ import {VehicleDto} from '../Models/VehicleDto';
 })
 export class VehicleService{
   private http = inject(HttpClient);
-  baseUrl:string="http://localhost:7000/api/";
+  private baseUrl = MyConfig.api_address + 'vehicle';
 
   GetVehicleBrands(){
     return this.http.get<VehicleBrandDto[]>("http://localhost:7000/api/VehicleModelAndBrand/getBrand/all");

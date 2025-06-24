@@ -6,6 +6,7 @@ import {MyAuthServiceService} from './auth-service/my-auth-service.service';
 import {catchError, timeout} from 'rxjs';
 import {EmployeeService} from './employee.service';
 import {MySnackbarService} from './snackbars/my-snackbar.service';
+import { MyConfig } from '../my-config';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class PasswordResetService {
 
   constructor() { }
 
-    baseUrl:string="http://localhost:7000/api/";
+    private baseUrl = MyConfig.api_address + 'resetpassword';
     private http=inject(HttpClient);
     private router=inject(Router);
     private accountService=inject(UserService);
@@ -24,7 +25,7 @@ export class PasswordResetService {
 
 
   ResetPassword(model:any){
-      this.http.put<{ userType: string }>(this.baseUrl+'resetpassword/reset',model).subscribe({
+      this.http.put<{ userType: string }>(this.baseUrl+'reset',model).subscribe({
       next:(res)=>{
         this.snackBarService.showSuccessMessage("Password change successful")
         if(res.userType==="user"){
@@ -40,7 +41,7 @@ export class PasswordResetService {
 
 
   ChangePassword(model:any){
-    this.http.put<{ userType: string }>(this.baseUrl+'resetpassword/change',model).subscribe({
+    this.http.put<{ userType: string }>(this.baseUrl+'change',model).subscribe({
       next:(res)=>{
         this.snackBarService.showSuccessMessage("Password change successful")
         localStorage.removeItem('auth-token')
@@ -66,11 +67,11 @@ export class PasswordResetService {
 
 
   SendResetToken(model:any){
-    return this.http.post<{ isSent: boolean }>(this.baseUrl+'resetpassword/send-reset-token',model);
+    return this.http.post<{ isSent: boolean }>(this.baseUrl+'send-reset-token',model);
   }
 
   ValidatePasswordToken(model:any){
-    return this.http.post<{ isValidToken: boolean }>(this.baseUrl+'resetpassword/validate-password-token',model)
+    return this.http.post<{ isValidToken: boolean }>(this.baseUrl+'validate-password-token',model)
   }
 
 }
