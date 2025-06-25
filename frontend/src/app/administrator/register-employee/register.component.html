@@ -6,50 +6,51 @@
     <div class="form-group mb-2">
       <label for="firstName">First Name</label>
       <input type="text" id="firstName" class="form-control" name="firstName"  formControlName="firstName"   />
-      <small class="text-danger" *ngIf="employeeForm.get('firstName')?.touched && employeeForm.get('firstName')?.invalid ">
-        First name is required.
-      </small>
+      <div class="text-danger" *ngIf="employeeForm.get('firstName')?.touched && employeeForm.get('firstName')?.invalid">
+        <small *ngIf="employeeForm.get('firstName')?.errors?.['required']">First name is required.</small>
+        <small *ngIf="employeeForm.get('firstName')?.errors?.['minlength']">First name must be at least 2 characters.</small>
+        <small *ngIf="employeeForm.get('firstName')?.errors?.['maxlength']">First name cannot exceed 50 characters.</small>
+      </div>
     </div>
 
     <div class="form-group mb-2">
       <label for="lastName">Last Name</label>
       <input type="text" id="lastName" class="form-control" name="lastName"  formControlName="lastName"  />
-      <small class="text-danger" *ngIf="employeeForm.get('lastName')?.touched && employeeForm.get('lastName')?.invalid ">
-        Last name is required.
-      </small>
+      <div class="text-danger" *ngIf="employeeForm.get('lastName')?.touched && employeeForm.get('lastName')?.invalid">
+        <small *ngIf="employeeForm.get('lastName')?.errors?.['required']">Last name is required.</small>
+        <small *ngIf="employeeForm.get('lastName')?.errors?.['minlength']">Last name must be at least 2 characters.</small>
+        <small *ngIf="employeeForm.get('lastName')?.errors?.['maxlength']">Last name cannot exceed 50 characters.</small>
+      </div>
     </div>
 
     <div class="form-group mb-2">
       <label for="email">Email</label>
       <input type="email" readonly id="email" class="form-control" name="email" formControlName="emailAddress" />
-<!--      <small class="text-danger" *ngIf="employeeForm.get('emailAddress')?.touched && employeeForm.get('emailAddress')?.invalid ">
-        Email is required.
-      </small>
-      <small class="text-danger" *ngIf="employeeForm.get('emailAddress')?.touched && employeeForm.get('emailAddress')?.invalid ">
-        Enter a valid email address.
-      </small>-->
+      <div class="text-danger" *ngIf="employeeForm.get('emailAddress')?.touched && employeeForm.get('emailAddress')?.invalid">
+        <small *ngIf="employeeForm.get('emailAddress')?.errors?.['required']">Email is required.</small>
+        <small *ngIf="employeeForm.get('emailAddress')?.errors?.['email']">Enter a valid email address.</small>
+        <small *ngIf="employeeForm.get('emailAddress')?.errors?.['maxlength']">Email cannot exceed 100 characters.</small>
+      </div>
     </div>
 
     <div class="form-group mb-2">
       <label for="username">Username</label>
       <input type="text" id="username" class="form-control" name="username" formControlName="username"  />
-      <small class="text-danger" *ngIf="employeeForm.get('username')?.touched && employeeForm.get('username')?.invalid ">
-        Username is required.
-      </small>
-<!--      <small class="text-danger" *ngIf="employeeForm.get('username')?.dirty && employeeForm.get('username')?.invalid">
-        Username should be between 2 and 20 characters long
-      </small>-->
+      <div class="text-danger" *ngIf="employeeForm.get('username')?.touched && employeeForm.get('username')?.invalid">
+        <small *ngIf="employeeForm.get('username')?.errors?.['required']">Username is required.</small>
+        <small *ngIf="employeeForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters.</small>
+        <small *ngIf="employeeForm.get('username')?.errors?.['maxlength']">Username cannot exceed 30 characters.</small>
+      </div>
     </div>
 
     <div class="form-group mb-2">
       <label for="phone">Phone</label>
       <input type="text" id="phone" class="form-control" name="phone" formControlName="phoneNumber" placeholder="+38762335441" />
-      <small class="text-danger" *ngIf="employeeForm.get('phoneNumber')?.dirty && employeeForm.get('phoneNumber')?.invalid">
-        Phone number is required.
-      </small>
-      <small class="text-danger" *ngIf="employeeForm.get('phoneNumber')?.touched && employeeForm.get('phoneNumber')?.invalid">
-        Enter a valid phone number.
-      </small>
+      <div class="text-danger" *ngIf="employeeForm.get('phoneNumber')?.touched && employeeForm.get('phoneNumber')?.invalid">
+        <small *ngIf="employeeForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</small>
+        <small *ngIf="employeeForm.get('phoneNumber')?.errors?.['pattern']">Enter a valid phone number.</small>
+        <small *ngIf="employeeForm.get('phoneNumber')?.errors?.['maxlength']">Phone number cannot exceed 20 characters.</small>
+      </div>
     </div>
 
     <div class="form-group mb-2">
@@ -57,6 +58,9 @@
       <select  class="form-select" aria-label="Default select example" name="city" formControlName="countryId">
         <option *ngFor="let country of countries" id="country" value="{{country.id}}">{{country.name}}</option>
       </select>
+      <div class="text-danger" *ngIf="employeeForm.get('countryId')?.touched && employeeForm.get('countryId')?.invalid">
+        <small *ngIf="employeeForm.get('countryId')?.errors?.['required']">Country is required.</small>
+      </div>
     </div>
 
     <div class="form-group mb-2">
@@ -64,33 +68,34 @@
       <select  class="form-select" aria-label="Default select example" name="city" formControlName="cityId">
           <option *ngFor="let city of filteredCities" id="city" value="{{city.id}}">{{city.name}}</option>
       </select>
+      <div class="text-danger" *ngIf="employeeForm.get('cityId')?.touched && employeeForm.get('cityId')?.invalid">
+        <small *ngIf="employeeForm.get('cityId')?.errors?.['required']">City is required.</small>
+      </div>
     </div>
 
     <div class="form-group mb-2">
       <label for="birthDate">Birth Date</label>
       <input type="date"  id="birthDate" class="form-control" name="birthDate" formControlName="birthDate" required />
-      <small class="text-danger" *ngIf="employeeForm.get('birthDate')?.touched && employeeForm.get('birthDate')?.invalid">
-        Birth date is required.
-      </small>
-
+      <div class="text-danger" *ngIf="employeeForm.get('birthDate')?.touched && employeeForm.get('birthDate')?.invalid">
+        <small *ngIf="employeeForm.get('birthDate')?.errors?.['required']">Birth date is required.</small>
+        <small *ngIf="employeeForm.get('birthDate')?.errors?.['minlength'] || employeeForm.get('birthDate')?.errors?.['maxlength']">Birth date must be in YYYY-MM-DD format.</small>
+      </div>
     </div>
-
-
 
     <div class="form-group mb-2">
       <label for="jobTitle">Job Title</label>
       <input type="text" id="jobTitle" class="form-control" name="jobTitle" formControlName="jobTitle" required />
-      <small class="text-danger" *ngIf="employeeForm.get('jobTitle')?.touched && employeeForm.get('jobTitle')?.invalid">
-        Job title is required.
-      </small>
+      <div class="text-danger" *ngIf="employeeForm.get('jobTitle')?.touched && employeeForm.get('jobTitle')?.invalid">
+        <small *ngIf="employeeForm.get('jobTitle')?.errors?.['required']">Job title is required.</small>
+      </div>
     </div>
 
     <div class="form-group mb-2">
       <label for="hireDate">Hire Date</label>
       <input type="date" id="hireDate" class="form-control" name="hireDate" formControlName="dateOfHire" required />
-      <small class="text-danger" *ngIf="employeeForm.get('dateOfHire')?.touched && employeeForm.get('dateOfHire')?.invalid">
-        Hire date is required.
-      </small>
+      <div class="text-danger" *ngIf="employeeForm.get('dateOfHire')?.touched && employeeForm.get('dateOfHire')?.invalid">
+        <small *ngIf="employeeForm.get('dateOfHire')?.errors?.['required']">Hire date is required.</small>
+      </div>
     </div>
 
     <button *ngIf="!editMode" [disabled]="employeeForm.invalid

@@ -20,15 +20,15 @@ export class AdminUserUpdateComponent implements OnInit {
 
   constructor() {
     this.userEditForm=this.fb.group({
-      firstName: [undefined,Validators.required],
-      lastName: [undefined,Validators.required],
-      emailAddress: [undefined,[Validators.required,Validators.email]],
-      username: [undefined,Validators.required],
-      phoneNumber: [undefined,[Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
-      cityId: [undefined,Validators.required],
-      countryId:[undefined,Validators.required],
-      birthDate: [undefined,Validators.required],
-      isVerified:[undefined,Validators.required],
+      firstName: [undefined, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      lastName: [undefined, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      emailAddress: [undefined, [Validators.required, Validators.email, Validators.maxLength(100)]],
+      username: [undefined, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      phoneNumber: [undefined, [Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$"), Validators.maxLength(20)]],
+      cityId: [undefined, Validators.required],
+      countryId:[undefined, Validators.required],
+      birthDate: [undefined, [Validators.required, Validators.maxLength(10), Validators.minLength(10)]],
+      isVerified:[undefined, Validators.required],
     });
   }
 

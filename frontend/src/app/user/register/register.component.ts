@@ -50,14 +50,14 @@ export class RegisterComponent implements OnInit {
 
   registrationForm=this.fb.group({
     personalInfo:this.fb.group({
-      firstName: ['', [Validators.required,Validators.min(2),Validators.max(15)]],
-      lastName: ['', [Validators.required,Validators.min(2),Validators.max(15)]],
-      username: ['', [Validators.required,Validators.minLength(4),Validators.maxLength(20)],[usernameAsyncValidator()]],
-      birthDate: ['', Validators.required],
+      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)], [usernameAsyncValidator()]],
+      birthDate: ['', [Validators.required, Validators.maxLength(10), Validators.minLength(10)]],
     }),
     contactDetails:this.fb.group({
-      emailAdress: ['', [Validators.required,Validators.email]],
-      phoneNumber: ['', [Validators.required,Validators.pattern("^(\\+?[0-9][0-9\\s\\-\\(\\)]*)$")]],
+      emailAdress: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      phoneNumber: ['', [Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$"), Validators.maxLength(20)]],
     }),
     address:this.fb.group({
       countryId: ['', Validators.required],

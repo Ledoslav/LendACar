@@ -42,7 +42,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-//dodajte vaše servise
+//dodajte vaï¿½e servise
 
 var app = builder.Build();
 
