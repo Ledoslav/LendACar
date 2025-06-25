@@ -15,7 +15,7 @@ export class PasswordResetService {
 
   constructor() { }
 
-    private baseUrl = MyConfig.api_address + 'resetpassword';
+    private baseUrl = MyConfig.api_address + 'resetpassword/';
     private http=inject(HttpClient);
     private router=inject(Router);
     private accountService=inject(UserService);

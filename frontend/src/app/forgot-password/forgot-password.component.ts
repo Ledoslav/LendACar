@@ -6,6 +6,7 @@ import {PasswordResetService} from '../services/password-reset.service';
 import {UserSecurityQuestionAnswerService} from '../services/user-security-question-answer.service';
 import {UserSecurityQuestionAnswerDto} from '../Models/UserSecurityQuestionAnswerDto';
 import {SecurityQuestion, SecurityQuestionService} from '../services/security-question.service';
+import {MySnackbarService} from '../services/snackbars/my-snackbar.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -31,6 +32,7 @@ export class ForgotPasswordComponent  {
   private passwordResetService=inject(PasswordResetService);
   private userSecurityQuestionAnswerService=inject(UserSecurityQuestionAnswerService)
   private securityQuestionService=inject(SecurityQuestionService);
+  private snackBarService=inject(MySnackbarService);
   passwordSame: boolean=true;
   baseUrl:string="http://localhost:7000/api/";
 
@@ -51,15 +53,13 @@ export class ForgotPasswordComponent  {
       ResetToken:this.model.resetToken,
     }
 
-    console.log(passwordChangeModel);
-
-
     if(this.passwordSame){
       this.passwordResetService.ResetPassword(passwordChangeModel);
+      this.snackBarService.showSuccessMessage('Password reset request sent.');
     }
-    else
-      alert("Passwords must match");
-
+    else {
+      this.snackBarService.showErrorMessage('Passwords must match');
+    }
   }
 
   SendResetToken(){
@@ -77,13 +77,14 @@ export class ForgotPasswordComponent  {
         else {
           this.passwordResetService.SendResetToken(object).subscribe({
             next:result=>{
-              alert("Verification code is sent");
+              this.snackBarService.showSuccessMessage('Verification code is sent');
               this.isEmailSent=result.isSent
             },
-            error:err => console.log(err)
+            error:err => this.snackBarService.showErrorMessage('Failed to send verification code')
           })
         }
-      }
+      },
+      error:err => this.snackBarService.showErrorMessage('Failed to check security question')
     })
   }
 
@@ -95,14 +96,14 @@ export class ForgotPasswordComponent  {
     this.passwordResetService.ValidatePasswordToken(object).subscribe({
       next:result=>{
         if(result.isValidToken){
-          alert("Verification code is valid");
+          this.snackBarService.showSuccessMessage('Verification code is valid');
+        } else {
+          this.snackBarService.showErrorMessage('Verification code is invalid');
         }
         this.isTokenValid=result.isValidToken
         this.showResendToken=result.isValidToken
       },
-      error:err => {
-        console.log(err)
-      }
+      error:err => this.snackBarService.showErrorMessage('Failed to validate token')
     })
   }
 
@@ -117,13 +118,16 @@ SubmitAnswer(){
       if(result.isAnswerGood){
         this.passwordResetService.SendResetToken(object).subscribe({
           next:result=>{
-            alert("Verification code is sent");
+            this.snackBarService.showSuccessMessage('Verification code is sent');
             this.isEmailSent=result.isSent
           },
-          error:err => console.log(err)
+          error:err => this.snackBarService.showErrorMessage('Failed to send verification code')
         })
+      } else {
+        this.snackBarService.showErrorMessage('Incorrect answer to security question');
       }
-    }
+    },
+    error:err => this.snackBarService.showErrorMessage('Failed to submit answer')
   })
 }
 

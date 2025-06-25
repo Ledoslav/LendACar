@@ -22,16 +22,16 @@ export class RegisterComponent implements OnInit {
   constructor() {
     this.employeeForm=this.fb.group({
       id:[{value:0,disabled:true}],
-      firstName: [undefined,[Validators.required,Validators.minLength(2),Validators.max(15)]],
-      lastName: [undefined,[Validators.required,Validators.minLength(2),Validators.max(25)]],
-      emailAddress: ['',[Validators.required,Validators.email]],
-      username: [undefined,[Validators.required,Validators.minLength(2),Validators.max(20)]],
-      phoneNumber: [undefined,[Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
-      cityId: [undefined,Validators.required],
-      countryId:[undefined,Validators.required],
-      birthDate: [undefined,Validators.required],
-      jobTitle:[undefined,Validators.required],
-      dateOfHire:[undefined,Validators.required],
+      firstName: [undefined, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      lastName: [undefined, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      emailAddress: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      username: [undefined, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      phoneNumber: [undefined, [Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$"), Validators.maxLength(20)]],
+      cityId: [undefined, Validators.required],
+      countryId:[undefined, Validators.required],
+      birthDate: [undefined, [Validators.required, Validators.maxLength(10), Validators.minLength(10)]],
+      jobTitle:[undefined, Validators.required],
+      dateOfHire:[undefined, Validators.required],
       workingHourId:1
     })
   }

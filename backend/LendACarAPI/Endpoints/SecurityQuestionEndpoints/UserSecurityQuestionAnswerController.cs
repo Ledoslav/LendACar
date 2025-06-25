@@ -14,7 +14,6 @@ namespace LendACarAPI.Endpoints.SecurityQuestionEndpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
     public class UserSecurityQuestionAnswerController(ApplicationDbContext db) : ControllerBase
     {
         [HttpPost("create-answer/{userID}")]
@@ -82,7 +81,7 @@ namespace LendACarAPI.Endpoints.SecurityQuestionEndpoints
 
             var userAnswer = user.UserSecurityQuestionAnswer;
 
-            if(userAnswer.IsDisabled && userAnswer.DisabledUntil>DateTime.Now)
+            if(userAnswer.IsDisabled && userAnswer.DisabledUntil>DateTime.UtcNow)
             {
                 return BadRequest("You cannot answer due to too many wrong answer attempts");
             }
@@ -102,7 +101,7 @@ namespace LendACarAPI.Endpoints.SecurityQuestionEndpoints
                     if (userAnswer.AnswerAttempts % 3 == 0)
                     {
                         var disableTime = Math.Pow(3, (userAnswer.AnswerAttempts / 3) - 1);
-                        userAnswer.DisabledUntil = DateTime.Now.AddMinutes(disableTime);
+                        userAnswer.DisabledUntil = DateTime.UtcNow.AddMinutes(disableTime);
                         userAnswer.IsDisabled= true;
                         await db.SaveChangesAsync(cancellationToken);
                         return Unauthorized($"You cant answer again for {disableTime} min");
@@ -126,6 +125,7 @@ namespace LendACarAPI.Endpoints.SecurityQuestionEndpoints
 
 
         [HttpPut("change-question/{userId}")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<ActionResult> ChangeSecurityQuestion(int userId, [FromBody] ChangeSecurityQuestionRequest request, CancellationToken cancellationToken)
         {
             var user = await db.Users
@@ -152,6 +152,7 @@ namespace LendACarAPI.Endpoints.SecurityQuestionEndpoints
 
 
         [HttpDelete("remove-securityQuestion/{userId}")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<ActionResult> RemoveSecurityQuestion(int userId, [FromBody] ChangeSecurityQuestionRequest request, CancellationToken cancellationToken)
         {
             var user = await db.Users

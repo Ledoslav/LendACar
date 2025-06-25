@@ -34,8 +34,11 @@
 
 
   <div class="form-group mb-2 w-75">
-    <label for="city">City</label>
+    <label for="city">City*</label>
     <input formControlName="cityId" id="city" type="text" class="form-control disabled-small-input" readonly>
+    <div class="text-danger" *ngIf="employeeEditForm.get('cityId')?.touched && employeeEditForm.get('cityId')?.invalid">
+      <small *ngIf="employeeEditForm.get('cityId')?.errors?.['required']">City is required.</small>
+    </div>
   </div>
 
 

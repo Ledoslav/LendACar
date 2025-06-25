@@ -24,12 +24,12 @@ export class EditProfileComponent implements OnInit {
 
    this.userEditForm=this.fb.group({
      id: [this.model.id, Validators.required],
-      firstName: [this.model.firstName, [Validators.required,Validators.min(2),Validators.max(15)]],
-      lastName: [this.model.lastName, [Validators.required,Validators.min(2),Validators.max(25)]],
-      username: [this.model.username, [Validators.required,Validators.min(5),Validators.max(20)]],
-      birthDate: [this.model.birthDate, Validators.required],
-      emailAddress: [this.model.emailAddress, [Validators.required,Validators.email]],
-      phoneNumber: [this.model.phoneNumber, [Validators.required,Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
+      firstName: [this.model.firstName, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      lastName: [this.model.lastName, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      username: [this.model.username, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      birthDate: [this.model.birthDate, [Validators.required, Validators.maxLength(10), Validators.minLength(10)]],
+      emailAddress: [this.model.emailAddress, [Validators.required, Validators.email, Validators.maxLength(100)]],
+      phoneNumber: [this.model.phoneNumber, [Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$"), Validators.maxLength(20)]],
       countryId: [this.model.city?.countryId, Validators.required],
       cityId: [this.model.cityId, Validators.required],
     })
