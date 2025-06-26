@@ -35,10 +35,11 @@ namespace LendACarAPI.Endpoints
             var verificationRequest = new VerificationDto
             {
                 Id = request.Id,
-                RequestDate = request.RequestDate,
+                RequestDate = DateTime.SpecifyKind(request.RequestDate, DateTimeKind.Utc),
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
-                RequestReviewDate = request.RequestReviewDate,
+                RequestReviewDate = request.RequestReviewDate.HasValue ? 
+                    DateTime.SpecifyKind(request.RequestReviewDate.Value, DateTimeKind.Utc) : null,
                 RequestStatus = request.RequestStatus,
                 DenialComment = request.DenialComment,
                 EmpAdmId = request.EmpAdmId,
@@ -62,10 +63,11 @@ namespace LendACarAPI.Endpoints
             var verificationRequest = new VerificationDto
             {
                 Id = request.Id,
-                RequestDate = request.RequestDate,
+                RequestDate = DateTime.SpecifyKind(request.RequestDate, DateTimeKind.Utc),
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
-                RequestReviewDate = request.RequestReviewDate,
+                RequestReviewDate = request.RequestReviewDate.HasValue ?
+                    DateTime.SpecifyKind(request.RequestReviewDate.Value, DateTimeKind.Utc) : null,
                 RequestStatus = request.RequestStatus,
                 DenialComment = request.DenialComment,
                 EmpAdmId = request.EmpAdmId,
@@ -85,14 +87,14 @@ namespace LendACarAPI.Endpoints
             var request = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.UserId == user.Id);
             if (request == null) return BadRequest("User hasn't submited a request.");
 
-
             var verificationRequest = new VerificationDto
             {
                 Id = request.Id,
-                RequestDate = request.RequestDate,
+                RequestDate = DateTime.SpecifyKind(request.RequestDate, DateTimeKind.Utc),
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
-                RequestReviewDate = request.RequestReviewDate,
+                RequestReviewDate = request.RequestReviewDate.HasValue ? 
+                    DateTime.SpecifyKind(request.RequestReviewDate.Value, DateTimeKind.Utc) : null,
                 RequestStatus = request.RequestStatus,
                 DenialComment = request.DenialComment,
                 EmpAdmId = request.EmpAdmId,
@@ -111,7 +113,7 @@ namespace LendACarAPI.Endpoints
 
             var newVerificationRequest = new VerificationRequest
             {
-                RequestDate = verificationSubmitDto.RequestDate,
+                RequestDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
                 UserId = verificationSubmitDto.UserId,
                 RequestComment = verificationSubmitDto.RequestComment,
             };
@@ -132,10 +134,9 @@ namespace LendACarAPI.Endpoints
             var userGettingVerified = await db.Users.FirstOrDefaultAsync(u => u.Id == verificationRequest.UserId);
             if (userGettingVerified == null) return NotFound("User not found");
 
-
             userGettingVerified.IsVerified = true;
 
-            verificationRequest.RequestReviewDate = DateTime.UtcNow;
+            verificationRequest.RequestReviewDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
             verificationRequest.RequestStatus = 1;
             verificationRequest.DenialComment = approvedVerificationRequest.DenialComment;
             verificationRequest.EmpAdmId = approvedVerificationRequest.EmpAdmId;
@@ -146,10 +147,11 @@ namespace LendACarAPI.Endpoints
             return Ok(new VerificationDto
             {
                 Id = verificationRequest.Id,
-                RequestDate = verificationRequest.RequestDate,
+                RequestDate = DateTime.SpecifyKind(verificationRequest.RequestDate, DateTimeKind.Utc),
                 UserId = verificationRequest.UserId,
                 RequestComment = verificationRequest.RequestComment,
-                RequestReviewDate = verificationRequest.RequestReviewDate,
+                RequestReviewDate = verificationRequest.RequestReviewDate.HasValue ? 
+                    DateTime.SpecifyKind(verificationRequest.RequestReviewDate.Value, DateTimeKind.Utc) : null,
                 RequestStatus = verificationRequest.RequestStatus,
                 DenialComment = verificationRequest.DenialComment,
                 EmpAdmId = verificationRequest.EmpAdmId,
@@ -167,10 +169,9 @@ namespace LendACarAPI.Endpoints
             var userGettingVerified = await db.Users.FirstOrDefaultAsync(u => u.Id == verificationRequest.UserId);
             if (userGettingVerified == null) return NotFound("User not found");
 
-
             userGettingVerified.IsVerified = false;
 
-            verificationRequest.RequestReviewDate = DateTime.UtcNow;
+            verificationRequest.RequestReviewDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
             verificationRequest.RequestStatus = 0;
             verificationRequest.DenialComment = approvedVerificationRequest.DenialComment;
             verificationRequest.EmpAdmId = approvedVerificationRequest.EmpAdmId;
@@ -181,10 +182,11 @@ namespace LendACarAPI.Endpoints
             return Ok(new VerificationDto
             {
                 Id = verificationRequest.Id,
-                RequestDate = verificationRequest.RequestDate,
+                RequestDate = DateTime.SpecifyKind(verificationRequest.RequestDate, DateTimeKind.Utc),
                 UserId = verificationRequest.UserId,
                 RequestComment = verificationRequest.RequestComment,
-                RequestReviewDate = verificationRequest.RequestReviewDate,
+                RequestReviewDate = verificationRequest.RequestReviewDate.HasValue ? 
+                    DateTime.SpecifyKind(verificationRequest.RequestReviewDate.Value, DateTimeKind.Utc) : null,
                 RequestStatus = verificationRequest.RequestStatus,
                 DenialComment = verificationRequest.DenialComment,
                 EmpAdmId = verificationRequest.EmpAdmId,

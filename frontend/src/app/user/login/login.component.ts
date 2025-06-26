@@ -18,7 +18,7 @@ accountService=inject(UserService);
     this.accountService.Login(this.model).subscribe({
       next:res=>{
         console.log(res);
-        void this.router.navigateByUrl('/user/dashboard');
+        void this.router.navigateByUrl('/public/home');
       },
       error:err=>{
         console.log(err);

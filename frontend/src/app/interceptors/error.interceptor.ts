@@ -30,7 +30,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                  this.snackBar.showErrorMessage(err.statusText)
                }
                else{
-                 this.snackBar.showErrorMessage(err.error,err.statusText);
+                 this.snackBar.showErrorMessage(err.error);
                }
                break;
              case 401:
