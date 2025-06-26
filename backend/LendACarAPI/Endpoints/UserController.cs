@@ -104,7 +104,7 @@ namespace LendACarAPI.Endpoints
                     Username = user.Username,
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
                     PasswordSalt = hmac.Key,
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = DateTime.UtcNow,
                     UserSecurityQuestionAnswerId = questionAnswer.Id,
                     IsVerified = false,
                     IsAppUser = true,
@@ -124,7 +124,7 @@ namespace LendACarAPI.Endpoints
                     Username = user.Username,
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
                     PasswordSalt = hmac.Key,
-                    CreatedDate=DateTime.Now,
+                    CreatedDate = DateTime.UtcNow,
                     IsVerified = false,
                     IsAppUser = true
                 };
@@ -200,6 +200,15 @@ namespace LendACarAPI.Endpoints
             user.Username = updatedUser.Username;
             user.EmailAdress = updatedUser.EmailAddress;
             user.IsVerified = updatedUser.IsVerified;
+
+            if (!updatedUser.IsVerified)
+            {
+                var UserVerificationRequest = db.VerificationRequests.FirstOrDefault(u => u.UserId == id);
+                if (UserVerificationRequest != null)
+                {
+                    db.VerificationRequests.Remove(UserVerificationRequest);
+                }
+            }
 
             await db.SaveChangesAsync(cancellationToken);
 

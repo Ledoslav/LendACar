@@ -10,7 +10,7 @@ export class MySnackbarService {
 
   private snackBar=inject(MatSnackBar);
 
-  showErrorMessage(message:string, duration:number=4000):MatSnackBarRef<TextOnlySnackBar>{
+  showErrorMessage(message:string, duration:number=2000):MatSnackBarRef<TextOnlySnackBar>{
     return this.snackBar.open(message,undefined,{
       duration:duration,
       horizontalPosition: 'center',
@@ -19,7 +19,7 @@ export class MySnackbarService {
     });
   }
 
-  showSuccessMessage(message:string,duration:number=4000):MatSnackBarRef<TextOnlySnackBar>{
+  showSuccessMessage(message:string,duration:number=2000):MatSnackBarRef<TextOnlySnackBar>{
     return this.snackBar.open(message,undefined,{
       duration:duration,
       horizontalPosition: 'center',
@@ -28,7 +28,7 @@ export class MySnackbarService {
     });
   }
 
-  showMessage(message:string, duration:number=4000):MatSnackBarRef<TextOnlySnackBar>{
+  showMessage(message:string, duration:number=2000):MatSnackBarRef<TextOnlySnackBar>{
     return this.snackBar.open(message,undefined,{
       duration:duration,
       horizontalPosition: 'center',

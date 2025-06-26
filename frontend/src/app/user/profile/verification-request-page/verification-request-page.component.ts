@@ -3,6 +3,7 @@ import {VerificationRequestService} from '../../../services/verificationrequest.
 import {VerificationRequestDto} from '../../../Models/VerificationRequestDto';
 import {UserService} from '../../../services/user.service';
 import {VerificationRequestSubmitDto} from '../../../Models/VerificationRequestSubmitDto';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-verification-request-page',
@@ -12,9 +13,12 @@ import {VerificationRequestSubmitDto} from '../../../Models/VerificationRequestS
 export class VerificationRequestPageComponent implements OnInit{
   verificationService=inject(VerificationRequestService);
   accountService=inject(UserService);
+  datePipe = inject(DatePipe);
   verificationRequest: VerificationRequestDto | null = null;
   verificationStatus: number = 3;
   comment:string = '';
+  currentDate=new Date().toISOString();
+
   ngOnInit(): void {
     const currentUser = this.accountService.currentUser();
 
@@ -22,6 +26,7 @@ export class VerificationRequestPageComponent implements OnInit{
       this.verificationService.GetVerificationRequestByUserId(currentUser.id).subscribe({
         next: (res) => {
           this.verificationRequest = res;
+          console.log(this.verificationRequest);
           this.CheckVerificationStatus(); // Ensure to re-check after updating verificationRequest
         },
         error: (err) => {
@@ -48,11 +53,10 @@ export class VerificationRequestPageComponent implements OnInit{
 
   SubmitVerificationRequest() {
     const currentUser = this.accountService.currentUser();
-    const currentDateTime = new Date();
 
     if (currentUser) {
       const submit: VerificationRequestSubmitDto = {
-        requestDate: currentDateTime.toISOString(),
+        requestDate: new Date().toISOString(), // This sends UTC time
         userId: currentUser.id,
         requestComment: this.comment
       };

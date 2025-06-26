@@ -28,9 +28,9 @@
     <h4 class="mb-4">You are Verified!</h4>
 
     <div class="mb-3">
-      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate | date: 'dd.MM.yyyy' }}</p>
+      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate | date:'dd.MM.yyyy HH:mm' }}</p>
       <p><strong>Your Comment:</strong> {{ verificationRequest.requestComment || 'No comment provided' }}</p>
-      <p><strong>Approved Date:</strong> {{ verificationRequest.requestReviewDate | date: 'dd.MM.yyyy'  }}</p>
+      <p><strong>Approved Date:</strong> {{ verificationRequest.requestReviewDate | date:'dd.MM.yyyy HH:mm' }}</p>
       <p><strong>Comment from employee:</strong> {{ verificationRequest.denialComment || 'No comment provided' }}</p>
     </div>
   </div>
@@ -40,9 +40,9 @@
     <h4 class="mb-4">Your Verification Request was denied!</h4>
 
     <div class="mb-3">
-      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate | date: 'dd.MM.yyyy'}}</p>
+      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate | date:'dd.MM.yyyy HH:mm' }}</p>
       <p><strong>Your Comment:</strong> {{ verificationRequest.requestComment || 'No comment provided' }}</p>
-      <p><strong>Denial Date:</strong> {{ verificationRequest.requestReviewDate | date: 'dd.MM.yyyy'  }}</p>
+      <p><strong>Denial Date:</strong> {{ verificationRequest.requestReviewDate | date:'dd.MM.yyyy HH:mm' }}</p>
       <p><strong>Denial Reason:</strong> {{ verificationRequest.denialComment || 'No comment provided' }}</p>
     </div>
   </div>
@@ -52,7 +52,7 @@
     <h4 class="mb-4">Pending Verification Request</h4>
 
     <div class="mb-3">
-      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate | date: 'dd.MM.yyyy' }}</p>
+      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate | date:'dd.MM.yyyy HH:mm' }}</p>
       <p><strong>Your Comment:</strong> {{ verificationRequest.requestComment || 'No comment provided' }}</p>
     </div>
     <button class="btn btn-primary" (click)="DeleteRequest()">Delete Request</button>
