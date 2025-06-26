@@ -39,7 +39,7 @@ namespace LendACarAPI.Endpoints
 
 
             user.ResetPasswordToken = emailToken.ToString();
-            user.ResetPasswordTokenExpiry = DateTime.Now.AddMinutes(15);
+            user.ResetPasswordTokenExpiry = DateTime.UtcNow.AddMinutes(15);
 
             await db.SaveChangesAsync(cancellationToken);
 
@@ -51,7 +51,7 @@ namespace LendACarAPI.Endpoints
                              <h3>Use the code below to reset your password:</h3>
                              <h3>{emailToken}</h3>
                              <p>This code will expire in 15 minutes.</p>
-                             <p>If you didn’t request a password reset, please ignore this email.</p>
+                             <p>If you didn't request a password reset, please ignore this email.</p>
                          </body>
                          </html>";
 
@@ -78,7 +78,7 @@ namespace LendACarAPI.Endpoints
             if (user == null)
                 return BadRequest("User was with given email was not found");
 
-            if (user.ResetPasswordToken != resetRequest.ResetToken || user.ResetPasswordTokenExpiry < DateTime.Now)
+            if (user.ResetPasswordToken != resetRequest.ResetToken || user.ResetPasswordTokenExpiry < DateTime.UtcNow)
             {
                 isValidToken = false;
                 return Ok(new { isValidToken});
@@ -105,7 +105,7 @@ namespace LendACarAPI.Endpoints
 
             if (user != null)
             {
-                if(user.ResetPasswordToken!=resetDto.ResetToken || user.ResetPasswordTokenExpiry < DateTime.Now)
+                if(user.ResetPasswordToken!=resetDto.ResetToken || user.ResetPasswordTokenExpiry < DateTime.UtcNow)
                     return BadRequest("Invalid reset token");
                 
 
@@ -150,29 +150,29 @@ namespace LendACarAPI.Endpoints
 
         [HttpPut("change")]
         [MyAuthorization(IsAdmin: false, IsEmployee: true, isAppUser: true)]
-        public async Task<IActionResult> ChangePassword([FromBody] PasswordResetDto resetDto, CancellationToken cancellationToken)
+        public async Task<IActionResult> ChangePassword([FromBody] PasswordChangeDto changeDto, CancellationToken cancellationToken)
         {
             User? user=null;
             Employee? employee=null;
 
-            if(resetDto.EmailAddress.Contains("@lendacar.ba"))
-                employee = await db.Employees.FirstOrDefaultAsync(e => e.EmailAdress == resetDto.EmailAddress, cancellationToken);
+            if(changeDto.EmailAddress.Contains("@lendacar.ba"))
+                employee = await db.Employees.FirstOrDefaultAsync(e => e.EmailAdress == changeDto.EmailAddress, cancellationToken);
             else
-                user = await db.Users.FirstOrDefaultAsync(u => u.EmailAdress == resetDto.EmailAddress, cancellationToken);
+                user = await db.Users.FirstOrDefaultAsync(u => u.EmailAdress == changeDto.EmailAddress, cancellationToken);
 
             if (user != null)
             {
 
-                if (!string.IsNullOrWhiteSpace(resetDto.CurrentPassword))
+                if (!string.IsNullOrWhiteSpace(changeDto.CurrentPassword))
                 {
-                    if (!ComparePasswords(resetDto.CurrentPassword, user.PasswordSalt,user.PasswordHash))
+                    if (!ComparePasswords(changeDto.CurrentPassword, user.PasswordSalt,user.PasswordHash))
                         return BadRequest("Entered password doesn't match current password");
                 }
                 else
                     return BadRequest("Current password is required");
 
 
-                var hashedNewPassword = GeneratePasswordHash(resetDto.NewPassword);
+                var hashedNewPassword = GeneratePasswordHash(changeDto.NewPassword);
 
                 var salt = hashedNewPassword.Item1;
                 var hash = hashedNewPassword.Item2;
@@ -196,15 +196,15 @@ namespace LendACarAPI.Endpoints
 
             if(employee != null)
             {
-                if(!string.IsNullOrWhiteSpace(resetDto.CurrentPassword))
+                if(!string.IsNullOrWhiteSpace(changeDto.CurrentPassword))
                 {
-                    if (!ComparePasswords(resetDto.CurrentPassword, employee.PasswordSalt,employee.PasswordHash))
+                    if (!ComparePasswords(changeDto.CurrentPassword, employee.PasswordSalt,employee.PasswordHash))
                         return BadRequest("Entered password doesn't match current password");
                 }
                 else 
                     return BadRequest("Current password is required");
 
-                var hashedNewPassword = GeneratePasswordHash(resetDto.NewPassword);
+                var hashedNewPassword = GeneratePasswordHash(changeDto.NewPassword);
 
                 var salt = hashedNewPassword.Item1;
                 var hash = hashedNewPassword.Item2;
