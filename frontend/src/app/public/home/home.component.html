@@ -16,11 +16,21 @@
   <div class="content">
     <div class="nav-bar">
       <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
-      <div class="right-section" routerLink="/user/profile/edit-profile">
-        <span class="text-wrapper-17">User</span>
-        <img class="profile-icon" src="User.svg" alt="Profile" routerLink="/user/dashboard">
-      </div>
+      @if (!isAppUser){
+        <div class="right-section" style="cursor: pointer;">
+          <a routerLink="/user/login" style="margin-right: 5px; text-decoration: none; font-weight: 500" >Login</a>
+          <a routerLink="/user/register" style="margin-left: 5px; text-decoration: none;font-weight: 500">Register</a>
+        </div>
+      } @else {
+        <div class="right-section" routerLink="/user/profile" style="cursor: pointer;">
+          <span class="text-wrapper-17">{{ accountService.currentUser()?.username }}</span>
+          <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" class="profile-icon" style="border-radius: 20px" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile">
+          <img *ngIf="accountService.currentUser()?.profilePhotoUrl==null" class="profile-icon" style="border-radius: 20px" src="/defaultProfilePic.png" alt="Profile">
+        </div>
+      }
+
     </div>
+
 
     <!-- New Header Section with Background -->
     <div class="header-section">
