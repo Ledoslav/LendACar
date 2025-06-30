@@ -24,6 +24,9 @@ namespace LendACarAPI.Endpoints.CityEndpoints
         [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult<City>> CreateCity([FromBody] City city,CancellationToken cancellationToken)
         {
+
+            if (city.CountryId == 0) return BadRequest();
+
             var searchCity=db.Cities
                 .Include(c=>c.Country)
                 .Where(c=>c.Name==city.Name && c.CountryId==city.CountryId)
