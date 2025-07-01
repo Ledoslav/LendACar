@@ -201,12 +201,35 @@ namespace LendACarAPI.Endpoints
             user.EmailAdress = updatedUser.EmailAddress;
             user.IsVerified = updatedUser.IsVerified;
 
-            if (!updatedUser.IsVerified)
+            // Handle verified status change
+            if (updatedUser.isUserVerifiedStatusChanged)
             {
-                var UserVerificationRequest = db.VerificationRequests.FirstOrDefault(u => u.UserId == id);
-                if (UserVerificationRequest != null)
+                if (updatedUser.IsVerified)
                 {
-                    db.VerificationRequests.Remove(UserVerificationRequest);
+                    var claims= authService.GetAuthInfoFromRequest();
+                    var newVerificationRequest = new VerificationRequest
+                    {
+                        RequestDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                        UserId = id,
+                        RequestComment = "",
+                        RequestReviewDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                        RequestStatus = 1,
+                        DenialComment = "",
+                        EmpAdmId = claims.UserId, // this is the admins id
+                        RevievedByAdmin = true,
+                };
+
+                   db.VerificationRequests.Add(newVerificationRequest);
+                }
+
+                else
+                {
+                    // User is now unverified, remove verification request if exists
+                    var UserVerificationRequest = db.VerificationRequests.FirstOrDefault(u => u.UserId == id);
+                    if (UserVerificationRequest != null)
+                    {
+                        db.VerificationRequests.Remove(UserVerificationRequest);
+                    }
                 }
             }
 

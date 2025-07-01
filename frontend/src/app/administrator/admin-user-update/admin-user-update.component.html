@@ -46,8 +46,9 @@
     </div>
 
     <div class="form-group mb-2">
-      <label for="verified">Verified</label>
-      <input type="checkbox" class="mx-2" id="verified" formControlName="isVerified" />
+      <label for="isVerified">Verified</label>
+      <input type="checkbox" id="isVerified" formControlName="isVerified" />
+      <input type="hidden" formControlName="isUserVerifiedStatusChanged" />
     </div>
 
     <button type="button" class="btn btn-primary w-100" [disabled]="this.userEditForm.invalid"   (click)="UpdateUser()">Update</button>
