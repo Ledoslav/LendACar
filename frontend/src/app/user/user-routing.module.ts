@@ -4,8 +4,6 @@ import {LayoutComponent} from './layout/layout.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {LoginComponent} from './login/login.component';
 import {RegisterComponent} from './register/register.component';
-import {UserProfileComponent} from './user-profile/user-profile.component';
-import {EditProfileComponent} from './edit-profile/edit-profile.component';
 import { PollsComponent } from './polls/polls.component';
 import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
 import {AuthGuard} from '../guards/auth.guard';
@@ -43,8 +41,6 @@ const routes: Routes = [
           isAppUser:true
         },
         children: [
-          { path: 'userProfile', component: UserProfileComponent },
-          { path: 'editProfile', component: EditProfileComponent },
           { path: 'myVehicles', component: MyVehiclesComponent },
           { path:'vehicleUpload', component: VehicleUploadComponent},
           { path:'profile',component:ProfileLayoutComponent,children:

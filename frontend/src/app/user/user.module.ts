@@ -6,8 +6,6 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {LoginComponent } from './login/login.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { RegisterComponent } from './register/register.component';
-import { UserProfileComponent } from './user-profile/user-profile.component';
-import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import {MatStep, MatStepper, MatStepperNext, MatStepperPrevious} from "@angular/material/stepper";
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {NgxCaptchaModule} from 'ngx-captcha';
@@ -41,8 +39,6 @@ import { NavbarComponent } from './navbar/navbar.component';
     DashboardComponent,
     LoginComponent,
     RegisterComponent,
-    UserProfileComponent,
-    EditProfileComponent,
     PollsComponent,
     VehicleUploadComponent,
     MyVehiclesComponent,

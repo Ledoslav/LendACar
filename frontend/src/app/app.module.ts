@@ -43,14 +43,14 @@ import { MatInputModule } from '@angular/material/input';
     MatStepperModule,
     NgxCaptchaModule,
     MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
     JwtModule.forRoot({
       config:{
         headerName:"my-auth-token"
         //allowedDomains:["localhost:7000"]
       }
-    }),
-    MatFormFieldModule,
-    MatInputModule,
+    })
   ],
   providers: [
     provideAnimationsAsync(),
