@@ -118,15 +118,24 @@
             <label for="password">Password*</label>
             <input [type]="passwordShow ? 'text': 'password'" (change)="UpdateRepeatPasswordValidity()" id="password" class="form-control" formControlName="password" required>
             <mat-error *ngIf="passwords.get('password')?.invalid &&passwords.get('password')?.touched" style="color: red">
-              Password required
+              <ng-container *ngIf="passwords.get('password')?.errors?.['required']">Password required</ng-container>
+              <ng-container *ngIf="passwords.get('password')?.errors?.['minlength'] && passwords.get('password')?.dirty ">Password must be at least 6 characters.</ng-container>
+              <ng-container *ngIf="passwords.get('password')?.errors?.['maxlength'] && passwords.get('password')?.dirty ">Password cannot exceed 100 characters.</ng-container>
             </mat-error>
           </div>
 
 
           <div class="form-group mb-2">
             <label for="repeatPassword">Repeat password*</label>
-            <input [type]="passwordShow ? 'text': 'password'" id="repeatPassword" class="form-control" formControlName="repeatPassword" required>
-            <mat-error *ngIf="passwords.get('repeatPassword')?.invalid"></mat-error>
+            <input [type]="passwordShow ? 'text': 'password'" id="repeatPassword" class="form-control" formControlName="repeatPassword" required (input)="ComparePassword()">
+            <mat-error *ngIf="passwords.get('repeatPassword')?.invalid && passwords.get('repeatPassword')?.touched">
+              <ng-container *ngIf="passwords.get('repeatPassword')?.errors?.['required']">Repeat password is required.</ng-container>
+              <ng-container *ngIf="passwords.get('repeatPassword')?.errors?.['minlength']">Password must be at least 6 characters.</ng-container>
+              <ng-container *ngIf="passwords.get('repeatPassword')?.errors?.['maxlength']">Password cannot exceed 100 characters.</ng-container>
+            </mat-error>
+            <div class="d-flex" *ngIf="!passwordSame">
+              <span class="text-danger">Passwords don't match</span>
+            </div>
           </div>
 
         </form>

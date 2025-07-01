@@ -31,7 +31,7 @@ namespace LendACarAPI.Endpoints.CityEndpoints
                 .Include(c=>c.Country)
                 .Where(c=>c.Name==city.Name && c.CountryId==city.CountryId)
                 .FirstOrDefault();
-            if (searchCity != null) return BadRequest();
+            if (searchCity != null) return BadRequest("City already exists");
          
             db.Cities.Add(city);
             await db.SaveChangesAsync(cancellationToken);

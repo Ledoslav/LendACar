@@ -15,6 +15,11 @@
     <label for="newPassword">New password *</label>
     <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'"  class="form-control small-input" id="newPassword"
            formControlName="newPassword" name="newPassword">
+    <mat-error *ngIf="changePasswordForm.get('newPassword')?.invalid &&changePasswordForm.get('newPassword')?.touched" style="color: red">
+      <ng-container *ngIf="changePasswordForm.get('newPassword')?.errors?.['required']">Password required</ng-container>
+      <ng-container *ngIf="changePasswordForm.get('newPassword')?.errors?.['minlength'] && changePasswordForm.get('newPassword')?.dirty ">Password must be at least 6 characters.</ng-container>
+      <ng-container *ngIf="changePasswordForm.get('newPassword')?.errors?.['maxlength'] && changePasswordForm.get('newPassword')?.dirty ">Password cannot exceed 100 characters.</ng-container>
+    </mat-error>
   </div>
 
   <div class="form-group mb-1 w-75">
@@ -22,9 +27,10 @@
     <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control small-input" id="repeatPassword"
            name="repeatPassword" formControlName="repeatPassword">
 
-    <div class="d-flex" *ngIf="changePasswordForm.get('repeatPassword')?.invalid && changePasswordForm.get('repeatPassword')?.touched">
-      <span style="color: red;" class="text-danger">Passwords don't match</span>
-    </div>
+    <mat-error *ngIf="changePasswordForm.get('repeatPassword')?.invalid && changePasswordForm.get('repeatPassword')?.touched" style="color: red">
+      <ng-container>Passwords don't match</ng-container>
+    </mat-error>
+
     <div class="mt-2">
       <input formControlName="passwordShow" type="checkbox" id="check" name="check"/>
       <label class="px-2" for="check">Show password</label>
@@ -73,13 +79,13 @@
   <div class="w-75 d-flex justify-content-end">
     <div *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId!=null">
       <button type="button" class="btn mt-2 p-2"
-              style="border-radius: 30px;background-color: #ffffff; color: black" (click)="ChangeQuestion()" [disabled]="securityQuestionForm.invalid">Change question</button>
+              style="border-radius: 30px;background-color: #ffffff; color: black" (click)="ChangeQuestionConfirmDialog()" [disabled]="securityQuestionForm.invalid">Change question</button>
       <button type="button" class="btn mt-2 p-2"
-              style="border-radius: 30px;background-color: #ffffff; color: black" (click)="RemoveQuestion()" [disabled]="securityQuestionForm.invalid">Remove question</button>
+              style="border-radius: 30px;background-color: #ffffff; color: black" (click)="RemoveQuestionConfirmDialog()" [disabled]="securityQuestionForm.invalid">Remove question</button>
     </div>
     <div *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId==null">
       <button type="button" class="btn mt-2 p-2"
-              style="border-radius: 30px;background-color: #ffffff; color: black" (click)="AddQuestion()" [disabled]="securityQuestionForm.invalid">Add question</button>
+              style="border-radius: 30px;background-color: #ffffff; color: black" (click)="AddQuestionConfirmDialog()" [disabled]="securityQuestionForm.invalid">Add question</button>
     </div>
   </div>
 </form>

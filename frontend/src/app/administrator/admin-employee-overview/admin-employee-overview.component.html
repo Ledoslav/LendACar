@@ -11,6 +11,10 @@
                   <div class="col-auto">
                     <input class="form-control" formControlName="name" placeholder="Name">
                   </div>
+                  <div class="text-danger" *ngIf="employeeSearchForm.get('name')?.touched && employeeSearchForm.get('name')?.invalid">
+                    <small *ngIf="employeeSearchForm.get('name')?.errors?.['maxlength']">Max 50 characters allowed.</small>
+                    <small *ngIf="employeeSearchForm.get('name')?.errors?.['pattern']">Only letters, numbers, spaces, and - allowed.</small>
+                  </div>
                   <div class="col-2">
                     <input class="form-control" formControlName="ageFrom" type="number" placeholder="Age from" min="0" max="100">
                   </div>
@@ -28,9 +32,11 @@
                     </select>
                   </div>
                   <div class="col-auto">
-                    <select class="form-select"  formControlName="jobTitle">
-                      <option  *ngFor="let title of jobTitles">{{title}}</option>
-                    </select>
+                    <input class="form-control" type="text" formControlName="jobTitle" placeholder="Job title" maxlength="50">
+                  </div>
+                  <div class="text-danger" *ngIf="employeeSearchForm.get('jobTitle')?.touched && employeeSearchForm.get('jobTitle')?.invalid">
+                    <small *ngIf="employeeSearchForm.get('jobTitle')?.errors?.['maxlength']">Max 50 characters allowed.</small>
+                    <small *ngIf="employeeSearchForm.get('jobTitle')?.errors?.['pattern']">Only letters, numbers, spaces, and - allowed.</small>
                   </div>
                   <div class="col-auto">
                     <button class="btn btn-primary" type="submit" [disabled]="employeeSearchForm.invalid">Search</button>

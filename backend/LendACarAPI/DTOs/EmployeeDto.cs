@@ -40,6 +40,7 @@ namespace LendACarAPI.DTOs
         public int WorkingHourId { get; set; }
         public WorkingHour? WorkingHour { get; set; }
 
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Job title must be between 2 and 50 characters.")]
         public string? JobTitle { get; set; }
         public DateOnly DateOfHire { get; set; }
 

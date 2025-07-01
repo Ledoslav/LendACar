@@ -19,6 +19,7 @@ import {usernameAsyncValidator} from '../../validators/username-async-validator'
 import {catchError, map, Observable, of} from 'rxjs';
 import {SecurityQuestion, SecurityQuestionService} from '../../services/security-question.service';
 import {StepperSelectionEvent} from '@angular/cdk/stepper';
+import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 
 @Component({
@@ -45,8 +46,10 @@ export class RegisterComponent implements OnInit {
     private securityQuestionService=inject(SecurityQuestionService);
     router=inject(Router);
     fb=inject(FormBuilder);
+    snackbar=inject(MySnackbarService);
     passwordShow: boolean=false;
     captchaSuccess:boolean=false;
+    passwordSame: boolean = true;
 
   registrationForm=this.fb.group({
     personalInfo:this.fb.group({
@@ -64,8 +67,8 @@ export class RegisterComponent implements OnInit {
       cityId: ['', Validators.required],
     }),
     passwords:this.fb.group({
-      password: ['', Validators.required],
-      repeatPassword: ['', [Validators.required,this.matchValues('password')]],
+      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
+      repeatPassword: ['', [Validators.required, this.matchValues('password'), Validators.minLength(6), Validators.maxLength(100)]],
     }),
     securityQuestion:this.fb.group({
       securityQuestionId:[''],
@@ -135,13 +138,13 @@ showJustCaptcha=false
       ...this.securityQuestion.value
     };
 
-    console.log(this.model);
+
+    this.model.securityQuestionId=null;
 
 
     this.accountService.Register(this.model).subscribe({
       next: result =>{
-        alert("User created successfully");
-        console.log(result)
+        this.snackbar.showSuccessMessage("User created successfully")
         void this.router.navigateByUrl('/user/login');
       },
       error: err => console.log(err)
@@ -188,6 +191,12 @@ showJustCaptcha=false
     this.showQuestions=!this.showQuestions;
   }
 
+  ComparePassword() {
+    if(this.passwords.get('password')?.value !== this.passwords.get('repeatPassword')?.value)
+      this.passwordSame = false;
+    else
+      this.passwordSame = true;
+  }
 
 }
 

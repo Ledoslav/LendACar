@@ -34,6 +34,7 @@ namespace LendACarAPI.DTOs
         public string? Username { get; set; }
 
         [Required(ErrorMessage = "Job title is required.")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Job title must be between 2 and 50 characters.")]
         public string? JobTitle { get; set; }
 
         public int WorkingHourId { get; set; }

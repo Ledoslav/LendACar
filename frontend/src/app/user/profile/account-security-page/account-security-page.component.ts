@@ -5,6 +5,9 @@ import {SecurityQuestion, SecurityQuestionService} from '../../../services/secur
 import {UserSecurityQuestionAnswerService} from '../../../services/user-security-question-answer.service';
 import {UserService} from '../../../services/user.service';
 import {Router} from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogConfirmComponent } from '../../../shared/dialogs/dialog-confirm/dialog-confirm.component';
+import { MySnackbarService } from '../../../services/snackbars/my-snackbar.service';
 
 @Component({
   selector: 'app-account-security-page',
@@ -22,6 +25,8 @@ export class AccountSecurityPageComponent implements OnInit{
   private passwordResetService=inject(PasswordResetService);
   private securityQuestionService=inject(SecurityQuestionService);
   private userSecurityQuestionAnswerService=inject(UserSecurityQuestionAnswerService);
+  private dialog = inject(MatDialog);
+  private snackbarService = inject(MySnackbarService);
 
   ngOnInit(): void {
 
@@ -35,9 +40,9 @@ export class AccountSecurityPageComponent implements OnInit{
 
 
   changePasswordForm=this.fb.group({
-    currentPassword:['',Validators.required],
-    newPassword: ['', Validators.required],
-    repeatPassword: ['', [Validators.required,this.matchValues('newPassword')]],
+    currentPassword:['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
+    newPassword: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
+    repeatPassword: ['', [Validators.required, this.matchValues('password'), Validators.minLength(6), Validators.maxLength(100)]],
     passwordShow:[false],
     emailAddress: '',
   })
@@ -46,7 +51,7 @@ export class AccountSecurityPageComponent implements OnInit{
   securityQuestionForm=this.fb.group({
     securityQuestionId:[0,Validators.required],
     questionAnswer: ['', Validators.required],
-    currentPassword: ['',Validators.required],
+    currentPassword: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
   })
 
 
@@ -81,19 +86,16 @@ export class AccountSecurityPageComponent implements OnInit{
   ChangeQuestion(){
     const userId=this.accountService.currentUser()?.id ?? 0 ;
     const changeQuestionModel={... this.securityQuestionForm.value};
-    console.log(changeQuestionModel);
-    if(confirm("Are you sure you want to change security questions?")){
-      this.userSecurityQuestionAnswerService.ChangeSecurityQuestion(userId,changeQuestionModel).subscribe({
-        next:res=>{
-          alert("Question changed successfully")
-          this.accountService.currentUser.set(null);
-          localStorage.removeItem('user');
-          localStorage.removeItem('auth-token');
-          void this.router.navigateByUrl('/user/dashboard');
-        },
-        error:err=>console.log(err)
-      })
-    }
+    this.userSecurityQuestionAnswerService.ChangeSecurityQuestion(userId,changeQuestionModel).subscribe({
+      next:res=>{
+        this.snackbarService.showSuccessMessage('Question changed successfully');
+        this.accountService.currentUser.set(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('auth-token');
+        void this.router.navigateByUrl('/public/home');
+      },
+      error: err => console.log(err)
+    });
   }
 
   AddQuestion(){
@@ -102,31 +104,87 @@ export class AccountSecurityPageComponent implements OnInit{
     console.log(changeQuestionModel);
     this.userSecurityQuestionAnswerService.CreateAnswer(userId,changeQuestionModel).subscribe({
       next:res=>{
-        alert("Security question added successfully");
+        this.snackbarService.showSuccessMessage('Security question added successfully');
         this.accountService.currentUser.set(null);
         localStorage.removeItem('user');
         localStorage.removeItem('auth-token');
-        void this.router.navigateByUrl('/user/dashboard');
+        void this.router.navigateByUrl('/public/home');
       },
-      error:err=>console.log(err)
-    })
+      error: err => console.log(err)
+    });
   }
 
   RemoveQuestion(){
     const userId=this.accountService.currentUser()?.id ?? 0 ;
     const changeQuestionModel={... this.securityQuestionForm.value};
-    if(confirm("Are you sure you want to remove security questions?")){
-      this.userSecurityQuestionAnswerService.RemoveSecurityQuestion(userId,changeQuestionModel).subscribe({
-        next:res=>{
-          alert("Question removed successfully")
-          this.accountService.currentUser.set(null);
-          localStorage.removeItem('user');
-          localStorage.removeItem('auth-token');
-          void this.router.navigateByUrl('/user/dashboard');
-        },
-        error:err=>console.log(err)
-      })
-    }
+    this.userSecurityQuestionAnswerService.RemoveSecurityQuestion(userId,changeQuestionModel).subscribe({
+      next:res=>{
+        this.snackbarService.showSuccessMessage('Question removed successfully');
+        this.accountService.currentUser.set(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('auth-token');
+        void this.router.navigateByUrl('/public/home');
+      },
+      error: err => console.log(err)
+    });
+  }
+
+
+  RemoveQuestionConfirmDialog() {
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm removal',
+        message: 'Are you sure you want to remove security questions?',
+        confirmButtonText:'Confirm'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.RemoveQuestion()
+      } else {
+        console.log('Korisnik je otkazao brisanje');
+      }
+    });
+  }
+
+  ChangeQuestionConfirmDialog() {
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm change',
+        message: 'Are you sure you want to change security questions?',
+        confirmButtonText:'Confirm'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.ChangeQuestion()
+      } else {
+        console.log('Korisnik je otkazao brisanje');
+      }
+    });
+  }
+
+  AddQuestionConfirmDialog() {
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm',
+        message: 'Are you sure you want to add security question?',
+        confirmButtonText:'Confirm'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.AddQuestion()
+      } else {
+        console.log('Korisnik je otkazao brisanje');
+      }
+    });
   }
 
 }

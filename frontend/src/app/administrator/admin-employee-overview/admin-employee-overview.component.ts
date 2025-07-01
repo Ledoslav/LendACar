@@ -1,7 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {EmployeeDto} from '../../Models/EmployeeDto';
 import {EmployeeService} from '../../services/employee.service';
-import {FormBuilder} from '@angular/forms';
+import {FormBuilder, Validators} from '@angular/forms';
 import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
 import {Router} from '@angular/router';
@@ -30,7 +30,6 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   filteredCities: City[] = [];
 
   employees: PaginatedResult<EmployeeDto[]> = new PaginatedResult()
-  jobTitles: string[] = ["Select Job Title", "Customer support", "Developer"];
   employeeService = inject(EmployeeService);
   private dialog = inject(MatDialog);
 
@@ -88,10 +87,10 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   }
 
   employeeSearchForm = this.fb.group({
-    name: [undefined],
+    name: ['', [Validators.maxLength(50), Validators.pattern(/^[\w\s\-]+$/)]],
     cityId: [undefined],
     countryId: 0,
-    jobTitle: this.jobTitles[0],
+    jobTitle: ['', [Validators.maxLength(50), Validators.pattern(/^[\w\s\-]+$/)]],
     ageFrom: [undefined],
     ageTo: [undefined]
   })
@@ -140,7 +139,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
       countryId: 0,
       ageFrom: undefined,
       ageTo: undefined,
-      jobTitle: this.jobTitles[0]
+      jobTitle: ''
     });
   }
 

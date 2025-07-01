@@ -25,6 +25,9 @@ namespace LendACarAPI.Endpoints.SecurityQuestionEndpoints
 
             if (user == null) return BadRequest("User not found");
 
+            if (!ComparePasswords(request.CurrentPassword, user.PasswordSalt, user.PasswordHash))
+                return BadRequest("Invalid credentials");
+
 
             var hashedAnswerWithSalt = GenerateHash(request.QuestionAnswer);
 
@@ -133,7 +136,7 @@ namespace LendACarAPI.Endpoints.SecurityQuestionEndpoints
                     .FirstOrDefaultAsync(u => u.Id == userId,cancellationToken);
 
             if (!ComparePasswords(request.CurrentPassword, user.PasswordSalt, user.PasswordHash))
-                return BadRequest("Invalid password");
+                return BadRequest("Invalid credentials");
 
 
             var hashedAnswerWithSalt = GenerateHash(request.QuestionAnswer);
