@@ -45,6 +45,7 @@ namespace LendACarAPI.DTOs
 
         public string? ProfilePhotoUrl { get; set; }
 
+        public bool isUserVerifiedStatusChanged { get; set; }
 
         public int? UserSecurityQuestionAnswerId { get; set; }
         public UserSecurityQuestionAnswer? SecurityQuestion { get; set; }

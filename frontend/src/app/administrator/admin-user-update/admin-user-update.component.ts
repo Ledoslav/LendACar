@@ -28,7 +28,8 @@ export class AdminUserUpdateComponent implements OnInit {
       cityId: [undefined, Validators.required],
       countryId:[undefined, Validators.required],
       birthDate: [undefined, [Validators.required, Validators.maxLength(10), Validators.minLength(10)]],
-      isVerified:[undefined, Validators.required],
+      isVerified:[false],
+      isUserVerifiedStatusChanged: [false],
     });
   }
 
@@ -45,6 +46,13 @@ export class AdminUserUpdateComponent implements OnInit {
             }
           )
         }
+        this.userEditForm.get('isVerified')?.valueChanges.subscribe((value: boolean) => {
+          if (this.originalIsVerified !== undefined && value !== this.originalIsVerified) {
+            this.userEditForm.get('isUserVerifiedStatusChanged')?.setValue(true, { emitEvent: false });
+          } else {
+            this.userEditForm.get('isUserVerifiedStatusChanged')?.setValue(false, { emitEvent: false });
+          }
+        });
     }
 
     user:any;
@@ -61,6 +69,7 @@ export class AdminUserUpdateComponent implements OnInit {
   filteredCities:City[]=[];
   countries:Country[]=[];
   datePipe=inject(DatePipe)
+  originalIsVerified: boolean | undefined;
 
   formatDate(){
     this.user.birthDate=this.datePipe.transform(Date.parse(this.user.birthDate),"yyyy-MM-dd");
@@ -84,7 +93,15 @@ export class AdminUserUpdateComponent implements OnInit {
   }
     getUserById(idString:string){
       const id=Number.parseInt(idString);
-      return this.userService.GetUserById(id);
+      return this.userService.GetUserById(id).pipe(
+        concatMap(user => {
+          this.user = user;
+          this.originalIsVerified = user.isVerified;
+          this.formatDate();
+          this.createForm();
+          return this.userService.GetUserById(id);
+        })
+      );
     }
     createForm(){
       this.userEditForm.patchValue({
@@ -97,6 +114,7 @@ export class AdminUserUpdateComponent implements OnInit {
         countryId:this.user.city.countryId,
         birthDate: this.user.birthDate,
         isVerified: this.user.isVerified,
+        isUserVerifiedStatusChanged: false,
       });
       this.FilterCities(undefined,this.user.city.countryId);
     }
