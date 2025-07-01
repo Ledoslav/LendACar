@@ -19,40 +19,40 @@
                 <div class="col-md-6">
                   <label class="form-label">First Name *</label>
                   <input type="text" class="form-control" formControlName="firstName">
-                  <div class="text-danger" *ngIf="adminEditForm.get('firstName')?.touched && adminEditForm.get('firstName')?.invalid">
-                    <small *ngIf="adminEditForm.get('firstName')?.errors?.['required']">First name is required.</small>
-                    <small *ngIf="adminEditForm.get('firstName')?.errors?.['minlength']">First name must be at least 2 characters.</small>
-                    <small *ngIf="adminEditForm.get('firstName')?.errors?.['maxlength']">First name cannot exceed 50 characters.</small>
-                  </div>
+                  <mat-error *ngIf="adminEditForm.get('firstName')?.touched && adminEditForm.get('firstName')?.invalid">
+                    <ng-container *ngIf="adminEditForm.get('firstName')?.errors?.['required']">First name is required.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('firstName')?.errors?.['minlength']">First name must be at least 2 characters.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('firstName')?.errors?.['maxlength']">First name cannot exceed 50 characters.</ng-container>
+                  </mat-error>
                 </div>
                 <!-- Last name -->
                 <div class="col-md-6">
                   <label class="form-label">Last Name *</label>
                   <input type="text" class="form-control" formControlName="lastName">
-                  <div class="text-danger" *ngIf="adminEditForm.get('lastName')?.touched && adminEditForm.get('lastName')?.invalid">
-                    <small *ngIf="adminEditForm.get('lastName')?.errors?.['required']">Last name is required.</small>
-                    <small *ngIf="adminEditForm.get('lastName')?.errors?.['minlength']">Last name must be at least 2 characters.</small>
-                    <small *ngIf="adminEditForm.get('lastName')?.errors?.['maxlength']">Last name cannot exceed 50 characters.</small>
-                  </div>
+                  <mat-error *ngIf="adminEditForm.get('lastName')?.touched && adminEditForm.get('lastName')?.invalid">
+                    <ng-container *ngIf="adminEditForm.get('lastName')?.errors?.['required']">Last name is required.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('lastName')?.errors?.['minlength']">Last name must be at least 2 characters.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('lastName')?.errors?.['maxlength']">Last name cannot exceed 50 characters.</ng-container>
+                  </mat-error>
                 </div>
                 <!-- Phone number -->
                 <div class="col-md-6">
                   <label class="form-label">Phone number *</label>
                   <input type="text" class="form-control" formControlName="phoneNumber">
-                  <div class="text-danger" *ngIf="adminEditForm.get('phoneNumber')?.touched && adminEditForm.get('phoneNumber')?.invalid">
-                    <small *ngIf="adminEditForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</small>
-                    <small *ngIf="adminEditForm.get('phoneNumber')?.errors?.['pattern']">Enter a valid phone number.</small>
-                    <small *ngIf="adminEditForm.get('phoneNumber')?.errors?.['maxlength']">Phone number cannot exceed 20 characters.</small>
-                  </div>
+                  <mat-error *ngIf="adminEditForm.get('phoneNumber')?.touched && adminEditForm.get('phoneNumber')?.invalid">
+                    <ng-container *ngIf="adminEditForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('phoneNumber')?.errors?.['pattern']">Enter a valid phone number.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('phoneNumber')?.errors?.['maxlength']">Phone number cannot exceed 20 characters.</ng-container>
+                  </mat-error>
                 </div>
                 <!-- Birth date -->
                 <div class="col-md-6">
                   <label class="form-label">Birth date * <small class="text-muted">(readonly)</small></label>
                   <input type="text" class="form-control bg-secondary" formControlName="birthDate" readonly>
-                  <div class="text-danger" *ngIf="adminEditForm.get('birthDate')?.touched && adminEditForm.get('birthDate')?.invalid">
-                    <small *ngIf="adminEditForm.get('birthDate')?.errors?.['required']">Birth date is required.</small>
-                    <small *ngIf="adminEditForm.get('birthDate')?.errors?.['minlength'] || adminEditForm.get('birthDate')?.errors?.['maxlength']">Birth date must be in YYYY-MM-DD format.</small>
-                  </div>
+                  <mat-error *ngIf="adminEditForm.get('birthDate')?.touched && adminEditForm.get('birthDate')?.invalid">
+                    <ng-container *ngIf="adminEditForm.get('birthDate')?.errors?.['required']">Birth date is required.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('birthDate')?.errors?.['minlength'] || adminEditForm.get('birthDate')?.errors?.['maxlength']">Birth date must be in YYYY-MM-DD format.</ng-container>
+                  </mat-error>
                 </div>
                 <!-- City -->
                 <div class="col-md-6">
@@ -60,29 +60,29 @@
                   <select class="form-select" formControlName="cityId">
                     <option *ngFor="let city of cities" [value]="city.id">{{city.name}}</option>
                   </select>
-                  <div class="text-danger" *ngIf="adminEditForm.get('cityId')?.touched && adminEditForm.get('cityId')?.invalid">
-                    <small *ngIf="adminEditForm.get('cityId')?.errors?.['required']">City is required.</small>
-                  </div>
+                  <mat-error *ngIf="adminEditForm.get('cityId')?.touched && adminEditForm.get('cityId')?.invalid">
+                    <ng-container *ngIf="adminEditForm.get('cityId')?.errors?.['required']">City is required.</ng-container>
+                  </mat-error>
                 </div>
                 <!-- Email -->
                 <div class="col-md-6">
                   <label class="form-label">Email * <small class="text-muted">(readonly)</small></label>
                   <input type="email" class="form-control bg-secondary" formControlName="emailAddress" readonly>
-                  <div class="text-danger" *ngIf="adminEditForm.get('emailAddress')?.touched && adminEditForm.get('emailAddress')?.invalid">
-                    <small *ngIf="adminEditForm.get('emailAddress')?.errors?.['required']">Email is required.</small>
-                    <small *ngIf="adminEditForm.get('emailAddress')?.errors?.['email']">Enter a valid email address.</small>
-                    <small *ngIf="adminEditForm.get('emailAddress')?.errors?.['maxlength']">Email cannot exceed 100 characters.</small>
-                  </div>
+                  <mat-error *ngIf="adminEditForm.get('emailAddress')?.touched && adminEditForm.get('emailAddress')?.invalid">
+                    <ng-container *ngIf="adminEditForm.get('emailAddress')?.errors?.['required']">Email is required.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('emailAddress')?.errors?.['email']">Enter a valid email address.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('emailAddress')?.errors?.['maxlength']">Email cannot exceed 100 characters.</ng-container>
+                  </mat-error>
                 </div>
                 <!-- Username -->
                 <div class="col-md-6">
                   <label class="form-label">Username * <small class="text-muted">(readonly)</small></label>
                   <input type="text" class="form-control bg-secondary" formControlName="username" readonly>
-                  <div class="text-danger" *ngIf="adminEditForm.get('username')?.touched && adminEditForm.get('username')?.invalid">
-                    <small *ngIf="adminEditForm.get('username')?.errors?.['required']">Username is required.</small>
-                    <small *ngIf="adminEditForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters.</small>
-                    <small *ngIf="adminEditForm.get('username')?.errors?.['maxlength']">Username cannot exceed 30 characters.</small>
-                  </div>
+                  <mat-error *ngIf="adminEditForm.get('username')?.touched && adminEditForm.get('username')?.invalid">
+                    <ng-container *ngIf="adminEditForm.get('username')?.errors?.['required']">Username is required.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters.</ng-container>
+                    <ng-container *ngIf="adminEditForm.get('username')?.errors?.['maxlength']">Username cannot exceed 30 characters.</ng-container>
+                  </mat-error>
                 </div>
               </div>
             </div>
