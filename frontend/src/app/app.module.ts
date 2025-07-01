@@ -20,6 +20,8 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
 import {
   MatDialogModule,
 } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 
 @NgModule({
@@ -46,7 +48,9 @@ import {
         headerName:"my-auth-token"
         //allowedDomains:["localhost:7000"]
       }
-    })
+    }),
+    MatFormFieldModule,
+    MatInputModule,
   ],
   providers: [
     provideAnimationsAsync(),
