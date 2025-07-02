@@ -31,6 +31,7 @@ import {FileUploadModule} from "ng2-file-upload";
 import {ImageCropperComponent} from 'ngx-image-cropper';
 import { VerificationRequestPageComponent } from './profile/verification-request-page/verification-request-page.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -78,6 +79,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     NgOptimizedImage,
     FileUploadModule,
     ImageCropperComponent,
+    MatProgressSpinner,
 
   ]
 })

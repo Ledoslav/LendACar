@@ -24,6 +24,7 @@ export class PhotoPageComponent implements OnInit{
   croppedImage: any = null;
   showCropper = false;
   croppedImageUrl: any = null;
+  isLoading = false;
 
   constructor() {}
 
@@ -67,6 +68,7 @@ export class PhotoPageComponent implements OnInit{
       return;
     }
 
+    this.isLoading = true;
     const formData = new FormData();
     const file = new File([this.croppedImage], 'cropped-image.png', { type: 'image/png' });
     formData.append('file', file);
@@ -77,10 +79,12 @@ export class PhotoPageComponent implements OnInit{
       this.showCropper = false;
       this.accountService.currentUser.set(response);
       this.snackbarService.showSuccessMessage('Profile picture updated successfully!')
+      this.isLoading = false;
     },
     error:(error) => {
       console.error('Upload failed:', error);
       this.snackbarService.showErrorMessage('Failed to upload profile picture')
+      this.isLoading = false;
     }
    }
     );
