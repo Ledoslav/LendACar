@@ -23,6 +23,7 @@ export class PhotoPageComponent {
   showCropper = false;
   croppedImageUrl: any = null;
   private dialog=inject(MatDialog);
+  isLoading = false;
 
   constructor() {}
 
@@ -65,6 +66,7 @@ export class PhotoPageComponent {
       return;
     }
 
+    this.isLoading=true;
     const formData = new FormData();
     const file = new File([this.croppedImage], 'cropped-image.png', { type: 'image/png' });
     formData.append('file', file);
@@ -75,10 +77,12 @@ export class PhotoPageComponent {
           this.showCropper = false;
           this.employeeService.currentEmployee.set(response);
           this.snackbarService.showSuccessMessage('Profile picture updated successfully!')
+          this.isLoading=false;
         },
         error:(error) => {
           console.error('Upload failed:', error);
           this.snackbarService.showErrorMessage('Failed to upload profile picture.');
+          this.isLoading=false;
         }
       }
     );
