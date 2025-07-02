@@ -6,7 +6,7 @@
     <div class="col-md-5 mb-3" *ngFor="let vehicle of userVehicles">
       <div class="card shadow-sm car-card">
         <img src="/Image-not-found.png"  class="card-img-top" alt="">
-        <div class="card-body">
+        <div class="card-body" style="padding-left: 12px">
           <div class="row justify-content-between">
             <div class="col-auto">
               <h5 class="card-title mb-0">{{ vehicle.title }}</h5>
@@ -17,28 +17,28 @@
           </div>
           <div class="d-flex align-items-center">
 
-            <div class="d-flex align-items-center me-2">
+            <div class="d-flex align-items-center me-1">
               <img class="vehicle-icons" src="/people.png" alt="gsa">
               <p style="color: black"  class="mb-0 ms-2">{{ vehicle.numberOfSeats }}</p>
             </div>
 
-            <div class="d-flex align-items-center me-2">
+            <div class="d-flex align-items-center me-1">
               <img class="vehicle-icons" src="/door.png" alt="gsa">
               <p style="color: black"  class="mb-0 ms-2">{{ vehicle.numberOfSeats +1 }}</p>
             </div>
 
             <!-- Image with Number -->
-            <div class="d-flex align-items-center me-2">
+            <div class="d-flex align-items-center me-1">
               <img class="vehicle-icons" src="/gear-shift.png" alt="gsa">
               <p style="color: black"  class="mb-0 ms-2">{{ findTransmissionType(vehicle.transmissionType) }}</p>
             </div>
 
-            <div class="d-flex align-items-center me-2">
+            <div class="d-flex align-items-center me-1">
               <img class="vehicle-icons" src="/gears.png" alt="gsa">
               <p style="color: black" class="mb-0 ms-2">{{ vehicle.enginePower }}</p>
             </div>
 
-            <div class="d-flex align-items-center me-2">
+            <div class="d-flex align-items-center me-1">
               <img class="vehicle-icons" src="/drivers-license.png" alt="gsa">
               <p style="color: black"   class="mb-0 ms-2">21</p>
             </div>
