@@ -55,7 +55,7 @@ namespace LendACarTests.Tests.Endpoints
             await controller.CreateCity(city, CancellationToken.None);
             var result = await controller.CreateCity(new City { Name = "Testopolis", CountryId = 1 }, CancellationToken.None);
 
-            Assert.IsType<Microsoft.AspNetCore.Mvc.BadRequestResult>(result.Result);
+            Assert.IsType<Microsoft.AspNetCore.Mvc.BadRequestObjectResult>(result.Result);
         }
 
         [Fact]

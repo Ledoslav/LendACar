@@ -19,7 +19,7 @@ namespace LendACarTests.Services
                 .Options;
             var db = new TestApplicationDbContext(options);
             await DataSeeder.SeedReferalDataAsync(db);
-            await DataSeeder.SeedPersonDataAsync(db, authService, photoService, renderPDFReport);
+            await DataSeeder.SeedPersonDataAsync(db);
             return db;
         }
     }
