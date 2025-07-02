@@ -4,8 +4,6 @@ import {CommonModule, DatePipe} from '@angular/common';
 import { EmployeeRoutingModule } from './employee-routing.module';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { ProfileOverviewComponent } from './profile-overview/profile-overview.component';
-import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { VerificationRequestComponent } from './verification-request/verification-request.component';
 import { PollManagementComponent } from './poll-management/poll-management.component';
@@ -24,8 +22,6 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
   declarations: [
     LoginComponent,
     DashboardComponent,
-    ProfileOverviewComponent,
-    EditProfileComponent,
     VerificationRequestComponent,
     PollManagementComponent,
     ForgotPasswordComponent,
