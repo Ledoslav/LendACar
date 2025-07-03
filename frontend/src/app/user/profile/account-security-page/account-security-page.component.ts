@@ -8,6 +8,7 @@ import {Router} from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirmComponent } from '../../../shared/dialogs/dialog-confirm/dialog-confirm.component';
 import { MySnackbarService } from '../../../services/snackbars/my-snackbar.service';
+import {MapQuestionTextToKey} from '../../../helper/map-question-text-to-key.helper';
 
 @Component({
   selector: 'app-account-security-page',
@@ -17,7 +18,7 @@ import { MySnackbarService } from '../../../services/snackbars/my-snackbar.servi
 export class AccountSecurityPageComponent implements OnInit{
 
   model:any={};
-  questions:SecurityQuestion[]=[]
+  questions:any[]=[]
 
   fb=inject(FormBuilder)
   accountService=inject(UserService);
@@ -64,12 +65,12 @@ export class AccountSecurityPageComponent implements OnInit{
 
   loadSecurityQuestion() {
     this.securityQuestionService.GetAllQuestions().subscribe(res => {
-      this.questions = res;
-      console.log(this.questions)
+      this.questions = res.map(q => ({
+        ...q,
+        questionTextKey: MapQuestionTextToKey(q.id)
+      }));
     })
   }
-
-
 
   ChangePassword() {
     this.changePasswordForm.patchValue({

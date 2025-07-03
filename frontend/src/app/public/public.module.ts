@@ -10,6 +10,8 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatIconModule} from '@angular/material/icon';
+import {UserModule} from "../user/user.module";
+import {TranslatePipe} from '@ngx-translate/core';
 
 
 @NgModule({
@@ -17,15 +19,17 @@ import {MatIconModule} from '@angular/material/icon';
     HomeComponent,
     LayoutComponent
   ],
-    imports: [
-        CommonModule,
-        PublicRoutingModule,
-        DataRowOutlet,
-        MatInputModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatIconModule
-    ]
+  imports: [
+    CommonModule,
+    PublicRoutingModule,
+    DataRowOutlet,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule,
+    UserModule,
+    TranslatePipe
+  ]
 })
 export class PublicModule { }

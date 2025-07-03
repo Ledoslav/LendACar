@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { LayoutComponent } from './layout/layout.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
@@ -22,6 +22,9 @@ import {
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {CustomTranslateLoader} from './services/custom-translate-loader';
+import {MatOption, MatSelect} from '@angular/material/select';
 
 
 @NgModule({
@@ -46,25 +49,38 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule,
     JwtModule.forRoot({
-      config:{
-        headerName:"my-auth-token"
-        //allowedDomains:["localhost:7000"]
+      config: {
+        tokenGetter: () => '',
+        headerName: "my-auth-token"
       }
-    })
+    }),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (http: HttpClient) => new CustomTranslateLoader(http),
+        deps: [HttpClient]
+      },
+      defaultLanguage: 'bs' // Podrazumijevani jezik
+    }),
+    MatSelect,
+    MatOption
+
   ],
   providers: [
     provideAnimationsAsync(),
     DatePipe,
     {
       provide: HTTP_INTERCEPTORS,
-      useClass:TokenInterceptor,
+      useClass: TokenInterceptor,
       multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass:ErrorInterceptor,
+      useClass: ErrorInterceptor,
       multi: true,
     }
+  ],
+  exports: [
   ],
   bootstrap: [AppComponent]
 })

@@ -1,0 +1,121 @@
+{
+  "PROFILE": {
+    "SIDEBAR": {
+      "PROFILE": "Profil",
+      "PHOTO": "Fotografija",
+      "ACCOUNT_SECURITY": "Sigurnost računa",
+      "VERIFICATION_REQUEST": "Zahtjev za verifikaciju",
+      "MY_VEHICLES": "Moja vozila",
+      "RESERVATION_HISTORY": "Historija rezervacija",
+      "CLOSE_ACCOUNT": "Zatvori račun",
+      "LOGOUT": "Odjavi se"
+    },
+    "PHOTO": {
+      "PHOTO": "Fotografija",
+      "UPLOAD_TITLE": "Dodaj profilnu sliku",
+      "DRAG_DROP": "Prevucite sliku ovdje ili kliknite za odabir.",
+      "CHOOSE_FILE": "Odaberi fajl",
+      "EDIT_TITLE": "Uredi profilnu sliku",
+      "CHANGE": "Promijeni",
+      "REMOVE": "Ukloni",
+      "UPLOAD": "Dodaj",
+      "CANCEL": "Otkaži"
+    },
+    "MY_VEHICLES": {
+      "TITLE": "Moja vozila"
+    },
+    "ACCOUNT_SECURITY": {
+      "TITLE": "Sigurnost računa",
+      "CHANGE_PASSWORD": "Promijeni lozinku",
+      "CURRENT_PASSWORD": "Trenutna lozinka *",
+      "NEW_PASSWORD": "Nova lozinka *",
+      "CONFIRM_PASSWORD": "Potvrdi lozinku *",
+      "SHOW_PASSWORD": "Prikaži lozinku",
+      "PASSWORD_REQUIRED": "Lozinka je obavezna",
+      "PASSWORD_MIN": "Lozinka mora imati najmanje 6 karaktera.",
+      "PASSWORD_MAX": "Lozinka ne može imati više od 100 karaktera.",
+      "PASSWORDS_DONT_MATCH": "Lozinke se ne podudaraju",
+      "CHANGE_PASSWORD_BTN": "Promijeni lozinku",
+      "SECURITY_QUESTION_TITLE": "Sigurnosno pitanje",
+      "CHANGE_QUESTION": "Promijeni pitanje",
+      "REMOVE_QUESTION": "Ukloni pitanje",
+      "ADD_QUESTION": "Dodaj pitanje",
+      "QUESTION": "Sigurnosna pitanja*",
+      "QUESTION_ANSWER": "Odgovor na pitanje*",
+      "CURRENT_PASSWORD_QUESTION": "Trenutna lozinka*",
+      "QUESTION_HINT": "*Ako želite ukloniti ili promijeniti pitanje, morate ispravno unijeti polja*",
+      "QUESTION1": "Kako se djevojački prezivala vaša majka?",
+      "QUESTION2": "Koji je bio vaš nadimak iz djetinjstva?",
+      "QUESTION3": "Kako se zvao vaš najbolji prijatelj iz djetinjstva?",
+      "QUESTION4": "Koja je bila prva video igra koju ste igrali?",
+      "QUESTION5": "Kako se zvala vaša omiljena igračka iz djetinjstva?",
+      "QUESTION6": "Koja je bila vaša prva slavna simpatija?",
+      "QUESTION7": "Kako se zvao vaš omiljeni učitelj/ica iz škole?",
+      "QUESTION8": "Gdje ste išli na svoj prvi odmor?"
+    },
+    "VERIFICATION_REQUEST": {
+      "TITLE": "Zahtjev za verifikaciju",
+      "SUBMIT_TITLE": "Pošalji zahtjev za verifikaciju",
+      "COMMENT": "Komentar",
+      "SUBMIT": "Pošalji",
+      "VERIFIED": "Verifikovani ste!",
+      "REQUEST_DATE": "Datum zahtjeva",
+      "YOUR_COMMENT": "Vaš komentar",
+      "APPROVED_DATE": "Datum odobrenja",
+      "EMPLOYEE_COMMENT": "Komentar zaposlenika",
+      "NO_COMMENT": "Nema komentara",
+      "DENIED": "Vaš zahtjev za verifikaciju je odbijen!",
+      "DENIAL_DATE": "Datum odbijanja",
+      "DENIAL_REASON": "Razlog odbijanja",
+      "PENDING": "Zahtjev za verifikaciju na čekanju",
+      "DELETE_REQUEST": "Obriši zahtjev"
+    },
+    "RESERVATION_HISTORY": {
+      "TITLE": "Historija rezervacija",
+      "OWNER": "Vlasnik",
+      "LOCATION": "Lokacija",
+      "PICKUP_LOCATION": "Mjesto preuzimanja",
+      "PAYMENT_METHOD": "Način plaćanja",
+      "TOTAL": "Ukupno",
+      "STATUS": "Status",
+      "VIEW_DETAILS": "Detalji",
+      "FINISHED": "Završeno"
+    },
+    "PROFILE_PAGE": {
+      "TITLE": "Profil",
+      "FIRST_NAME": "Ime*",
+      "LAST_NAME": "Prezime*",
+      "EMAIL": "Email*",
+      "PHONE": "Telefon*",
+      "BIRTH_DATE": "Datum rođenja*",
+      "COUNTRY": "Država*",
+      "CITY": "Grad*",
+      "SAVE_CHANGES": "Sačuvaj promjene"
+    },
+    "CLOSE_ACCOUNT": {
+      "TITLE": "Zatvori račun",
+      "CONFIRM_QUESTION": "Jeste li sigurni da želite zatvoriti račun? Ova radnja je trajna i ne može se poništiti.",
+      "WARNING_1": "* Izgubit ćete pristup svim podacima, postavkama i uslugama.",
+      "WARNING_2": "* Sve sačuvane postavke, rezervacije ili povezani računi će biti uklonjeni.",
+      "WARNING_3": "* Ovaj proces se ne može poništiti nakon završetka.",
+      "SUPPORT": "Ako želite nastaviti, potvrdite svoju odluku. Ako imate bilo kakvih nedoumica, kontaktirajte našu podršku.",
+      "CLOSE_BTN": "Zatvori račun"
+    }
+  },
+
+  "SIDEBAR": {
+    "HOME": "Početna",
+    "ACTIVITY": "Aktivnosti",
+    "CHATS": "Poruke",
+    "SAVED": "Sačuvano",
+    "RESERVED": "Rezervisano",
+    "MY_VEHICLES": "Moja vozila",
+    "CREATE_COMPANY": "Kreiraj kompaniju"
+  },
+
+  "NAVBAR": {
+    "REGISTER":"Registracija",
+    "LOGIN":"Prijava"
+  }
+
+}

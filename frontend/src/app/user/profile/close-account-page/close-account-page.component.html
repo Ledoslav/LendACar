@@ -1,18 +1,17 @@
-<h2 class="mb-2 text-center">Close Account</h2>
+<h2 class="mb-2 text-center">{{ 'PROFILE.CLOSE_ACCOUNT.TITLE' | translate }}</h2>
 <hr>
 <div class="mb-2">
-<strong>Are you sure you want to close your account? This action is permanent and cannot be undone.</strong>
+<strong>{{ 'PROFILE.CLOSE_ACCOUNT.CONFIRM_QUESTION' | translate }}</strong>
 </div>
 <div>
-  <p>* You will lose access to all your data, settings, and services.</p>
-  <p>* Any saved preferences, reservations, or linked accounts will be removed.</p>
-  <p>* This process cannot be reversed once completed.</p>
+  <p>{{ 'PROFILE.CLOSE_ACCOUNT.WARNING_1' | translate }}</p>
+  <p>{{ 'PROFILE.CLOSE_ACCOUNT.WARNING_2' | translate }}</p>
+  <p>{{ 'PROFILE.CLOSE_ACCOUNT.WARNING_3' | translate }}</p>
 </div>
 <div>
-  <p>If you wish to proceed, please confirm your decision.
-    If you have any concerns, consider reaching out to our support team for assistance</p>
+  <p>{{ 'PROFILE.CLOSE_ACCOUNT.SUPPORT' | translate }}</p>
 </div>
 <div class="mt-5">
-  <button class="btn btn-danger" (click)="openMyConfirmDialog()">Close account</button>
+  <button class="btn btn-danger" (click)="openMyConfirmDialog()">{{ 'PROFILE.CLOSE_ACCOUNT.CLOSE_BTN' | translate }}</button>
 </div>
 
