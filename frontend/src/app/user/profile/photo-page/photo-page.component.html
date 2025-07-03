@@ -1,12 +1,12 @@
-<h2 class="mb-2 text-center">Photo</h2>
+<h2 class="mb-2 text-center">{{ 'PROFILE.PHOTO.PHOTO' | translate }}</h2>
 <hr>
 <div class="container">
   <ng-container *ngIf="accountService.currentUser()?.profilePhotoUrl==null">
-  <h2>Upload Profile Picture</h2>
+  <h2>{{ 'PROFILE.PHOTO.UPLOAD_TITLE' | translate }}</h2>
     <div *ngIf="!showCropper" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
-      <p>Drag & drop an image here or click to browse.</p>
+      <p>{{ 'PROFILE.PHOTO.DRAG_DROP' | translate }}</p>
       <input type="file" accept="image/*" #fileInput (change)="onFileChange($event)" hidden />
-      <button (click)="fileInput.click()">Choose File</button>
+      <button (click)="fileInput.click()">{{ 'PROFILE.PHOTO.CHOOSE_FILE' | translate }}</button>
     </div>
   </ng-container>
 
@@ -29,14 +29,14 @@
     ></image-cropper>
 
     <div class="mt-2">
-      <button class="btn btn-outline-light " (click)="uploadCroppedImage()">Upload</button>
-      <button class="btn btn-outline-light mx-2" (click)="cancelCrop()">Cancel</button>
+      <button class="btn btn-outline-light " (click)="uploadCroppedImage()">{{ 'PROFILE.PHOTO.UPLOAD' | translate }}</button>
+      <button class="btn btn-outline-light mx-2" (click)="cancelCrop()">{{ 'PROFILE.PHOTO.CANCEL' | translate }}</button>
     </div>
   </div>
 
 
   <ng-container *ngIf="!showCropper && accountService.currentUser()?.profilePhotoUrl!=null">
-    <h2>Edit Profile Picture</h2>
+    <h2>{{ 'PROFILE.PHOTO.EDIT_TITLE' | translate }}</h2>
     <div class="d-flex justify-content-center mb-3">
       <div class="profile-pic">
         <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile pic">
@@ -45,8 +45,8 @@
     <div class="d-flex justify-content-center mb-3">
       <div class="mt-2">
         <input type="file" accept="image/*" #fileInput (change)="onFileChange($event)" hidden />
-        <button class="btn btn-outline-light" (click)="fileInput.click()">Change</button>
-        <button class="btn btn-outline-danger mx-2" style="color: red" (click)="removeProfilePhoto()">Remove</button>
+        <button class="btn btn-outline-light" (click)="fileInput.click()">{{ 'PROFILE.PHOTO.CHANGE' | translate }}</button>
+        <button class="btn btn-outline-danger mx-2" style="color: red" (click)="removeProfilePhoto()">{{ 'PROFILE.PHOTO.REMOVE' | translate }}</button>
       </div>
     </div>
   </ng-container>

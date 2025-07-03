@@ -1,14 +1,14 @@
-<h2 class="mb-2 text-center">Verification Request</h2>
+<h2 class="mb-2 text-center">{{ 'PROFILE.VERIFICATION_REQUEST.TITLE' | translate }}</h2>
 <hr>
 
 <div class="container mt-4">
   <!-- Unverified User -->
   <div *ngIf="verificationStatus === 3">
-    <h4 class="mb-4">Submit Verification Request</h4>
+    <h4 class="mb-4">{{ 'PROFILE.VERIFICATION_REQUEST.SUBMIT_TITLE' | translate }}</h4>
 
     <form (ngSubmit)="SubmitVerificationRequest()" #verificationForm="ngForm">
       <div class="mb-3">
-        <label for="comment" class="form-label">Comment</label>
+        <label for="comment" class="form-label">{{ 'PROFILE.VERIFICATION_REQUEST.COMMENT' | translate }}</label>
         <textarea
           id="comment"
           class="form-control"
@@ -19,43 +19,43 @@
           required
         ></textarea>
       </div>
-      <button type="submit" class="btn btn-primary" [disabled]="!verificationForm.form.valid">Submit</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!verificationForm.form.valid">{{ 'PROFILE.VERIFICATION_REQUEST.SUBMIT' | translate }}</button>
     </form>
   </div>
 
   <!-- Verified User -->
   <div *ngIf="verificationStatus === 1 && verificationRequest !== null">
-    <h4 class="mb-4">You are Verified!</h4>
+    <h4 class="mb-4">{{ 'PROFILE.VERIFICATION_REQUEST.VERIFIED' | translate }}</h4>
 
     <div class="mb-3">
-      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate | date:'dd.MM.yyyy HH:mm' }}</p>
-      <p><strong>Your Comment:</strong> {{ verificationRequest.requestComment || 'No comment provided' }}</p>
-      <p><strong>Approved Date:</strong> {{ verificationRequest.requestReviewDate | date:'dd.MM.yyyy HH:mm' }}</p>
-      <p><strong>Comment from employee:</strong> {{ verificationRequest.denialComment || 'No comment provided' }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.REQUEST_DATE' | translate }}:</strong> {{ verificationRequest.requestDate | date:'dd.MM.yyyy HH:mm' }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.YOUR_COMMENT' | translate }}:</strong> {{ verificationRequest.requestComment || ('PROFILE.VERIFICATION_REQUEST.NO_COMMENT' | translate) }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.APPROVED_DATE' | translate }}:</strong> {{ verificationRequest.requestReviewDate | date:'dd.MM.yyyy HH:mm' }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.EMPLOYEE_COMMENT' | translate }}:</strong> {{ verificationRequest.denialComment || ('PROFILE.VERIFICATION_REQUEST.NO_COMMENT' | translate) }}</p>
     </div>
   </div>
 
   <!-- Denied Verification User -->
   <div *ngIf="verificationStatus === 0 && verificationRequest !== null">
-    <h4 class="mb-4">Your Verification Request was denied!</h4>
+    <h4 class="mb-4">{{ 'PROFILE.VERIFICATION_REQUEST.DENIED' | translate }}</h4>
 
     <div class="mb-3">
-      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate | date:'dd.MM.yyyy HH:mm' }}</p>
-      <p><strong>Your Comment:</strong> {{ verificationRequest.requestComment || 'No comment provided' }}</p>
-      <p><strong>Denial Date:</strong> {{ verificationRequest.requestReviewDate | date:'dd.MM.yyyy HH:mm' }}</p>
-      <p><strong>Denial Reason:</strong> {{ verificationRequest.denialComment || 'No comment provided' }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.REQUEST_DATE' | translate }}:</strong> {{ verificationRequest.requestDate | date:'dd.MM.yyyy HH:mm' }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.YOUR_COMMENT' | translate }}:</strong> {{ verificationRequest.requestComment || ('PROFILE.VERIFICATION_REQUEST.NO_COMMENT' | translate) }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.DENIAL_DATE' | translate }}:</strong> {{ verificationRequest.requestReviewDate | date:'dd.MM.yyyy HH:mm' }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.DENIAL_REASON' | translate }}:</strong> {{ verificationRequest.denialComment || ('PROFILE.VERIFICATION_REQUEST.NO_COMMENT' | translate) }}</p>
     </div>
   </div>
 
   <!-- Pending Verification User -->
   <div *ngIf="verificationStatus === 2 && verificationRequest !== null">
-    <h4 class="mb-4">Pending Verification Request</h4>
+    <h4 class="mb-4">{{ 'PROFILE.VERIFICATION_REQUEST.PENDING' | translate }}</h4>
 
     <div class="mb-3">
-      <p><strong>Request Date:</strong> {{ verificationRequest.requestDate | date:'dd.MM.yyyy HH:mm' }}</p>
-      <p><strong>Your Comment:</strong> {{ verificationRequest.requestComment || 'No comment provided' }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.REQUEST_DATE' | translate }}:</strong> {{ verificationRequest.requestDate | date:'dd.MM.yyyy HH:mm' }}</p>
+      <p><strong>{{ 'PROFILE.VERIFICATION_REQUEST.YOUR_COMMENT' | translate }}:</strong> {{ verificationRequest.requestComment || ('PROFILE.VERIFICATION_REQUEST.NO_COMMENT' | translate) }}</p>
     </div>
-    <button class="btn btn-primary" (click)="DeleteRequest()">Delete Request</button>
+    <button class="btn btn-primary" (click)="DeleteRequest()">{{ 'PROFILE.VERIFICATION_REQUEST.DELETE_REQUEST' | translate }}</button>
   </div>
 
 </div>

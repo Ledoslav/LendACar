@@ -1,25 +1,28 @@
 <div class="landing-page">
   <img class="vector" src="Vector.png" />
   <div class="side-bar">
-    <div class="menu-item"><img src="Home.svg" alt="Home"> <span>Home</span></div>
-    <div class="menu-item"><img src="Bell.svg" alt="Activity"> <span>Activity</span></div>
-    <div class="menu-item"><img src="Messagesquare.svg" alt="Chats"> <span>Chats</span></div>
+    <div class="menu-item" routerLinkActive="active" routerLink="/public/home" ><img src="Home.svg" alt="Home"> <span>{{'SIDEBAR.HOME' | translate}}</span></div>
+    <div class="menu-item"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
+    <div class="menu-item"><img src="Messagesquare.svg" alt="Chats"> <span>{{'SIDEBAR.CHATS' | translate}}</span></div>
     <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item"><img src="Bookmark.svg" alt="Saved"> <span>Saved</span></div>
-    <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>Reserved</span></div>
+    <div class="menu-item"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
+    <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
     <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item" routerLink="/user/profile/my-vehicles"><img src="Truck.svg" alt="My Vehicles"> <span>My Vehicles</span></div>
+    <div routerLinkActive="active" routerLink="/user/profile/my-vehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
     <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item" routerLink="/company/dashboard"><img src="Plussquare.svg" alt="Create Company"> <span>Create Company</span></div>
+    <div class="menu-item" routerLink="/company/dashboard"><img src="Plussquare.svg" alt="Create Company"> <span>{{'SIDEBAR.CREATE_COMPANY' | translate}}</span></div>
   </div>
 
   <div class="content">
     <div class="nav-bar">
-      <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
+      <div class="nav-left">
+        <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
+        <language-selector></language-selector>
+      </div>
       @if (!isAppUser){
         <div class="right-section" style="cursor: pointer;">
-          <a routerLink="/user/login" style="margin-right: 5px; text-decoration: none; font-weight: 500" >Login</a>
-          <a routerLink="/user/register" style="margin-left: 5px; text-decoration: none;font-weight: 500">Register</a>
+          <a routerLink="/user/login" style="margin-right: 5px; text-decoration: none; font-weight: 500" >{{ "NAVBAR.LOGIN" | translate }}</a>
+          <a routerLink="/user/register" style="margin-left: 5px; text-decoration: none;font-weight: 500">{{ "NAVBAR.REGISTER" | translate }}</a>
         </div>
       } @else {
         <div class="right-section" routerLink="/user/profile" style="cursor: pointer;">

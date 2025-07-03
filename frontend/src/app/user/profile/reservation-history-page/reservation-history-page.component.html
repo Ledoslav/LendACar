@@ -1,11 +1,11 @@
-<h2 class="mb-2 text-center">Reservation History</h2>
+<h2 class="mb-2 text-center">{{ 'PROFILE.RESERVATION_HISTORY.TITLE' | translate }}</h2>
 <hr>
 <div class="container">
   <div class="card shadow-sm" style="width: 100%; max-width: 800px; height: auto;">
     <div class="card-body">
       <!-- Owner and Location -->
       <div class="d-flex justify-content-between align-items-center mb-1">
-        <p class="card-text mb-0"><strong>Owner:</strong> Edin Tabak</p>
+        <p class="card-text mb-0"><strong>{{ 'PROFILE.RESERVATION_HISTORY.OWNER' | translate }}:</strong> Edin Tabak</p>
         <p class="card-text mb-0">Sarajevo, BIH</p>
       </div>
       <hr style="border:1px solid black; margin-top:5px;">
@@ -20,16 +20,16 @@
         <!-- Second Column: Vehicle Name, Pick-up Location, Status -->
         <div class="col-md-4">
           <h5 class="card-title mb-3">VOLKSWAGEN GOLF 1.2 TSI</h5>
-          <p class="card-text mb-1"><strong>Pick-up Location:</strong> Sarajevo Airport</p>
+          <p class="card-text mb-1"><strong>{{ 'PROFILE.RESERVATION_HISTORY.PICKUP_LOCATION' | translate }}:</strong> Sarajevo Airport</p>
           <p class="card-text mb-1">14/5/2024 - 21/5/2024</p>
-          <p class="card-text mb-0"><strong>Payment Method:</strong> Card</p>
-          <p class="card-text mb-0"><strong>Total:</strong> $140</p>
-          <p class="card-text mb-0"><strong>Status:</strong> Finished</p>
+          <p class="card-text mb-0"><strong>{{ 'PROFILE.RESERVATION_HISTORY.PAYMENT_METHOD' | translate }}:</strong> Card</p>
+          <p class="card-text mb-0"><strong>{{ 'PROFILE.RESERVATION_HISTORY.TOTAL' | translate }}:</strong> $140</p>
+          <p class="card-text mb-0"><strong>{{ 'PROFILE.RESERVATION_HISTORY.STATUS' | translate }}:</strong> {{ 'PROFILE.RESERVATION_HISTORY.FINISHED' | translate }}</p>
         </div>
 
         <!-- Third Column: Total, Payment Method, and View Details Button -->
         <div class="col-md-4 d-flex flex-column justify-content-center">
-          <button class="btn view-details">View Details</button>
+          <button class="btn view-details">{{ 'PROFILE.RESERVATION_HISTORY.VIEW_DETAILS' | translate }}</button>
         </div>
       </div>
     </div>

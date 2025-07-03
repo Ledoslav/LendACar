@@ -1,0 +1,5 @@
+<div class="col-auto">
+  <select class="form-select" style="border: none" id="language-select" (change)="changeLanguage($event)" [value]="'en'">
+    <option *ngFor="let language of languages" value="{{language.code}}">{{language.label}}</option>
+  </select>
+</div>

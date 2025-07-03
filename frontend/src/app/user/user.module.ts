@@ -32,7 +32,9 @@ import {ImageCropperComponent} from 'ngx-image-cropper';
 import { VerificationRequestPageComponent } from './profile/verification-request-page/verification-request-page.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-
+import {TranslatePipe} from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
+import {LanguageSelectorComponent} from './language-selector/language-selector.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +54,10 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
     CloseAccountPageComponent,
     VerificationRequestPageComponent,
     NavbarComponent,
+    LanguageSelectorComponent
+  ],
+  exports: [
+    LanguageSelectorComponent
   ],
   imports: [
     CommonModule,
@@ -80,7 +86,8 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
     FileUploadModule,
     ImageCropperComponent,
     MatProgressSpinner,
-
+    TranslatePipe,
+    TranslateModule,
   ]
 })
 export class UserModule { }

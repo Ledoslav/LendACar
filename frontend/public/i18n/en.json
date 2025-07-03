@@ -1,0 +1,121 @@
+{
+  "PROFILE": {
+    "SIDEBAR": {
+      "PROFILE": "Profile",
+      "PHOTO": "Photo",
+      "ACCOUNT_SECURITY": "Account Security",
+      "VERIFICATION_REQUEST": "Verification Request",
+      "MY_VEHICLES": "My Vehicles",
+      "RESERVATION_HISTORY": "Reservation History",
+      "CLOSE_ACCOUNT": "Close account",
+      "LOGOUT": "Log out"
+    },
+    "PHOTO": {
+      "PHOTO": "Photo",
+      "UPLOAD_TITLE": "Upload Profile Picture",
+      "DRAG_DROP": "Drag & drop an image here or click to browse.",
+      "CHOOSE_FILE": "Choose File",
+      "EDIT_TITLE": "Edit Profile Picture",
+      "CHANGE": "Change",
+      "REMOVE": "Remove",
+      "UPLOAD": "Upload",
+      "CANCEL": "Cancel"
+    },
+    "MY_VEHICLES": {
+      "TITLE": "My Vehicles"
+    },
+    "ACCOUNT_SECURITY": {
+      "TITLE": "Account Security",
+      "CHANGE_PASSWORD": "Change password",
+      "CURRENT_PASSWORD": "Current password *",
+      "NEW_PASSWORD": "New password *",
+      "CONFIRM_PASSWORD": "Confirm password *",
+      "SHOW_PASSWORD": "Show password",
+      "PASSWORD_REQUIRED": "Password required",
+      "PASSWORD_MIN": "Password must be at least 6 characters.",
+      "PASSWORD_MAX": "Password cannot exceed 100 characters.",
+      "PASSWORDS_DONT_MATCH": "Passwords don't match",
+      "CHANGE_PASSWORD_BTN": "Change password",
+      "SECURITY_QUESTION_TITLE": "Security Question",
+      "CHANGE_QUESTION": "Change question",
+      "REMOVE_QUESTION": "Remove question",
+      "ADD_QUESTION": "Add question",
+      "QUESTION": "Security Questions*",
+      "QUESTION_ANSWER": "Question Answer*",
+      "CURRENT_PASSWORD_QUESTION": "Current password*",
+      "QUESTION_HINT": "*If you want to remove or change the question you need to enter the fields correct*",
+      "QUESTION1": "What is your mother's maiden name?",
+      "QUESTION2": "What is your childhood nickname?",
+      "QUESTION3": "What is the name of your best friend from childhood?",
+      "QUESTION4": "What was the first video game you played?",
+      "QUESTION5": "What is the name of your favorite childhood toy?",
+      "QUESTION6": "Who was your first celebrity crush?",
+      "QUESTION7": "What is the name of your favorite teacher from school?",
+      "QUESTION8": "Where did you go on your first vacation?"
+    },
+    "VERIFICATION_REQUEST": {
+      "TITLE": "Verification Request",
+      "SUBMIT_TITLE": "Submit Verification Request",
+      "COMMENT": "Comment",
+      "SUBMIT": "Submit",
+      "VERIFIED": "You are Verified!",
+      "REQUEST_DATE": "Request Date",
+      "YOUR_COMMENT": "Your Comment",
+      "APPROVED_DATE": "Approved Date",
+      "EMPLOYEE_COMMENT": "Comment from employee",
+      "NO_COMMENT": "No comment provided",
+      "DENIED": "Your Verification Request was denied!",
+      "DENIAL_DATE": "Denial Date",
+      "DENIAL_REASON": "Denial Reason",
+      "PENDING": "Pending Verification Request",
+      "DELETE_REQUEST": "Delete Request"
+    },
+    "RESERVATION_HISTORY": {
+      "TITLE": "Reservation History",
+      "OWNER": "Owner",
+      "LOCATION": "Location",
+      "PICKUP_LOCATION": "Pick-up Location",
+      "PAYMENT_METHOD": "Payment Method",
+      "TOTAL": "Total",
+      "STATUS": "Status",
+      "VIEW_DETAILS": "View Details",
+      "FINISHED": "Finished"
+    },
+    "PROFILE_PAGE": {
+      "TITLE": "Profile",
+      "FIRST_NAME": "First Name*",
+      "LAST_NAME": "Last Name*",
+      "EMAIL": "Email*",
+      "PHONE": "Phone*",
+      "BIRTH_DATE": "Birth date*",
+      "COUNTRY": "Country*",
+      "CITY": "City*",
+      "SAVE_CHANGES": "Save changes"
+    },
+    "CLOSE_ACCOUNT": {
+      "TITLE": "Close Account",
+      "CONFIRM_QUESTION": "Are you sure you want to close your account? This action is permanent and cannot be undone.",
+      "WARNING_1": "* You will lose access to all your data, settings, and services.",
+      "WARNING_2": "* Any saved preferences, reservations, or linked accounts will be removed.",
+      "WARNING_3": "* This process cannot be reversed once completed.",
+      "SUPPORT": "If you wish to proceed, please confirm your decision. If you have any concerns, consider reaching out to our support team for assistance",
+      "CLOSE_BTN": "Close account"
+    }
+  },
+
+  "SIDEBAR": {
+    "HOME": "Home",
+    "ACTIVITY": "Activity",
+    "CHATS": "Chats",
+    "SAVED": "Saved",
+    "RESERVED": "Reserved",
+    "MY_VEHICLES": "My Vehicles",
+    "CREATE_COMPANY": "Create Company"
+  },
+
+  "NAVBAR": {
+    "REGISTER":"Register",
+    "LOGIN":"Login"
+  }
+
+}
