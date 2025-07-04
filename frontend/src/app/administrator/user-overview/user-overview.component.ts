@@ -24,7 +24,6 @@ export class UserOverviewComponent  implements OnInit {
   private snackBarService=inject(MySnackbarService)
   showCityField: boolean=false;
   ngOnInit(): void {
-      this.initSearchListener();
       this.filterUsers();
       this.loadCities();
       this.loadCountries();
@@ -36,9 +35,18 @@ export class UserOverviewComponent  implements OnInit {
       } else {
         this.showCityField = true;
         this.userSearchForm.get('cityId')?.enable();
-
       }
     });
+
+    this.userSearchForm.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe(() => {
+        if(!this.userSearchForm.invalid)
+          this.filterUsers();
+      });
   }
   fb=inject(FormBuilder);
   userService=inject(UserService)
@@ -56,15 +64,6 @@ export class UserOverviewComponent  implements OnInit {
   pageNumber:number=1;
   pageSize:number=5;
 
-
-  initSearchListener(): void {
-    this.searchSubject.pipe(
-      debounceTime(500),
-      distinctUntilChanged(),
-    ).subscribe((filterValue) => {
-      this.filterUsers();
-    });
-  }
 
   loadCities(){
     this.cityService.GetAllCities().subscribe(res=>{
@@ -118,16 +117,6 @@ export class UserOverviewComponent  implements OnInit {
     this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
   }
 
-  onNameUsernameSearch(){
-    const searchValue = this.userSearchForm.get('name')?.value || '';
-    if(this.userSearchForm.value.countryId==0) this.userSearchForm.value.countryId=undefined;
-    if(this.userSearchForm.value.countryId==0 && this.userSearchForm.value.cityId!=undefined)
-      this.userSearchForm.value.cityId=undefined;
-
-    if (searchValue.trim().length > 0) {
-      this.searchSubject.next(searchValue);
-    }
-  }
 
   filterUsers(): void {
     if(this.userSearchForm.value.countryId==0 && this.userSearchForm.value.cityId!=undefined)
@@ -141,6 +130,7 @@ export class UserOverviewComponent  implements OnInit {
             dataItems: res.body as UserDto[],
             pagination: JSON.parse(res.headers.get('Pagination')!)
           };
+          console.log(this.users);
         },
         error: (err) => console.log(err),
       });

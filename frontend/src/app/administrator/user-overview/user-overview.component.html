@@ -2,17 +2,15 @@
   <h2 class="text-center pt-3">User Information</h2>
   <div class="bg-image h-100">
     <div class="mask d-flex align-items-center h-100">
-      <div class="container-fluid px-5">
+      <div class="container-fluid px-5 mt-4">
         <div class="row justify-content-center">
           <div class="col-12">
             <form [formGroup]="userSearchForm" (ngSubmit)="filterUsers()">
-              <div class="row mb-3">
-                <div class="col-3">
-                  <input class="form-control" (keyup)="onNameUsernameSearch()" formControlName="name" placeholder="Name / Username">
-                </div>
-              </div>
               <div class="container-fluid p-3 border rounded mb-3">
                 <div class="row align-items-center g-3">
+                  <div class="col-2">
+                    <input class="form-control" formControlName="name" placeholder="Name / Username">
+                  </div>
                   <div class="col-2">
                     <input class="form-control" formControlName="ageFrom" type="number" min="0" max="100" placeholder="Age from">
                   </div>
@@ -35,7 +33,6 @@
                     </select>
                   </div>
                   <div class="col-auto ms-auto">
-                    <button class="btn btn-primary" type="submit"  [disabled]="userSearchForm.invalid">Search</button>
                     <button class="btn btn-secondary mx-2" type="button" (click)="resetForm()">Clear filters</button>
                   </div>
                 </div>
@@ -88,6 +85,7 @@
             </div>
           </div>
         </div>
+        <h1 class="d-flex justify-content-center mt-5" *ngIf="users.pagination?.totalCount!<=0" >No results</h1>
         <div *ngIf="users.pagination && users.pagination.totalCount>pageSize" class="d-flex justify-content-center mt-3">
           <pagination
             [boundaryLinks]="true"
