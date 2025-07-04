@@ -10,6 +10,7 @@ import {Country} from '../../Models/Country';
 import {PaginatedResult} from '../../Models/Pagination';
 import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog-confirm.component';
 import {MatDialog} from '@angular/material/dialog';
+import {debounceTime, distinctUntilChanged} from 'rxjs';
 
 
 @Component({
@@ -53,6 +54,16 @@ export class AdminEmployeeOverviewComponent implements OnInit {
 
       }
     });
+
+    this.employeeSearchForm.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(()=>{
+      if(!this.employeeSearchForm.invalid)
+        this.filterEmployees();
+    })
+
+
   }
 
   loadEmployees() {
@@ -87,10 +98,10 @@ export class AdminEmployeeOverviewComponent implements OnInit {
   }
 
   employeeSearchForm = this.fb.group({
-    name: ['', [Validators.maxLength(50), Validators.pattern(/^[\w\s\-]+$/)]],
+    name: ['', [Validators.minLength(2),Validators.maxLength(50), Validators.pattern(/^[\w\s\-]+$/)]],
     cityId: [undefined],
     countryId: 0,
-    jobTitle: ['', [Validators.maxLength(50), Validators.pattern(/^[\w\s\-]+$/)]],
+    jobTitle: ['', [Validators.minLength(2),Validators.maxLength(50), Validators.pattern(/^[\w\s\-]+$/)]],
     ageFrom: [undefined],
     ageTo: [undefined]
   })

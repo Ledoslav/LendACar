@@ -2,7 +2,7 @@
   <h2 class="text-center pt-3">Employee Information</h2>
   <div class="bg-image h-100" >
     <div class="mask d-flex align-items-center h-100">
-      <div class="container-fluid px-5">
+      <div class="container-fluid px-5 mt-4">
         <div class="row justify-content-center">
           <div class="col-12">
             <form [formGroup]="employeeSearchForm" (ngSubmit)="onSearch()">
@@ -12,13 +12,12 @@
                     <input class="form-control" formControlName="name" placeholder="Name">
                   </div>
                   <div class="text-danger" *ngIf="employeeSearchForm.get('name')?.touched && employeeSearchForm.get('name')?.invalid">
-                    <small *ngIf="employeeSearchForm.get('name')?.errors?.['maxlength']">Max 50 characters allowed.</small>
-                    <small *ngIf="employeeSearchForm.get('name')?.errors?.['pattern']">Only letters, numbers, spaces, and - allowed.</small>
+
                   </div>
                   <div class="col-2">
                     <input class="form-control" formControlName="ageFrom" type="number" placeholder="Age from" min="0" max="100">
                   </div>
-                  <div class="col-1">
+                  <div class="col-2">
                     <input class="form-control"  formControlName="ageTo" type="number" placeholder="Age to" min="0" max="100">
                   </div>
                   <div *ngIf="showCityField" class="col-auto">
@@ -35,11 +34,9 @@
                     <input class="form-control" type="text" formControlName="jobTitle" placeholder="Job title" maxlength="50">
                   </div>
                   <div class="text-danger" *ngIf="employeeSearchForm.get('jobTitle')?.touched && employeeSearchForm.get('jobTitle')?.invalid">
-                    <small *ngIf="employeeSearchForm.get('jobTitle')?.errors?.['maxlength']">Max 50 characters allowed.</small>
-                    <small *ngIf="employeeSearchForm.get('jobTitle')?.errors?.['pattern']">Only letters, numbers, spaces, and - allowed.</small>
+
                   </div>
                   <div class="col-auto">
-                    <button class="btn btn-primary" type="submit" [disabled]="employeeSearchForm.invalid">Search</button>
                     <button class="btn btn-secondary mx-2" type="button" (click)="resetForm()">Clear filters</button>
                   </div>
                 </div>
@@ -87,6 +84,7 @@
             </div>
           </div>
         </div>
+        <h1 class="d-flex justify-content-center mt-5" *ngIf="employees.pagination?.totalCount!<=0" >No results</h1>
         <div class="d-flex align-items-center mt-3">
           <button class="btn btn-outline-light btn-secondary me-auto" routerLink="/admin/register">
             Add employee
