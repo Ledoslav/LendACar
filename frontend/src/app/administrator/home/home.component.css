@@ -11,3 +11,70 @@ body {
 footer {
   margin-top: auto;
 }
+
+
+.app-users-card {
+  width: 270px;
+height: 180px;
+display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 8px;
+background-color: #333A40;
+
+.app-users-card-header {
+  margin-bottom: 10px;
+}
+
+  .app-users-icon {
+    width: 60px;
+    height: 60px;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+      width: 60px;
+      height: 60px;
+      fill: #1ABC9C;
+    }
+
+    /* Make mat-icon larger */
+    .mat-icon {
+      width: 50px !important;
+      height: 50px !important;
+      font-size: 50px !important;
+      line-height: 50px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .app-users-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+  .app-users-label {
+    font-size: 1.5em;
+  font-weight: normal;
+  color: white;
+  margin-bottom: 10px;
+  }
+
+    .app-users-count {
+      font-size: 2.5em;
+    font-weight: 500;
+      color: white;
+    margin: 0;
+    }
+  }
+}

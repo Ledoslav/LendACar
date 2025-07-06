@@ -5,30 +5,53 @@
     <!-- Main Dashboard -->
     <main class="col-12">
       <!-- Notifications and Calendar -->
-      <div class="row">
-        <!-- Notifications Panel -->
-        <div class="col-lg-6 mb-4">
-          <div class="card">
-            <div class="card-header">Notifications</div>
-            <div class="card-body">
-              <ul class="list-group">
-                <li class="list-group-item">Car #123 needs servicing.</li>
-                <li class="list-group-item">Booking #456 is overdue.</li>
-                <li class="list-group-item">New customer inquiry received.</li>
-              </ul>
+      <div class="d-flex justify-content-evenly mt-3">
+
+        <mat-card class="app-users-card">
+          <mat-card-header class="app-users-card-header">
+            <div mat-card-avatar class="app-users-icon">
+              <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="groups"></mat-icon>
             </div>
-          </div>
-        </div>
+          </mat-card-header>
+          <mat-card-content class="app-users-card-content">
+            <p class="app-users-label">App users:</p>
+            <p class="app-users-count">{{dashboardData.userCount}}</p>
+          </mat-card-content>
+        </mat-card>
+
+          <mat-card class="app-users-card">
+            <mat-card-header class="app-users-card-header">
+              <div mat-card-avatar class="app-users-icon">
+                <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="directions_car"></mat-icon>
+              </div>
+            </mat-card-header>
+            <mat-card-content class="app-users-card-content">
+              <p class="app-users-label">Vehicles:</p>
+              <p class="app-users-count">{{ dashboardData.vehicleCount }}</p>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="app-users-card">
+            <mat-card-header class="app-users-card-header">
+              <div mat-card-avatar class="app-users-icon">
+                <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="business_center"></mat-icon>
+              </div>
+            </mat-card-header>
+            <mat-card-content class="app-users-card-content">
+              <p class="app-users-label">Employees:</p>
+              <p class="app-users-count">{{ dashboardData.employeeCount }}</p>
+            </mat-card-content>
+          </mat-card>
 
         <!-- Calendar/Schedule -->
-        <div class="col-lg-6 mb-4">
-          <div class="card">
-            <div class="card-header">Calendar / Schedule</div>
-            <div class="card-body">
-              <p>Upcoming events and schedule will be shown here.</p>
-            </div>
-          </div>
-        </div>
+<!--        <div class="col-lg-6 mb-4">-->
+<!--          <div class="card">-->
+<!--            <div class="card-header">Calendar / Schedule</div>-->
+<!--            <div class="card-body">-->
+<!--              <p>Upcoming events and schedule will be shown here.</p>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
     </main>
   </div>

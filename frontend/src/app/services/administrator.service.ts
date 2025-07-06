@@ -56,6 +56,9 @@ export class AdminService {
     );
   }
 
+  GetDashboardData(){
+    return this.http.get<any>(this.baseUrl+`administrator/dashboard`);
+  }
   UpdateUser(model:any){
     return this.http.put<EmployeeDto>(this.baseUrl+`user/update/${model.id}`,model);
   }
@@ -63,4 +66,5 @@ export class AdminService {
   UpdateEmployee(model: any) {
     return this.http.put<EmployeeDto>(this.baseUrl+`employee/update/${model.id}`,model)
   }
+
 }

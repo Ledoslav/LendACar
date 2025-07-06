@@ -3,3 +3,6 @@
   border-left: 4px solid #00bfff; /* highlight bar */
   font-weight: bold;
 }
+.nav-link{
+  font-size:18px
+}
