@@ -5,6 +5,8 @@ using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Security;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -140,6 +142,33 @@ namespace LendACarAPI.Endpoints
         [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult<DashboardTotalCountsDto>> DashBoardData(CancellationToken cancellationToken)
         {
+            var monthNames = new List<string>()
+            {
+               "", "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            };
+
+
+            var userCountsByMonth=await db.Users
+                    .Where(u=>u.CreatedDate.Year == DateOnly.FromDateTime(DateTime.Now).Year)
+                    .GroupBy(u => u.CreatedDate.Month)
+                    .Select(g => new
+                    {
+                        Month = g.Key,
+                        UserCount = g.Count()
+                    })
+                    .ToListAsync(cancellationToken);
+
+
+            var userCountByMonth = Enumerable.Range(1, 12)
+                        .Select(month => new UserCountByMonth
+                        {
+                            MonthName = monthNames[month],
+                            UserCount = userCountsByMonth.FirstOrDefault(x => x.Month == month)?.UserCount ?? 0
+                        })
+                        .ToList();
+
+
             var userCount=await db.Users.CountAsync(cancellationToken);
             var vehicleCount = await db.Vehicles.CountAsync(cancellationToken);
             var employeeCount=await db.Employees.CountAsync(cancellationToken);
@@ -149,7 +178,8 @@ namespace LendACarAPI.Endpoints
             {
                 UserCount = userCount,
                 VehicleCount = vehicleCount,
-                EmployeeCount = employeeCount
+                EmployeeCount = employeeCount,
+                UserCountByMonth = userCountByMonth
             });
         }
 
@@ -160,5 +190,11 @@ namespace LendACarAPI.Endpoints
             && user.EmailAdress.ToLower() == email.ToLower());
         }
 
+    }
+
+    public class UserCountByMonth
+    {
+        public string MonthName { get; set; }
+        public int UserCount { get; set; }
     }
 }
