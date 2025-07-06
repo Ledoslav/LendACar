@@ -4,7 +4,6 @@
   <div class="row">
     <!-- Main Dashboard -->
     <main class="col-12">
-      <!-- Notifications and Calendar -->
       <div class="d-flex justify-content-evenly mt-3">
 
         <mat-card class="app-users-card">
@@ -27,7 +26,7 @@
             </mat-card-header>
             <mat-card-content class="app-users-card-content">
               <p class="app-users-label">Vehicles:</p>
-              <p class="app-users-count">{{ dashboardData.vehicleCount }}</p>
+              <p class="app-users-count">{{ dashboardData.vehicleCount}}</p>
             </mat-card-content>
           </mat-card>
 
@@ -43,17 +42,12 @@
             </mat-card-content>
           </mat-card>
 
-        <!-- Calendar/Schedule -->
-<!--        <div class="col-lg-6 mb-4">-->
-<!--          <div class="card">-->
-<!--            <div class="card-header">Calendar / Schedule</div>-->
-<!--            <div class="card-body">-->
-<!--              <p>Upcoming events and schedule will be shown here.</p>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
       </div>
     </main>
+  </div>
+  <div class="chart-container mx-auto my-4" style="max-width: 700px;">
+    <h3>Number of registered users per month for current year</h3>
+    <canvas id="myLineChart"></canvas>
   </div>
 </div>
 
