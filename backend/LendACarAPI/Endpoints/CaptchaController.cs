@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration;
 
 namespace LendACarAPI.Endpoints
 {
@@ -10,6 +11,12 @@ namespace LendACarAPI.Endpoints
     [ApiController]
     public class CaptchaController : ControllerBase
     {
+        private readonly string _captchaSecretKey;
+        public CaptchaController(IConfiguration config)
+        {
+            _captchaSecretKey = config["CaptchaSecretKey"] ?? throw new Exception("CaptchaSecretKey is missing from configuration.");
+        }
+
         [HttpPost("verify")]
 
         public async Task<ActionResult> VerifyCaptcha([FromBody] CaptchaRequest captchaRequest)
@@ -21,7 +28,7 @@ namespace LendACarAPI.Endpoints
 
             HttpClient client = new HttpClient();
 
-            string? secretKey = Environment.GetEnvironmentVariable("CaptchaSecretKey");
+            string secretKey = _captchaSecretKey;
 
             string verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
 

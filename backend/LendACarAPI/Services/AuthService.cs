@@ -15,7 +15,10 @@ namespace LendACarAPI.Services
 
         public AuthService(IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWTSecretKey")));
+            var jwtSecret = config["JWTSecretKey"];
+            if (string.IsNullOrEmpty(jwtSecret))
+                throw new Exception("JWTSecretKey is missing from configuration.");
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
             _httpContextAccessor = httpContextAccessor;
         }
 

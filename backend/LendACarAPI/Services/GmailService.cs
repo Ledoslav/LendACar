@@ -13,6 +13,8 @@ namespace LendACarAPI.Services
         {
             var from = Environment.GetEnvironmentVariable("From");
 
+            //var   from = config["EmailSettings:SenderEmail"];
+
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(MailboxAddress.Parse(from));
             emailMessage.To.Add(MailboxAddress.Parse(email.To));
@@ -20,11 +22,18 @@ namespace LendACarAPI.Services
             emailMessage.Body=new TextPart(TextFormat.Html) { Text = email.Body };
 
             var smtpServer = Environment.GetEnvironmentVariable("SmtpServer");
-            var username=Environment.GetEnvironmentVariable("Username");
-            var password=Environment.GetEnvironmentVariable("AppPassword");
+            var username = Environment.GetEnvironmentVariable("Username");
+            var password = Environment.GetEnvironmentVariable("AppPassword");
+            var port = int.Parse(Environment.GetEnvironmentVariable("SmtpPort"));
+
+
+            //var   smtpServer = config["EmailSettings:SmtpServer"];
+            //var  username = config["EmailSettings:Username"];
+            //var password = config["EmailSettings:AppPassword"];
+            //var port = config["EmailSettings:SmtpPort"];
 
             using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(smtpServer, 587, SecureSocketOptions.StartTls);
+            await smtp.ConnectAsync(smtpServer, port, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(username, password);
             await smtp.SendAsync(emailMessage);
             await smtp.DisconnectAsync(true);
