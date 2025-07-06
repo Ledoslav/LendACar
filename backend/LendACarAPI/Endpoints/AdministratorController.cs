@@ -15,7 +15,7 @@ namespace LendACarAPI.Endpoints
     public class AdministratorController(ApplicationDbContext db, IAuthService authService) : ControllerBase
     {
         [HttpPost("register")]
-        public async Task<ActionResult<string>> RegisterAdministrator([FromBody] AdministratorRegisterDto registerAdmin)
+        public async Task<ActionResult<string>> RegisterAdministrator([FromBody] AdministratorRegisterDto registerAdmin,CancellationToken cancellationToken)
         {
             var hmac = new HMACSHA256();
 
@@ -36,19 +36,19 @@ namespace LendACarAPI.Endpoints
             };
 
             db.Administrators.Add(newAdmin);
-           await db.SaveChangesAsync();
+           await db.SaveChangesAsync(cancellationToken);
 
             return Created();
         }
 
         [HttpPost("login")]
 
-        public async Task<ActionResult<AdministratorDto>> LoginAdmin([FromBody] AdministratorLoginDto adminLogin)
+        public async Task<ActionResult<AdministratorDto>> LoginAdmin([FromBody] AdministratorLoginDto adminLogin, CancellationToken cancellationToken)
         {
             var admin = await db.Administrators
             .Include(e => e.City)
             .Include(e => e.City != null ? e.City.Country : null)
-            .FirstOrDefaultAsync(e => e.EmailAdress.ToLower() == adminLogin.EmailAddress.ToLower());
+            .FirstOrDefaultAsync(e => e.EmailAdress.ToLower() == adminLogin.EmailAddress.ToLower(),cancellationToken);
 
             if(admin == null)
                 return Unauthorized("Invalid credentials");
@@ -122,17 +122,35 @@ namespace LendACarAPI.Endpoints
 
         [HttpDelete("remove/{id}")]
         [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
-        public async Task<ActionResult<string>> RemoveAdmin(int id)
+        public async Task<ActionResult<string>> RemoveAdmin(int id, CancellationToken cancellationToken)
         {
             var admin = await db.Administrators
-            .FirstOrDefaultAsync(a => a.Id == id);
+            .FirstOrDefaultAsync(a => a.Id == id,cancellationToken);
 
             if (admin == null) return NotFound("Administrator not found");
 
             db.Remove(admin);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(cancellationToken);
 
             return Ok();
+        }
+
+
+        [HttpGet("dashboard")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
+        public async Task<ActionResult<DashboardTotalCountsDto>> DashBoardData(CancellationToken cancellationToken)
+        {
+            var userCount=await db.Users.CountAsync(cancellationToken);
+            var vehicleCount = await db.Vehicles.CountAsync(cancellationToken);
+            var employeeCount=await db.Employees.CountAsync(cancellationToken);
+
+
+            return Ok(new DashboardTotalCountsDto
+            {
+                UserCount = userCount,
+                VehicleCount = vehicleCount,
+                EmployeeCount = employeeCount
+            });
         }
 
 

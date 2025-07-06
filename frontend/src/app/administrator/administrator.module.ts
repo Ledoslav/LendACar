@@ -30,6 +30,8 @@ import {
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
 import { SharedModule } from '../shared/shared.module';
+import {MatCard, MatCardContent, MatCardHeader} from "@angular/material/card";
+import {MatIcon} from '@angular/material/icon';
 
 
 @NgModule({
@@ -63,6 +65,10 @@ import { SharedModule } from '../shared/shared.module';
     MatDatepickerModule,
     MatNativeDateModule, // Ensures the DateAdapter is provided
     MatInputModule,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    MatIcon,
   ]
 })
 export class AdministratorModule { }
