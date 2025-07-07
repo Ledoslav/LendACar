@@ -35,6 +35,8 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {TranslatePipe} from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {LanguageSelectorComponent} from './language-selector/language-selector.component';
+import {MatIcon} from "@angular/material/icon";
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -59,35 +61,37 @@ import {LanguageSelectorComponent} from './language-selector/language-selector.c
   exports: [
     LanguageSelectorComponent
   ],
-  imports: [
-    CommonModule,
-    UserRoutingModule,
-    FormsModule,
-    MatStep,
-    MatLabel,
-    MatFormField,
-    MatStepper,
-    ReactiveFormsModule,
-    MatStepperNext,
-    MatError,
-    MatStepperPrevious,
-    NgxCaptchaModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatStepperModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    NgOptimizedImage,
-    FileUploadModule,
-    ImageCropperComponent,
-    MatProgressSpinner,
-    TranslatePipe,
-    TranslateModule,
-  ]
+    imports: [
+        CommonModule,
+        UserRoutingModule,
+        FormsModule,
+        MatStep,
+        MatLabel,
+        MatFormField,
+        MatStepper,
+        ReactiveFormsModule,
+        MatStepperNext,
+        MatError,
+        MatStepperPrevious,
+        NgxCaptchaModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatStepperModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatDatepicker,
+        MatDatepickerInput,
+        MatDatepickerToggle,
+        NgOptimizedImage,
+        FileUploadModule,
+        ImageCropperComponent,
+        MatProgressSpinner,
+        TranslatePipe,
+        TranslateModule,
+        MatIcon,
+        MatNativeDateModule
+    ]
 })
 export class UserModule { }

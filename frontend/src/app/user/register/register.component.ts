@@ -138,9 +138,16 @@ showJustCaptcha=false
       ...this.securityQuestion.value
     };
 
+    // Format birthDate to yyyy-MM-dd if it exists
+    if (this.model.birthDate) {
+      const date = new Date(this.model.birthDate);
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      this.model.birthDate = `${yyyy}-${mm}-${dd}`;
+    }
 
     this.model.securityQuestionId=null;
-
 
     this.accountService.Register(this.model).subscribe({
       next: result =>{
@@ -153,8 +160,9 @@ showJustCaptcha=false
 
 
   FilterCities($event:any) {
-    let countryId=$event.target.value;
-      this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
+    console.log(this.address.get('countryId')?.value);
+    let countryId=this.address.get('countryId')?.value
+    this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
   }
 
   handleSuccess(token: string) {
@@ -173,10 +181,16 @@ showJustCaptcha=false
 
 
   onStepChange(event: StepperSelectionEvent) {
-    // If moving back to Step 1, reset its form
+
+    if (event.selectedIndex === 4) {
+      this.showQuestions = true;
+      this.showJustCaptcha = false;
+      this.isSelectSecurityQuestionShown = false;
+    }
+
     if (event.previouslySelectedIndex > event.selectedIndex) {
       if (event.selectedIndex === 3) {
-       this.showQuestions=false;
+        this.showQuestions = false;
       }
     }
   }
