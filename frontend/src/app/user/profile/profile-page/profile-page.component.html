@@ -2,48 +2,48 @@
 <hr>
 <form [formGroup]="userEditForm" (ngSubmit)="UpdateProfile()" class="d-flex flex-column align-items-center">
 
-  <div class="form-group my-2 w-75">
-    <label for="firstName">{{ 'PROFILE.PROFILE_PAGE.FIRST_NAME' | translate }}</label>
-    <input formControlName="firstName" id="firstName" type="text" class="form-control small-input">
-  </div>
+  <mat-form-field appearance="outline" class="my-2 w-75">
+    <mat-label>{{ 'PROFILE.PROFILE_PAGE.FIRST_NAME' | translate }}</mat-label>
+    <input matInput formControlName="firstName" id="firstName" type="text">
+  </mat-form-field>
 
-  <div class="form-group m-2 w-75">
-    <label for="lastName">{{ 'PROFILE.PROFILE_PAGE.LAST_NAME' | translate }}</label>
-    <input formControlName="lastName" id="lastName" type="text" class="form-control small-input">
-  </div>
+  <mat-form-field appearance="outline" class="m-2 w-75">
+    <mat-label>{{ 'PROFILE.PROFILE_PAGE.LAST_NAME' | translate }}</mat-label>
+    <input matInput formControlName="lastName" id="lastName" type="text">
+  </mat-form-field>
 
-  <div class="form-group mb-2 w-75">
-    <label for="email">{{ 'PROFILE.PROFILE_PAGE.EMAIL' | translate }}</label>
-    <input formControlName="emailAddress" id="email" type="email" class="form-control small-input">
-  </div>
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.PROFILE_PAGE.EMAIL' | translate }}</mat-label>
+    <input matInput formControlName="emailAddress" id="email" type="email">
+  </mat-form-field>
 
-  <div class="form-group mb-2 w-75">
-    <label for="phone">{{ 'PROFILE.PROFILE_PAGE.PHONE' | translate }}</label>
-    <input formControlName="phoneNumber" id="phone" type="text" class="form-control small-input">
-  </div>
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.PROFILE_PAGE.PHONE' | translate }}</mat-label>
+    <input matInput formControlName="phoneNumber" id="phone" type="text">
+  </mat-form-field>
 
-  <div class="form-group mb-2 w-75">
-    <label for="address">{{ 'PROFILE.PROFILE_PAGE.BIRTH_DATE' | translate }}</label>
-    <input formControlName="birthDate" id="address" type="text" class="form-control disabled-small-input" readonly>
-  </div>
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.PROFILE_PAGE.BIRTH_DATE' | translate }}</mat-label>
+    <input matInput formControlName="birthDate" id="address" type="text" readonly>
+  </mat-form-field>
 
-  <div class="form-group mb-2 w-75">
-    <label for="country">{{ 'PROFILE.PROFILE_PAGE.COUNTRY' | translate }}</label>
-    <select class="form-select"  aria-label="Default select example" formControlName="countryId" >
-      <option *ngFor="let country of countries"   id="country" value="{{country.id}}">{{country.name}}</option>
-    </select>
-  </div>
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.PROFILE_PAGE.COUNTRY' | translate }}</mat-label>
+    <mat-select formControlName="countryId">
+      <mat-option *ngFor="let country of countries" [value]="country.id">{{country.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-  <div class="form-group mb-2 w-75">
-    <label for="country">{{ 'PROFILE.PROFILE_PAGE.CITY' | translate }}</label>
-    <select class="form-select"  aria-label="Default select example" formControlName="cityId" >
-      <option *ngFor="let city of filteredCities"  id="city" value="{{city.id}}">{{city.name}}</option>
-    </select>
-  </div>
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.PROFILE_PAGE.CITY' | translate }}</mat-label>
+    <mat-select formControlName="cityId">
+      <mat-option *ngFor="let city of filteredCities" [value]="city.id">{{city.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
   <!-- Button aligned to the end -->
   <div class="w-75 d-flex justify-content-end">
-    <button type="submit" class="btn mt-2 p-2"
+    <button type="submit"  class=" btn mt-2 p-2"
             style="border-radius: 30px;background-color: #ffffff; color: black" [disabled]="userEditForm.invalid" >{{ 'PROFILE.PROFILE_PAGE.SAVE_CHANGES' | translate }}</button>
   </div>
 </form>
