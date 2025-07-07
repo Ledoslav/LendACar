@@ -135,6 +135,11 @@ export class AdminUserUpdateComponent implements OnInit {
   UpdateUser() {
     let userObject={...this.userEditForm.value};
     userObject.id=this.user.id;
+
+    if (userObject.birthDate) {
+      userObject.birthDate=userObject.birthDate.toISOString().split('T')[0];
+    }
+
     this.adminService.UpdateUser(userObject).subscribe({
       next:result => {
         this.snackBarService.showSuccessMessage("User Updated Successfully");

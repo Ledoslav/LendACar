@@ -1,73 +1,75 @@
-<div class="container mt-4">
+<div style="max-width: 600px; margin: 32px auto;">
   <h2 class="text-center mb-2">User Update</h2>
   <form [formGroup]="userEditForm">
-
-    <div class="form-group mb-2">
-      <label for="firstName">First Name</label>
-      <input type="text" id="firstName" class="form-control" formControlName="firstName" />
-      <mat-error *ngIf="userEditForm.get('firstName')?.invalid && userEditForm.get('firstName')?.touched" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>First Name</mat-label>
+      <input matInput id="firstName" formControlName="firstName" />
+      <mat-error *ngIf="userEditForm.get('firstName')?.invalid && userEditForm.get('firstName')?.touched">
         First name required
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="lastName">Last Name</label>
-      <input type="text" id="lastName" class="form-control" formControlName="lastName"  />
-      <mat-error *ngIf="userEditForm.get('lastName')?.invalid && userEditForm.get('lastName')?.touched" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Last Name</mat-label>
+      <input matInput id="lastName" formControlName="lastName" />
+      <mat-error *ngIf="userEditForm.get('lastName')?.invalid && userEditForm.get('lastName')?.touched">
         Last name required
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="email">Email</label>
-      <input type="email" id="email" class="form-control" formControlName="emailAddress" />
-      <mat-error *ngIf="userEditForm.get('emailAddress')?.invalid && userEditForm.get('emailAddress')?.touched" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" id="email" formControlName="emailAddress" />
+      <mat-error *ngIf="userEditForm.get('emailAddress')?.invalid && userEditForm.get('emailAddress')?.touched">
         Email required
       </mat-error>
-    </div>
-    <div class="form-group mb-2">
-      <label for="username">Username</label>
-      <input type="text" id="username" class="form-control" formControlName="username" />
-      <mat-error *ngIf="userEditForm.get('username')?.invalid && userEditForm.get('username')?.touched" style="color: red">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Username</mat-label>
+      <input matInput id="username" formControlName="username" />
+      <mat-error *ngIf="userEditForm.get('username')?.invalid && userEditForm.get('username')?.touched">
         Username required
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="phone">Phone</label>
-      <input type="text" id="phone" class="form-control" formControlName="phoneNumber" />
-      <mat-error *ngIf="userEditForm.get('phoneNumber')?.invalid && userEditForm.get('phoneNumber')?.touched" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Phone</mat-label>
+      <input matInput id="phone" formControlName="phoneNumber" />
+      <mat-error *ngIf="userEditForm.get('phoneNumber')?.invalid && userEditForm.get('phoneNumber')?.touched">
         Phone number required
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="birthDate">Birth Date</label>
-      <input type="date"  id="birthDate" class="form-control" formControlName="birthDate"/>
-      <mat-error *ngIf="userEditForm.get('birthDate')?.invalid && userEditForm.get('birthDate')?.touched" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Birth Date</mat-label>
+      <input matInput [matDatepicker]="birthDatePicker" id="birthDate" formControlName="birthDate" />
+      <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #birthDatePicker></mat-datepicker>
+      <mat-error *ngIf="userEditForm.get('birthDate')?.invalid && userEditForm.get('birthDate')?.touched">
         Birth date required
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="country">Country</label>
-      <select  class="form-select" (change)="FilterCities($event,undefined)" aria-label="Default select example" formControlName="countryId" >
-        <option *ngFor="let country of countries"   id="country" value="{{country.id}}">{{country.name}}</option>
-      </select>
-      <mat-error *ngIf="userEditForm.get('countryId')?.invalid && userEditForm.get('countryId')?.touched" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Country</mat-label>
+      <mat-select formControlName="countryId" (selectionChange)="FilterCities($event,undefined)">
+        <mat-option *ngFor="let country of countries" [value]="country.id">{{country.name}}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="userEditForm.get('countryId')?.invalid && userEditForm.get('countryId')?.touched">
         Country required
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="city">City</label>
-      <select  class="form-select" aria-label="Default select example" formControlName="cityId" >
-          <option *ngFor="let city of filteredCities"  id="city" value="{{city.id}}">{{city.name}}</option>
-      </select>
-      <mat-error *ngIf="userEditForm.get('cityId')?.invalid && userEditForm.get('cityId')?.touched" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>City</mat-label>
+      <mat-select formControlName="cityId">
+        <mat-option *ngFor="let city of filteredCities" [value]="city.id">{{city.name}}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="userEditForm.get('cityId')?.invalid && userEditForm.get('cityId')?.touched">
         City required
       </mat-error>
-    </div>
+    </mat-form-field>
 
     <div class="form-group mb-2">
       <label for="isVerified">Verified</label>
