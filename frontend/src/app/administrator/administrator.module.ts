@@ -27,11 +27,12 @@ import {
   MatDatepickerModule,
   MatDatepickerToggle
 } from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material/core';
+import {MatNativeDateModule, MatOption} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
 import { SharedModule } from '../shared/shared.module';
 import {MatCard, MatCardContent, MatCardHeader} from "@angular/material/card";
 import {MatIcon} from '@angular/material/icon';
+import {MatSelect} from "@angular/material/select";
 
 
 @NgModule({
@@ -69,6 +70,8 @@ import {MatIcon} from '@angular/material/icon';
     MatCardHeader,
     MatCardContent,
     MatIcon,
+    MatSelect,
+    MatOption,
   ]
 })
 export class AdministratorModule { }
