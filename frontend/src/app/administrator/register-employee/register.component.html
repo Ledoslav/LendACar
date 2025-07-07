@@ -1,107 +1,108 @@
-<div class="container mt-4">
-  <h2 *ngIf="!editMode" class="text-center mb-2">Employee Registration</h2>
-  <h2 *ngIf="editMode" class="text-center mb-2">Edit Employee</h2>
+<div style="max-width: 600px; margin: 32px auto;">
+  <h2 *ngIf="!editMode" class="text-center mb-3">Employee Registration</h2>
+  <h2 *ngIf="editMode" class="text-center mb-3">Edit Employee</h2>
   <form [formGroup]="employeeForm" (ngSubmit)="register(employeeForm)">
 
-    <div class="form-group mb-2">
-      <label for="firstName">First Name</label>
-      <input type="text" id="firstName" class="form-control" name="firstName"  formControlName="firstName"   />
-      <mat-error *ngIf="employeeForm.get('firstName')?.touched && employeeForm.get('firstName')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>First Name</mat-label>
+      <input matInput id="firstName" name="firstName" formControlName="firstName" />
+      <mat-error *ngIf="employeeForm.get('firstName')?.touched && employeeForm.get('firstName')?.invalid">
         <small *ngIf="employeeForm.get('firstName')?.errors?.['required']">First name is required.</small>
         <small *ngIf="employeeForm.get('firstName')?.errors?.['minlength']">First name must be at least 2 characters.</small>
         <small *ngIf="employeeForm.get('firstName')?.errors?.['maxlength']">First name cannot exceed 50 characters.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="lastName">Last Name</label>
-      <input type="text" id="lastName" class="form-control" name="lastName"  formControlName="lastName"  />
-      <mat-error *ngIf="employeeForm.get('lastName')?.touched && employeeForm.get('lastName')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Last Name</mat-label>
+      <input matInput id="lastName" name="lastName" formControlName="lastName" />
+      <mat-error *ngIf="employeeForm.get('lastName')?.touched && employeeForm.get('lastName')?.invalid">
         <small *ngIf="employeeForm.get('lastName')?.errors?.['required']">Last name is required.</small>
         <small *ngIf="employeeForm.get('lastName')?.errors?.['minlength']">Last name must be at least 2 characters.</small>
         <small *ngIf="employeeForm.get('lastName')?.errors?.['maxlength']">Last name cannot exceed 50 characters.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="email">Email</label>
-      <input type="email" readonly id="email" class="form-control" name="email" formControlName="emailAddress" />
-      <mat-error *ngIf="employeeForm.get('emailAddress')?.touched && employeeForm.get('emailAddress')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Email</mat-label>
+      <input matInput readonly id="email" name="email" formControlName="emailAddress" />
+      <mat-error *ngIf="employeeForm.get('emailAddress')?.touched && employeeForm.get('emailAddress')?.invalid">
         <small *ngIf="employeeForm.get('emailAddress')?.errors?.['required']">Email is required.</small>
         <small *ngIf="employeeForm.get('emailAddress')?.errors?.['email']">Enter a valid email address.</small>
         <small *ngIf="employeeForm.get('emailAddress')?.errors?.['maxlength']">Email cannot exceed 100 characters.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="username">Username</label>
-      <input type="text" id="username" class="form-control" name="username" formControlName="username"  />
-      <mat-error *ngIf="employeeForm.get('username')?.touched && employeeForm.get('username')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Username</mat-label>
+      <input matInput id="username" name="username" formControlName="username" />
+      <mat-error *ngIf="employeeForm.get('username')?.touched && employeeForm.get('username')?.invalid">
         <small *ngIf="employeeForm.get('username')?.errors?.['required']">Username is required.</small>
         <small *ngIf="employeeForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters.</small>
         <small *ngIf="employeeForm.get('username')?.errors?.['maxlength']">Username cannot exceed 30 characters.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="phone">Phone</label>
-      <input type="text" id="phone" class="form-control" name="phone" formControlName="phoneNumber" placeholder="+38762335441" />
-      <mat-error *ngIf="employeeForm.get('phoneNumber')?.touched && employeeForm.get('phoneNumber')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Phone</mat-label>
+      <input matInput id="phone" name="phone" formControlName="phoneNumber" placeholder="+38762335441" />
+      <mat-error *ngIf="employeeForm.get('phoneNumber')?.touched && employeeForm.get('phoneNumber')?.invalid">
         <small *ngIf="employeeForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</small>
         <small *ngIf="employeeForm.get('phoneNumber')?.errors?.['pattern']">Enter a valid phone number.</small>
         <small *ngIf="employeeForm.get('phoneNumber')?.errors?.['maxlength']">Phone number cannot exceed 20 characters.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="city">Country</label>
-      <select  class="form-select" aria-label="Default select example" name="city" formControlName="countryId">
-        <option *ngFor="let country of countries" id="country" value="{{country.id}}">{{country.name}}</option>
-      </select>
-      <mat-error *ngIf="employeeForm.get('countryId')?.touched && employeeForm.get('countryId')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Country</mat-label>
+      <mat-select formControlName="countryId">
+        <mat-option *ngFor="let country of countries" [value]="country.id">{{country.name}}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="employeeForm.get('countryId')?.touched && employeeForm.get('countryId')?.invalid">
         <small *ngIf="employeeForm.get('countryId')?.errors?.['required']">Country is required.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="city">City</label>
-      <select  class="form-select" aria-label="Default select example" name="city" formControlName="cityId">
-          <option *ngFor="let city of filteredCities" id="city" value="{{city.id}}">{{city.name}}</option>
-      </select>
-      <mat-error *ngIf="employeeForm.get('cityId')?.touched && employeeForm.get('cityId')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>City</mat-label>
+      <mat-select formControlName="cityId">
+        <mat-option *ngFor="let city of filteredCities" [value]="city.id">{{city.name}}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="employeeForm.get('cityId')?.touched && employeeForm.get('cityId')?.invalid">
         <small *ngIf="employeeForm.get('cityId')?.errors?.['required']">City is required.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="birthDate">Birth Date</label>
-      <input type="date"  id="birthDate" class="form-control" name="birthDate" formControlName="birthDate" required />
-      <mat-error *ngIf="employeeForm.get('birthDate')?.touched && employeeForm.get('birthDate')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Birth Date</mat-label>
+      <input matInput [matDatepicker]="birthDatePicker" id="birthDate" name="birthDate" formControlName="birthDate" required />
+      <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #birthDatePicker></mat-datepicker>
+      <mat-error *ngIf="employeeForm.get('birthDate')?.touched && employeeForm.get('birthDate')?.invalid">
         <small *ngIf="employeeForm.get('birthDate')?.errors?.['required']">Birth date is required.</small>
         <small *ngIf="employeeForm.get('birthDate')?.errors?.['minlength'] || employeeForm.get('birthDate')?.errors?.['maxlength']">Birth date must be in YYYY-MM-DD format.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="jobTitle">Job Title</label>
-      <input type="text" id="jobTitle" class="form-control" name="jobTitle" formControlName="jobTitle" required />
-      <mat-error *ngIf="employeeForm.get('jobTitle')?.touched && employeeForm.get('jobTitle')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Job Title</mat-label>
+      <input matInput id="jobTitle" name="jobTitle" formControlName="jobTitle" required />
+      <mat-error *ngIf="employeeForm.get('jobTitle')?.touched && employeeForm.get('jobTitle')?.invalid">
         <small *ngIf="employeeForm.get('jobTitle')?.errors?.['required']">Job title is required.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="form-group mb-2">
-      <label for="hireDate">Hire Date</label>
-      <input type="date" id="hireDate" class="form-control" name="hireDate" formControlName="dateOfHire" required />
-      <mat-error *ngIf="employeeForm.get('dateOfHire')?.touched && employeeForm.get('dateOfHire')?.invalid" style="color: red">
+    <mat-form-field appearance="outline" class="w-100 mb-2">
+      <mat-label>Hire Date</mat-label>
+      <input matInput [matDatepicker]="hireDatePicker" [min]="minDate" [max]="maxDate" id="hireDate" name="hireDate" formControlName="dateOfHire" required />
+      <mat-datepicker-toggle matSuffix [for]="hireDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #hireDatePicker></mat-datepicker>
+      <mat-error *ngIf="employeeForm.get('dateOfHire')?.touched && employeeForm.get('dateOfHire')?.invalid">
         <small *ngIf="employeeForm.get('dateOfHire')?.errors?.['required']">Hire date is required.</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <button *ngIf="!editMode" [disabled]="employeeForm.invalid
-    || compareDates(employeeForm.get('dateOfHire')?.value)
-    || compareDates(employeeForm.get('birthDate')?.value)"   type="submit" class="btn btn-primary w-100">Register</button>
-    <button *ngIf="editMode" [disabled]="employeeForm.invalid || compareDates(employeeForm.get('dateOfHire')?.value)
-    || compareDates(employeeForm.get('birthDate')?.value) " type="button" class="btn btn-primary w-100" (click)="update()">Update</button>
+    <button *ngIf="!editMode" [disabled]="employeeForm.invalid" type="submit" class="btn btn-primary w-100 mb-3" style="font-size: large">Register</button>
+    <button *ngIf="editMode" [disabled]="employeeForm.invalid" type="button" class="btn btn-primary w-100 mb-3" style="font-size: large" (click)="update()">Update</button>
   </form>
 </div>
