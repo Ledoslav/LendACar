@@ -51,6 +51,8 @@ export class RegisterComponent implements OnInit {
   employeeForm!:FormGroup;
 
   editMode=false;
+  minDate=new Date(2023,12,1);
+  maxDate=new Date();
 
   ngOnInit(): void {
     this.loadCountries();
@@ -164,18 +166,25 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  compareDates(dateString:string):boolean{
-    const currentDate = new Date();
-    const parsedDate=new Date(dateString);
-    if(parsedDate.getTime() < currentDate.getTime()) return false;
-
-    return true;
-  }
+  // compareDates(dateString:string):boolean{
+  //   const currentDate = new Date();
+  //   const parsedDate=new Date(dateString);
+  //   if(parsedDate.getTime() < currentDate.getTime()) return false;
+  //
+  //   return true;
+  // }
 
   register(form: any) {
-    console.log('Employee Registered:', this.employee);
-    console.log(this.employeeForm.value)
-    this.employeeService.Register(this.employeeForm.value).subscribe({
+    const formData = { ...this.employeeForm.value };
+
+    if (formData.birthDate) {
+      formData.birthDate=formData.birthDate.toISOString().split('T')[0];
+    }
+    if (formData.dateOfHire) {
+      formData.dateOfHire=formData.dateOfHire.toISOString().split('T')[0];
+    }
+
+    this.employeeService.Register(formData).subscribe({
       next:result => {
         this.snackBarService.showSuccessMessage("Employee created successfully")
         const pdfUrl=URL.createObjectURL(result);
