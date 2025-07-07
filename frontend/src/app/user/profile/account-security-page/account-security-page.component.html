@@ -5,43 +5,38 @@
 <h5>{{ 'PROFILE.ACCOUNT_SECURITY.CHANGE_PASSWORD' | translate }}</h5>
 <form [formGroup]="changePasswordForm" (ngSubmit)="ChangePassword()" class="d-flex flex-column align-items-center">
 
-  <div class="form-group mb-2 w-75">
-    <label for="currentPassword">{{ 'PROFILE.ACCOUNT_SECURITY.CURRENT_PASSWORD' | translate }}</label>
-    <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control small-input" id="currentPassword"
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.ACCOUNT_SECURITY.CURRENT_PASSWORD' | translate }}</mat-label>
+    <input matInput [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" id="currentPassword"
            formControlName="currentPassword" name="currentPassword">
-  </div>
+  </mat-form-field>
 
-  <div class="form-group mb-2 w-75">
-    <label for="newPassword">{{ 'PROFILE.ACCOUNT_SECURITY.NEW_PASSWORD' | translate }}</label>
-    <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'"  class="form-control small-input" id="newPassword"
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.ACCOUNT_SECURITY.NEW_PASSWORD' | translate }}</mat-label>
+    <input matInput [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" id="newPassword"
            formControlName="newPassword" name="newPassword">
-    <mat-error *ngIf="changePasswordForm.get('newPassword')?.invalid &&changePasswordForm.get('newPassword')?.touched" style="color: red">
+    <mat-error *ngIf="changePasswordForm.get('newPassword')?.invalid &&changePasswordForm.get('newPassword')?.touched">
       <ng-container *ngIf="changePasswordForm.get('newPassword')?.errors?.['required']">{{ 'PROFILE.ACCOUNT_SECURITY.PASSWORD_REQUIRED' | translate }}</ng-container>
       <ng-container *ngIf="changePasswordForm.get('newPassword')?.errors?.['minlength'] && changePasswordForm.get('newPassword')?.dirty ">{{ 'PROFILE.ACCOUNT_SECURITY.PASSWORD_MIN' | translate }}</ng-container>
       <ng-container *ngIf="changePasswordForm.get('newPassword')?.errors?.['maxlength'] && changePasswordForm.get('newPassword')?.dirty ">{{ 'PROFILE.ACCOUNT_SECURITY.PASSWORD_MAX' | translate }}</ng-container>
     </mat-error>
-  </div>
+  </mat-form-field>
 
-  <div class="form-group mb-1 w-75">
-    <label for="repeatPassword">{{ 'PROFILE.ACCOUNT_SECURITY.CONFIRM_PASSWORD' | translate }}</label>
-    <input [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" class="form-control small-input" id="repeatPassword"
+  <mat-form-field appearance="outline" class="mb-1 w-75">
+    <mat-label>{{ 'PROFILE.ACCOUNT_SECURITY.CONFIRM_PASSWORD' | translate }}</mat-label>
+    <input matInput [type]="changePasswordForm.get('passwordShow')?.value ? 'text': 'password'" id="repeatPassword"
            name="repeatPassword" formControlName="repeatPassword">
-
-    <mat-error *ngIf="changePasswordForm.get('repeatPassword')?.invalid && changePasswordForm.get('repeatPassword')?.touched" style="color: red">
+    <mat-error *ngIf="changePasswordForm.get('repeatPassword')?.invalid && changePasswordForm.get('repeatPassword')?.touched">
       <ng-container>{{ 'PROFILE.ACCOUNT_SECURITY.PASSWORDS_DONT_MATCH' | translate }}</ng-container>
     </mat-error>
+  </mat-form-field>
 
-    <div class="mt-2">
-      <input formControlName="passwordShow" type="checkbox" id="check" name="check"/>
-      <label class="px-2" for="check">{{ 'PROFILE.ACCOUNT_SECURITY.SHOW_PASSWORD' | translate }}</label>
-    </div>
-
+  <div class="mt-2 w-75">
+    <mat-checkbox formControlName="passwordShow" id="check" name="check">{{ 'PROFILE.ACCOUNT_SECURITY.SHOW_PASSWORD' | translate }}</mat-checkbox>
   </div>
 
-
-
   <div class="w-75 d-flex justify-content-end">
-    <button type="submit" class="btn mt-2 p-2"
+    <button type="submit" mat-raised-button color="primary" class="mt-2 p-2"
             style="border-radius: 30px;background-color: #ffffff; color: black" [disabled]="changePasswordForm.invalid">{{ 'PROFILE.ACCOUNT_SECURITY.CHANGE_PASSWORD_BTN' | translate }}</button>
   </div>
 </form>
@@ -51,36 +46,35 @@
 <hr>
 <h5 *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId!=null" >{{ 'PROFILE.ACCOUNT_SECURITY.CHANGE_QUESTION' | translate }}</h5>
 <h5 *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId==null" >{{ 'PROFILE.ACCOUNT_SECURITY.ADD_QUESTION' | translate }}</h5>
-<form [formGroup]="securityQuestionForm"  class="d-flex flex-column align-items-center">
-  <div class="form-group mb-2 w-75">
-    <label for="currentPasswordQuestion">{{ 'PROFILE.ACCOUNT_SECURITY.CURRENT_PASSWORD_QUESTION' | translate }}</label>
-    <input type="password" class="form-control small-input" id="currentPasswordQuestion"
+<form [formGroup]="securityQuestionForm" class="d-flex flex-column align-items-center">
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.ACCOUNT_SECURITY.CURRENT_PASSWORD_QUESTION' | translate }}</mat-label>
+    <input matInput type="password" id="currentPasswordQuestion"
            formControlName="currentPassword">
-  </div>
+  </mat-form-field>
 
-  <div class="form-group mb-2 w-75">
-    <label for="questions">{{ 'PROFILE.ACCOUNT_SECURITY.QUESTION' | translate }}</label>
-    <select class="form-select bg-light"  style="color: black;" aria-label="Default select example" formControlName="securityQuestionId" >
-      <option style="color: black" *ngFor="let question of questions" id="questions" value="{{question.id}}">{{ question.questionTextKey | translate }}</option>
-    </select>
-  </div>
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.ACCOUNT_SECURITY.QUESTION' | translate }}</mat-label>
+    <mat-select formControlName="securityQuestionId">
+      <mat-option *ngFor="let question of questions" [value]="question.id">{{ question.questionTextKey | translate }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-  <div class="form-group mb-2 w-75">
-    <label for="questionAnswer">{{ 'PROFILE.ACCOUNT_SECURITY.QUESTION_ANSWER' | translate }}</label>
-    <input  class="form-control small-input" id="questionAnswer"
+  <mat-form-field appearance="outline" class="mb-2 w-75">
+    <mat-label>{{ 'PROFILE.ACCOUNT_SECURITY.QUESTION_ANSWER' | translate }}</mat-label>
+    <input matInput id="questionAnswer"
             name="questionAnswer" formControlName="questionAnswer">
-  </div>
+  </mat-form-field>
   <ng-container *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId!=null">
     <p style="font-size: 13px; color:lightcoral">{{ 'PROFILE.ACCOUNT_SECURITY.QUESTION_HINT' | translate }}</p>
   </ng-container>
 
-
   <!-- Button aligned to the end -->
   <div class="w-75 d-flex justify-content-end">
     <div *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId!=null">
-      <button type="button" class="btn mt-2 p-2"
+      <button type="button" class="btn mt-2 mx-2"
               style="border-radius: 30px;background-color: #ffffff; color: black" (click)="ChangeQuestionConfirmDialog()" [disabled]="securityQuestionForm.invalid">{{ 'PROFILE.ACCOUNT_SECURITY.CHANGE_QUESTION' | translate }}</button>
-      <button type="button" class="btn mt-2 p-2"
+      <button type="button" class="btn mt-2 "
               style="border-radius: 30px;background-color: #ffffff; color: black" (click)="RemoveQuestionConfirmDialog()" [disabled]="securityQuestionForm.invalid">{{ 'PROFILE.ACCOUNT_SECURITY.REMOVE_QUESTION' | translate }}</button>
     </div>
     <div *ngIf="accountService.currentUser()?.userSecurityQuestionAnswerId==null">

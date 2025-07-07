@@ -43,7 +43,7 @@ export class AccountSecurityPageComponent implements OnInit{
   changePasswordForm=this.fb.group({
     currentPassword:['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
     newPassword: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
-    repeatPassword: ['', [Validators.required, this.matchValues('password'), Validators.minLength(6), Validators.maxLength(100)]],
+    repeatPassword: ['', [Validators.required, this.matchValues('newPassword'), Validators.minLength(6), Validators.maxLength(100)]],
     passwordShow:[false],
     emailAddress: '',
   })
