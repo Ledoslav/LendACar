@@ -74,7 +74,6 @@ namespace LendACarAPI.Endpoints
 
 
             db.RemoveRange(cities);
-            //await db.SaveChangesAsync(cancellationToken);
 
             db.Remove(country);
             await db.SaveChangesAsync(cancellationToken);

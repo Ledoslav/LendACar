@@ -3,9 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LendACarAPI.Data.Models
 {
-
-    //TO DO:
-    //Promijeniti start time i end time u timeonly objete i skloniti ovo za companyemployee i dodati workinghour u companyemployee
     public class WorkingHour
     {
         [Key]

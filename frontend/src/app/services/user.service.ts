@@ -53,14 +53,12 @@ export class UserService {
   }
 
   Update(model:any){
-    console.log(model);
     return this.http.put<UserDto>(this.baseUrl+`user/update/${model.id}`,model).pipe(
       map(user=>{
         if(user){
           localStorage.removeItem('user');
           localStorage.setItem('user',JSON.stringify(user));
           this.currentUser.set(user)
-          console.log("Current user set:", this.currentUser());
         }
         return user;
       })
@@ -72,7 +70,6 @@ export class UserService {
   }
 
   ChangePassword(model:any){
-    console.log(model);
     return this.http.put<any>(this.baseUrl+'resetpassword/change',model).subscribe({
       next:()=>{
         alert("Password change successful");
@@ -130,7 +127,6 @@ export class UserService {
     const object={
       username:username
     }
-    console.log(object);
     return this.http.post<{ isTaken: boolean }>(this.baseUrl+'Validator/check-username',object)
       .pipe(map(response => {
         console.log("Server response",response);
@@ -160,7 +156,6 @@ export class UserService {
           localStorage.removeItem('user');
           localStorage.setItem('user',JSON.stringify(user));
           this.currentUser.set(user)
-          console.log("Current user set:", this.currentUser());
         }
         return user;
       })

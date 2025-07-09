@@ -78,7 +78,6 @@ export class AccountSecurityPageComponent implements OnInit{
     })
     const passwordChangeModel={...this.changePasswordForm.value};
     delete passwordChangeModel.passwordShow
-    console.log(passwordChangeModel);
 
     this.passwordResetService.ChangePassword(passwordChangeModel)
   }
@@ -102,7 +101,7 @@ export class AccountSecurityPageComponent implements OnInit{
   AddQuestion(){
     const userId=this.accountService.currentUser()?.id ?? 0 ;
     const changeQuestionModel={... this.securityQuestionForm.value};
-    console.log(changeQuestionModel);
+
     this.userSecurityQuestionAnswerService.CreateAnswer(userId,changeQuestionModel).subscribe({
       next:res=>{
         this.snackbarService.showSuccessMessage('Security question added successfully');

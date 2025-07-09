@@ -2,7 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {UserDto} from '../../Models/UserDto';
 import {City} from '../../Models/City';
 import {Country} from '../../Models/Country';
-import {FormBuilder} from '@angular/forms';
+import {FormBuilder, Validators} from '@angular/forms';
 import {UserService} from '../../services/user.service';
 import {CityService} from '../../services/city.service';
 import {CountryService} from '../../services/country.service';
@@ -79,7 +79,7 @@ export class UserOverviewComponent  implements OnInit {
 
 
   userSearchForm=this.fb.group({
-    name: [undefined],
+    name: [undefined,[Validators.minLength(2),Validators.maxLength(50), Validators.pattern(/^[\w\s\-]+$/)]],
     cityId: [undefined],
     countryId: 0,
     ageFrom:[undefined],
@@ -130,7 +130,6 @@ export class UserOverviewComponent  implements OnInit {
             dataItems: res.body as UserDto[],
             pagination: JSON.parse(res.headers.get('Pagination')!)
           };
-          console.log(this.users);
         },
         error: (err) => console.log(err),
       });

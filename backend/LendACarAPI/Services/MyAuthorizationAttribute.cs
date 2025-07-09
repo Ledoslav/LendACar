@@ -42,13 +42,6 @@ namespace LendACarAPI.Services
                 isCurrentUserEmployee= true;
 
 
-            //if (!isCurrentUserEmployee && !isCurrentUserAdmin && !isCurrentUserAppUser)
-            //{
-            //    context.Result = new ForbidResult();
-            //    return;
-            //}
-
-
             if (!isCurrentUserEmployee && !isCurrentUserAdmin && !isCurrentUserAppUser)
             {
                 context.Result = new ObjectResult(new { message = "You are not authorized to access this resource." })

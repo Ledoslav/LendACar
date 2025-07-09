@@ -15,10 +15,10 @@ export class DialogConfirmComponent {
   }
 
   onConfirm(): void {
-    this.dialogRef.close(true); // Vraća true kada korisnik potvrdi
+    this.dialogRef.close(true);
   }
 
   onCancel(): void {
-    this.dialogRef.close(false); // Vraća false kada korisnik otkaže
+    this.dialogRef.close(false);
   }
 }

@@ -17,13 +17,11 @@ accountService=inject(UserService);
   login() {
     this.accountService.Login(this.model).subscribe({
       next:res=>{
-        console.log(res);
         void this.router.navigateByUrl('/public/home');
       },
       error:err=>{
         console.log(err);
       }
     })
-    console.log(this.accountService.currentUser());
   }
 }

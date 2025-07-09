@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center">
 <div id="stepperContainer">
-  <mat-stepper [linear]="true" (selectionChange)="onStepChange($event)" #stepper>
+  <mat-stepper [linear]="true"  (selectionChange)="onStepChange($event)" #stepper>
     <mat-step label="Personal Information" [stepControl]="personalInfo">
       <h3 class="text-center mb-2">Personal Information</h3>
       <form [formGroup]="personalInfo">
@@ -110,7 +110,7 @@
           <mat-label>Password</mat-label>
           <input matInput [type]="passwordShow ? 'text': 'password'" (change)="UpdateRepeatPasswordValidity()" id="password" formControlName="password" required>
           <button mat-icon-button matSuffix (click)="passwordShow = !passwordShow" [attr.aria-label]="passwordShow ? 'Hide password' : 'Show password'" type="button">
-            <mat-icon>{{passwordShow ? 'visibility_off' : 'visibility'}}</mat-icon>
+
           </button>
           <mat-error *ngIf="passwords.get('password')?.invalid && passwords.get('password')?.touched">
             <ng-container *ngIf="passwords.get('password')?.errors?.['required']">Password required</ng-container>

@@ -42,14 +42,12 @@ export class AdminService {
   }
 
   Update(model:any){
-    console.log(model);
     return this.http.put<AdministratorDto>(this.baseUrl+`administrator/update/${model.id}`,model).pipe(
       map(admin=>{
         if(admin){
           localStorage.clear();
           localStorage.setItem('administrator',JSON.stringify(admin));
           this.currentAdmin.set(admin)
-          console.log("Current administrator set:", this.currentAdmin());
         }
         return admin;
       })

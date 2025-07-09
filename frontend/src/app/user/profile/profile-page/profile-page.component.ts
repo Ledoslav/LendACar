@@ -16,7 +16,6 @@ import {MySnackbarService} from '../../../services/snackbars/my-snackbar.service
 export class ProfilePageComponent implements OnInit{
   constructor() {
     this.model = this.accountService.currentUser();
-    console.log(this.model);
 
     this.userEditForm=this.fb.group({
       id: [this.model.id, Validators.required],
@@ -59,7 +58,6 @@ export class ProfilePageComponent implements OnInit{
       ...this.userEditForm.value,
       city:city
     };
-    console.log(updateUser);
     this.accountService.Update(updateUser).subscribe({
       next: result => {
         this.accountService.currentUser.set(result);

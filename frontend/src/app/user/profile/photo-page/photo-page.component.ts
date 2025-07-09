@@ -54,8 +54,6 @@ export class PhotoPageComponent implements OnInit{
     if (blob) {
       this.croppedImage = blob;
       this.croppedImageUrl = event.objectUrl;
-      console.log('Cropped Blob:', this.croppedImage);
-      console.log('Preview URL:', this.croppedImageUrl);
     } else {
       console.error('Blob image is undefined.');
     }
@@ -75,7 +73,6 @@ export class PhotoPageComponent implements OnInit{
 
    this.accountService.UploadProfilePhoto(formData,this.accountService.currentUser()?.id).subscribe({
    next:(response: any) => {
-      console.log('Upload successful:', response);
       this.showCropper = false;
       this.accountService.currentUser.set(response);
       this.snackbarService.showSuccessMessage('Profile picture updated successfully!')

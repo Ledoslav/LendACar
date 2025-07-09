@@ -418,7 +418,6 @@ namespace LendACarAPI.Endpoints
             return await db.Users.AnyAsync(user => user.Username.ToLower() == username.ToLower()
             || user.EmailAdress.ToLower()==email.ToLower(),cancellation);
 
-            // dodati i provjeru da li email ili username je koristen u admin, employee ili company employee tabeli
         }
     }
 }

@@ -13,7 +13,6 @@ export function usernameAsyncValidator(): AsyncValidatorFn {
       debounceTime(300),
       distinctUntilChanged(),
       map((isTaken: boolean) => {
-        console.log(isTaken);
         return !isTaken ? null : { 'usernameTaken': { value: control.value } };
       }),
       catchError(() => of(null))

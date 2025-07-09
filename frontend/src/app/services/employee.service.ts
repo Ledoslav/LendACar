@@ -111,7 +111,6 @@ export class EmployeeService {
           localStorage.removeItem('employee');
           localStorage.setItem('employee',JSON.stringify(employee));
           this.currentEmployee.set(employee)
-          console.log("Current employee set:", this.currentEmployee());
         }
         return employee;
       })
@@ -125,7 +124,6 @@ export class EmployeeService {
           localStorage.removeItem('employee');
           localStorage.setItem('employee',JSON.stringify(employee));
           this.currentEmployee.set(employee)
-          console.log("Current employee set:", this.currentEmployee());
         }
         return employee;
       })

@@ -86,7 +86,7 @@ export class AuthGuard implements CanActivate {
       if(guardData.isAppUser){
         if(!this.authService.isAppUser()){
           console.log("Nije user")
-          this.router.navigate(['/public/home']); // treba se napraviti unauthorized komponenta, privremeno rjesenje
+          this.router.navigate(['/public/home']);
           return false;
         }
       }
