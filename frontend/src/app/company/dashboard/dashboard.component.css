@@ -77,8 +77,13 @@ a{
   pointer-events: none;
 }
 
-#sidebar{
+.sidebar{
   height: 100%;
+  background-image: url("../../../../public/Vector.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #181818;
 }
 
 .clickable:hover {
@@ -93,7 +98,7 @@ a{
   display: none;
 }
 
-.dropdown:hover .dropdown-menu {
+.dropdown-menu.clicked {
   display: block;
 }
 

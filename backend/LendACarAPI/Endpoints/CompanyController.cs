@@ -43,7 +43,7 @@ namespace LendACarAPI.Endpoints
 
             if (company == null)
             {
-                return NotFound("No company found for this user.");
+                return Ok(new { message = "No company found for this user." });
             }
 
             return company;
@@ -60,7 +60,7 @@ namespace LendACarAPI.Endpoints
 
             if (existingCompany != null)
             {
-                return BadRequest("This user already has a company.");
+                return Ok("This user already has a company.");
             }
 
             // Create default WorkingHours if they don't exist
@@ -134,7 +134,7 @@ namespace LendACarAPI.Endpoints
 
             if (user == null)
             {
-                return BadRequest("User not found.");
+                return Ok("User not found.");
             }
 
             // Create the CompanyEmployee entry, making the user an admin
@@ -164,7 +164,7 @@ namespace LendACarAPI.Endpoints
 
             if (company == null)
             {
-                return NotFound("Company not found for this user.");
+                return Ok("Company not found for this user.");
             }
 
             int companyId = company.Id;
@@ -223,7 +223,7 @@ namespace LendACarAPI.Endpoints
 
             if (company == null)
             {
-                return NotFound("Company not found for this user.");
+                return Ok("Company not found for this user.");
             }
 
             // Update the company details

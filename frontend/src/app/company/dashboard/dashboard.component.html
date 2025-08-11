@@ -31,31 +31,15 @@
         <hr />
 
         <div class="dropdown">
-          <a
-            class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-            data-bs-toggle="dropdown"
-          >
-            <img
-              src="https://github.com/mdo.png"
-              alt="User"
-              width="32"
-              height="32"
-              class="rounded-circle me-2"
-            />
+          <a class="d-flex align-items-center m-3 text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" (click)="toggleDropdown()">
+            <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" class="profile-icon" style="border-radius: 50%; width: 50px; margin-right: 10px;" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile">
+            <img *ngIf="accountService.currentUser()?.profilePhotoUrl==null" class="profile-icon" style="border-radius: 50%; width: 50px; margin-right: 10px;" src="/defaultProfilePic.png" alt="Profile">
             <strong>{{ isLoggedIn ? username : 'User not logged in' }}</strong>
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark text-small shadow" *ngIf="employeeSectionClicked">
+          <ul class="dropdown-menu dropdown-menu-dark text-small shadow" [class.clicked]="dropdownClicked" *ngIf="employeeSectionClicked && isLoggedIn && hasCompany">
             <li *ngIf="isLoggedIn && hasCompany"><a class="dropdown-item" (click)="deleteCompany()">Delete Company</a></li>
-            <li *ngIf="isLoggedIn && hasCompany">
-              <a class="dropdown-item" (click)="showUpdateForm()">
-                Update Company
-              </a>
-            </li>
-            <li *ngIf="!isLoggedIn">
-              <a class="dropdown-item" href="https://localhost:4200/user">
-                Login
-              </a>
-            </li>
+            <li *ngIf="isLoggedIn && hasCompany"><a class="dropdown-item" (click)="showUpdateForm()">Update Company</a></li>
+            <li *ngIf="!isLoggedIn"><a class="dropdown-item" href="https://localhost:4200/user">Login</a></li>
           </ul>
         </div>
 

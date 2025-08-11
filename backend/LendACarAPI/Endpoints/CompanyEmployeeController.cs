@@ -33,7 +33,7 @@ namespace LendACarAPI.Endpoints
 
             if (companyEmployees == null)
             {
-                return NotFound("No company employees found");
+                return Ok("No company employees found");
             }
 
             return companyEmployees;
@@ -57,7 +57,7 @@ namespace LendACarAPI.Endpoints
 
             if (companyAdmin == null)
             {
-                return NotFound(new { message = "Company admin not found." });
+                return Ok(new { message = "Company admin not found." });
             }
 
             // Step 2: Get the company ID from the admin
@@ -74,7 +74,7 @@ namespace LendACarAPI.Endpoints
 
             if (companyEmployees == null || !companyEmployees.Any())
             {
-                return NotFound(new { message = "No employees found for this company." });
+                return Ok(new { message = "No employees found for this company." });
             }
 
             return Ok(companyEmployees);
@@ -89,7 +89,7 @@ namespace LendACarAPI.Endpoints
 
             if (companyEmployee == null)
             {
-                return NotFound(new { message = "Employee not found in CompanyEmployee table." });
+                return Ok(new { message = "Employee not found in CompanyEmployee table." });
             }
 
             // Step 2: Remove the employee from the CompanyEmployee table
@@ -110,7 +110,7 @@ namespace LendACarAPI.Endpoints
 
             if (user == null)
             {
-                return NotFound(new { message = "User not found in User table." });
+                return Ok(new { message = "User not found in User table." });
             }
 
             _context.Users.Remove(user);
@@ -128,7 +128,7 @@ namespace LendACarAPI.Endpoints
             // Validate the request data
             if (request == null)
             {
-                return BadRequest(new { message = "Invalid employee data." });
+                return Ok(new { message = "Invalid employee data." });
             }
 
             // Step 1: Find the company admin using their email (this email should exist)
@@ -138,7 +138,7 @@ namespace LendACarAPI.Endpoints
 
             if (companyAdmin == null)
             {
-                return NotFound(new { message = "Company admin not found." });
+                return Ok(new { message = "Company admin not found." });
             }
 
             // Step 2: Get the company ID from the admin
@@ -215,13 +215,13 @@ namespace LendACarAPI.Endpoints
         {
             if (employeeDto == null)
             {
-                return BadRequest(new { message = "Invalid data." });
+                return Ok(new { message = "Invalid data." });
             }
 
             // If any of the required fields are missing, this can also be a source of a BadRequest error
             if (string.IsNullOrEmpty(employeeDto.FirstName) || string.IsNullOrEmpty(employeeDto.LastName) || string.IsNullOrEmpty(employeeDto.Email))
             {
-                return BadRequest(new { message = "Required fields are missing." });
+                return Ok(new { message = "Required fields are missing." });
             }
 
             // Authorization logic and employee update
@@ -239,7 +239,7 @@ namespace LendACarAPI.Endpoints
 
             if (employee == null)
             {
-                return NotFound(new { message = "Employee not found." });
+                return Ok(new { message = "Employee not found." });
             }
 
             // Ensure that CompanyPosition is not null before updating it
@@ -249,7 +249,7 @@ namespace LendACarAPI.Endpoints
             }
             else
             {
-                return BadRequest(new { message = "Employee does not have a valid company position." });
+                return Ok(new { message = "Employee does not have a valid company position." });
             }
 
             // Update other employee information
@@ -277,7 +277,7 @@ namespace LendACarAPI.Endpoints
             }
             else
             {
-                return NotFound(new { error = "Company Admin Email hasn't been found for this user!" });
+                return Ok(new { error = "Company Admin Email hasn't been found for this user!" });
             }
         }
 

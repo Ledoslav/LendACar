@@ -4,6 +4,7 @@ import { UserService } from '../../services/user.service';
 import {CompanyService} from '../../services/company.service';
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
 import {Observable} from 'rxjs';
+import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,10 +23,10 @@ export class DashboardComponent implements OnInit {
   activeLink: string = 'home';
   companyDescription: string = '';
   accountService = inject(UserService); // Inject UserService
-  username: string = '';
+  username: any;
   isLoggedIn: boolean = false;
   hasCompany: boolean = false;  // Flag to check if the user has a company
-  userId: number = 0;
+  userId: any;
   updateFormVisible = false; // Visibility toggle for the update form
   selectedFileName: any;
   employeeSectionClicked: boolean = true;
@@ -35,6 +36,9 @@ export class DashboardComponent implements OnInit {
   employeeSectionFlag = false;
   employees: employees[] = [];
   isUpdating: boolean = false;
+  isAppUser: boolean = false;
+  authService = inject(MyAuthServiceService);
+  dropdownClicked: boolean = false;
 
   employee = {
     firstName: '',
@@ -126,12 +130,12 @@ export class DashboardComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    const currentUser = this.userService.getCurrentUser();  // Make sure this correctly returns a user object if logged in
-    this.isLoggedIn = !!currentUser;  // Ensures it's true if a user is found, false otherwise
+    this.isLoggedIn = this.authService.isLoggedIn();
+    this.isAppUser = this.authService.isAppUser();
 
-    if (currentUser) {
-      this.username = currentUser.username;
-      this.userId = currentUser.id;
+    if (this.isAppUser) {
+      this.username = this.accountService.currentUser()?.username;
+      this.userId = this.accountService.currentUser()?.id;
 
       // Fetch employees based on companyId
       this.fetchEmployees();
@@ -402,15 +406,15 @@ export class DashboardComponent implements OnInit {
   setActive(link: string) {
     this.activeLink = link;
     //Employee section
-    if(link=='employees'){
+    if (link == 'employees') {
       this.employeeSectionClicked = false;
       this.employeeSectionFlag = true;
       this.employeesFlag = this.employees.length > 0;
-    }else{
-      this.employeeSectionClicked=true;
+    } else {
+      this.employeeSectionClicked = true;
     }
 
-    if(link=='home'){
+    if (link == 'home') {
       this.employeeSectionFlag = false;
     }
   }
@@ -418,23 +422,23 @@ export class DashboardComponent implements OnInit {
   deleteCompany(): void {
     const isConfirmed = window.confirm('Are you sure you want to delete the company?');
 
-    if(isConfirmed){
-    if (!this.userId) {
-      console.error('User not logged in.');
-      return;
-    }
-
-    // Call the service to delete the company
-    this.companyService.deleteCompanyByUserId(this.userId).subscribe(
-      () => {
-        console.log('Company deleted successfully.');
-        this.hasCompany = false; // Update the UI state to reflect the absence of a company
-        window.location.reload(); // Refresh the page
-      },
-      (error) => {
-        console.error('Error deleting company:', error);
+    if (isConfirmed) {
+      if (!this.userId) {
+        console.error('User not logged in.');
+        return;
       }
-    );
+
+      // Call the service to delete the company
+      this.companyService.deleteCompanyByUserId(this.userId).subscribe(
+        () => {
+          console.log('Company deleted successfully.');
+          this.hasCompany = false; // Update the UI state to reflect the absence of a company
+          window.location.reload(); // Refresh the page
+        },
+        (error) => {
+          console.error('Error deleting company:', error);
+        }
+      );
     }
   }
 
@@ -447,7 +451,7 @@ export class DashboardComponent implements OnInit {
 
   updateCompany(): void {
     const isConfirmed = window.confirm('Are you sure you want to update the company?');
-    if(isConfirmed) {
+    if (isConfirmed) {
       const updatedCompanyData = {
         companyName: this.companyName,
         companyPhone: this.companyPhone,
@@ -481,6 +485,10 @@ export class DashboardComponent implements OnInit {
 
   showUpdateForm() {
     this.updateFormVisible = true;
+  }
+
+  toggleDropdown() {
+    this.dropdownClicked = !this.dropdownClicked;
   }
 }
 
