@@ -27,6 +27,10 @@ const routes: Routes = [
     loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule)
   },
   {
+    path: 'pretraga',
+    loadChildren: () => import('./pretraga/pretraga.module').then(m => m.PretragaModule)
+  },
+  {
     path: 'user',
     loadChildren: () => import('./user/user.module').then(m => m.UserModule)
   },

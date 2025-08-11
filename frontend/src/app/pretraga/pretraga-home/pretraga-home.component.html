@@ -1,0 +1,177 @@
+<div class="landing-page">
+  <img class="vector" src="Vector.png" />
+  <div class="side-bar">
+    <div class="menu-item" routerLinkActive="active" routerLink="/public/home" ><img src="Home.svg" alt="Home"> <span>{{'SIDEBAR.HOME' | translate}}</span></div>
+    <div class="menu-item"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
+    <div class="menu-item"><img src="Messagesquare.svg" alt="Chats"> <span>{{'SIDEBAR.CHATS' | translate}}</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div class="menu-item"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
+    <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div routerLinkActive="active" routerLink="/user/profile/my-vehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div class="menu-item" routerLink="/company/dashboard"><img src="Plussquare.svg" alt="Create Company"> <span>{{'SIDEBAR.CREATE_COMPANY' | translate}}</span></div>
+  </div>
+
+  <div class="content">
+    <div class="nav-bar">
+      <div class="nav-left">
+        <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
+        <language-selector></language-selector>
+      </div>
+      @if (!isAppUser){
+        <div class="right-section" style="cursor: pointer;">
+          <a routerLink="/user/login" style="margin-right: 5px; text-decoration: none; font-weight: 500" >{{ "NAVBAR.LOGIN" | translate }}</a>
+          <a routerLink="/user/register" style="margin-left: 5px; text-decoration: none;font-weight: 500">{{ "NAVBAR.REGISTER" | translate }}</a>
+        </div>
+      } @else {
+        <div class="right-section" routerLink="/user/profile" style="cursor: pointer;">
+          <span class="text-wrapper-17">{{ accountService.currentUser()?.username }}</span>
+          <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" class="profile-icon" style="border-radius: 20px" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile">
+          <img *ngIf="accountService.currentUser()?.profilePhotoUrl==null" class="profile-icon" style="border-radius: 20px" src="/defaultProfilePic.png" alt="Profile">
+        </div>
+      }
+
+    </div>
+
+
+    <div class="header-section">
+      <img class="lendacar-landingpage" src="backgroundcar.png" />
+
+      <div class="circle-element"></div>
+
+      <div class="title">
+        <div>
+          <h1 style="font-size: 58px; font-weight: bold;">LendACar!</h1>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <mat-form-field appearance="outline" class="pretraga">
+          <input matInput placeholder="Search a vehicle">
+        </mat-form-field>
+
+        <div class="pretraga-tipka">
+            <p>Search</p>
+        </div>
+
+        <div class="pretraga-filter" (click)="openDialogFilter()">
+            <p><img style="width:15px; height: 15px; margin-right: 5px" src="Chevrondown.svg" alt="Filter">Filter</p>
+        </div>
+
+        <div class="pretraga-info">
+          <p>13 results found</p>
+        </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="this.isFilterOpen" class="filter-section">
+        <p>Publish Date</p>
+        <div class="filter-date">
+          <div id="all" [class.active] = "allDateActive" (click)="toggleAllActive('allDate')"><p>All</p></div>
+          <div id="last24" [class.active] = "last24Active" (click)="toggleActive('last24')"><p>Last 24 hours</p></div>
+          <div id="last7" [class.active] = "last7Active" (click)="toggleActive('last7')"><p>Last 7 days</p></div>
+          <div id="lastMonth" [class.active] = "lastMonthActive" (click)="toggleActive('lastMonth')"><p>Last month</p></div>
+        </div>
+
+        <div class="vehicle-info">
+          <div>
+            <p>Transmission</p>
+            <div id="allTrans" [class.active] = "allTransActive" (click)="toggleAllActive('allTrans')"><p>All</p></div>
+            <div id="manualTrans" [class.active] = "manualTransActive" (click)="toggleActive('manualTrans')"><p>Manual</p></div>
+            <div id="automaticTrans" [class.active] = "automaticTransActive" (click)="toggleActive('automaticTrans')"><p>Automatic</p></div>
+          </div>
+
+          <div>
+            <p>Fuel type</p>
+            <div id="allFuel" [class.active] = "allFuelActive" (click)="toggleAllActive('allFuel')"><p>All</p></div>
+            <div id="petrol" [class.active] = "petrolActive" (click)="toggleActive('petrol')"><p>Petrol</p></div>
+            <div id="diesel" [class.active] = "dieselActive" (click)="toggleActive('diesel')"><p>Diesel</p></div>
+            <div id="otherFuel" [class.active] = "otherFuelActive" (click)="toggleActive('otherFuel')"><p>Other</p></div>
+          </div>
+
+          <div>
+            <p>Other</p>
+            <div id="specialOffers" [class.active] = "specialOffersActive" (click)="toggleActive('specialOffers')"><p>Include special offers</p></div>
+            <div id="specialEquipment" [class.active] = "specialEquipmentActive" (click)="toggleActive('specialEquipment')"><p>Has special equipment</p></div>
+          </div>
+        </div>
+
+        <div class="filter-price-range">
+          <p>Price range</p>
+          <div class="filter-price-range-text">
+            <p id="fromPrice">From 0KM</p>
+            <p id="toPrice">To 100000KM</p>
+          </div>
+
+          <mat-slider class="price-slider" min="200" max="500">
+            <input value="300" matSliderStartThumb>
+            <input value="400" matSliderEndThumb>
+          </mat-slider>
+        </div>
+    </div>
+
+    <div class="content-section">
+      <div class="search-result">
+        <div class="search-result-image-section">
+          <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+        </div>
+        <div class="search-result-info">
+          <h3 style="font-weight: bold; color: black;">Mercedes-Benz GLS</h3>
+          <p style="color: #5a6268; width: 100%; height: 100%;">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
+          <p style="color: #5a6268; width: 100%; height: 100%; font-weight: bold; font-size: 20px; color: #007bff; text-align: center">350$ per day</p>
+        </div>
+      </div>
+      <div class="search-result">
+        <div class="search-result-image-section">
+          <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+        </div>
+        <div class="search-result-info">
+          <h3 style="font-weight: bold; color: black;">Mercedes-Benz GLS</h3>
+          <p style="color: #5a6268; width: 100%; height: 100%;">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
+          <p style="color: #5a6268; width: 100%; height: 100%; font-weight: bold; font-size: 20px; color: #007bff; text-align: center">350$ per day</p>
+        </div>
+      </div>
+      <div class="search-result">
+        <div class="search-result-image-section">
+          <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+        </div>
+        <div class="search-result-info">
+          <h3 style="font-weight: bold; color: black;">Mercedes-Benz GLS</h3>
+          <p style="color: #5a6268; width: 100%; height: 100%;">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
+          <p style="color: #5a6268; width: 100%; height: 100%; font-weight: bold; font-size: 20px; color: #007bff; text-align: center">350$ per day</p>
+        </div>
+      </div>
+      <div class="search-result">
+        <div class="search-result-image-section">
+          <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+        </div>
+        <div class="search-result-info">
+          <h3 style="font-weight: bold; color: black;">Mercedes-Benz GLS</h3>
+          <p style="color: #5a6268; width: 100%; height: 100%;">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
+          <p style="color: #5a6268; width: 100%; height: 100%; font-weight: bold; font-size: 20px; color: #007bff; text-align: center">350$ per day</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pagination">
+        <mat-paginator class="mat-paginator" [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+    </div>
+
+    <img class="vector1" src="Vector.png"/>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="vehicle-logos">
+          <img src="VehicleLogos.png" alt="Vehicle Logos">
+        </div>
+        <div>
+          <h3 class="footer-title">©2025 SparkWave. All rights reserved.</h3>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
