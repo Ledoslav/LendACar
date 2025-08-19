@@ -25,7 +25,8 @@ import { MatInputModule } from '@angular/material/input';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {CustomTranslateLoader} from './services/custom-translate-loader';
 import {MatOption, MatSelect} from '@angular/material/select';
-
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import {MatOption, MatSelect} from '@angular/material/select';
     MatStepperModule,
     NgxCaptchaModule,
     MatDialogModule,
+    MatNativeDateModule,
     MatFormFieldModule,
     MatInputModule,
     JwtModule.forRoot({

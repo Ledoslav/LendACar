@@ -1,456 +1,646 @@
-<div class="container-fluid vh-100" data-bs-theme="dark">
-  <img class="vector" src="Vector.png" />
-  <div class="row h-100">
+<div class="{{mode}} page">
+    <img class="vector" src="Vector.png" alt="Vector"/>
     <!-- Sidebar -->
-    <div class="col-2 bg-dark text-white sidebar">
-      <div class="p-3">
-        <h4 class="mb-3">{{hasCompany ? companyName : 'MyCompany'}}</h4>
-        <hr />
-        <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item">
-            <a
-              class="nav-link clickable"
-              [ngClass]="{ 'active': activeLink === 'home' }"
-              (click)="setActive('home')"
-            >
-              <i class="bi bi-house me-2"></i> Home
-            </a>
-          </li>
+      <div class="sidebar">
+        <div class="lang_select">
+          <p>{{'COMPANY.LANGUAGE' | translate}}: </p>
+          <language-selector></language-selector>
+        </div>
 
-          <!-- Show this link only if the user is logged in and has a company -->
-          <li *ngIf="isLoggedIn && hasCompany" class="nav-item">
-            <a
-              class="nav-link clickable"
-              [ngClass]="{ 'active': activeLink === 'employees' }"
-              (click)="setActive('employees')"
-            >
-              <i class="bi bi-speedometer2 me-2"></i> Employees
-            </a>
-          </li>
-        </ul>
-        <hr />
-
-        <div class="dropdown">
-          <a class="d-flex align-items-center m-3 text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" (click)="toggleDropdown()">
-            <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" class="profile-icon" style="border-radius: 50%; width: 50px; margin-right: 10px;" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile">
-            <img *ngIf="accountService.currentUser()?.profilePhotoUrl==null" class="profile-icon" style="border-radius: 50%; width: 50px; margin-right: 10px;" src="/defaultProfilePic.png" alt="Profile">
-            <strong>{{ isLoggedIn ? username : 'User not logged in' }}</strong>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-dark text-small shadow" [class.clicked]="dropdownClicked" *ngIf="employeeSectionClicked && isLoggedIn && hasCompany">
-            <li *ngIf="isLoggedIn && hasCompany"><a class="dropdown-item" (click)="deleteCompany()">Delete Company</a></li>
-            <li *ngIf="isLoggedIn && hasCompany"><a class="dropdown-item" (click)="showUpdateForm()">Update Company</a></li>
-            <li *ngIf="!isLoggedIn"><a class="dropdown-item" href="https://localhost:4200/user">Login</a></li>
+        <div class="p-3">
+          <h4>{{hasCompany ? companyName : 'MyCompany'}}</h4>
+          <hr />
+          <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+              <a class="nav-link clickable" [ngClass]="{ 'active': activeLink === 'home' }"><i class="bi bi-house me-2"></i> {{'COMPANY.HOME' | translate}}</a>
+            </li>
           </ul>
-        </div>
+          <hr />
 
-        <div class="mt-5 d-flex" id="BackDiv">
-          <button type="button" class="btn btn-primary" routerLink="/public/home">Back</button>
+          <div class="dropdown">
+            <a class="d-flex align-items-center m-3 text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" (click)="toggleDropdown()">
+              <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" class="profile-icon" style="border-radius: 50%; width: 50px; margin-right: 10px;" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile">
+              <img *ngIf="accountService.currentUser()?.profilePhotoUrl==null" class="profile-icon" style="border-radius: 50%; width: 50px; margin-right: 10px;" src="/defaultProfilePic.png" alt="Profile">
+              <strong>{{ isLoggedIn ? username : 'COMPANY.NOT_LOGGED_IN' | translate}}▼</strong>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" [class.clicked]="dropdownClicked" *ngIf="employeeSectionClicked && isLoggedIn && hasCompany">
+              <li *ngIf="isLoggedIn && hasCompany"><a class="dropdown-item" (click)="deleteCompany()">{{ 'COMPANY.DELETE_COMPANY' | translate }}</a></li>
+              <li *ngIf="isLoggedIn && hasCompany"><a class="dropdown-item" (click)="showUpdateForm()">{{'COMPANY.UPDATE_COMPANY' | translate}}</a></li>
+              <li *ngIf="!isLoggedIn"><a class="dropdown-item" routerLinkActive="active" routerLink="/user/login">{{'COMPANY.LOGIN' | translate}}</a></li>
+            </ul>
+          </div>
+
+          <div class="mode-select" (click)="toggleDarkMode()">
+            <p>Dark mode</p>
+            <div class="switch" [class.clicked]="switchClicked">
+              <div id="modeSwitch">
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 d-flex" id="BackDiv">
+            <button style="width: 100%;" type="button" class="btn btn-primary" routerLink="/public/home">{{'COMPANY.STEPPER_BACK' | translate}}</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Main content -->
-    <div class="col d-flex flex-column align-items-center justify-content-center main-content">
-      <ng-container *ngIf="employeeSectionFlag">
-      <div *ngIf="isEmployeeFormVisible" class="card p-4 shadow-sm form-card">
-        <form (ngSubmit)="submitEmployeeForm()">
-          <!-- Employee First Name Field -->
-          <div class="form-group mb-3">
-            <label for="employeeFirstName">First Name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="employeeFirstName"
-              [(ngModel)]="employee.firstName"
-              name="employeeFirstName"
-              required
-            />
-          </div>
 
-          <!-- Employee Last Name Field -->
-          <div class="form-group mb-3">
-            <label for="employeeLastName">Last Name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="employeeLastName"
-              [(ngModel)]="employee.lastName"
-              name="employeeLastName"
-              required
-            />
-          </div>
 
-          <!-- Employee Email Field -->
-          <div class="form-group mb-3">
-            <label for="employeeEmail">Email</label>
-            <input
-              type="email"
-              class="form-control"
-              id="employeeEmail"
-              [(ngModel)]="employee.email"
-              name="employeeEmail"
-              required
-            />
-          </div>
+      <!-- Main content -->
+      <div class="main-content">
+        <div *ngIf="!hasCompany && isLoggedIn" class="no-company-section" >
+          <div class="no-company-title">
+            <h1 id="noCompanyTitle" *ngIf="!hasCompany">{{'COMPANY.NO_COMPANY' | translate}}</h1>
 
-          <!-- Employee Phone Number Field -->
-          <div class="form-group mb-3">
-            <label for="employeePhone">Phone Number</label>
-            <input
-              type="tel"
-              class="form-control"
-              id="employeePhone"
-              [(ngModel)]="employee.phoneNumber"
-              name="employeePhone"
-              required
-            />
-          </div>
-
-          <!-- Employee Title Field -->
-          <div class="form-group mb-3">
-            <label for="employeeTitle">Title</label>
-            <input
-              type="text"
-              class="form-control"
-              id="employeeTitle"
-              [(ngModel)]="employee.title"
-              name="employeeTitle"
-              required
-            />
-          </div>
-
-          <!-- Employee Admin Email -->
-          <div class="form-group mb-3">
-            <label for="companyAdminEmail">Company admin email</label>
-            <input
-              type="text"
-              class="form-control"
-              id="companyAdminEmail"
-              [(ngModel)]="employee.companyAdminEmail"
-              name="companyAdminEmail"
-              readonly
-              required
-            />
-          </div>
-
-          <!-- Submit and Cancel Buttons -->
-          <div class="d-flex justify-content-between mt-4" style="width: 400px">
-            <button type="submit" class="btn btn-primary buttonForm">Submit</button>
-            <button type="button" (click)="cancelEmployeeForm()" class="btn btn-danger buttonForm">
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-
-        <div *ngIf="isUpdating" class="update-employee-form">
-          <h3>Update Employee Information</h3>
-          <form (ngSubmit)="updateEmployeeForm()">
-            <!-- First Name -->
-            <div class="form-group mb-3">
-              <label for="updateEmployeeFirstName">First Name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="updateEmployeeFirstName"
-                [(ngModel)]="employee.firstName"
-                name="updateFirstName"
-                required
-              />
+            <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100px;">
+              <div class="create-company-button" (click)="showForm()">
+                <p id="createCompanyButton">{{'COMPANY.CREATE_COMPANY_BUTTON' | translate}}</p>
+              </div>
             </div>
-
-            <!-- Last Name -->
-            <div class="form-group mb-3">
-              <label for="updateEmployeeLastName">Last Name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="updateEmployeeLastName"
-                [(ngModel)]="employee.lastName"
-                name="updateLastName"
-                required
-              />
-            </div>
-
-            <!-- Email -->
-            <div class="form-group mb-3">
-              <label for="updateEmployeeEmail">Email</label>
-              <input
-                type="email"
-                class="form-control"
-                id="updateEmployeeEmail"
-                [(ngModel)]="employee.email"
-                name="updateEmail"
-                required
-              />
-            </div>
-
-            <!-- Phone Number -->
-            <div class="form-group mb-3">
-              <label for="updateEmployeePhone">Phone Number</label>
-              <input
-                type="tel"
-                class="form-control"
-                id="updateEmployeePhone"
-                [(ngModel)]="employee.phoneNumber"
-                name="updatePhoneNumber"
-                required
-              />
-            </div>
-
-            <!-- Title -->
-            <div class="form-group mb-3">
-              <label for="updateEmployeeTitle">Title</label>
-              <input
-                type="text"
-                class="form-control"
-                id="updateEmployeeTitle"
-                [(ngModel)]="employee.title"
-                name="updateTitle"
-                required
-              />
-            </div>
-
-            <!-- Company Admin Email (Read-Only) -->
-            <div class="form-group mb-3">
-              <label for="updateCompanyAdminEmail">Company Admin Email</label>
-              <input
-                type="email"
-                class="form-control"
-                style="color: gray"
-                id="updateCompanyAdminEmail"
-                [(ngModel)]="employee.companyAdminEmail"
-                name="updateCompanyAdminEmail"
-                readonly
-                required
-              />
-            </div>
-
-            <!-- Submit and Cancel Buttons -->
-            <div class="d-flex justify-content-between mt-4">
-              <button type="submit" class="btn btn-primary buttonForm">Update</button>
-              <button type="button" (click)="cancelUpdateEmployeeForm()" class="btn btn-danger buttonForm">
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Employee Table -->
-        <div *ngIf="activeLink === 'employees' && isLoggedIn && hasCompany && employeesFlag && hasEmployees && !isUpdating" class="table-responsive">
-          <table class="table table-dark table-striped table-hover">
-            <thead>
-            <tr>
-              <th>Employee ID</th>
-              <th>Last Name</th>
-              <th>First Name</th>
-              <th>Phone Number</th>
-              <th>Title</th>
-              <th>Email</th>
-              <th>Working Hour</th>
-              <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let employee of employees">
-              <!-- Ensure employee object has these properties -->
-              <td>{{ employee.employeeId }}</td>
-              <td>{{ employee.lastName }}</td>
-              <td>{{ employee.firstName }}</td>
-              <td>{{ employee.phoneNumber }}</td>
-              <td>{{ employee.companyTitle }}</td>
-              <td>{{ employee.email }}</td>
-              <td>{{ employee.workingHour }}</td>
-              <td>
-                <button type="button" class="btn btn-warning btn-sm me-2" (click)="updateEmployee(employee.employeeId)">Update</button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="deleteEmployee(employee.employeeId)">Delete</button>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-          <button type="button" class="btn btn-primary btn-sm" (click)="addEmployee()">Add Employee</button>
+          </div>
         </div>
 
 
-      <!-- Message if no employees are present -->
-        <div class="d-flex flex-column justify-content-center align-items-center" *ngIf="activeLink === 'employees' && !employeesFlag && isLoggedIn && hasCompany && !isEmployeeFormVisible">
-          <h1>No employees found.</h1>
-          <button type="button" class="btn btn-primary" (click)="showEmployeeForm()">Add employee</button>
+        <!--Image of company-->
+        <div *ngIf="hasCompany && isLoggedIn" class="company-image-section">
+          <div class="company-image">
+            <img id="companyImage" *ngIf="avatarPreviewUrl" [src]="avatarPreviewUrl" alt="Company Avatar" />
+          </div>
+
+          <div class="company-image-title">
+            <h2 style="color: #1e1e1e; font-family: 'Century Gothic'; width: 70%; margin-bottom: 20px;" *ngIf="hasCompany">{{this.companyDescription}}</h2>
+            <p style="font-family: 'Century Gothic'; margin:0;">{{'COMPANY.ADDRESS' | translate}}: {{this.companyAddress}}</p>
+            <p style="font-family: 'Century Gothic'; margin:0;">{{'COMPANY.EMAIL' | translate}}: {{this.companyEmail}}</p>
+            <p style="font-family: 'Century Gothic'; margin:0;">{{'COMPANY.PHONE' | translate}}: {{this.companyPhone}}</p>
+          </div>
         </div>
 
-      </ng-container>
-      <div *ngIf="!isLoggedIn; else createCompanySection">
-        <p>You need to be logged in to create a company.</p>
-      </div>
+        <!--CREATE COMPANY---------------------------------------------------------------------------------------------------------------->
 
-      <ng-template #createCompanySection>
-        <!-- Big Transparent Text Overlay (for no company created) -->
-        <div *ngIf="!hasCompany && activeLink === 'home' && !isFormVisible" class="no-company-overlay">
-          You need to create a company to manage employees.
-        </div>
-      <!-- Create Company Form -->
-      <div *ngIf="isLoggedIn && activeLink === 'home' && !hasCompany">
-        <button
-          class="btn btn-primary mb-3"
-          *ngIf="!isFormVisible"
-          (click)="showForm()"
-        >
-          Create Company
-        </button>
+        <div *ngIf="!hasCompany && isLoggedIn && isFormVisible" class="create-company-section">
+          <div class="create-company-form-box">
 
-        <div *ngIf="isFormVisible" class="card p-4 shadow-sm form-card">
-          <form (ngSubmit)="submitForm()">
-            <!-- Company Avatar Field -->
-            <div class="d-flex justify-content-center mb-4">
-              <label for="companyAvatar" class="avatar-upload">
-                <div
-                  class="avatar-circle"
-                  [ngStyle]="{ 'background-image': 'url(' + avatarPreview + ')' }"
-                >
-                  <span class="plus-icon" *ngIf="!avatarPreview">+</span>
+            <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
+              <div class="close-update-button" (click)="closeForm(); stepper.reset();"><p>X</p></div>
+            </div>
+
+            <h2>{{'COMPANY.CREATE_COMPANY_TITLE' | translate}}</h2>
+
+            <mat-stepper orientation="horizontal" #stepper>
+
+              /* Basic info */
+              <mat-step [stepControl]="basicInfoFormGroup">
+                <form [formGroup]="basicInfoFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.COMPANY_BASIC_INFO_TITLE' | translate}}</ng-template>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_NAME' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. Google" formControlName="companyName" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_PHONE' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. 387-123-456" formControlName="companyPhone" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_EMAIL' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. 3k4t2@example.com" formControlName="companyEmail" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_ADDRESS' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. 1 Main St, New York, NY" formControlName="companyAddress" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_DESCRIPTION' | translate}} </mat-label>
+                    <textarea matInput placeholder="e.g. We are a company that specializes in electronics" formControlName="companyDescription" required></textarea>
+                  </mat-form-field>
+                  <div>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              /* Verification */
+              <mat-step [stepControl]="verificationFormGroup">
+                <form [formGroup]="verificationFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.VERIFICATION_TITLE' | translate}}</ng-template>
+
+                  <p class="verificationText">{{'COMPANY.VERIFICATION_INSTRUCTIONS' | translate}}:</p>
+
+                  <label class="custom-file-upload">
+                    <div class="custom-file-upload-button">{{'COMPANY.VERIFICATION_UPLOAD_BUTTON' | translate}}</div>
+                    <input class="fileInput" accept="application/pdf" type="file" (change)="onFileSelected($event)">
+                    {{ this.fileName }}
+                  </label>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button *ngIf="this.isFileSelected" class="company-create-button-form" (click)="openCompanyPdf()">{{'COMPANY.VERIFICATION_VIEW_FILE_BUTTON' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              /*Avatar*/
+              <mat-step [stepControl]="avatarFormGroup">
+                <form [formGroup]="avatarFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.AVATAR_TITLE' | translate}}</ng-template>
+
+                  <div class="container">
+                    <ng-container *ngIf="!showCropper && !companyAvatar">
+                      <div class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+                        <p>{{'COMPANY.AVATAR_INSTRUCTIONS' | translate}}</p>
+                        <input type="file" accept="image/*" #companyFileInput (change)="onFileChange($event)" hidden />
+                        <button (click)="companyFileInput.click()">{{'COMPANY.AVATAR_CHOOSE_BUTTON' | translate}}</button>
+                      </div>
+                    </ng-container>
+
+                    <div *ngIf="showCropper" class="cropper-modal" style="position: relative;">
+                      <image-cropper
+                        [imageChangedEvent]="imageChangedEvent"
+                        [maintainAspectRatio]="true"
+                        [aspectRatio]="1"
+                        [roundCropper]="true"
+                        [cropperStaticWidth]="250"
+                        [cropperStaticHeight]="250"
+                        [resizeToWidth]="400"
+                        [resizeToHeight]="400"
+                        [imageQuality]="0.8"
+                        format="jpeg"
+                        style="max-width: 400px; max-height: 400px; display: block; margin: 0 auto;"
+                        (imageCropped)="imageCropped($event)"
+                      ></image-cropper>
+
+                      <div class="mt-2">
+                        <button class="btn btn-outline-light" (click)="uploadCroppedImage()">{{'COMPANY.AVATAR_UPLOAD_BUTTON' | translate}}</button>
+                        <button class="btn btn-outline-light mx-2" (click)="cancelCrop()">{{'COMPANY.AVATAR_CANCEL_BUTTON' | translate}}</button>
+                      </div>
+                    </div>
+
+                    <ng-container *ngIf="!showCropper && companyAvatar">
+                      <div class="d-flex justify-content-center mb-3">
+                        <div class="profile-pic">
+                          <img *ngIf="avatarPreviewUrl" [src]="this.avatarPreviewUrl" alt="Company Avatar">
+                        </div>
+                      </div>
+                      <div class="d-flex justify-content-center mb-3">
+                        <input type="file" accept="image/*" #companyFileInput (change)="onFileChange($event)" hidden />
+                        <button class="btn btn-outline-light" (click)="companyFileInput.click()">{{'COMPANY.AVATAR_CHANGE_BUTTON' | translate}}</button>
+                        <button class="btn btn-outline-danger mx-2" (click)="companyAvatar = null">{{'COMPANY.AVATAR_REMOVE_BUTTON' | translate}}</button>
+                      </div>
+                    </ng-container>
+
+                    <div *ngIf="isLoading" class="loader-overlay">
+                      <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+                    </div>
+                  </div>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              /*Finish*/
+              <mat-step>
+                <ng-template matStepLabel>{{'COMPANY.STEPPER_DONE' | translate}}</ng-template>
+                <p>{{'COMPANY.STEPPER_DONE_TEXT' | translate}}</p>
+                <div>
+                  <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                  <button class="company-create-button-form" (click)="stepper.reset(); resetForm()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
+                  <button class="company-create-button-form" (click)="createCompany();stepper.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
                 </div>
-                <input
-                  type="file"
-                  id="companyAvatar"
-                  (change)="onFileSelected($event)"
-                  accept="image/*"
-                  class="d-none"
-                />
-              </label>
-            </div>
-
-            <!-- Company Name Field -->
-            <div class="form-group mb-3">
-              <label for="companyName">Company Name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="companyName"
-                [(ngModel)]="companyName"
-                name="companyName"
-                required
-              />
-            </div>
-
-            <!-- Company Phone Field -->
-            <div class="form-group mb-3">
-              <label for="companyPhone">Company Phone</label>
-              <input
-                type="tel"
-                class="form-control"
-                id="companyPhone"
-                [(ngModel)]="companyPhone"
-                name="companyPhone"
-                required
-              />
-            </div>
-
-            <!-- Company Description Field (new) -->
-            <div class="form-group mb-3">
-              <label for="companyDescription">Company Description</label>
-              <textarea
-                class="form-control"
-                id="companyDescription"
-                [(ngModel)]="companyDescription"
-                name="companyDescription"
-                rows="4"
-                required
-              ></textarea>
-            </div>
-
-            <!-- Company Email Field -->
-            <div class="form-group mb-3">
-              <label for="companyEmail">Company Email</label>
-              <input
-                type="email"
-                class="form-control"
-                id="companyEmail"
-                [(ngModel)]="companyEmail"
-                name="companyEmail"
-                required
-              />
-            </div>
-
-            <!-- Company Address Field -->
-            <div class="form-group mb-3">
-              <label for="address">Address</label>
-              <input
-                type="text"
-                class="form-control"
-                id="address"
-                [(ngModel)]="address"
-                name="address"
-                required
-              />
-            </div>
-
-            <!-- Company Verification PDF Field -->
-            <div class="form-group mb-3">
-              <label for="companyPdf">Upload Verification PDF</label>
-              <input
-                type="file"
-                class="form-control"
-                id="companyPdf"
-                (change)="onPdfSelected($event)"
-                accept="application/pdf"
-                required
-              />
-            </div>
-
-            <!-- Submit and Cancel Buttons -->
-            <div class="d-flex justify-content-between mt-4">
-              <button type="submit" class="btn btn-primary buttonForm">
-                Submit
-              </button>
-              <button
-                type="button"
-                (click)="cancelForm()"
-                class="btn btn-danger buttonForm"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+              </mat-step>
+            </mat-stepper>
+          </div>
         </div>
-        <!-- Optionally display the success message or company info here -->
-        <div *ngIf="hasCompany">
-          <p>Your company has already been created.</p>
+
+        <!--UPDATE COMPANY------------------------------------------------------------------------------------------------------------------>
+
+        <div *ngIf="hasCompany && isLoggedIn && updateFormVisible" class="update-company-section">
+          <div class="update-company-form-box">
+
+            <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
+              <div class="close-update-button" (click)="closeUpdateForm()"><p>X</p></div>
+            </div>
+
+            <h2>{{'COMPANY.UPDATE_COMPANY_TITLE' | translate}}</h2>
+
+            <mat-stepper orientation="horizontal" #stepperUpdate>
+
+              /* Basic info */
+              <mat-step [stepControl]="basicInfoUpdateFormGroup">
+                <form [formGroup]="basicInfoUpdateFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.COMPANY_BASIC_INFO_TITLE' | translate}}</ng-template>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_NAME' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. Google" formControlName="companyName" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_PHONE' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. 387-123-456" formControlName="companyPhone" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_EMAIL' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. 3k4t2@example.com" formControlName="companyEmail" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_ADDRESS' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. 1 Main St, New York, NY" formControlName="companyAddress" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.COMPANY_DESCRIPTION' | translate}}</mat-label>
+                    <textarea matInput placeholder="e.g. We are a company that specializes in electronics" formControlName="companyDescription" required></textarea>
+                  </mat-form-field>
+                  <div>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              /* Verification */
+              <mat-step [stepControl]="verificationUpdateFormGroup">
+                <form [formGroup]="verificationUpdateFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.VERIFICATION_TITLE' | translate}}</ng-template>
+
+                  <p class="verificationText">{{'COMPANY.VERIFICATION_INSTRUCTIONS' | translate}}</p>
+
+                  <label class="custom-file-upload" style="text-decoration: underline;">
+                    <div class="custom-file-upload-button">{{'COMPANY.VERIFICATION_UPLOAD_BUTTON' | translate}}</div>
+                    <input class="fileInput" accept="application/pdf" type="file" (change)="onFileSelected($event)">
+                    {{ this.fileName }}
+                  </label>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button *ngIf="this.isFileSelected" class="company-create-button-form" (click)="openCompanyPdf()">{{'COMPANY.VERIFICATION_VIEW_FILE_BUTTON' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              /*Avatar*/
+              <mat-step [stepControl]="avatarUpdateFormGroup">
+                <form [formGroup]="avatarUpdateFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.AVATAR_TITLE' | translate}}</ng-template>
+
+                  <div class="container">
+                    <ng-container *ngIf="!showCropper && !companyAvatar">
+                      <div class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+                        <p>{{'COMPANY.AVATAR_INSTRUCTIONS' | translate}}</p>
+                        <input type="file" accept="image/*" #companyFileInput (change)="onFileChange($event)" hidden />
+                        <button (click)="companyFileInput.click()">{{'COMPANY.AVATAR_CHOOSE_BUTTON' | translate}}</button>
+                      </div>
+                    </ng-container>
+
+                    <div *ngIf="showCropper" class="cropper-modal" style="position: relative;">
+                      <image-cropper
+                        [imageChangedEvent]="imageChangedEvent"
+                        [maintainAspectRatio]="true"
+                        [aspectRatio]="1"
+                        [roundCropper]="true"
+                        [cropperStaticWidth]="250"
+                        [cropperStaticHeight]="250"
+                        [resizeToWidth]="400"
+                        [resizeToHeight]="400"
+                        [imageQuality]="0.8"
+                        format="jpeg"
+                        style="max-width: 400px; max-height: 400px; display: block; margin: 0 auto;"
+                        (imageCropped)="imageCropped($event)"
+                      ></image-cropper>
+
+                      <div class="mt-2">
+                        <button class="btn btn-outline-light" (click)="uploadCroppedImage()">{{'COMPANY.AVATAR_UPLOAD_BUTTON' | translate}}</button>
+                        <button class="btn btn-outline-light mx-2" (click)="cancelCrop()">{{'COMPANY.AVATAR_CANCEL_BUTTON' | translate}}</button>
+                      </div>
+                    </div>
+
+                    <ng-container *ngIf="!showCropper && companyAvatar">
+                      <div class="d-flex justify-content-center mb-3">
+                        <div class="profile-pic">
+                          <img *ngIf="avatarPreviewUrl" [src]="this.avatarPreviewUrl" alt="Company Avatar">
+                        </div>
+                      </div>
+                      <div class="d-flex justify-content-center mb-3">
+                        <input type="file" accept="image/*" #companyFileInput (change)="onFileChange($event)" hidden />
+                        <button class="btn btn-outline-light" (click)="companyFileInput.click()">{{'COMPANY.AVATAR_CHANGE_BUTTON' | translate}}</button>
+                        <button class="btn btn-outline-danger mx-2" (click)="openMyConfirmDialog()">{{'COMPANY.AVATAR_REMOVE_BUTTON' | translate}}</button>
+                      </div>
+                    </ng-container>
+
+                    <div *ngIf="isLoading" class="loader-overlay">
+                      <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+                    </div>
+                  </div>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              /*Finish*/
+              <mat-step>
+                <ng-template matStepLabel>{{'COMPANY.STEPPER_DONE' | translate}}</ng-template>
+                <p>{{'COMPANY.STEPPER_DONE_TEXT' | translate}}</p>
+                <div>
+                  <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                  <button class="company-create-button-form" (click)="stepperUpdate.reset(); resetForm()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
+                  <button class="company-create-button-form" (click)="updateCompany();stepperUpdate.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                </div>
+              </mat-step>
+            </mat-stepper>
+          </div>
+        </div>
+
+        <!--Employee View-------------------------------------------------------------------------------------------->
+
+        <div class="employee-view-section" *ngIf="hasCompany && isLoggedIn && hasEmployees">
+          <h1>{{'COMPANY.EMPLOYEE_VIEW_TITLE' | translate}}</h1>
+
+          <mat-form-field id="filter">
+            <mat-label>{{'COMPANY.EMPLOYEE_VIEW_FILTER' | translate}}</mat-label>
+            <input matInput (keyup)="applyFilter(input.value)" placeholder="Ex. John Doe" #input>
+          </mat-form-field>
+
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="userId">
+              <th mat-header-cell *matHeaderCellDef> {{'COMPANY.EMPLOYEE_TABLE_USER_ID' | translate}} </th>
+              <td mat-cell *matCellDef="let employee"> {{employee.userId}} </td>
+            </ng-container>
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="firstName">
+              <th mat-header-cell *matHeaderCellDef> {{'COMPANY.EMPLOYEE_TABLE_FIRST_NAME' | translate}} </th>
+              <td mat-cell *matCellDef="let employee"> {{employee.user.firstName}} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="lastName">
+              <th mat-header-cell *matHeaderCellDef> {{'COMPANY.EMPLOYEE_TABLE_LAST_NAME' | translate}} </th>
+              <td mat-cell *matCellDef="let employee"> {{employee.user.lastName}} </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="phoneNumber">
+              <th mat-header-cell *matHeaderCellDef> {{'COMPANY.EMPLOYEE_TABLE_PHONE' | translate}} </th>
+              <td mat-cell *matCellDef="let employee"> {{employee.user.phoneNumber}} </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef> {{'COMPANY.EMPLOYEE_TABLE_POSITION' | translate}} </th>
+              <td mat-cell *matCellDef="let employee"> {{employee.companyPosition.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef> {{'COMPANY.EMPLOYEE_TABLE_EMAIL' | translate}} </th>
+              <td mat-cell *matCellDef="let employee"> {{employee.user.emailAdress}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="workingHours">
+              <th mat-header-cell *matHeaderCellDef> {{'COMPANY.EMPLOYEE_TABLE_WORKING_HOURS' | translate}} </th>
+              <td mat-cell *matCellDef="let employee"> {{ employee.workingHour?.startTime }} - {{ employee.workingHour?.endTime }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> {{'COMPANY.EMPLOYEE_TABLE_ACTIONS' | translate}} </th>
+              <td mat-cell *matCellDef="let employee"> <div id="update-employee-button" (click)="showUpdateEmployeeForm(employee)">{{'COMPANY.EMPLOYEE_TABLE_UPDATE' | translate}}</div> <div id="delete-employee-button" (click)="deleteEmployee(employee.userId)">{{'COMPANY.EMPLOYEE_TABLE_DELETE' | translate}}</div> </td>
+            </ng-container>
+
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="4">{{'COMPANY.EMPLOYEE_VIEW_NO_FILTER_DATA' | translate}} "{{input.value}}"</td>
+            </tr>
+          </table>
+
+          <mat-paginator id="paginator"  [pageSizeOptions]="[5]" showFirstLastButtons></mat-paginator>
+
+          <div class="add-employee-button" (click)="showEmployeeForm()">{{'COMPANY.EMPLOYEE_VIEW_ADD_EMPLOYEE_BUTTON' | translate}}</div>
+        </div>
+
+        <div class="no-employees-section" *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !hasEmployees && !isEmployeeFormVisible && !isUpdateEmployeeFormVisible">
+          <h1 id="noEmployeesTitle">{{'COMPANY.EMPLOYEE_VIEW_NO_EMPLOYEES' | translate}}</h1>
+          <div class="add-employee-button" (click)="showEmployeeForm()">{{'COMPANY.EMPLOYEE_VIEW_ADD_EMPLOYEE_BUTTON' | translate}}</div>
+        </div>
+
+        <div class="employee-form-section" *ngIf="hasCompany && isLoggedIn && !updateFormVisible && isEmployeeFormVisible && !isUpdateEmployeeFormVisible">
+          <div class="employee-form-box">
+            <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
+              <div class="close-update-button" (click)="closeAddEmployeeForm(); stepperAddEmployeeForm.reset();"><p>X</p></div>
+            </div>
+
+            <h2 style="text-align: center;">{{'COMPANY.EMPLOYEE_ADD_FORM_TITLE' | translate}}</h2>
+
+            <mat-stepper orientation="horizontal" #stepperAddEmployeeForm>
+
+              //Basic information
+              <mat-step [stepControl]="companyEmployeeFormGroup">
+                <form [formGroup]="companyEmployeeFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.EMPLOYEE_ADD_FORM_BASIC_INFO' | translate}}</ng-template>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_FIRST_NAME' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. John" formControlName="firstName" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_LAST_NAME' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. Doe" formControlName="lastName" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_PHONE' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. 387-123-456" formControlName="phoneNumber" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_EMAIL' | translate}}</mat-label>
+                    <textarea matInput placeholder="e.g. johndoe@gmail.com" formControlName="email" required></textarea>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_POSITION' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. Programmer" formControlName="title" required>
+                  </mat-form-field>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              <mat-step [stepControl]="workingHoursFormGroup">
+                <form [formGroup]="workingHoursFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS' | translate}}</ng-template>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS_FROM' | translate}}</mat-label>
+                    <input matInput [ngxTimepicker]="startPicker" formControlName="startTime" readonly>
+                    <ngx-material-timepicker #startPicker></ngx-material-timepicker>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS_TO' | translate}}</mat-label>
+                    <input matInput [ngxTimepicker]="endPicker" formControlName="endTime" readonly>
+                    <ngx-material-timepicker #endPicker></ngx-material-timepicker>
+                  </mat-form-field>
+
+                  <div class="days-checkboxes">
+                    <mat-checkbox formControlName="monday">{{'COMPANY.EMPLOYEE_ADD_FORM_MONDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="tuesday">{{'COMPANY.EMPLOYEE_ADD_FORM_TUESDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="wednesday">{{'COMPANY.EMPLOYEE_ADD_FORM_WEDNESDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="thursday">{{'COMPANY.EMPLOYEE_ADD_FORM_THURSDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="friday">{{'COMPANY.EMPLOYEE_ADD_FORM_FRIDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="saturday">{{'COMPANY.EMPLOYEE_ADD_FORM_SATURDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="sunday">{{'COMPANY.EMPLOYEE_ADD_FORM_SUNDAY' | translate}}</mat-checkbox>
+                  </div>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              <mat-step [stepControl]="companyEmployeeBirthDateFormGroup">
+                <form [formGroup]="companyEmployeeBirthDateFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.EMPLOYEE_ADD_FORM_BIRTH_DATE' | translate}}</ng-template>
+
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_BIRTH_DATE' | translate}}</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="birthDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              /*Finish*/
+              <mat-step>
+                <ng-template matStepLabel>{{'COMPANY.STEPPER_DONE' | translate}}</ng-template>
+                <p>{{'COMPANY.STEPPER_DONE_TEXT' | translate}}</p>
+                <div>
+                  <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                  <button class="company-create-button-form" (click)="stepperAddEmployeeForm.reset()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
+                  <button class="company-create-button-form" (click)="addEmployee();stepperAddEmployeeForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                </div>
+              </mat-step>
+            </mat-stepper>
+          </div>
+        </div>
+
+        <div class="employee-update-form-section" *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !isEmployeeFormVisible && isUpdateEmployeeFormVisible">
+          <div class="employee-update-form-box">
+            <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
+              <div class="close-update-button" (click)="closeUpdateEmployeeForm(); stepperUpdateEmployeeForm.reset();"><p>X</p></div>
+            </div>
+
+            <h2 style="text-align: center;">{{'COMPANY.EMPLOYEE_UPDATE_FORM_TITLE' | translate}}</h2>
+
+            <mat-stepper orientation="horizontal" #stepperUpdateEmployeeForm>
+
+              //Basic information
+              <mat-step [stepControl]="companyUpdateEmployeeFormGroup">
+                <form [formGroup]="companyUpdateEmployeeFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.EMPLOYEE_ADD_FORM_BASIC_INFO' | translate}}</ng-template>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_FIRST_NAME' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. John" formControlName="firstName" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_LAST_NAME' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. Doe" formControlName="lastName" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_PHONE' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. 387-123-456" formControlName="phoneNumber" required>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_EMAIL' | translate}}</mat-label>
+                    <textarea matInput placeholder="e.g. johndoe@gmail.com" formControlName="email" required></textarea>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_TABLE_POSITION' | translate}}</mat-label>
+                    <input matInput placeholder="e.g. Programmer" formControlName="title" required>
+                  </mat-form-field>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              <mat-step [stepControl]="workingHoursUpdateFormGroup">
+                <form [formGroup]="workingHoursUpdateFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS' | translate}}</ng-template>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS_FROM' | translate}}</mat-label>
+                    <input matInput [ngxTimepicker]="startPicker" formControlName="startTime" readonly>
+                    <ngx-material-timepicker #startPicker></ngx-material-timepicker>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS_TO' | translate}}</mat-label>
+                    <input matInput [ngxTimepicker]="endPicker" formControlName="endTime" readonly>
+                    <ngx-material-timepicker #endPicker></ngx-material-timepicker>
+                  </mat-form-field>
+
+                  <div class="days-checkboxes">
+                    <mat-checkbox formControlName="monday">{{'COMPANY.EMPLOYEE_ADD_FORM_MONDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="tuesday">{{'COMPANY.EMPLOYEE_ADD_FORM_TUESDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="wednesday">{{'COMPANY.EMPLOYEE_ADD_FORM_WEDNESDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="thursday">{{'COMPANY.EMPLOYEE_ADD_FORM_THURSDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="friday">{{'COMPANY.EMPLOYEE_ADD_FORM_FRIDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="saturday">{{'COMPANY.EMPLOYEE_ADD_FORM_SATURDAY' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="sunday">{{'COMPANY.EMPLOYEE_ADD_FORM_SUNDAY' | translate}}</mat-checkbox>
+                  </div>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              <mat-step [stepControl]="companyEmployeeUpdateBirthDateFormGroup">
+                <form [formGroup]="companyEmployeeUpdateBirthDateFormGroup">
+                  <ng-template matStepLabel>{{'COMPANY.EMPLOYEE_ADD_FORM_BIRTH_DATE' | translate}}</ng-template>
+
+                  <mat-form-field>
+                    <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_BIRTH_DATE' | translate}}</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="birthDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </form>
+              </mat-step>
+
+              /*Finish*/
+              <mat-step>
+                <ng-template matStepLabel>{{'COMPANY.STEPPER_DONE' | translate}}</ng-template>
+                <p>{{'COMPANY.STEPPER_DONE_TEXT' | translate}}</p>
+                <div>
+                  <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                  <button class="company-create-button-form" (click)="stepperUpdateEmployeeForm.reset()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
+                  <button class="company-create-button-form" (click)="updateEmployee();stepperUpdateEmployeeForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                </div>
+              </mat-step>
+            </mat-stepper>
+          </div>
         </div>
       </div>
-
-        <div *ngIf="updateFormVisible" class="update-company-form">
-          <h2>Update Company</h2>
-          <form (ngSubmit)="updateCompany()">
-            <label class="form-label">Company Name:</label>
-            <input class="form-control" [(ngModel)]="companyName" name="companyName" required />
-
-            <label class="form-label">Phone:</label>
-            <input class="form-control" [(ngModel)]="companyPhone" name="companyPhone" required />
-
-            <label class="form-label">Email:</label>
-            <input class="form-control" [(ngModel)]="companyEmail" name="companyEmail" required />
-
-            <label class="form-label">Description:</label>
-            <textarea class="form-control" [(ngModel)]="companyDescription" name="companyDescription"></textarea>
-
-            <label class="form-label">Address:</label>
-            <input class="form-control" [(ngModel)]="address" name="companyAddress" required />
-
-            <!-- Avatar selection -->
-            <label class="form-label">Avatar:</label>
-            <input class="form-control" type="file" (change)="onFileChange($event)" />
-
-            <!-- Display selected file name -->
-            <p *ngIf="selectedFileName">Selected Avatar: {{ selectedFileName }}</p>
-
-            <button type="submit" class="btn btn-primary" style="margin:10px 5px;">Update Company</button>
-            <button type="button" class="btn btn-secondary" style="margin:10px 5px;" (click)="updateFormVisible = false">Cancel</button>
-          </form>
-        </div>
-
-
-      </ng-template>
-
-    </div>
   </div>
-</div>

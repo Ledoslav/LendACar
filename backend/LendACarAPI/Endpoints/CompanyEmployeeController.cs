@@ -1,10 +1,11 @@
-using Azure.Core.GeoJson;
+using System.Security.Cryptography;
+using System.Text;
 using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+using Org.BouncyCastle.Asn1.Cms;
 
 namespace LendACarAPI.Endpoints
 {
@@ -33,7 +34,7 @@ namespace LendACarAPI.Endpoints
 
             if (companyEmployees == null)
             {
-                return Ok("No company employees found");
+                return null;
             }
 
             return companyEmployees;
@@ -83,184 +84,183 @@ namespace LendACarAPI.Endpoints
         [HttpDelete("delete/{userId}")]
         public async Task<IActionResult> DeleteEmployee(int userId)
         {
-            // Step 1: Find the employee in the CompanyEmployee table
-            var companyEmployee = await _context.CompanyEmployees
-                .FirstOrDefaultAsync(ce => ce.UserId == userId);
+            // Use a transaction to ensure all deletions succeed together
+            await using var transaction = await _context.Database.BeginTransactionAsync();
 
-            if (companyEmployee == null)
+            try
             {
-                return Ok(new { message = "Employee not found in CompanyEmployee table." });
+                // Step 1: Find the employee with related entities
+                var employee = await _context.CompanyEmployees
+                    .Include(ce => ce.WorkingHour)
+                    .Include(ce => ce.User)
+                    .FirstOrDefaultAsync(ce => ce.UserId == userId);
+
+                if (employee == null)
+                    return NotFound(new { message = "Employee not found." });
+
+                // Step 2: Remove related working hours if exists
+                if (employee.WorkingHour != null)
+                    _context.WorkingHours.Remove(employee.WorkingHour);
+
+                // Step 3: Remove the CompanyEmployee record
+                _context.CompanyEmployees.Remove(employee);
+
+                // Step 4: Remove the User record
+                if (employee.User != null)
+                    _context.Users.Remove(employee.User);
+
+                // Step 5: Save changes
+                await _context.SaveChangesAsync();
+
+                // Commit transaction
+                await transaction.CommitAsync();
+
+                return Ok(new { message = "Employee successfully deleted." });
             }
-
-            // Step 2: Remove the employee from the CompanyEmployee table
-            _context.CompanyEmployees.Remove(companyEmployee);
-
-            // Step 3: Find and delete the employee's working hours
-            var workingHours = await _context.WorkingHours
-                .FirstOrDefaultAsync(wh => wh.Id == companyEmployee.WorkingHourId);
-
-            if (workingHours != null)
+            catch (Exception ex)
             {
-                _context.WorkingHours.Remove(workingHours);
+                await transaction.RollbackAsync();
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { message = "Error deleting employee.", details = ex.Message });
             }
-
-            // Step 4: Find and delete the user from the User table
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (user == null)
-            {
-                return Ok(new { message = "User not found in User table." });
-            }
-
-            _context.Users.Remove(user);
-
-            // Step 5: Save changes to the database
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Employee successfully deleted." });
         }
 
 
         [HttpPost("add")]
         public async Task<ActionResult> AddEmployee([FromBody] AddEmployeeRequest request)
         {
-            // Validate the request data
             if (request == null)
             {
-                return Ok(new { message = "Invalid employee data." });
+                return BadRequest(new { message = "Invalid employee data." });
             }
 
-            // Step 1: Find the company admin using their email (this email should exist)
+            // Step 1: Find the company admin using their email
             var companyAdmin = await _context.CompanyEmployees
                 .Include(ce => ce.User)
                 .FirstOrDefaultAsync(ce => ce.CompanyAdminEmail == request.CompanyAdminEmail);
 
             if (companyAdmin == null)
             {
-                return Ok(new { message = "Company admin not found." });
+                return NotFound(new { message = "Company admin not found." });
             }
 
-            // Step 2: Get the company ID from the admin
             var companyId = companyAdmin.CompanyId;
 
-            // Step 3: Create a new user (from Person table)
+            using var hmac = new HMACSHA256();
+
             var newUser = new User
             {
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 EmailAdress = request.Email,
                 PhoneNumber = request.PhoneNumber,
-                PasswordHash = new byte[0],  // Placeholder for actual password handling
-                PasswordSalt = new byte[0],  // Placeholder for actual password handling
                 Username = request.FirstName + request.LastName,
-                CityId = 1  // Default CityId (adjust as needed)
+                CityId = 1,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.EmployeePassword)),
+                PasswordSalt = hmac.Key,
+                CreatedDate = DateTime.UtcNow,
+                IsVerified = false,
+                IsAppUser = true,
+                BirthDate = DateTime.Parse(request.BirthDate)
             };
 
-            // Step 4: Add the new user to the database
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // Step 5: Check if the CompanyPosition already exists
+            // Step 4: Handle position
             var companyPosition = await _context.CompanyPositions
                 .FirstOrDefaultAsync(p => p.Name == request.Title);
 
             if (companyPosition == null)
             {
-                // Create the CompanyPosition if it doesn't exist
-                companyPosition = new CompanyPosition
-                {
-                    Name = request.Title
-                };
+                companyPosition = new CompanyPosition { Name = request.Title };
                 _context.CompanyPositions.Add(companyPosition);
                 await _context.SaveChangesAsync();
             }
 
-            // Step 6: Create a unique WorkingHour entry for the employee
+            // Step 5: Create working hours
             var newWorkingHour = new WorkingHour
             {
-                StartTime = new TimeOnly(9, 0),  // Example start time
-                EndTime = new TimeOnly(17, 0),  // Example end time
-                Monday = true,
-                Tuesday = true,
-                Wednesday = true,
-                Thursday = true,
-                Friday = true,
-                Saturday = false,
-                Sunday = false
+                StartTime = TimeOnly.Parse(request.StartTime),
+                EndTime = TimeOnly.Parse(request.EndTime),
+                Monday = request.Monday,
+                Tuesday = request.Tuesday,
+                Wednesday = request.Wednesday,
+                Thursday = request.Thursday,
+                Friday = request.Friday,
+                Saturday = request.Saturday,
+                Sunday = request.Sunday
             };
 
             _context.WorkingHours.Add(newWorkingHour);
             await _context.SaveChangesAsync();
 
-            // Step 7: Create the CompanyEmployee entry for the new employee
             var companyEmployee = new CompanyEmployee
             {
                 UserId = newUser.Id,
-                CompanyPositionId = companyPosition.Id,  // Use the existing or newly created position ID
+                CompanyPositionId = companyPosition.Id,
                 CompanyId = companyId,
-                CompanyAdminEmail = null,  // Only the admin will have this set
-                WorkingHourId = newWorkingHour.Id  // Assign the newly created WorkingHourId
+                CompanyAdminEmail = null,
+                WorkingHourId = newWorkingHour.Id,
+                BirthDate = DateTime.Parse(request.BirthDate),
             };
 
             _context.CompanyEmployees.Add(companyEmployee);
             await _context.SaveChangesAsync();
 
-            // Return a JSON response with a message
-            return Ok(new { message = "Employee added successfully." });
+            return Ok(new { message = "Employee added successfully.", username = newUser.Username });
         }
 
         [HttpPut("UpdateEmployee")]
         public async Task<IActionResult> UpdateEmployee([FromBody] UpdateEmployeeDto employeeDto)
         {
             if (employeeDto == null)
-            {
-                return Ok(new { message = "Invalid data." });
-            }
+                return BadRequest(new { message = "Invalid data." });
 
-            // If any of the required fields are missing, this can also be a source of a BadRequest error
-            if (string.IsNullOrEmpty(employeeDto.FirstName) || string.IsNullOrEmpty(employeeDto.LastName) || string.IsNullOrEmpty(employeeDto.Email))
+            if (string.IsNullOrEmpty(employeeDto.FirstName) ||
+                string.IsNullOrEmpty(employeeDto.LastName) ||
+                string.IsNullOrEmpty(employeeDto.Email))
             {
-                return Ok(new { message = "Required fields are missing." });
-            }
-
-            // Authorization logic and employee update
-            var currentUserEmail = employeeDto.CompanyAdminEmail;  // Make sure this value is being passed correctly
-
-            if (currentUserEmail != employeeDto.CompanyAdminEmail)
-            {
-                return Unauthorized(new { message = "You are not authorized to update this employee." });
+                return BadRequest(new { message = "Required fields are missing." });
             }
 
             var employee = await _context.CompanyEmployees
                                          .Include(e => e.User)
-                                         .Include(e => e.CompanyPosition)  // Ensure CompanyPosition is loaded
+                                         .Include(e => e.CompanyPosition)
+                                         .Include(e => e.WorkingHour)
                                          .FirstOrDefaultAsync(e => e.UserId == employeeDto.UserId);
 
             if (employee == null)
-            {
-                return Ok(new { message = "Employee not found." });
-            }
+                return NotFound(new { message = "Employee not found." });
 
-            // Ensure that CompanyPosition is not null before updating it
+            // Update company position
             if (employee.CompanyPosition != null)
-            {
-                employee.CompanyPosition.Name = employeeDto.Title;  // Update title if CompanyPosition exists
-            }
+                employee.CompanyPosition.Name = employeeDto.Title;
             else
-            {
-                return Ok(new { message = "Employee does not have a valid company position." });
-            }
+                return BadRequest(new { message = "Employee does not have a valid company position." });
 
-            // Update other employee information
+            // Update user info
             employee.User.FirstName = employeeDto.FirstName;
             employee.User.LastName = employeeDto.LastName;
             employee.User.EmailAdress = employeeDto.Email;
             employee.User.PhoneNumber = employeeDto.PhoneNumber;
+            employee.User.BirthDate = DateTime.Parse(employeeDto.BirthDate);
 
-            // Save changes to the database
+            // Update working hours
+            if (employee.WorkingHour != null)
+            {
+                employee.WorkingHour.StartTime = TimeOnly.Parse(employeeDto.StartTime);
+                employee.WorkingHour.EndTime = TimeOnly.Parse(employeeDto.EndTime);
+                employee.WorkingHour.Monday = employeeDto.Monday;
+                employee.WorkingHour.Tuesday = employeeDto.Tuesday;
+                employee.WorkingHour.Wednesday = employeeDto.Wednesday;
+                employee.WorkingHour.Thursday = employeeDto.Thursday;
+                employee.WorkingHour.Friday = employeeDto.Friday;
+                employee.WorkingHour.Saturday = employeeDto.Saturday;
+                employee.WorkingHour.Sunday = employeeDto.Sunday;
+            }
+
             await _context.SaveChangesAsync();
-
             return Ok(new { message = "Employee updated successfully." });
         }
 

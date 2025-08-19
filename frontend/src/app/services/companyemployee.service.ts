@@ -3,15 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import {catchError, map, Observable, of, throwError} from 'rxjs';
 import { MyConfig } from '../my-config';
 
-// Define the interface for the Employee data
-interface Employee {
-  userId: number;
-  companyAdminEmail: string;
-  companyPositionId: number;
-  workingHourId: number;
-  companyId: number;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -27,7 +18,18 @@ export class CompanyEmployeeService {
     companyAdminEmail: any;
     phoneNumber: string;
     title: string;
-    email: string
+    email: string;
+    employeePassword: string;
+    startTime: string;
+    birthDate: string;
+    endTime: string;
+    monday: boolean;
+    tuesday: boolean;
+    wednesday: boolean;
+    thursday: boolean;
+    friday: boolean;
+    saturday: boolean;
+    sunday: boolean;
   }): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/add`, employee);
   }
@@ -72,7 +74,24 @@ export class CompanyEmployeeService {
     return this.http.delete(`${this.baseUrl}/delete/${userId}`);
   }
 
-  updateEmployee(employee: any): Observable<any> {
+  updateEmployee(employee:{
+    firstName: string;
+    lastName: string;
+    companyAdminEmail: any;
+    phoneNumber: string;
+    title: string;
+    email: string;
+    startTime: string;
+    birthDate: string;
+    endTime: string;
+    monday: boolean;
+    tuesday: boolean;
+    wednesday: boolean;
+    thursday: boolean;
+    friday: boolean;
+    saturday: boolean;
+    sunday: boolean;
+  }): Observable<any> {
     return this.http.put(`${this.baseUrl}/UpdateEmployee`, employee);
   }
 

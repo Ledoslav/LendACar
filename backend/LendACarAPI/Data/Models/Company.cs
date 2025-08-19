@@ -23,6 +23,10 @@ namespace LendACarAPI.Data.Models
 
         public double AverageRating { get; set; } = 0.0;
 
+        public byte[]? File { get; set; }
+
+        public string FileName { get; set; }
+
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }
         public User? User { get; set; } 

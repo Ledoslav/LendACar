@@ -31,12 +31,18 @@ export class CompanyService {
     formData.append('companyPhone', companyData.companyPhone);
     formData.append('companyDescription', companyData.companyDescription);
     formData.append('companyEmail', companyData.companyEmail);
-    formData.append('companyAddress', companyData.address);
-    formData.append('userId', companyData.userId.toString());
+    formData.append('companyAddress', companyData.companyAddress);
+    formData.append('userId', companyData.userId);
+    formData.append('fileName', companyData.fileName);
 
+    console.log('companyData:', companyData);
     // Append the avatar image if it's provided
     if (companyData.companyAvatar) {
-      formData.append('companyAvatar', companyData.avatar, companyData.avatar.name);
+      formData.append('companyAvatar', companyData.companyAvatar, companyData.companyAvatar.name);
+    }
+
+    if (companyData.file) {
+      formData.append('file', companyData.file, companyData.file.name);
     }
 
     return this.http.post<any>(`${this.baseUrl}/create`, formData);
@@ -56,10 +62,15 @@ export class CompanyService {
     formData.append('companyEmail', companyData.companyEmail);
     formData.append('companyAddress', companyData.companyAddress);
     formData.append('userId', companyData.userId.toString());
+    formData.append('fileName', companyData.fileName);
 
     // Append the avatar image if it's provided
     if (companyData.companyAvatar) {
       formData.append('companyAvatar', companyData.companyAvatar, companyData.companyAvatar.name);
+    }
+
+    if (companyData.file) {
+      formData.append('file', companyData.file, companyData.file.name);
     }
 
     return this.http.put<void>(`${this.baseUrl}/updateByUser/${userId}`, formData);

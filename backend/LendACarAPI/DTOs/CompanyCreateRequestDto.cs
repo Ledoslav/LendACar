@@ -25,8 +25,10 @@ namespace LendACarAPI.Data.Models
         [Required]
         public int UserId { get; set; }
 
-        public IFormFile? CompanyAvatar { get; set; } // File upload for company avatar (optional)
+        public IFormFile CompanyAvatar { get; set; } // File upload for company avatar (optional)
 
+        public IFormFile File { get; set; }
+        public string FileName { get; set; }
 
     }
 }

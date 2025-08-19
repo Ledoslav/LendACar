@@ -13,7 +13,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
 import {UserModule} from "../user/user.module";
 import {TranslatePipe} from '@ngx-translate/core';
-
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -31,7 +31,11 @@ import {TranslatePipe} from '@ngx-translate/core';
     MatIconModule,
     MatCardModule,
     UserModule,
-    TranslatePipe
-  ]
+    TranslatePipe,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    FormsModule,
+  ], providers: [
+    MatDatepickerModule]
 })
 export class PublicModule { }

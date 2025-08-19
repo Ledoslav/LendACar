@@ -111,7 +111,8 @@ namespace LendACarAPI.Endpoints
                 CompanyEmail = request.CompanyEmail,
                 CompanyAddress = request.CompanyAddress,
                 UserId = request.UserId,
-                AverageRating = 0.0 // Initial average rating
+                AverageRating = 0.0, // Initial average rating
+                FileName = request.FileName
             };
 
             // Handle avatar if it's provided
@@ -121,6 +122,15 @@ namespace LendACarAPI.Endpoints
                 {
                     await request.CompanyAvatar.CopyToAsync(memoryStream);
                     company.CompanyAvatar = memoryStream.ToArray();
+                }
+            }
+
+            if (request.File != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await request.File.CopyToAsync(memoryStream);
+                    company.File = memoryStream.ToArray();
                 }
             }
 
@@ -144,7 +154,7 @@ namespace LendACarAPI.Endpoints
                 CompanyId = company.Id,  // The newly created company's ID
                 CompanyAdminEmail = user.EmailAdress, // Set the admin email to the user's email
                 CompanyPositionId = companyPosition.Id, // Link to the default 'Admin' position
-                WorkingHourId = workingHour.Id // Link the newly created working hours to the employee
+                WorkingHourId = workingHour.Id,// Link the newly created working hours to the employee
             };
 
             // Add the employee to the CompanyEmployee table
@@ -158,62 +168,39 @@ namespace LendACarAPI.Endpoints
         [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<IActionResult> DeleteCompanyByUserId(int userId)
         {
-            // Fetch the company associated with the user/owner
             var company = await _context.Companies
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (company == null)
-            {
-                return Ok("Company not found for this user.");
-            }
+                return NotFound("Company not found for this user.");
 
             int companyId = company.Id;
 
-            // Fetch related CompanyEmployees
+            // Include Users but do NOT attempt to delete WorkingHours or Positions
             var companyEmployees = await _context.CompanyEmployees
+                .Include(ce => ce.User)
                 .Where(ce => ce.CompanyId == companyId)
                 .ToListAsync();
 
-            // Step 1: Delete WorkingHours related to CompanyEmployee
-            var workingHoursIds = companyEmployees.Select(ce => ce.WorkingHourId).ToList();
-            var workingHoursToDelete = await _context.WorkingHours
-                .Where(wh => workingHoursIds.Contains(wh.Id))
-                .ToListAsync();
-
-            _context.WorkingHours.RemoveRange(workingHoursToDelete);
-
-            // Step 2: Delete CompanyPositions related to CompanyEmployee
-            var companyPositionIds = companyEmployees.Select(ce => ce.CompanyPositionId).ToList();
-            var companyPositionsToDelete = await _context.CompanyPositions
-                .Where(cp => companyPositionIds.Contains(cp.Id))
-                .ToListAsync();
-
-            _context.CompanyPositions.RemoveRange(companyPositionsToDelete);
-
-            // Step 3: Delete all users related to the company, excluding the owner
+            // Delete related Users (excluding owner)
             var usersToDelete = companyEmployees
-                .Where(ce => ce.UserId != userId) // Exclude the owner
+                .Where(ce => ce.UserId != userId && ce.User != null)
                 .Select(ce => ce.User)
+                .Distinct()
                 .ToList();
 
             _context.Users.RemoveRange(usersToDelete);
 
-            // Step 4: Delete CompanyEmployees
+            // Delete CompanyEmployees
             _context.CompanyEmployees.RemoveRange(companyEmployees);
 
-            // Step 5: Delete the company itself
+            // Delete the company itself
             _context.Companies.Remove(company);
 
-            // Save changes to the database
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-
-
-
-
-
 
         [HttpPut("updateByUser/{userId}")]
         [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
@@ -232,6 +219,7 @@ namespace LendACarAPI.Endpoints
             company.CompanyEmail = request.CompanyEmail ?? company.CompanyEmail;
             company.CompanyDescription = request.CompanyDescription ?? company.CompanyDescription;
             company.CompanyAddress = request.CompanyAddress ?? company.CompanyAddress;
+            company.FileName = request.FileName ?? company.FileName;
 
             // Handle avatar update if provided
             if (request.CompanyAvatar != null)
@@ -240,6 +228,15 @@ namespace LendACarAPI.Endpoints
                 {
                     await request.CompanyAvatar.CopyToAsync(memoryStream);
                     company.CompanyAvatar = memoryStream.ToArray();
+                }
+            }
+
+            if (request.File != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await request.File.CopyToAsync(memoryStream);
+                    company.File = memoryStream.ToArray();
                 }
             }
 

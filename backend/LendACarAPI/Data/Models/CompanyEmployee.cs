@@ -12,6 +12,7 @@ namespace LendACarAPI.Data.Models
         public User? User { get; set; }
         [EmailAddress]
         public string? CompanyAdminEmail { get; set; }
+        public DateTime BirthDate { get; set; }
 
         [ForeignKey(nameof(CompanyPosition))]
         [Required]

@@ -1,10 +1,18 @@
 // dashboard.component.ts
-import { Component, inject, OnInit } from '@angular/core';
+import {Component, ElementRef, inject, input, OnInit, ViewChild, AfterViewInit, AfterViewChecked, OnDestroy} from '@angular/core';
 import { UserService } from '../../services/user.service';
 import {CompanyService} from '../../services/company.service';
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
-import {Observable} from 'rxjs';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {HttpClient} from '@angular/common/http';
+import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
+import {MatDialog} from '@angular/material/dialog';
+import {ImageCroppedEvent, LoadedImage} from 'ngx-image-cropper';
+import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog-confirm.component';
+import {MatTableDataSource} from '@angular/material/table';
+import jsPDF from "jspdf";
+import {MatPaginator} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,121 +20,147 @@ import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.
   styleUrls: ['./dashboard.component.css']
 })
 
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
+
+  // Injectabels
+  accountService = inject(UserService); // Inject UserService
+  authService = inject(MyAuthServiceService);
+
+  // Form controls
   isFormVisible = false;
+  isLoggedIn: boolean = false;
+  hasCompany: boolean = false;  // Flag to check if the user has a company
+  updateFormVisible = false; // Visibility toggle for the update form
+  employeeSectionClicked: boolean = true;
+  isEmployeeFormVisible = false;
+  hasEmployees:boolean = false;
+  isUpdating: boolean = false;
+  isAppUser: boolean = false;
+  dropdownClicked: boolean = false;
+  isFileSelected: boolean = false;
+  isUpdateEmployeeFormVisible: boolean = false;
+
+  // Company data
   companyName = '';
-  address = '';
   companyPhone = '';
   companyEmail = '';
   companyAddress = '';
-  avatarPreview: string | ArrayBuffer | null = null;
-  activeLink: string = 'home';
+  companyAvatar: File | null = null;
+  companyAvatarBackup: File | null = null;
+  avatarPreviewUrl:any;
   companyDescription: string = '';
-  accountService = inject(UserService); // Inject UserService
-  username: any;
-  isLoggedIn: boolean = false;
-  hasCompany: boolean = false;  // Flag to check if the user has a company
-  userId: any;
-  updateFormVisible = false; // Visibility toggle for the update form
-  selectedFileName: any;
-  employeeSectionClicked: boolean = true;
-  employeesFlag: boolean = false;
-  isEmployeeFormVisible = false;
-  hasEmployees = false;
-  employeeSectionFlag = false;
-  employees: employees[] = [];
-  isUpdating: boolean = false;
-  isAppUser: boolean = false;
-  authService = inject(MyAuthServiceService);
-  dropdownClicked: boolean = false;
+  fileName: any = "Upload a pdf file certificate";
+  fileNameBackup: any = "Upload a pdf file certificate";
+  file: File | null = null;
+  fileBackup: File | null = null;
 
-  employee = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    title: '',
-    companyAdminEmail: '',
-  };
+  //Employee table data
+  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
+  displayedColumns: string[] = ['userId', 'firstName', 'lastName', 'phoneNumber', 'title', 'email', 'workingHours','actions'];
+  employees: any = [];
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+
+
+  //Employee data
+  firstName: string ='';
+  lastName: string = '';
+  companyAdminEmail: any;
+  phoneNumber: string = '';
+  title: string = '';
+  email: string = '';
+  employeeIdToUpdate: number | null = null;
+
+  //Other
+  activeLink: string = 'home';
+  username: any;
+  userId: any;
+  switchClicked: boolean = false;
+  mode: string = 'light-mode';
+
+  private _formBuilder = inject(FormBuilder);
+  private _updateFormBuilder = inject(FormBuilder);
+
+  avatarFormGroup = this._formBuilder.group({
+    companyAvatar: ['', [Validators.required]]
+  });
+  basicInfoFormGroup = this._formBuilder.group({
+    companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(/^[\w\s\-]+$/)]],
+    companyPhone: ['', [Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
+    companyEmail: ['', [Validators.required, Validators.email]],
+    companyAddress: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100), Validators.pattern(/^[\w\s\-]+$/)]],
+    companyDescription: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100), Validators.pattern(/^[\w\s\-]+$/)]]
+  });
+  verificationFormGroup = this._formBuilder.group({
+    file: ['', [Validators.required]]
+  });
+
+  avatarUpdateFormGroup = this._updateFormBuilder.group({
+    companyAvatar: [this.companyAvatar, [Validators.required]]
+  });
+  basicInfoUpdateFormGroup = this._updateFormBuilder.group({
+    companyName: [this.companyName, [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(/^[\w\s\-]+$/)]],
+    companyPhone: [this.companyPhone, [Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
+    companyEmail: [this.companyEmail, [Validators.required, Validators.email]],
+    companyAddress: [this.companyAddress, [Validators.required, Validators.minLength(5), Validators.maxLength(100), Validators.pattern(/^[\w\s\-]+$/)]],
+    companyDescription: [this.companyDescription, [Validators.required, Validators.minLength(5), Validators.maxLength(100), Validators.pattern(/^[\w\s\-]+$/)]]
+  });
+  verificationUpdateFormGroup = this._updateFormBuilder.group({
+    file: [this.file, [Validators.required]]
+  });
+
+  companyEmployeeFormGroup = this._formBuilder.group({
+    firstName: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    lastName: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    phoneNumber: ['',[Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
+    title: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    email:['',[Validators.required, Validators.email]],
+  });
+  workingHoursFormGroup = this._formBuilder.group({
+    startTime: ['',[Validators.required]],
+    endTime: ['',[Validators.required]],
+    monday: [false],
+    tuesday: [false],
+    wednesday: [false],
+    thursday: [false],
+    friday: [false],
+    saturday: [false],
+    sunday: [false],
+  });
+  companyEmployeeBirthDateFormGroup = this._formBuilder.group({
+    birthDate: ['',[Validators.required]]
+  });
+
+  companyUpdateEmployeeFormGroup = this._formBuilder.group({
+    firstName: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    lastName: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    phoneNumber: ['',[Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
+    title: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    email:['',[Validators.required, Validators.email]],
+  });
+  workingHoursUpdateFormGroup = this._formBuilder.group({
+    startTime: ['',[Validators.required]],
+    endTime: ['',[Validators.required]],
+    monday: [false],
+    tuesday: [false],
+    wednesday: [false],
+    thursday: [false],
+    friday: [false],
+    saturday: [false],
+    sunday: [false],
+  });
+  companyEmployeeUpdateBirthDateFormGroup = this._formBuilder.group({
+    birthDate: ['',[Validators.required]]
+  });
 
 // Add employee form visibility control
   showEmployeeForm() {
     this.isEmployeeFormVisible = true; // Show the form
-    this.hasEmployees = false; // Hide the "No employees" message if any
   }
 
-// Hide the form and reset fields when "Cancel" is clicked
-  cancelEmployeeForm() {
-    this.isEmployeeFormVisible = false; // Hide the form
-    this.hasEmployees = this.employees.length > 0; // Show the employee table if there are employees
-    this.resetEmployeeForm(); // Reset form fields
-  }
-
-  submitEmployeeForm() {
-    // Check if any of the required fields are empty
-    if (!this.employee.companyAdminEmail) {
-      alert('Company Admin Email is required.');
-      return;
-    }
-    if (!this.employee.firstName) {
-      alert('First Name is required.');
-      return;
-    }
-    if (!this.employee.lastName) {
-      alert('Last Name is required.');
-      return;
-    }
-    if (!this.employee.email) {
-      alert('Email is required.');
-      return;
-    }
-    if (!this.employee.phoneNumber) {
-      alert('Phone Number is required.');
-      return;
-    }
-    if (!this.employee.title) {
-      alert('Title is required.');
-      return;
-    }
-
-    console.log('Submitting Employee Form:', this.employee);
-    this.companyEmployeeService.addEmployee(this.employee).subscribe(
-      (response) => {
-        console.log('Current Employee Data:', this.employee);
-        console.log('Employee added successfully:', response);
-        this.isEmployeeFormVisible = false;
-        this.resetEmployeeForm();
-        this.fetchEmployees();
-      },
-      (error) => {
-        console.error('Error adding employee:', error);
-
-        // Check if error has a response body and it is JSON
-        if (error.error && error.error.message) {
-          // Show the message from the JSON response
-          alert(`Error adding employee: ${error.error.message}`);
-        } else {
-          // Fallback for non-JSON errors
-          alert(`Error adding employee: ${error.message}`);
-        }
-      }
-    );
-  }
-
-  // Reset the form fields
-  resetEmployeeForm() {
-    const adminEmail = this.employee.companyAdminEmail; // Preserve value
-    this.employee = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-      title: '',
-      companyAdminEmail: adminEmail, // Restore after reset
-    };
-  }
-
-  constructor(private userService: UserService, private companyService: CompanyService, private companyEmployeeService: CompanyEmployeeService) {
+  constructor(
+    private userService: UserService,
+    private companyService: CompanyService,
+    private companyEmployeeService: CompanyEmployeeService) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -137,21 +171,52 @@ export class DashboardComponent implements OnInit {
       this.username = this.accountService.currentUser()?.username;
       this.userId = this.accountService.currentUser()?.id;
 
-      // Fetch employees based on companyId
-      this.fetchEmployees();
-
       // Fetch company data when the component is initialized
       this.companyService.getCompanyByUserId(this.userId).subscribe((company) => {
         // Populate form with fetched company data
+
         this.companyName = company.companyName;
         this.companyPhone = company.companyPhone;
         this.companyEmail = company.companyEmail;
         this.companyDescription = company.companyDescription;
-        this.address = company.companyAddress;
+        this.companyAddress = company.companyAddress;
+
+        if (company.companyAvatar && typeof company.companyAvatar === 'string') {
+          // Decode base64 string
+          const byteChars = atob(company.companyAvatar);
+          const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
+          const byteArray = new Uint8Array(byteNumbers);
+
+          // Create Blob with the correct image type (assuming PNG here — change if needed)
+          const blob = new Blob([byteArray], { type: 'image/png' });
+
+          // Create a File object
+          this.companyAvatar = new File([blob], 'avatar.png', { type: 'image/png' });
+        } else {
+          this.companyAvatar = company.companyAvatar as File;
+        }
+
+        this.companyAvatarBackup = this.companyAvatar;
+
+        if (company.file && typeof company.file === 'string') {
+          const byteChars = atob(company.file); // decode base64
+          const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: 'application/pdf' }); // adjust type
+          this.file = new File([blob], 'document.pdf', { type: 'application/pdf' });
+        } else {
+          this.file = company.file as File;
+        }
+
+        this.fileBackup = this.file;
+
+        if(company.fileName != null){
+        this.fileName=company.fileName;
+        }
+        this.fileNameBackup = this.fileName;
+        this.convertImageToDataUrl(this.companyAvatar);
       });
 
-      console.log('isLoggedIn:', this.isLoggedIn);
-      console.log('hasCompany:', this.hasCompany);
 
       // Call the service to check if the user has a company
       this.companyService.checkIfCompanyExists(this.userId).subscribe(
@@ -165,11 +230,12 @@ export class DashboardComponent implements OnInit {
       );
 
       // Check if user is Company Admin
-      await this.companyEmployeeService
+     await this.companyEmployeeService
         .getCompanyAdminEmail(this.userId)
         .toPromise()
         .then((adminEmail) => {
-          this.employee.companyAdminEmail = adminEmail || '';
+          this.companyAdminEmail = adminEmail;
+          console.log(this.companyAdminEmail);
           console.log(adminEmail);
         })
         .catch((error) => {
@@ -178,146 +244,219 @@ export class DashboardComponent implements OnInit {
     } else {
       console.log('No user logged in');  // Log if there's no user
     }
+
+    this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
+      next: (employees) => {
+        this.employees = employees;
+        this.hasEmployees = employees.length > 0;
+
+        this.dataSource.data = this.employees;
+
+        if (this.paginator) {
+          this.dataSource.paginator = this.paginator;
+          console.log('Paginator assigned:', this.dataSource.paginator);
+        } else {
+          console.warn('Paginator not yet available!');
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+        this.handleNoEmployees();
+      }
+    });
   }
 
-// Fetch employees for the company based on the current user
-  fetchEmployees(): void {
-    const currentUser = this.userService.getCurrentUser(); // Get the current user
-    if (currentUser) {
-      this.companyEmployeeService.getAllEmployeesForAdmin().subscribe(
-        (response: any) => {
-          if (response && response.length > 0) {
-            this.employees = response.map((employee: any) => ({
-              employeeId: employee.user.id,
-              firstName: employee.user.firstName,
-              lastName: employee.user.lastName,
-              phoneNumber: employee.user.phoneNumber,
-              companyTitle: employee.companyPosition?.name || 'N/A',
-              email: employee.user.emailAdress,
-              workingHour: employee.workingHour
-                ? `${employee.workingHour.startTime} - ${employee.workingHour.endTime}`
-                : 'N/A',
-            }));
-
-            this.employeesFlag = true;   // Show employee table
-            this.hasEmployees = true;    // Indicate employees exist
-          } else {
-            this.handleNoEmployees();    // Handle empty employee response
-          }
-        },
-        (error: any) => {
-          console.error('Error fetching employees:', error);
-          if (error.status === 404) {
-            this.handleNoEmployees();    // Show "no employees" message on 404
-          } else {
-            this.employeesFlag = false;  // Handle other errors
-          }
-        }
-      );
+  ngAfterViewInit() {
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator; // assign paginator after view init
+      console.log('Paginator assigned:', this.dataSource.paginator);
+    } else {
+      console.warn('Paginator still not available!');
     }
   }
 
+  ngAfterViewChecked() {
+    if (this.paginator && this.dataSource.paginator !== this.paginator) {
+      this.dataSource.paginator = this.paginator;
+      console.log('Paginator now assigned in AfterViewChecked');
+    }
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    if (this.avatarPreviewUrl) {
+      URL.revokeObjectURL(this.avatarPreviewUrl);
+    }
+  }
+
+
 // Helper method to handle no employees found
   private handleNoEmployees(): void {
-    this.employees = [];               // Clear the employee array
-    this.employeesFlag = false;        // Indicate no employee table
     this.hasEmployees = false;         // Indicate no employees available
-  }
-
-  employeeIdToUpdate: number = 0;
-
-// Method to handle update logic (this will fetch data for a specific employee by ID)
-  updateEmployee(employeeId: number): void {
-    // Store the employeeId for later use
-    this.employeeIdToUpdate = employeeId;
-    // Use the service to fetch employee data by ID
-    this.companyEmployeeService.getEmployeeForAdmin(employeeId).subscribe(
-      (employeeData: any) => {
-        // Assign the fetched data to the employee object
-        // Assuming employeeData.user contains the details you want to populate in the form
-        this.employee = {
-          firstName: employeeData.user.firstName,
-          lastName: employeeData.user.lastName,
-          email: employeeData.user.emailAdress,
-          phoneNumber: employeeData.user.phoneNumber,
-          title: employeeData.companyPosition.name,
-          companyAdminEmail: this.employee.companyAdminEmail // Assuming this field is directly available
-        };
-
-        console.log('Fetched employee data:', employeeData); // Check if data is correct
-        this.isUpdating = true; // Set flag to show the update form
-      },
-      (error: any) => {
-        console.error('Error fetching employee data:', error);
-      }
-    );
-  }
-
-  updateEmployeeForm(): void {
-    const currentUser = this.userService.getCurrentUser();
-    // Fetch the company admin email using the service
-    // @ts-ignore
-    this.companyEmployeeService.getCompanyAdminEmail(currentUser.id).subscribe(
-      (companyAdminEmail: string | null) => {
-        const updatedEmployee = {
-          ...this.employee,  // Spread all employee data
-          companyAdminEmail: companyAdminEmail,  // Add the admin email for authorization
-          userId: this.employeeIdToUpdate  // Add the employee ID from the stored variable
-        };
-
-        console.log(updatedEmployee); // Log the updated employee to verify that the ID and email are included
-
-        // Call the updateEmployee service with the updated employee data
-        this.companyEmployeeService.updateEmployee(updatedEmployee).subscribe(
-          (response: any) => {
-            console.log('Employee updated successfully:', response);
-            this.isUpdating = false; // Close the update form
-            this.fetchEmployees(); // Refresh the employee list
-            this.employeeIdToUpdate = 0; // Reset the employeeIdToUpdate variable
-          },
-          (error: any) => {
-            console.error('Error updating employee:', error);
-          }
-        );
-      },
-      (error: any) => {
-        console.error('Error fetching company admin email:', error);
-      }
-    );
   }
 
 
   cancelUpdateEmployeeForm(): void {
     this.isUpdating = false; // Hide the form without submitting
-    this.resetEmployeeForm();
-  }
-
-  // Method to handle delete logic
-  deleteEmployee(employeeId: number): void {
-    console.log('Deleting employee with ID:', employeeId);
-
-    this.companyEmployeeService.deleteEmployee(employeeId).subscribe(
-      (response) => {
-        console.log('Employee deleted:', response);
-        this.fetchEmployees();
-        // Option 1: Remove the employee from the local array
-        this.employees = this.employees.filter(employee => employee.employeeId !== employeeId);
-
-        // Check if the employees array is empty
-        if (this.employees.length === 0) {
-          this.employeesFlag = false;  // No employees left, show "no employees" message
-        }
-      },
-      (error) => {
-        console.error('Error deleting employee:', error);
-      }
-    );
   }
 
 // Method to handle add employee logic (display the form)
   addEmployee() {
-    this.isEmployeeFormVisible = true; // Show the form
-    this.hasEmployees = false; // Hide the table
+
+    const formValue = this.companyEmployeeFormGroup.value;
+    const formTimeValue = this.workingHoursFormGroup.value;
+    const formBirthDateValue = this.companyEmployeeBirthDateFormGroup.value;
+
+    const newEmployee = {
+      firstName: formValue.firstName!,
+      lastName: formValue.lastName!,
+      phoneNumber: formValue.phoneNumber!,
+      title: formValue.title!,
+      email: formValue.email!,
+      employeePassword : this.generateRandomPassword(),
+      companyAdminEmail: this.companyAdminEmail,
+      startTime: formTimeValue.startTime!,
+      birthDate: formBirthDateValue.birthDate!,
+      endTime: formTimeValue.endTime!,
+      monday: formTimeValue.monday!,
+      tuesday: formTimeValue.tuesday!,
+      wednesday: formTimeValue.wednesday!,
+      thursday: formTimeValue.thursday!,
+      friday: formTimeValue.friday!,
+      saturday: formTimeValue.saturday!,
+      sunday: formTimeValue.sunday!,
+    };
+
+    console.log(newEmployee);
+
+    const username = newEmployee.firstName + newEmployee.lastName;
+
+      this.companyEmployeeService.addEmployee(newEmployee).subscribe({
+        next: (response) => {
+          console.log('Employee added successfully:', response);
+          this.isEmployeeFormVisible = false; // Hide the form
+          this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
+            next: (employees) => {
+              this.employees = employees;
+              this.dataSource = new MatTableDataSource(this.employees);
+              this.downloadEmployeeCredentials(username, newEmployee.employeePassword, newEmployee.firstName, newEmployee.lastName);
+              window.location.reload();
+            },
+            error: (error) => {
+              console.error('Error fetching employees:', error);
+            }
+          })
+        },
+        error: (error) => {
+          console.error('Error adding employee:', error);
+        }
+      });
+  }
+
+  updateEmployee() {
+
+    const formValue = this.companyUpdateEmployeeFormGroup.value;
+    const formTimeValue = this.workingHoursUpdateFormGroup.value;
+    const formBirthDateValue = this.companyEmployeeUpdateBirthDateFormGroup.value;
+
+    const updateEmployee = {
+      userId: this.employeeIdToUpdate,
+      firstName: formValue.firstName!,
+      lastName: formValue.lastName!,
+      phoneNumber: formValue.phoneNumber!,
+      title: formValue.title!,
+      email: formValue.email!,
+      companyAdminEmail: this.companyAdminEmail,
+      startTime: formTimeValue.startTime!,
+      birthDate: formBirthDateValue.birthDate!,
+      endTime: formTimeValue.endTime!,
+      monday: formTimeValue.monday!,
+      tuesday: formTimeValue.tuesday!,
+      wednesday: formTimeValue.wednesday!,
+      thursday: formTimeValue.thursday!,
+      friday: formTimeValue.friday!,
+      saturday: formTimeValue.saturday!,
+      sunday: formTimeValue.sunday!,
+    };
+
+    console.log(updateEmployee);
+
+    this.companyEmployeeService.updateEmployee(updateEmployee).subscribe({
+      next: (response) => {
+        console.log('Employee updated successfully:', response);
+        this.isUpdateEmployeeFormVisible = false; // Hide the form
+        this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
+          next: (employees) => {
+            this.employees = employees;
+            this.dataSource = new MatTableDataSource(this.employees);
+          },
+          error: (error) => {
+            console.error('Error fetching employees:', error);
+          }
+        })
+      }
+
+    });
+  }
+
+  deleteEmployee(employeeId:any): void {
+
+    const userIdToDelete = employeeId;
+
+    const deleteEmployeeRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm removal',
+        message: 'Are you sure you want to delete this employee',
+        confirmButtonText:'Confirm'
+      }
+    });
+
+    deleteEmployeeRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.companyEmployeeService.deleteEmployee(userIdToDelete).subscribe({});
+        window.location.reload();
+        this.snackbarService.showSuccessMessage('Employee deleted successfully!')
+      } else {
+        console.log('Korisnik je otkazao brisanje');
+      }
+    });
+  }
+
+  generateRandomPassword(length: number = 12): string {
+    // Only letters and digits for safe UTF-8 handling
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    // Optional: include some safe symbols if you like
+    const safeSymbols = "!@#$%^&*";
+
+    let password = "";
+
+    for (let i = 0; i < length; i++) {
+      // Mix letters/digits and optional safe symbols
+      const useSymbol = Math.random() < 0.2; // 20% chance to pick a symbol
+      if (useSymbol) {
+        password += safeSymbols[Math.floor(Math.random() * safeSymbols.length)];
+      } else {
+        password += chars[Math.floor(Math.random() * chars.length)];
+      }
+    }
+
+    return password;
+  }
+
+  downloadEmployeeCredentials(username: string, password: string, firstName: string, lastName: string): void {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Employee Login Credentials", 20, 20);
+
+    doc.setFontSize(12);
+    doc.text(`Username: ${username}`, 20, 40);
+    doc.text(`Password: ${password}`, 20, 50);
+
+    doc.text("Keep this document safe. Do not share it with anyone else.", 20, 70);
+
+    doc.save("EmployeeCredentials-" + firstName + '-' + lastName + ".pdf");
   }
 
   // Show the form
@@ -325,179 +464,330 @@ export class DashboardComponent implements OnInit {
     this.isFormVisible = true;
   }
 
-  // Submit the company creation form
-  submitForm() {
-    // Log each field
-    console.log("Company Name:", this.companyName);
-    console.log("Address:", this.address);
-    console.log("Phone:", this.companyPhone);
-    console.log("Email:", this.companyEmail);
-    console.log("Description:", this.companyDescription);
-    console.log("Avatar Preview:", this.avatarPreview);
+  // Cancel the form without saving
+  cancelForm() {
+    this.isFormVisible = false;
+  }
 
-    const companyData = {
+  convertImageToDataUrl(Avatar: any){
+      if (Avatar) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.avatarPreviewUrl = e.target.result; // this is the correct data URL
+        };
+        reader.readAsDataURL(Avatar); // converts File to base64
+      }
+  }
+
+  showUpdateForm() {
+    this.updateFormVisible = !this.updateFormVisible;
+    this.dropdownClicked = false;
+
+    this.basicInfoUpdateFormGroup.patchValue({
       companyName: this.companyName,
-      address: this.address,
       companyPhone: this.companyPhone,
       companyEmail: this.companyEmail,
-      companyDescription: this.companyDescription,
-      avatar: this.avatarPreview,
-      userId: this.userId,
+      companyAddress: this.companyAddress,
+      companyDescription: this.companyDescription
+    });
+
+    this.avatarUpdateFormGroup.patchValue({
+      companyAvatar: this.companyAvatar
+    });
+
+    this.verificationUpdateFormGroup.patchValue({
+      file: this.file
+    });
+
+    this.isFileSelected = true;
+  }
+
+  toggleDropdown() {
+    if(this.updateFormVisible==false){
+        this.dropdownClicked = !this.dropdownClicked;
+    }
+  }
+
+  onFileSelected($event: Event) {
+    this.file = ($event.target as HTMLInputElement).files![0];
+    this.fileName = this.file.name;
+    this.isFileSelected = true;
+  }
+
+  createCompany() {
+
+    const companyData = {
+      ...this.basicInfoFormGroup.value,
+      companyAvatar: this.companyAvatar, // If this is an uploaded File, make sure it's a File object, not a base64 string
+      file: this.file, // Your PDF file
+      fileName: this.fileName,
+      userId: this.userId
     };
 
     this.companyService.createCompany(companyData).subscribe(
-      (response) => {
-        console.log('Company created successfully:', response);
-        this.isFormVisible = false;
-        this.resetForm();
-        window.location.reload(); // Refresh the page after success
+      () => {
+        this.snackbarService.showSuccessMessage('Company created successfully');
+        window.location.reload();
       },
       (error) => {
+        this.snackbarService.showErrorMessage('Failed to create company');
         console.error('Error creating company:', error);
+      }
+    );
+
+    this.isFormVisible = false;
+    this.fileName = "Upload a pdf file certificate";
+  }
+
+  updateCompany(){
+    const companyUpdateData = {
+      ...this.basicInfoUpdateFormGroup.value,
+      companyAvatar: this.companyAvatar, // If this is an uploaded File, make sure it's a File object, not a base64 string
+      file: this.file, // Your PDF file
+      fileName: this.fileName,
+      userId: this.userId
+    };
+
+    console.log(companyUpdateData);
+
+    this.companyService.updateCompanyByUserId(this.userId,companyUpdateData).subscribe(
+      () => {
+        this.snackbarService.showSuccessMessage('Company updated successfully');
+        window.location.reload();
+      },
+      (error) => {
+        this.snackbarService.showErrorMessage('Failed to update company');
+        console.error('Error updating company:', error);
       }
     );
   }
 
-  // Reset the form fields after submission and log each reset action
-  private resetForm() {
-    console.log("Resetting Company Name");
-    this.companyName = '';
-    console.log("Resetting Address");
-    this.address = '';
-    console.log("Resetting Phone");
-    this.companyPhone = '';
-    console.log("Resetting Email");
-    this.companyEmail = '';
-    console.log("Resetting Description");
-    this.companyDescription = '';
-    console.log("Resetting Avatar Preview");
-    this.avatarPreview = null;
+  @ViewChild('companyFileInput', { static: false }) companyFileInput!: ElementRef;
+  http = inject(HttpClient);
+  snackbarService = inject(MySnackbarService);
+  private dialog = inject(MatDialog);
+  imageChangedEvent: any = '';
+  croppedImage: any = null;
+  showCropper = false;
+  croppedImageUrl: any = null;
+  isLoading = false;
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
   }
 
-  // Cancel the form without saving
-  cancelForm() {
-    this.isFormVisible = false;
-    this.resetForm();
-  }
-
-  // Handle file selection for avatar
-  onFileSelected(event: Event): void {
-    const fileInput = event.target as HTMLInputElement;
-    if (fileInput.files && fileInput.files[0]) {
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.avatarPreview = reader.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  // Handle PDF selection
-  onPdfSelected(event: Event) {
-    const fileInput = event.target as HTMLInputElement;
-    if (fileInput.files && fileInput.files[0]) {
-      const file = fileInput.files[0];
-      console.log('Selected PDF:', file);
-    }
-  }
-
-  // Set active link (navigation)
-  setActive(link: string) {
-    this.activeLink = link;
-    //Employee section
-    if (link == 'employees') {
-      this.employeeSectionClicked = false;
-      this.employeeSectionFlag = true;
-      this.employeesFlag = this.employees.length > 0;
-    } else {
-      this.employeeSectionClicked = true;
-    }
-
-    if (link == 'home') {
-      this.employeeSectionFlag = false;
-    }
-  }
-
-  deleteCompany(): void {
-    const isConfirmed = window.confirm('Are you sure you want to delete the company?');
-
-    if (isConfirmed) {
-      if (!this.userId) {
-        console.error('User not logged in.');
-        return;
-      }
-
-      // Call the service to delete the company
-      this.companyService.deleteCompanyByUserId(this.userId).subscribe(
-        () => {
-          console.log('Company deleted successfully.');
-          this.hasCompany = false; // Update the UI state to reflect the absence of a company
-          window.location.reload(); // Refresh the page
-        },
-        (error) => {
-          console.error('Error deleting company:', error);
-        }
-      );
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer?.files.length) {
+      this.imageChangedEvent = { target: { files: event.dataTransfer.files } };
+      this.showCropper = true;
     }
   }
 
   onFileChange(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedFileName = file;
+    this.companyAvatar = event.target.files[0];
+    if (this.companyAvatar) {
+      this.imageChangedEvent = event;
+      this.showCropper = true;
     }
   }
 
-  updateCompany(): void {
-    const isConfirmed = window.confirm('Are you sure you want to update the company?');
-    if (isConfirmed) {
-      const updatedCompanyData = {
-        companyName: this.companyName,
-        companyPhone: this.companyPhone,
-        companyEmail: this.companyEmail,
-        companyDescription: this.companyDescription,
-        companyAddress: this.address,
-        userId: this.userId, // Use UserId to identify the company
-        companyAvatar: this.selectedFileName // Attach the selected file here
-      };
+  openCompanyPdf() {
+    if (!this.file) {
+      console.error('No file to preview.');
+      return;
+    }
+    console.log(this.file); // See what you actually have
 
-      this.companyService.updateCompanyByUserId(this.userId, updatedCompanyData).subscribe(
-        () => {
-          console.log('Company updated successfully.');
-          this.updateFormVisible = false; // Hide the update form
-          window.location.reload(); // Refresh the page
-        },
-        (error) => {
-          console.error('Error updating company:', error);
-          if (error.status === 400 && error.error && error.error.errors) {
-            console.log('Validation errors:', error.error.errors);
-            Object.entries(error.error.errors).forEach(([field, messages]) => {
-              window.alert(`All fields are required. The field ${field} is empty`);
-              console.error(`Validation error on ${field}:`, messages);
-            });
-          }
-        }
+    // Create a Blob URL directly from the File
+    const fileURL = URL.createObjectURL(this.file);
+    console.log('File URL:', fileURL);
+    const pdfWindow = window.open();
+
+    if (pdfWindow) {
+      pdfWindow.document.write(
+        `<iframe width="100%" height="100%" src="${fileURL}"></iframe>`
       );
     }
   }
 
 
-  showUpdateForm() {
-    this.updateFormVisible = true;
+  imageCropped(event: ImageCroppedEvent): void {
+    const blob = event.blob;
+    if (blob) {
+      this.croppedImage = blob;
+      this.croppedImageUrl = event.objectUrl;
+    } else {
+      console.error('Blob image is undefined.');
+    }
   }
 
-  toggleDropdown() {
-    this.dropdownClicked = !this.dropdownClicked;
+  uploadCroppedImage(): void {
+    if (!this.croppedImage) {
+      console.error('No cropped image available.');
+      return;
+    }
+
+    // Convert blob to File
+    this.companyAvatar = new File(
+      [this.croppedImage],
+      'company-avatar.png',
+      { type: 'image/png' }
+    );
+
+    // Hide cropper if needed
+    this.showCropper = false;
+
+    console.log('Company avatar stored for later:', this.companyAvatar);
+    this.convertImageToDataUrl(this.companyAvatar);
   }
+
+  removeProfilePhoto(): void {
+
+    if (this.companyAvatar==null) {
+      console.error('No image available.');
+      return;
+    }
+
+    this.openMyConfirmDialog();
+  }
+
+  cancelCrop(): void {
+    this.showCropper = false;
+    this.imageChangedEvent = null;
+    this.croppedImage = null;
+  }
+
+  openMyConfirmDialog() {
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm removal',
+        message: 'Are you sure you want to remove your company picture',
+        confirmButtonText:'Confirm'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+              this.showCropper = false;
+              this.companyAvatar = null;
+              this.snackbarService.showSuccessMessage('Company profile picture removed successfully!')
+      } else {
+        console.log('Korisnik je otkazao brisanje');
+      }
+    });
+  }
+
+  closeUpdateForm() {
+    this.companyAvatar = this.companyAvatarBackup;
+    this.convertImageToDataUrl(this.companyAvatar);
+
+    this.file = this.fileBackup;
+    this.fileName = this.fileNameBackup;
+
+    this.updateFormVisible = false;
+  }
+
+  closeForm() {
+    this.isFormVisible = false;
+    this.isFileSelected = false;
+    this.companyAvatar = null;
+    this.convertImageToDataUrl(this.companyAvatar);
+    this.file = null;
+    this.fileName = "Upload a pdf file certificate";
+  }
+
+  resetForm(){
+    this.isFileSelected = false;
+    this.companyAvatar = null;
+    this.convertImageToDataUrl(this.companyAvatar);
+    this.file = null;
+    this.fileName = "Upload a pdf file certificate";
+  }
+
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    this.dataSource.filterPredicate = (data:any, filter: string) => {
+      const searchTerm = filter.toLowerCase();
+
+      return data.user.firstName.toLowerCase().includes(searchTerm)
+        || data.user.lastName.toLowerCase().includes(searchTerm)
+        || data.user.phoneNumber.toLowerCase().includes(searchTerm)
+        || data.user.emailAdress.toLowerCase().includes(searchTerm)
+        || data.companyPosition.name.toLowerCase().includes(searchTerm)
+        || data.workingHour.startTime.toLowerCase().includes(searchTerm)
+        || data.workingHour.endTime.toLowerCase().includes(searchTerm)
+    };
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  deleteCompany() {
+    this.companyService.deleteCompanyByUserId(this.userId).subscribe(
+      ()=>{
+        this.snackbarService.showSuccessMessage('Company deleted successfully');
+        window.location.reload();
+      },
+      (error)=>{
+        this.snackbarService.showErrorMessage('Failed to delete company');
+        console.error('Error deleting company:', error);
+      }
+    )
+  }
+
+  closeAddEmployeeForm() {
+    this.isEmployeeFormVisible = false;
+  }
+
+  closeUpdateEmployeeForm() {
+    this.isUpdateEmployeeFormVisible = false;
+
+  }
+
+
+  showUpdateEmployeeForm(employee:any) {
+    this.isUpdateEmployeeFormVisible= true;
+    this.employeeIdToUpdate = employee.userId;
+
+    console.log(employee);
+
+    this.companyUpdateEmployeeFormGroup.patchValue({
+      firstName: employee.user.firstName,
+      lastName: employee.user.lastName,
+      phoneNumber: employee.user.phoneNumber,
+      title: employee.companyPosition.name,
+      email: employee.user.emailAdress,
+    });
+
+    this.workingHoursUpdateFormGroup.patchValue({
+      startTime: employee.workingHour.startTime.slice(0, 5),
+      endTime: employee.workingHour.endTime.slice(0, 5),
+      monday: employee.workingHour.monday,
+      tuesday: employee.workingHour.tuesday,
+      wednesday: employee.workingHour.wednesday,
+      thursday: employee.workingHour.thursday,
+      friday: employee.workingHour.friday,
+      saturday: employee.workingHour.saturday,
+      sunday: employee.workingHour.sunday
+    });
+
+    this.companyEmployeeUpdateBirthDateFormGroup.patchValue({
+      birthDate: employee.birthDate
+    });
+  }
+
+  toggleDarkMode() {
+    this.switchClicked = !this.switchClicked;
+
+    if(this.switchClicked) {
+      this.mode = 'dark-mode';
+    }else{
+      this.mode = 'light-mode';
+    }
+    }
 }
 
-interface employees {
-  employeeId: number;
-  lastName: string;
-  firstName: string;
-  phoneNumber: string;
-  companyTitle: string;
-  email: string;
-  workingHour: string;
-}
