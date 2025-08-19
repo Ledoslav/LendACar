@@ -393,6 +393,9 @@ namespace LendACarAPI.Migrations
                     b.Property<int>("FuelType")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
 

@@ -12,7 +12,7 @@ import { MyConfig } from '../my-config';
 })
 export class VehicleService{
   private http = inject(HttpClient);
-  private baseUrl = MyConfig.api_address + 'vehicle';
+  private baseUrl = MyConfig.api_address + '';
 
   GetVehicleBrands(){
     return this.http.get<VehicleBrandDto[]>("http://localhost:7000/api/VehicleModelAndBrand/getBrand/all");

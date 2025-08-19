@@ -42,6 +42,7 @@ namespace LendACarAPI.DTOs
         [Required]
         public int CityID { get; set; }
         public City City { get; set; }
+        public DateTime LastUpdated {  get; set; }
 
     }
 }

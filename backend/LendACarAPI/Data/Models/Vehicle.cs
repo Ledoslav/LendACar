@@ -26,6 +26,7 @@ namespace LendACarAPI.Data.Models
         public double AverageRating { get; set; } = 0.0;
         [Required]
         public double PricePerDay { get; set; }
+        public DateTime LastUpdated { get; set; }
 
 
         [ForeignKey(nameof(VehicleModel))]

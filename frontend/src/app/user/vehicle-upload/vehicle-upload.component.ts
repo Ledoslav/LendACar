@@ -82,7 +82,7 @@ export class VehicleUploadComponent implements OnInit {
       description: [''],
       vehicleCategoryID: ['', Validators.required],
       cityID: ['', Validators.required],
-      available: [true, Validators.required],
+      avaliable: [true, Validators.required],
       images: [[]]
     });
   }
@@ -138,6 +138,11 @@ export class VehicleUploadComponent implements OnInit {
       });
     }
   }
+
+  removeImage(index: number): void {
+  this.uploadedImages.splice(index, 1);
+  }
+
   
     // Handle files selected through the file input
     onFileSelected(event: any): void {

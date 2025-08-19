@@ -56,6 +56,7 @@ namespace LendACarAPI.Endpoints
                     UserID = vehicle.UserID,
                     User = vehicle.User,
                     CityID = vehicle.CityID,
+                    LastUpdated = vehicle.LastUpdated,
                 });
 
             var vehicles = await MyPagedList<VehicleDto>.CreateAsync(query, pagedParams, cancellationToken);
@@ -103,6 +104,7 @@ namespace LendACarAPI.Endpoints
                 UserID = vehicle.UserID,
                 User = vehicle.User,
                 CityID = vehicle.CityID,
+                LastUpdated = vehicle.LastUpdated,
             };
 
             return Ok(vehicleCategoryDto);
@@ -145,6 +147,7 @@ namespace LendACarAPI.Endpoints
                 UserID = vehicle.UserID,
                 User = vehicle.User,
                 CityID = vehicle.CityID,
+                LastUpdated = vehicle.LastUpdated,
             }).ToList();
 
             return Ok(vehicleDtos);
@@ -188,6 +191,7 @@ namespace LendACarAPI.Endpoints
                 VehicleModelID = vehicleDto.VehicleModelID,
                 UserID = vehicleDto.UserID,
                 CityID = vehicleDto.CityID,
+                LastUpdated = DateTime.Now
             };
 
             db.Vehicles.Add(newVehicle);
@@ -221,6 +225,7 @@ namespace LendACarAPI.Endpoints
             vehicle.VehicleModelID = vehicleDto.VehicleModelID;
             vehicle.UserID = vehicleDto.UserID;
             vehicle.CityID = vehicleDto.CityID;
+            vehicle.LastUpdated = DateTime.Now;
 
             await db.SaveChangesAsync();
 
@@ -255,6 +260,7 @@ namespace LendACarAPI.Endpoints
                 UserID = returnVehicle.UserID,
                 User = returnVehicle.User,
                 CityID = returnVehicle.CityID,
+                LastUpdated = returnVehicle.LastUpdated,
             });
         }
 
