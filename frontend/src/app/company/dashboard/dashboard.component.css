@@ -685,6 +685,130 @@ body{
   transition: 150ms;
 }
 
+.dark-mode .navLink{
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  border: 1px solid white;
+  transition: 150ms;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.dark-mode .navLink.active{
+  background-color: #007bff;
+}
+
+.dark-mode .navLink:hover{
+  background-color: #007bff;
+}
+
+.dark-mode .no-vehicles-section{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.dark-mode .no-vehicles-section>div>h1{
+  color: rgba(255, 255, 255, 0.3);
+}
+
+
+.dark-mode .no-vehicles-button{
+  width:200px;
+  height:50px;
+  margin:20px;
+  border-radius: 10px;
+  border:1px solid #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition:150ms;
+  color: white;
+}
+
+.dark-mode .no-vehicles-button:hover{
+  width:210px;
+  background-color: #007bff;
+  color: white;
+}
+
+.dark-mode .search-result{
+  width: 100%;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(75deg, rgba(24, 24, 24, 0.6), rgba(37, 37, 37, 0));
+  transition: 500ms;
+}
+
+.dark-mode .search-result:hover{
+  width: 100%;
+  background: linear-gradient(75deg, #007bff, rgba(37, 37, 37, 0));
+  cursor: pointer;
+}
+
+.dark-mode .search-result-image{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.dark-mode .search-result-info{
+  width:80%;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dark-mode .search-result-title{
+  font-weight: bold;
+  color: white;
+}
+
+.dark-mode .search-result-description{
+  color: #eeeeee;
+  width: 100%;
+  height: 100%;
+}
+
+.dark-mode .search-result-price{
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+  font-size: 20px;
+  color: #007bff;
+  text-align: center
+}
+
+.dark-mode .search-result-image-section{
+  width: 450px;
+  height: 90%;
+  margin-left: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(52, 58, 64, 0.29);
+  box-shadow: rgba(52, 58, 64, 0.29) 5px 10px 20px ;
+  transition: 200ms;
+}
+
+.dark-mode .search-result-image-section:hover{
+  width: 490px;
+  height: 95%;
+  cursor: pointer;
+}
+
+
 /*LIGHT MODE*/
 
 .light-mode .company-create-button-form{
@@ -1356,3 +1480,124 @@ body{
   cursor: pointer;
   transition: 150ms;
 }
+
+.light-mode .navLink{
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  text-decoration: none;
+  border-radius: 10px;
+  border: 1px solid black;
+  transition: 150ms;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.light-mode .navLink.active{
+  background-color: #007bff;
+  color: white;
+}
+
+.light-mode .navLink:hover{
+  background-color: #007bff;
+  color: white;
+}
+
+.light-mode .no-vehicles-section{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.light-mode .no-vehicles-button{
+  width:200px;
+  height:50px;
+  margin:20px;
+  border-radius: 10px;
+  border:1px solid #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition:150ms;
+  color: #007bff;
+}
+
+.light-mode .no-vehicles-button:hover{
+  width:210px;
+  background-color: #007bff;
+  color: white;
+}
+
+.light-mode .search-result{
+  width: 100%;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(75deg, rgba(0, 123, 255, 0.07), rgba(37, 37, 37, 0));
+  transition: 500ms;
+}
+
+.light-mode .search-result:hover{
+  width: 100%;
+  background: linear-gradient(75deg, #007bff, rgba(37, 37, 37, 0));
+  cursor: pointer;
+}
+
+.light-mode .search-result-image{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.light-mode .search-result-info{
+  width:80%;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.light-mode .search-result-title{
+  font-weight: bold;
+  color: black;
+}
+
+.light-mode .search-result-description{
+  color: #5a6268;
+  width: 100%;
+  height: 100%;
+}
+
+.light-mode .search-result-price{
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+  font-size: 20px;
+  color: #007bff;
+  text-align: center
+}
+
+.light-mode .search-result-image-section{
+  width: 450px;
+  height: 90%;
+  margin-left: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(52, 58, 64, 0.29);
+  box-shadow: rgba(52, 58, 64, 0.29) 5px 10px 20px ;
+  transition: 200ms;
+}
+
+.light-mode .search-result-image-section:hover{
+  width: 490px;
+  height: 95%;
+  cursor: pointer;
+}
+

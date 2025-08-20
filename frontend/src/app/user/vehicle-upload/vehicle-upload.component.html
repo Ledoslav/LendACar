@@ -55,7 +55,7 @@
       </div>
 
       <div class="form-group">
-        <label for="engineDisplacement">Engine Displacement (cc)</label>
+        <label for="engineDisplacement">Engine Displacement (l)</label>
         <input type="number" id="engineDisplacement" formControlName="engineDisplacement" class="form-control" required />
       </div>
 
@@ -120,8 +120,8 @@
       </div>
 
       <div class="form-group form-check">
-        <input type="checkbox" id="available" formControlName="available" class="form-check-input" />
-        <label for="available" class="form-check-label">Available for Rent</label>
+        <input type="checkbox" id="avaliable" formControlName="avaliable" class="form-check-input" />
+        <label for="avaliable" class="form-check-label">Available for Rent</label>
       </div>
 
       <div class="dugmici">
@@ -142,10 +142,12 @@
 
     <!-- Image Preview -->
     <div class="image-preview-container">
-      <div *ngFor="let image of uploadedImages" class="image-preview">
-        <img [src]="image" alt="Vehicle Image" />
-      </div>
+      <div *ngFor="let image of uploadedImages; let i = index" class="image-preview">
+       <img [src]="image" alt="Vehicle Image" />
+        <button type="button" class="remove-btn" (click)="removeImage(i)">✕</button>
+     </div>
     </div>
+
 
     <div class="dugmici">
       <button type="button" class="btn btn-secondary" matStepperPrevious>Back</button>

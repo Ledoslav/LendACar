@@ -10,9 +10,10 @@
         <p>{{ user?.emailAddress }}</p>
         <p>{{ user?.averageRating }} stars</p>
       </div>
-      <button class="upload-button" [routerLink]="['/user/vehicleUpload']">
-        Upload Vehicle
-      </button>
+      <button class="upload-button" [routerLink]="['/user/vehicleUpload']" [disabled]="!user?.isVerified">
+      Upload Vehicle
+    </button>
+
     </div>
 
     <!-- Vehicle List Card -->

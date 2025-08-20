@@ -21,4 +21,5 @@ export interface VehicleDto {
   user: any; // You can refine this type
   cityID: number;
   city: any; // You can refine this type
+  lastUpdated: string;
 }

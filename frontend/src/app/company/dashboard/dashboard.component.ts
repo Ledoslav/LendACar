@@ -13,6 +13,7 @@ import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog
 import {MatTableDataSource} from '@angular/material/table';
 import jsPDF from "jspdf";
 import {MatPaginator} from '@angular/material/paginator';
+import {delay} from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -39,6 +40,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   dropdownClicked: boolean = false;
   isFileSelected: boolean = false;
   isUpdateEmployeeFormVisible: boolean = false;
+  isEmployee: boolean = false;
+  isNavLinkHomeActive: boolean = true;
+  isNavLinkCompanyVehiclesActive: boolean = false;
 
   // Company data
   companyName = '';
@@ -171,100 +175,109 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       this.username = this.accountService.currentUser()?.username;
       this.userId = this.accountService.currentUser()?.id;
 
-      // Fetch company data when the component is initialized
-      this.companyService.getCompanyByUserId(this.userId).subscribe((company) => {
-        // Populate form with fetched company data
+      // 1️⃣ Check if user is owner (has companyAdminEmail)
+      this.companyEmployeeService.getCompanyAdminEmail(this.userId).subscribe({
+        next: (adminEmail) => {
+          if (adminEmail) {
+            // ✅ User is OWNER
+            this.isEmployee = false;
+            this.hasCompany = true;
+            this.companyAdminEmail = adminEmail;
 
-        this.companyName = company.companyName;
-        this.companyPhone = company.companyPhone;
-        this.companyEmail = company.companyEmail;
-        this.companyDescription = company.companyDescription;
-        this.companyAddress = company.companyAddress;
+            // Load company info for the owner
+            this.companyService.getCompanyByUserId(this.userId).subscribe((company) => {
+              this.setCompanyData(company);
 
-        if (company.companyAvatar && typeof company.companyAvatar === 'string') {
-          // Decode base64 string
-          const byteChars = atob(company.companyAvatar);
-          const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
-          const byteArray = new Uint8Array(byteNumbers);
+              // Load employees if owner
+              this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
+                next: (employees) => {
+                  this.employees = employees;
+                  this.hasEmployees = employees.length > 0;
+                  this.dataSource.data = employees;
 
-          // Create Blob with the correct image type (assuming PNG here — change if needed)
-          const blob = new Blob([byteArray], { type: 'image/png' });
+                  if (this.paginator) {
+                    this.dataSource.paginator = this.paginator;
+                    console.log('Paginator assigned:', this.dataSource.paginator);
+                  }
+                },
+                error: (error) => {
+                  console.error('Error fetching employees:', error);
+                  this.handleNoEmployees();
+                }
+              });
+            });
 
-          // Create a File object
-          this.companyAvatar = new File([blob], 'avatar.png', { type: 'image/png' });
-        } else {
-          this.companyAvatar = company.companyAvatar as File;
-        }
-
-        this.companyAvatarBackup = this.companyAvatar;
-
-        if (company.file && typeof company.file === 'string') {
-          const byteChars = atob(company.file); // decode base64
-          const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: 'application/pdf' }); // adjust type
-          this.file = new File([blob], 'document.pdf', { type: 'application/pdf' });
-        } else {
-          this.file = company.file as File;
-        }
-
-        this.fileBackup = this.file;
-
-        if(company.fileName != null){
-        this.fileName=company.fileName;
-        }
-        this.fileNameBackup = this.fileName;
-        this.convertImageToDataUrl(this.companyAvatar);
-      });
-
-
-      // Call the service to check if the user has a company
-      this.companyService.checkIfCompanyExists(this.userId).subscribe(
-        (exists: boolean) => {
-          this.hasCompany = exists;  // Set the flag based on response
+          } else {
+            // 2️⃣ If no admin email, check if employee
+            this.companyEmployeeService.getEmployeeForAdmin(this.userId).subscribe({
+              next: (response) => {
+                if (response?.company?.companyName) {
+                  // ✅ User is EMPLOYEE
+                  this.isEmployee = true;
+                  this.hasCompany = true;
+                  this.setCompanyData(response.company);
+                } else {
+                  // ❌ Neither owner nor employee
+                  this.isEmployee = false;
+                  this.hasCompany = false;
+                }
+              },
+              error: () => {
+                this.isEmployee = false;
+                this.hasCompany = false;
+              }
+            });
+          }
         },
-        (error: any) => {
-          console.error('Error checking if company exists:', error);
-          this.hasCompany = false;  // Default to false if there's an error
+        error: (err) => {
+          console.error('Error checking companyAdminEmail:', err);
+          this.isEmployee = false;
+          this.hasCompany = false;
         }
-      );
-
-      // Check if user is Company Admin
-     await this.companyEmployeeService
-        .getCompanyAdminEmail(this.userId)
-        .toPromise()
-        .then((adminEmail) => {
-          this.companyAdminEmail = adminEmail;
-          console.log(this.companyAdminEmail);
-          console.log(adminEmail);
-        })
-        .catch((error) => {
-          console.error('Error fetching company admin email:', error);
-        });
-    } else {
-      console.log('No user logged in');  // Log if there's no user
+      });
     }
-
-    this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
-      next: (employees) => {
-        this.employees = employees;
-        this.hasEmployees = employees.length > 0;
-
-        this.dataSource.data = this.employees;
-
-        if (this.paginator) {
-          this.dataSource.paginator = this.paginator;
-          console.log('Paginator assigned:', this.dataSource.paginator);
-        } else {
-          console.warn('Paginator not yet available!');
-        }
-      },
-      error: (error) => {
-        console.error('Error fetching employees:', error);
-        this.handleNoEmployees();
-      }
-    });
   }
+
+  /** Reusable method to fill company data */
+  private setCompanyData(company: any) {
+    this.companyName = company.companyName;
+    this.companyPhone = company.companyPhone;
+    this.companyEmail = company.companyEmail;
+    this.companyDescription = company.companyDescription;
+    this.companyAddress = company.companyAddress;
+
+    // Handle company avatar
+    if (company.companyAvatar && typeof company.companyAvatar === 'string') {
+      const byteChars = atob(company.companyAvatar);
+      const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/png' });
+      this.companyAvatar = new File([blob], 'avatar.png', { type: 'image/png' });
+    } else {
+      this.companyAvatar = company.companyAvatar as File;
+    }
+    this.companyAvatarBackup = this.companyAvatar;
+
+    // Handle company file
+    if (company.file && typeof company.file === 'string') {
+      const byteChars = atob(company.file);
+      const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      this.file = new File([blob], 'document.pdf', { type: 'application/pdf' });
+    } else {
+      this.file = company.file as File;
+    }
+    this.fileBackup = this.file;
+
+    if (company.fileName != null) {
+      this.fileName = company.fileName;
+    }
+    this.fileNameBackup = this.fileName;
+
+    this.convertImageToDataUrl(this.companyAvatar);
+  }
+
 
   ngAfterViewInit() {
     if (this.paginator) {
@@ -789,5 +802,19 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       this.mode = 'light-mode';
     }
     }
+
+  setActiveNavLink(activeNav: string) {
+    if(activeNav == 'home'){
+      this.isNavLinkHomeActive = true;
+      this.isNavLinkCompanyVehiclesActive = false;
+    }else{
+      this.isNavLinkHomeActive = false;
+      this.isNavLinkCompanyVehiclesActive = true;
+    }
+  }
+
+  addVehicle() {
+    return;
+  }
 }
 

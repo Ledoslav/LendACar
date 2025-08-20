@@ -27,6 +27,8 @@ export class HomeComponent implements OnInit {
     this.userId = this.accountService.currentUser()?.id;
 
     if(this.isAppUser == false || this.isLoggedIn == false) {
+      this.isOwner = false;
+      this.isEmployee = false;
       return;
     }
 
@@ -34,7 +36,6 @@ export class HomeComponent implements OnInit {
       next: (response2) => {
         if(response2 != null){
           this.companyAdminEmail = response2;
-          console.log(this.companyAdminEmail);
           this.isOwner = true;
           this.isEmployee = false;
           return;
@@ -50,10 +51,6 @@ export class HomeComponent implements OnInit {
     this.companyEmployeeService.getEmployeeForAdmin(this.userId).subscribe({
       next: (response) =>{
         if(response == null){
-          this.isOwner = false;
-          this.isEmployee = false;
-          console.log(this.isOwner);
-          console.log(this.isEmployee);
           return;
         }
 
@@ -68,8 +65,12 @@ export class HomeComponent implements OnInit {
           this.isEmployee = true;
           this.isOwner = false;
          }
-         else{
+         else if(this.employee.companyAdminEmail != null && this.employee.company.companyName != null){
            this.isOwner = true;
+           this.isEmployee = false;
+         }
+         else{
+           this.isOwner = false;
            this.isEmployee = false;
          }
       }

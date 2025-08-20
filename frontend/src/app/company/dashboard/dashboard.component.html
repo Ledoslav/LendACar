@@ -10,11 +10,8 @@
         <div class="p-3">
           <h4>{{hasCompany ? companyName : 'MyCompany'}}</h4>
           <hr />
-          <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item">
-              <a class="nav-link clickable" [ngClass]="{ 'active': activeLink === 'home' }"><i class="bi bi-house me-2"></i> {{'COMPANY.HOME' | translate}}</a>
-            </li>
-          </ul>
+            <div class="navLink" [class.active]="isNavLinkHomeActive" (click)="setActiveNavLink('home')">{{'COMPANY.HOME' | translate}}</div>
+            <div class="navLink" [class.active]="isNavLinkCompanyVehiclesActive" (click)="setActiveNavLink('vehicles')">{{'COMPANY.COMPANY_VEHICLES' | translate}}</div>
           <hr />
 
           <div class="dropdown">
@@ -23,7 +20,7 @@
               <img *ngIf="accountService.currentUser()?.profilePhotoUrl==null" class="profile-icon" style="border-radius: 50%; width: 50px; margin-right: 10px;" src="/defaultProfilePic.png" alt="Profile">
               <strong>{{ isLoggedIn ? username : 'COMPANY.NOT_LOGGED_IN' | translate}}▼</strong>
             </a>
-            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" [class.clicked]="dropdownClicked" *ngIf="employeeSectionClicked && isLoggedIn && hasCompany">
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" [class.clicked]="dropdownClicked" *ngIf="employeeSectionClicked && isLoggedIn && hasCompany && !isEmployee">
               <li *ngIf="isLoggedIn && hasCompany"><a class="dropdown-item" (click)="deleteCompany()">{{ 'COMPANY.DELETE_COMPANY' | translate }}</a></li>
               <li *ngIf="isLoggedIn && hasCompany"><a class="dropdown-item" (click)="showUpdateForm()">{{'COMPANY.UPDATE_COMPANY' | translate}}</a></li>
               <li *ngIf="!isLoggedIn"><a class="dropdown-item" routerLinkActive="active" routerLink="/user/login">{{'COMPANY.LOGIN' | translate}}</a></li>
@@ -77,7 +74,7 @@
 
         <!--CREATE COMPANY---------------------------------------------------------------------------------------------------------------->
 
-        <div *ngIf="!hasCompany && isLoggedIn && isFormVisible" class="create-company-section">
+        <div *ngIf="!hasCompany && isLoggedIn && isFormVisible && !isEmployee" class="create-company-section">
           <div class="create-company-form-box">
 
             <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
@@ -216,7 +213,7 @@
 
         <!--UPDATE COMPANY------------------------------------------------------------------------------------------------------------------>
 
-        <div *ngIf="hasCompany && isLoggedIn && updateFormVisible" class="update-company-section">
+        <div *ngIf="hasCompany && isLoggedIn && updateFormVisible && !isEmployee" class="update-company-section">
           <div class="update-company-form-box">
 
             <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
@@ -355,7 +352,7 @@
 
         <!--Employee View-------------------------------------------------------------------------------------------->
 
-        <div class="employee-view-section" *ngIf="hasCompany && isLoggedIn && hasEmployees">
+        <div class="employee-view-section" *ngIf="hasCompany && isLoggedIn && hasEmployees && !isEmployee && isNavLinkHomeActive">
           <h1>{{'COMPANY.EMPLOYEE_VIEW_TITLE' | translate}}</h1>
 
           <mat-form-field id="filter">
@@ -424,12 +421,12 @@
           <div class="add-employee-button" (click)="showEmployeeForm()">{{'COMPANY.EMPLOYEE_VIEW_ADD_EMPLOYEE_BUTTON' | translate}}</div>
         </div>
 
-        <div class="no-employees-section" *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !hasEmployees && !isEmployeeFormVisible && !isUpdateEmployeeFormVisible">
+        <div class="no-employees-section" *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !hasEmployees && !isEmployeeFormVisible && !isUpdateEmployeeFormVisible && !isEmployee && isNavLinkHomeActive">
           <h1 id="noEmployeesTitle">{{'COMPANY.EMPLOYEE_VIEW_NO_EMPLOYEES' | translate}}</h1>
           <div class="add-employee-button" (click)="showEmployeeForm()">{{'COMPANY.EMPLOYEE_VIEW_ADD_EMPLOYEE_BUTTON' | translate}}</div>
         </div>
 
-        <div class="employee-form-section" *ngIf="hasCompany && isLoggedIn && !updateFormVisible && isEmployeeFormVisible && !isUpdateEmployeeFormVisible">
+        <div class="employee-form-section" *ngIf="hasCompany && isLoggedIn && !updateFormVisible && isEmployeeFormVisible && !isUpdateEmployeeFormVisible && !isEmployee && isNavLinkHomeActive">
           <div class="employee-form-box">
             <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
               <div class="close-update-button" (click)="closeAddEmployeeForm(); stepperAddEmployeeForm.reset();"><p>X</p></div>
@@ -536,7 +533,7 @@
           </div>
         </div>
 
-        <div class="employee-update-form-section" *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !isEmployeeFormVisible && isUpdateEmployeeFormVisible">
+        <div class="employee-update-form-section" *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !isEmployeeFormVisible && isUpdateEmployeeFormVisible && !isEmployee && isNavLinkHomeActive">
           <div class="employee-update-form-box">
             <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
               <div class="close-update-button" (click)="closeUpdateEmployeeForm(); stepperUpdateEmployeeForm.reset();"><p>X</p></div>
@@ -642,5 +639,55 @@
             </mat-stepper>
           </div>
         </div>
+
+        <!--COMPANY VEHICLES SECTION-->
+
+        <div *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !isEmployeeFormVisible && !isUpdateEmployeeFormVisible && !isEmployee && isNavLinkCompanyVehiclesActive" class="company-vehicles-section">
+            <div class="no-vehicles-section">
+              <div class="no-vehicles-title">
+                <h1>{{'COMPANY.NO_VEHICLES_TEXT' | translate}}</h1>
+              </div>
+              <div class="no-vehicles-button" (click)="addVehicle()">
+                {{'COMPANY.ADD_VEHICLES_BUTTON' | translate}}
+            </div>
+        </div>
+
+        <div class="company-vehicles-list">
+
+          <div class="search-result">
+            <div class="search-result-image-section">
+              <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+            </div>
+            <div class="search-result-info">
+              <h3 class="search-result-title">Mercedes-Benz GLS</h3>
+              <p class="search-result-description">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
+              <p class="search-result-price" style="">350$ {{'COMPANY.PER_DAY' | translate}}</p>
+            </div>
+          </div>
+
+          <div class="search-result">
+            <div class="search-result-image-section">
+              <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+            </div>
+            <div class="search-result-info">
+              <h3 class="search-result-title">Mercedes-Benz GLS</h3>
+              <p class="search-result-description">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
+              <p class="search-result-price" style="">350$ {{'COMPANY.PER_DAY' | translate}}</p>
+            </div>
+          </div>
+
+          <div class="search-result">
+            <div class="search-result-image-section">
+              <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+            </div>
+            <div class="search-result-info">
+              <h3 class="search-result-title">Mercedes-Benz GLS</h3>
+              <p class="search-result-description">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
+              <p class="search-result-price" style="">350$ {{'COMPANY.PER_DAY' | translate}}</p>
+            </div>
+          </div>
+
+        </div>
+
       </div>
   </div>

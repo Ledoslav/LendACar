@@ -29,7 +29,7 @@ export interface VehicleUploadDto {
 })
 export class VehicleListingService {
 
-  private baseUrl = MyConfig.api_address + 'vehiclelisting';
+  private baseUrl = MyConfig.api_address + '';
   
   constructor(private http: HttpClient) {}
 
