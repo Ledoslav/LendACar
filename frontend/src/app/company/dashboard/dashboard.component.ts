@@ -1,19 +1,24 @@
 // dashboard.component.ts
-import {Component, ElementRef, inject, input, OnInit, ViewChild, AfterViewInit, AfterViewChecked, OnDestroy} from '@angular/core';
+import {Component, ElementRef, inject, OnInit, ViewChild, AfterViewInit, AfterViewChecked, OnDestroy} from '@angular/core';
 import { UserService } from '../../services/user.service';
 import {CompanyService} from '../../services/company.service';
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
+import {VehicleListingService, VehicleUploadDto} from '../../services/vehiclelisting.service';
+import {VehicleCategoriesService} from '../../services/vehiclecategory.service';
+import {VehicleService} from '../../services/vehicle.service';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 import {MatDialog} from '@angular/material/dialog';
-import {ImageCroppedEvent, LoadedImage} from 'ngx-image-cropper';
+import {ImageCroppedEvent} from 'ngx-image-cropper';
 import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog-confirm.component';
 import {MatTableDataSource} from '@angular/material/table';
 import jsPDF from "jspdf";
 import {MatPaginator} from '@angular/material/paginator';
-import {delay} from 'rxjs';
+import {CityService} from '../../services/city.service';
+import {CountryService} from '../../services/country.service';
+import {VehicleDto} from '../../Models/VehicleDto';
 
 @Component({
   selector: 'app-dashboard',
@@ -34,8 +39,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   updateFormVisible = false; // Visibility toggle for the update form
   employeeSectionClicked: boolean = true;
   isEmployeeFormVisible = false;
-  hasEmployees:boolean = false;
-  isUpdating: boolean = false;
+  hasEmployees: boolean = false;
   isAppUser: boolean = false;
   dropdownClicked: boolean = false;
   isFileSelected: boolean = false;
@@ -43,6 +47,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   isEmployee: boolean = false;
   isNavLinkHomeActive: boolean = true;
   isNavLinkCompanyVehiclesActive: boolean = false;
+  hasVehicles: boolean = false;
+  isVehicleFormVisible: boolean = false;
+  isVehicleUpdateFormVisible: boolean = false;
 
   // Company data
   companyName = '';
@@ -51,7 +58,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   companyAddress = '';
   companyAvatar: File | null = null;
   companyAvatarBackup: File | null = null;
-  avatarPreviewUrl:any;
+  avatarPreviewUrl: any;
   companyDescription: string = '';
   fileName: any = "Upload a pdf file certificate";
   fileNameBackup: any = "Upload a pdf file certificate";
@@ -60,13 +67,13 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
   //Employee table data
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
-  displayedColumns: string[] = ['userId', 'firstName', 'lastName', 'phoneNumber', 'title', 'email', 'workingHours','actions'];
+  displayedColumns: string[] = ['userId', 'firstName', 'lastName', 'phoneNumber', 'title', 'email', 'workingHours', 'actions'];
   employees: any = [];
-  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
 
 
   //Employee data
-  firstName: string ='';
+  firstName: string = '';
   lastName: string = '';
   companyAdminEmail: any;
   phoneNumber: string = '';
@@ -74,8 +81,47 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   email: string = '';
   employeeIdToUpdate: number | null = null;
 
+  //Vehicle data
+  vehicles: any = [];
+  vehicleModels: any = [];
+  vehicleCategories: any = [];
+  vehicleBrands: any = [];
+  uploadedImages: string[] = [];
+  cities: any = [];
+  countries: any = [];
+  currentPage = 1;
+  pageSize = 3;
+  fuelTypes = [
+    { value: 0, label: 'Petrol' },
+    { value: 1, label: 'Diesel' },
+    { value: 2, label: 'Electric' },
+    { value: 3, label: 'Hybrid' },
+    { value: 4, label: 'LPG' },
+    { value: 5, label: 'CNG' }
+  ];
+  transmissionTypes = [
+    { value: 0, label: 'Manual' },
+    { value: 1, label: 'Automatic' },
+    { value: 2, label: 'AutomatedManual' },
+    { value: 3, label: 'DCT' },
+    { value: 4, label: 'CVT' }
+  ];
+  airConditioningOptions = [
+    { value: 0, label: 'None' },
+    { value: 1, label: 'Single-Zone' },
+    { value: 2, label: 'Double-Zone' },
+    { value: 3, label: 'Triple-Zone' },
+    { value: 4, label: 'Quad-Zone' }
+  ];
+  years = Array.from({ length: 81 }, (_, i) => 2025 - i);
+  companyAdminUserId: any;
+  vehicleIdToUpdate: any;
+  city:any;
+  user:any;
+  vehicleModel:any;
+  vehicleCategory:any;
+
   //Other
-  activeLink: string = 'home';
   username: any;
   userId: any;
   switchClicked: boolean = false;
@@ -113,15 +159,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   });
 
   companyEmployeeFormGroup = this._formBuilder.group({
-    firstName: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
-    lastName: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
-    phoneNumber: ['',[Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
-    title: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
-    email:['',[Validators.required, Validators.email]],
+    firstName: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    lastName: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    phoneNumber: ['', [Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
+    title: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    email: ['', [Validators.required, Validators.email]],
   });
   workingHoursFormGroup = this._formBuilder.group({
-    startTime: ['',[Validators.required]],
-    endTime: ['',[Validators.required]],
+    startTime: ['', [Validators.required]],
+    endTime: ['', [Validators.required]],
     monday: [false],
     tuesday: [false],
     wednesday: [false],
@@ -131,19 +177,19 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     sunday: [false],
   });
   companyEmployeeBirthDateFormGroup = this._formBuilder.group({
-    birthDate: ['',[Validators.required]]
+    birthDate: ['', [Validators.required]]
   });
 
   companyUpdateEmployeeFormGroup = this._formBuilder.group({
-    firstName: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
-    lastName: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
-    phoneNumber: ['',[Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
-    title: ['',[Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
-    email:['',[Validators.required, Validators.email]],
+    firstName: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    lastName: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    phoneNumber: ['', [Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
+    title: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    email: ['', [Validators.required, Validators.email]],
   });
   workingHoursUpdateFormGroup = this._formBuilder.group({
-    startTime: ['',[Validators.required]],
-    endTime: ['',[Validators.required]],
+    startTime: ['', [Validators.required]],
+    endTime: ['', [Validators.required]],
     monday: [false],
     tuesday: [false],
     wednesday: [false],
@@ -153,7 +199,53 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     sunday: [false],
   });
   companyEmployeeUpdateBirthDateFormGroup = this._formBuilder.group({
-    birthDate: ['',[Validators.required]]
+    birthDate: ['', [Validators.required]]
+  });
+
+  companyVehicleBasicInfoForm = this._formBuilder.group({
+    title: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    brandId: [null as number | null, [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    vehicleModelID: [null as number | null, [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    pricePerDay: ['', [Validators.required]],
+  });
+  companyTechincalDataFormGroup = this._formBuilder.group({
+    fuelType: ['', [Validators.required]],
+    transmissionType: [0, [Validators.required]],
+    engineDisplacement: ['', [Validators.required]],
+    enginePower: ['', [Validators.required]],
+    airConditioning: ['', [Validators.required]],
+    numberOfSeats: ['', [Validators.required]],
+    towingHitch: [false, [Validators.required]],
+    productionYear: ['', [Validators.required]],
+  });
+  companyDescriptionFormGroup = this._formBuilder.group({
+    description: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    vehicleCategoryID: [null as number | null, [Validators.required]],
+    cityID: ['', [Validators.required]],
+    avaliable: [true, [Validators.required]],
+  });
+
+  companyUpdateVehicleBasicInfoForm = this._formBuilder.group({
+    title: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    brandId: [null as number | null, [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    vehicleModelID: [null as number | null, [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    pricePerDay: ['', [Validators.required]],
+  });
+  companyUpdateTechincalDataFormGroup = this._formBuilder.group({
+    fuelType: ['', [Validators.required]],
+    transmissionType: [0, [Validators.required]],
+    engineDisplacement: ['', [Validators.required]],
+    enginePower: ['', [Validators.required]],
+    airConditioning: ['', [Validators.required]],
+    numberOfSeats: ['', [Validators.required]],
+    towingHitch: [false, [Validators.required]],
+    productionYear: ['', [Validators.required]],
+  });
+  companyUpdateDescriptionFormGroup = this._formBuilder.group({
+    description: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    vehicleCategoryID: [null as number | null, [Validators.required]],
+    cityID: ['', [Validators.required]],
+    avaliable: [true, [Validators.required]],
   });
 
 // Add employee form visibility control
@@ -162,28 +254,43 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   }
 
   constructor(
-    private userService: UserService,
     private companyService: CompanyService,
-    private companyEmployeeService: CompanyEmployeeService) {
+    private companyEmployeeService: CompanyEmployeeService,
+    private vehicleListingService: VehicleListingService,
+    private vehicleService: VehicleService,
+    private vehicleCategoriesService: VehicleCategoriesService,
+    private vehicleModelsBrandsService: VehicleService,
+    private cityService: CityService,
+    private countryService: CountryService) {
   }
 
   async ngOnInit(): Promise<void> {
     this.isLoggedIn = this.authService.isLoggedIn();
     this.isAppUser = this.authService.isAppUser();
 
+    if(localStorage.getItem('mode') == 'dark-mode'){
+      this.mode = 'dark-mode';
+      this.switchClicked = true;
+    }else{
+      this.mode = 'light-mode';
+      this.switchClicked = false;
+    }
+
     if (this.isAppUser) {
       this.username = this.accountService.currentUser()?.username;
       this.userId = this.accountService.currentUser()?.id;
 
-      // 1️⃣ Check if user is owner (has companyAdminEmail)
       this.companyEmployeeService.getCompanyAdminEmail(this.userId).subscribe({
         next: (adminEmail) => {
           if (adminEmail) {
-            // ✅ User is OWNER
             this.isEmployee = false;
             this.hasCompany = true;
             this.companyAdminEmail = adminEmail;
-
+            this.getVehicles();
+            this.getCountries();
+            this.getCities();
+            this.getVehicleCategories();
+            this.getCompanyAdminId();
             // Load company info for the owner
             this.companyService.getCompanyByUserId(this.userId).subscribe((company) => {
               this.setCompanyData(company);
@@ -208,16 +315,18 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
             });
 
           } else {
-            // 2️⃣ If no admin email, check if employee
             this.companyEmployeeService.getEmployeeForAdmin(this.userId).subscribe({
               next: (response) => {
                 if (response?.company?.companyName) {
-                  // ✅ User is EMPLOYEE
                   this.isEmployee = true;
                   this.hasCompany = true;
+                  this.getVehicles();
+                  this.getCountries();
+                  this.getCities();
+                  this.getVehicleCategories();
+                  this.getCompanyAdminId();
                   this.setCompanyData(response.company);
                 } else {
-                  // ❌ Neither owner nor employee
                   this.isEmployee = false;
                   this.hasCompany = false;
                 }
@@ -251,8 +360,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       const byteChars = atob(company.companyAvatar);
       const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: 'image/png' });
-      this.companyAvatar = new File([blob], 'avatar.png', { type: 'image/png' });
+      const blob = new Blob([byteArray], {type: 'image/png'});
+      this.companyAvatar = new File([blob], 'avatar.png', {type: 'image/png'});
     } else {
       this.companyAvatar = company.companyAvatar as File;
     }
@@ -263,8 +372,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       const byteChars = atob(company.file);
       const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: 'application/pdf' });
-      this.file = new File([blob], 'document.pdf', { type: 'application/pdf' });
+      const blob = new Blob([byteArray], {type: 'application/pdf'});
+      this.file = new File([blob], 'document.pdf', {type: 'application/pdf'});
     } else {
       this.file = company.file as File;
     }
@@ -307,11 +416,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.hasEmployees = false;         // Indicate no employees available
   }
 
-
-  cancelUpdateEmployeeForm(): void {
-    this.isUpdating = false; // Hide the form without submitting
-  }
-
 // Method to handle add employee logic (display the form)
   addEmployee() {
 
@@ -325,7 +429,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       phoneNumber: formValue.phoneNumber!,
       title: formValue.title!,
       email: formValue.email!,
-      employeePassword : this.generateRandomPassword(),
+      employeePassword: this.generateRandomPassword(),
       companyAdminEmail: this.companyAdminEmail,
       startTime: formTimeValue.startTime!,
       birthDate: formBirthDateValue.birthDate!,
@@ -343,26 +447,26 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     const username = newEmployee.firstName + newEmployee.lastName;
 
-      this.companyEmployeeService.addEmployee(newEmployee).subscribe({
-        next: (response) => {
-          console.log('Employee added successfully:', response);
-          this.isEmployeeFormVisible = false; // Hide the form
-          this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
-            next: (employees) => {
-              this.employees = employees;
-              this.dataSource = new MatTableDataSource(this.employees);
-              this.downloadEmployeeCredentials(username, newEmployee.employeePassword, newEmployee.firstName, newEmployee.lastName);
-              window.location.reload();
-            },
-            error: (error) => {
-              console.error('Error fetching employees:', error);
-            }
-          })
-        },
-        error: (error) => {
-          console.error('Error adding employee:', error);
-        }
-      });
+    this.companyEmployeeService.addEmployee(newEmployee).subscribe({
+      next: (response) => {
+        console.log('Employee added successfully:', response);
+        this.isEmployeeFormVisible = false; // Hide the form
+        this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
+          next: (employees) => {
+            this.employees = employees;
+            this.dataSource = new MatTableDataSource(this.employees);
+            this.downloadEmployeeCredentials(username, newEmployee.employeePassword, newEmployee.firstName, newEmployee.lastName);
+            window.location.reload();
+          },
+          error: (error) => {
+            console.error('Error fetching employees:', error);
+          }
+        })
+      },
+      error: (error) => {
+        console.error('Error adding employee:', error);
+      }
+    });
   }
 
   updateEmployee() {
@@ -411,7 +515,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     });
   }
 
-  deleteEmployee(employeeId:any): void {
+  deleteEmployee(employeeId: any): void {
 
     const userIdToDelete = employeeId;
 
@@ -420,7 +524,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       data: {
         title: 'Confirm removal',
         message: 'Are you sure you want to delete this employee',
-        confirmButtonText:'Confirm'
+        confirmButtonText: 'Confirm'
       }
     });
 
@@ -477,19 +581,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.isFormVisible = true;
   }
 
-  // Cancel the form without saving
-  cancelForm() {
-    this.isFormVisible = false;
-  }
-
-  convertImageToDataUrl(Avatar: any){
-      if (Avatar) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.avatarPreviewUrl = e.target.result; // this is the correct data URL
-        };
-        reader.readAsDataURL(Avatar); // converts File to base64
-      }
+  convertImageToDataUrl(Avatar: any) {
+    if (Avatar) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.avatarPreviewUrl = e.target.result; // this is the correct data URL
+      };
+      reader.readAsDataURL(Avatar); // converts File to base64
+    }
   }
 
   showUpdateForm() {
@@ -516,8 +615,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   }
 
   toggleDropdown() {
-    if(this.updateFormVisible==false){
-        this.dropdownClicked = !this.dropdownClicked;
+    if (this.updateFormVisible == false) {
+      this.dropdownClicked = !this.dropdownClicked;
     }
   }
 
@@ -552,7 +651,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.fileName = "Upload a pdf file certificate";
   }
 
-  updateCompany(){
+  updateCompany() {
     const companyUpdateData = {
       ...this.basicInfoUpdateFormGroup.value,
       companyAvatar: this.companyAvatar, // If this is an uploaded File, make sure it's a File object, not a base64 string
@@ -563,7 +662,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     console.log(companyUpdateData);
 
-    this.companyService.updateCompanyByUserId(this.userId,companyUpdateData).subscribe(
+    this.companyService.updateCompanyByUserId(this.userId, companyUpdateData).subscribe(
       () => {
         this.snackbarService.showSuccessMessage('Company updated successfully');
         window.location.reload();
@@ -575,7 +674,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     );
   }
 
-  @ViewChild('companyFileInput', { static: false }) companyFileInput!: ElementRef;
+  @ViewChild('companyFileInput', {static: false}) companyFileInput!: ElementRef;
   http = inject(HttpClient);
   snackbarService = inject(MySnackbarService);
   private dialog = inject(MatDialog);
@@ -592,7 +691,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   onDrop(event: DragEvent): void {
     event.preventDefault();
     if (event.dataTransfer?.files.length) {
-      this.imageChangedEvent = { target: { files: event.dataTransfer.files } };
+      this.imageChangedEvent = {target: {files: event.dataTransfer.files}};
       this.showCropper = true;
     }
   }
@@ -645,7 +744,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.companyAvatar = new File(
       [this.croppedImage],
       'company-avatar.png',
-      { type: 'image/png' }
+      {type: 'image/png'}
     );
 
     // Hide cropper if needed
@@ -653,16 +752,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     console.log('Company avatar stored for later:', this.companyAvatar);
     this.convertImageToDataUrl(this.companyAvatar);
-  }
-
-  removeProfilePhoto(): void {
-
-    if (this.companyAvatar==null) {
-      console.error('No image available.');
-      return;
-    }
-
-    this.openMyConfirmDialog();
   }
 
   cancelCrop(): void {
@@ -677,15 +766,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       data: {
         title: 'Confirm removal',
         message: 'Are you sure you want to remove your company picture',
-        confirmButtonText:'Confirm'
+        confirmButtonText: 'Confirm'
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-              this.showCropper = false;
-              this.companyAvatar = null;
-              this.snackbarService.showSuccessMessage('Company profile picture removed successfully!')
+        this.showCropper = false;
+        this.companyAvatar = null;
+        this.snackbarService.showSuccessMessage('Company profile picture removed successfully!')
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
@@ -711,7 +800,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.fileName = "Upload a pdf file certificate";
   }
 
-  resetForm(){
+  resetForm() {
     this.isFileSelected = false;
     this.companyAvatar = null;
     this.convertImageToDataUrl(this.companyAvatar);
@@ -722,7 +811,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
 
-    this.dataSource.filterPredicate = (data:any, filter: string) => {
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
       const searchTerm = filter.toLowerCase();
 
       return data.user.firstName.toLowerCase().includes(searchTerm)
@@ -741,11 +830,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
   deleteCompany() {
     this.companyService.deleteCompanyByUserId(this.userId).subscribe(
-      ()=>{
+      () => {
         this.snackbarService.showSuccessMessage('Company deleted successfully');
         window.location.reload();
       },
-      (error)=>{
+      (error) => {
         this.snackbarService.showErrorMessage('Failed to delete company');
         console.error('Error deleting company:', error);
       }
@@ -762,8 +851,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   }
 
 
-  showUpdateEmployeeForm(employee:any) {
-    this.isUpdateEmployeeFormVisible= true;
+  showUpdateEmployeeForm(employee: any) {
+    this.isUpdateEmployeeFormVisible = true;
     this.employeeIdToUpdate = employee.userId;
 
     console.log(employee);
@@ -796,18 +885,20 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   toggleDarkMode() {
     this.switchClicked = !this.switchClicked;
 
-    if(this.switchClicked) {
+    if (this.switchClicked) {
       this.mode = 'dark-mode';
-    }else{
+      localStorage.setItem('mode', this.mode);
+    } else {
       this.mode = 'light-mode';
+      localStorage.setItem('mode', this.mode);
     }
-    }
+  }
 
   setActiveNavLink(activeNav: string) {
-    if(activeNav == 'home'){
+    if (activeNav == 'home') {
       this.isNavLinkHomeActive = true;
       this.isNavLinkCompanyVehiclesActive = false;
-    }else{
+    } else {
       this.isNavLinkHomeActive = false;
       this.isNavLinkCompanyVehiclesActive = true;
     }
@@ -816,5 +907,314 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   addVehicle() {
     return;
   }
+
+  getVehicles() {
+    this.vehicleListingService.getVehiclesByCompanyAdminEmail(this.userId, this.companyAdminEmail).subscribe({
+      next: (vehicles) => {
+        this.vehicles = vehicles;
+        console.log(this.vehicles);
+        this.hasVehicles = true;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    })
+
+    this.vehicleService.GetVehicleBrands().subscribe({
+      next: (brands) => {
+        this.vehicleBrands = brands;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+
+  getVehicleCategories(){
+    this.vehicleCategoriesService.getCategories().subscribe({
+      next: (categories) => {
+        this.vehicleCategories = categories;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  get pagedVehicles() {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.vehicles.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  nextPage() {
+    if (this.currentPage * this.pageSize < this.vehicles.length) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage() {
+  if (this.currentPage > 1) {
+  this.currentPage--;
 }
+}
+
+// Called when fuel type changes
+  onFuelTypeChange() {
+    const fuelType = Number(this.companyTechincalDataFormGroup.get('fuelType')?.value);
+
+    if (fuelType === 2) { // Electric
+      this.companyTechincalDataFormGroup.get('transmissionType')?.setValue(1); // Automatic
+      this.companyTechincalDataFormGroup.get('transmissionType')?.disable();
+    } else {
+      this.companyTechincalDataFormGroup.get('transmissionType')?.enable();
+    }
+  }
+
+
+// Called when brand changes to fetch models
+  onBrandChange(brandId: number, preselectModelId?: number) {
+    this.vehicleModelsBrandsService.GetVehicleModelsByBrandId(brandId).subscribe({
+      next: models => {
+        this.vehicleModels = models;
+        this.companyUpdateVehicleBasicInfoForm.get('vehicleModelID')?.reset();
+
+        // if we’re editing, re-assign the model
+        if (preselectModelId) {
+          this.companyUpdateVehicleBasicInfoForm.patchValue({
+            vehicleModelID: preselectModelId
+          });
+        }
+      },
+      error: err => {
+        console.error('Error loading models:', err);
+      }
+    });
+  }
+
+// Image selection handler
+  onVehicleImageChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      const files = Array.from(input.files);
+      if (files.length + this.uploadedImages.length > 15) {
+        alert('You can upload a maximum of 15 images.');
+        return;
+      }
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          const result = e.target?.result as string;
+          this.uploadedImages.push(result);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  }
+
+  removeImage(index: number): void {
+    this.uploadedImages.splice(index, 1);
+  }
+
+// Submit the vehicle
+  onSubmit() {
+    if (this.companyVehicleBasicInfoForm.valid &&
+      this.companyTechincalDataFormGroup.valid &&
+      this.companyDescriptionFormGroup.valid) {
+
+      const basic = this.companyVehicleBasicInfoForm.value;
+      const technical = this.companyTechincalDataFormGroup.value;
+      const description = this.companyDescriptionFormGroup.value;
+
+      const vehicleData: VehicleUploadDto = {
+        title: basic.title || '',
+        vehicleModelID: Number(basic.vehicleModelID),
+        vehicleCategoryID: Number(description.vehicleCategoryID),
+        pricePerDay: Number(basic.pricePerDay),
+        engineDisplacement: Number(technical.engineDisplacement),
+        enginePower: Number(technical.enginePower),
+        transmissionType: Number(technical.transmissionType),
+        fuelType: Number(technical.fuelType),
+        airConditioning: Number(technical.airConditioning),
+        numberOfSeats: Number(technical.numberOfSeats),
+        towingHitch: technical.towingHitch ?? false,
+        productionYear: Number(technical.productionYear),
+        description: description.description || '',
+        cityID: Number(description.cityID),
+        avaliable: description.avaliable ?? false,
+        userID: this.companyAdminUserId,
+        averageRating: 0
+      };
+
+      console.log(vehicleData);
+
+      this.vehicleListingService.uploadVehicle(vehicleData).subscribe({
+        next: response => {
+          console.log('Vehicle uploaded', response)
+          this.getVehicles();
+          this.isVehicleFormVisible = false;
+        },
+        error: err => console.error(err)
+      });
+    }
+  }
+
+
+  getCountries(){
+    this.countryService.getAllCountries().subscribe(countries => this.countries = countries);
+  }
+
+  getCities(){
+    this.cityService.GetAllCities().subscribe(cities => this.cities = cities);
+  }
+
+
+  protected readonly Math = Math;
+
+  closeAddVehicleForm() {
+    this.isVehicleFormVisible = false;
+  }
+
+  openAddVehicleForm() {
+    this.isVehicleFormVisible = true;
+  }
+
+  getCompanyAdminId(){
+    this.vehicleListingService.getCompanyAdminUserId(this.userId, this.companyAdminEmail).subscribe({
+      next: (response) => {
+        this.companyAdminUserId = response;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  showUpdateVehicleUpdateForm(vehicle: any) {
+    this.isVehicleUpdateFormVisible = true;
+
+    console.log(vehicle);
+    this.onBrandChange(vehicle.vehicleModel.vehicleBrandId);
+
+    this.companyUpdateVehicleBasicInfoForm.patchValue({
+      title: vehicle.title,
+      brandId: vehicle.vehicleModel.vehicleBrandId,
+      vehicleModelID: vehicle.vehicleModelID,
+      pricePerDay:vehicle.pricePerDay,
+    });
+
+    this.companyUpdateTechincalDataFormGroup.patchValue({
+      engineDisplacement: vehicle.engineDisplacement,
+      enginePower: vehicle.enginePower,
+      transmissionType: vehicle.transmissionType,
+      fuelType: vehicle.fuelType,
+      airConditioning: vehicle.airConditioning,
+      numberOfSeats: vehicle.numberOfSeats,
+      towingHitch: vehicle.towingHitch,
+      productionYear: vehicle.productionYear
+    });
+
+    this.companyUpdateDescriptionFormGroup.patchValue({
+      description: vehicle.description,
+      vehicleCategoryID: vehicle.vehicleCategoryID,
+      cityID: vehicle.cityID,
+      avaliable: vehicle.avaliable
+    });
+  }
+
+  deleteVehicle(vehicle: any) {
+
+    console.log(vehicle);
+
+    this.vehicleListingService.deleteVehicle(vehicle.id).subscribe({
+      next: response => {
+        console.log('Vehicle deleted', response)
+        this.getVehicles();
+      },
+      error: err => console.error(err)
+    });
+  }
+
+  closeUpdateVehicleForm() {
+    this.isVehicleUpdateFormVisible = false;
+  }
+
+  onUpdateVehicle() {
+    if (this.companyUpdateVehicleBasicInfoForm.valid &&
+      this.companyUpdateTechincalDataFormGroup.valid &&
+      this.companyUpdateDescriptionFormGroup.valid) {
+
+      const basic = this.companyUpdateVehicleBasicInfoForm.value;
+      const technical = this.companyUpdateTechincalDataFormGroup.value;
+      const description = this.companyUpdateDescriptionFormGroup.value;
+
+      this.vehicleListingService.getVehiclesByUser(this.companyAdminUserId).subscribe({
+        next: (response) => {
+          for(let i = 0; i < response.length; i++){
+            if(response[i].title == basic.title && response[i].description == description.description){
+              this.vehicleIdToUpdate = response[i].id;
+              this.vehicleModel = response[i].vehicleModel;
+              this.vehicleCategory = response[i].vehicleCategory;
+              this.city = response[i].city;
+              this.user = response[i].user;
+
+              console.log(this.city);
+            }
+          }
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+
+      const vehicleUpdateData: VehicleDto = {
+        id: this.vehicleIdToUpdate,
+
+        // Basic info form
+        title: String(basic.title),
+        pricePerDay: Number(basic.pricePerDay),
+        productionYear: Number(technical.productionYear),
+        vehicleCategoryID: Number(description.vehicleCategoryID),
+        vehicleModelID: Number(basic.vehicleModelID),
+        cityID: Number(description.cityID),
+
+        // Technical form
+        engineDisplacement: Number(technical.engineDisplacement),
+        enginePower: Number(technical.enginePower),
+        transmissionType: Number(technical.transmissionType), // dropdown or radio from form
+        fuelType: Number(technical.fuelType),
+        airConditioning: Number(technical.airConditioning),
+        numberOfSeats: Number(technical.numberOfSeats),
+        towingHitch: Boolean(technical.towingHitch),
+        avaliable: Boolean(description.avaliable),
+
+        // Description form
+        description: String(description.description),
+
+        // Values you might set automatically
+        averageRating: 0,   // if user can't edit this
+        lastUpdated: new Date().toISOString(),
+
+        // Nested objects (if backend requires them, else can be null)
+        vehicleCategory: this.vehicleCategory,
+        vehicleModel: this.vehicleModel,
+        userID: this.companyAdminUserId,   // depends how you handle user
+        user: this.user,
+        city: this.city,
+      };
+
+      this.vehicleListingService.updateVehicle(this.vehicleIdToUpdate,vehicleUpdateData).subscribe({
+        next: response => {
+          console.log('Vehicle uploaded', response)
+          this.getVehicles();
+          this.isVehicleFormVisible = false;
+        },
+        error: err => console.error(err)
+      });
+    }
+  }
+}
+
+
 

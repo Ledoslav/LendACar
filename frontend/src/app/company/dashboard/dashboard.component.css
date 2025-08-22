@@ -397,6 +397,18 @@ body{
   transition: 150ms;
 }
 
+.dark-mode .add-vehicle-images{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width:100%;
+  height:100%;
+}
+
+.dark-mode .add-vehicle-images>p{
+  margin:0;
+}
+
 .dark-mode .verificationText{
   margin-top: 20px;
   color:#007bff;
@@ -807,6 +819,180 @@ body{
   height: 95%;
   cursor: pointer;
 }
+
+.dark-mode .paginatorVehicles{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+  margin-top: 50px;
+  color: #007bff;
+}
+
+.dark-mode .paginatorVehicles button{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.dark-mode .paginatorVehicles button:hover{
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.dark-mode #add-vehicle-button{
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.dark-mode .important-vehicle-info{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.dark-mode .important-vehicle-info>p{
+  margin: 0 10px;
+  border: 1px solid #007bff;
+  border-radius: 25px;
+  padding: 5px;
+}
+
+.dark-mode .vehicle-form-section{
+  position:fixed;
+  top:0;
+  left:0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width:100%;
+  margin: 0 20px;
+  z-index: 1;
+}
+
+.dark-mode .vehicle-form-box{
+  background-image: url("../../../../public/Vector.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #181818;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 30px;
+  border-radius: 20px;
+  width:70%;
+}
+
+.dark-mode #update-vehicle-button{
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
+  border:1px solid #f0ad4e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: 5px 5px;
+  transition:150ms;
+  z-index: 1;
+  color: white;
+}
+
+.dark-mode #update-vehicle-button:hover{
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.dark-mode #delete-vehicle-button{
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
+  border:1px solid #dc3545;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition:150ms;
+  margin: 5px 5px;
+  z-index: 1;
+  color: white;
+}
+
+.dark-mode #delete-vehicle-button:hover{
+  background-color: #dc3545;
+  color: white;
+}
+
+.dark-mode #vehicle-buttons{
+  display: flex;
+  width: 100%;
+}
+
+.dark-mode #vehicle-buttons-container{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.dark-mode #vehicle-title-container{
+  width: 100%;
+}
+
+.dark-mode .vehicle-update-form-section{
+  position:fixed;
+  top:0;
+  left:0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width:100%;
+  margin: 0 20px;
+  z-index: 1;
+}
+
+.dark-mode .vehicle-update-form-box{
+  background-image: url("../../../../public/Vector.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #181818;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 30px;
+  border-radius: 20px;
+  width:70%;
+}
+
 
 
 /*LIGHT MODE*/
@@ -1599,5 +1785,186 @@ body{
   width: 490px;
   height: 95%;
   cursor: pointer;
+}
+
+.light-mode .paginatorVehicles{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+  margin-top: 50px;
+  color: #007bff;
+}
+
+.light-mode .paginatorVehicles button{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.light-mode .paginatorVehicles button:hover{
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.light-mode #add-vehicle-button{
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.light-mode .important-vehicle-info{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.light-mode .important-vehicle-info>p{
+  margin: 0 10px;
+  border: 1px solid #007bff;
+  border-radius: 25px;
+  padding: 5px;
+}
+
+.light-mode .vehicle-form-section{
+  position:fixed;
+  top:0;
+  left:0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width:100%;
+  margin: 0 20px;
+  z-index: 1;
+}
+
+.light-mode .vehicle-form-box{
+  background-image: url("../../../../public/Vector.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #181818;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 30px;
+  border-radius: 20px;
+  width:70%;
+}
+
+.light-mode .add-vehicle-images{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width:100%;
+  height:100%;
+}
+
+.light-mode #update-vehicle-button{
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
+  border:1px solid #f0ad4e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: 5px 5px;
+  transition:150ms;
+  z-index: 1;
+  color: black;
+}
+
+.light-mode #update-vehicle-button:hover{
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.light-mode #delete-vehicle-button{
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
+  border:1px solid #dc3545;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition:150ms;
+  margin: 5px 5px;
+  z-index: 1;
+  color: black;
+}
+
+.light-mode #delete-vehicle-button:hover{
+  background-color: #dc3545;
+  color: white;
+}
+
+.light-mode #vehicle-buttons{
+  display: flex;
+  width: 100%;
+}
+
+.light-mode #vehicle-buttons-container{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.light-mode #vehicle-title-container{
+  width: 100%;
+}
+
+.light-mode .vehicle-update-form-section{
+  position:fixed;
+  top:0;
+  left:0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width:100%;
+  margin: 0 20px;
+  z-index: 1;
+}
+
+.light-mode .vehicle-update-form-box{
+  background-image: url("../../../../public/Vector.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #181818;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 30px;
+  border-radius: 20px;
+  width:70%;
 }
 

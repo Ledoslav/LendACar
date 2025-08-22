@@ -17,6 +17,10 @@ export class CityService {
   GetAllCities(){
     return this.http.get<City[]>(this.baseUrl + '/get')
   }
+
+  GetAllCitiesByCountryId(countryId:number):Observable<City[]> {
+    return this.http.get<City[]>(this.baseUrl + `/getAllCitiesByCountryId/${countryId}`);
+  }
   AddCity(model:City){
     return this.http.post(this.baseUrl+'/add',model);
   }

@@ -30,12 +30,33 @@ export interface VehicleUploadDto {
 export class VehicleListingService {
 
   private baseUrl = MyConfig.api_address + '';
-  
+
   constructor(private http: HttpClient) {}
 
   // Get all vehicles by user ID
   getVehiclesByUser(userId: number): Observable<VehicleDto[]> {
     return this.http.get<VehicleDto[]>(`${this.baseUrl}vehicle/getByUser/${userId}`);
+  }
+
+  getVehiclesByCompanyAdminEmail(userId: number, companyAdminEmail: string | null): Observable<VehicleDto[]> {
+    let params = new HttpParams().set('userId', userId.toString());
+
+    if (companyAdminEmail) {
+      params = params.set('companyAdminEmail', companyAdminEmail);
+    }
+
+    return this.http.get<VehicleDto[]>(`${this.baseUrl}vehicle/getByCompanyAdminEmail`, { params });
+  }
+
+  getCompanyAdminUserId(userId: number, companyAdminEmail: string | null): Observable<number> {
+    let params = new HttpParams().set('userId', userId.toString());
+
+    if (companyAdminEmail) {
+      params = params.set('companyAdminEmail', companyAdminEmail);
+    }
+
+    // Make HTTP GET request and specify the type as number
+    return this.http.get<number>(`${this.baseUrl}vehicle/getCompanyAdminUserId`, { params });
   }
 
   // Get a vehicle by ID
@@ -55,7 +76,7 @@ export class VehicleListingService {
 
   // Delete a vehicle
   deleteVehicle(vehicleId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}vehicle/delete/${vehicleId}`);
+    return this.http.delete<void>(`${this.baseUrl}vehicle/remove/${vehicleId}`);
   }
 
   // Filter vehicles by availability and title (this can be modified for advanced filtering)

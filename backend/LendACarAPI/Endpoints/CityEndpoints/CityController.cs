@@ -20,6 +20,18 @@ namespace LendACarAPI.Endpoints.CityEndpoints
             return Ok(cities);
         }
 
+        [HttpGet("getAllCitiesByCountryId/{countryId}")]
+        public async Task<ActionResult<City[]>> GetAllCitiesByCountryId(int countryId, CancellationToken cancellationToken)
+        {
+            var cities = await db.Cities
+                .Include(c => c.Country)
+                .Where(a => a.CountryId == countryId)
+                .OrderBy(c => c.Country.Name)
+                .ToArrayAsync();
+
+            return Ok(cities);
+        }
+
         [HttpPost("add")]
         [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult<City>> CreateCity([FromBody] City city,CancellationToken cancellationToken)

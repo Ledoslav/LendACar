@@ -2,8 +2,10 @@ import {Component, inject, OnInit} from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import {VehicleService} from '../../services/vehicle.service';
+import {FormBuilder, Validators} from '@angular/forms';
+import {CountryService} from '../../services/country.service';
+import {CityService} from '../../services/city.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,6 +17,9 @@ export class HomeComponent implements OnInit {
   accountService=inject(UserService);
   authService=inject(MyAuthServiceService);
   companyEmployeeService=inject(CompanyEmployeeService);
+  vehicleService=inject(VehicleService);
+  countryService=inject(CountryService);
+  cityService=inject(CityService);
 
   constructor(
     private router: Router
@@ -25,6 +30,14 @@ export class HomeComponent implements OnInit {
     this.isAppUser=this.authService.isAppUser();
 
     this.userId = this.accountService.currentUser()?.id;
+
+    if(localStorage.getItem('mode') == 'dark-mode'){
+      this.mode = 'dark-mode';
+      this.switchClicked = true;
+    }else{
+      this.mode = 'light-mode';
+      this.switchClicked = false;
+    }
 
     if(this.isAppUser == false || this.isLoggedIn == false) {
       this.isOwner = false;
@@ -75,7 +88,12 @@ export class HomeComponent implements OnInit {
          }
       }
     })
+
+    this.getVehicles(this.paging);
+    this.loadCountries();
   }
+
+  private _formBuilder = inject(FormBuilder);
 
   isLoggedIn: boolean=false;
   isAppUser:boolean=false;
@@ -85,8 +103,110 @@ export class HomeComponent implements OnInit {
   isEmployee: boolean = false;
   isOwner: boolean = false;
   companyAdminEmail: any = null;
+  vehicles:any = [];
+  paging: pagingRequest = {
+    pageNumber: 1,
+    pageSize: 3
+  }
+  countries: any = [];
+  cities: any = [];
+  switchClicked: boolean = false;
+  mode: string = 'light-mode';
+
+  formGroup = this._formBuilder.group({
+    country: ['', [Validators.required]],
+    pickUpLocation: ['', [Validators.required]],
+    returnLocation: ['', [Validators.required]],
+    pickUpDate: ['', [Validators.required]],
+    returnDate: ['', [Validators.required]],
+  });
+
+  searchGroup = this._formBuilder.group({
+    search: ['', [Validators.required]]
+  });
+
 
   openSearch() {
+
+    let country = this.formGroup.value.country;
+    let pickUpLocation = this.formGroup.value.pickUpLocation;
+    let returnLocation = this.formGroup.value.returnLocation;
+
+    sessionStorage.setItem('search', String(this.searchGroup.value.search));
+    sessionStorage.setItem('country', String(JSON.stringify(country)));
+    sessionStorage.setItem('pickUpLocation', String(JSON.stringify(pickUpLocation)));
+    sessionStorage.setItem('returnLocation', String(JSON.stringify(returnLocation)));
+    sessionStorage.setItem('pickUpDate', String(this.formGroup.value.pickUpDate));
+    sessionStorage.setItem('returnDate', String(this.formGroup.value.returnDate));
+
     this.router.navigate(['/pretraga']);
   }
+
+  prev(){
+    if(this.paging.pageNumber == 1){
+      return;
+    }
+
+    this.paging.pageNumber--;
+
+    this.getVehicles(this.paging);
+  }
+
+  next(){
+    if(this.vehicles.length < this.paging.pageSize){
+      return;
+    }
+
+    this.paging.pageNumber++;
+
+    this.getVehicles(this.paging);
+  }
+
+  getVehicles(paging: pagingRequest){
+    this.vehicleService.getVehicle(this.paging).subscribe({
+      next: (response) =>{
+        this.vehicles = response;
+      }
+    })
+  }
+
+  onCountryChange(country:any){
+    const countryId = country.id;
+    this.loadCities(countryId);
+  }
+
+  loadCountries(){
+      this.countryService.getAllCountries().subscribe({
+        next: (response) => {
+          this.countries = response;
+        }
+      });
+}
+
+loadCities(countryId: number){
+    console.log(countryId);
+
+    this.cityService.GetAllCitiesByCountryId(countryId).subscribe({
+      next: (response) => {
+        this.cities = response;
+      }
+    });
+}
+
+  toggleDarkMode() {
+    this.switchClicked = !this.switchClicked;
+
+    if (this.switchClicked) {
+      this.mode = 'dark-mode';
+      localStorage.setItem('mode', this.mode);
+    } else {
+      this.mode = 'light-mode';
+      localStorage.setItem('mode', this.mode);
+    }
+  }
+}
+
+interface pagingRequest{
+  pageNumber: number;
+  pageSize: number;
 }

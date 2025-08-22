@@ -6,7 +6,7 @@ import {LayoutComponent} from './layout/layout.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious} from '@angular/material/stepper';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatFormField, MatLabel, MatSuffix} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatToolbar} from '@angular/material/toolbar';
@@ -31,9 +31,10 @@ import {
   MatDatepickerModule,
   MatDatepickerToggle
 } from "@angular/material/datepicker";
-import {MatNativeDateModule} from '@angular/material/core';
+import {MatNativeDateModule, MatOption} from '@angular/material/core';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import {UserModule} from '../user/user.module';
+import {MatSelect} from '@angular/material/select';
 
 
 @NgModule({
@@ -79,7 +80,10 @@ import {UserModule} from '../user/user.module';
     MatDatepickerToggle,
     MatSuffix,
     NgxMaterialTimepickerModule,
-    UserModule
+    UserModule,
+    MatSelect,
+    MatOption,
+    MatIconButton
   ],providers: [
     MatDatepickerModule,
     MatNativeDateModule

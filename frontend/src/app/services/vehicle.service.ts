@@ -1,11 +1,15 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {VehiclesDto} from '../Models/VehiclesDto';
 import { VehicleBrandDto } from '../Models/VehicleBrandDto';
 import {VehicleDto} from '../Models/VehicleDto';
 import { MyConfig } from '../my-config';
 
+interface pagingRequest{
+  pageNumber: number;
+  pageSize: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +26,13 @@ export class VehicleService{
     return this.http.get<VehiclesDto[]>( this.baseUrl + `VehicleModelAndBrand/getModelsByBrandId/${brandId}`);
   }
 
+  getVehicle(paging: pagingRequest):Observable<VehicleDto[]>{
+    const params = new HttpParams()
+      .set('PageNumber', paging.pageNumber)
+      .set('PageSize', paging.pageSize);
+
+    return this.http.get<VehicleDto[]>(this.baseUrl + 'Vehicle/get',{params});
+  }
 
   LoadVehicles(){
     return this.http.get("http://localhost:7000/api/VehicleModelAndBrand/getModel/all");

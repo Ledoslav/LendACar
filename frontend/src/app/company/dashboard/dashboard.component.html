@@ -642,50 +642,432 @@
 
         <!--COMPANY VEHICLES SECTION-->
 
-        <div *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !isEmployeeFormVisible && !isUpdateEmployeeFormVisible && !isEmployee && isNavLinkCompanyVehiclesActive" class="company-vehicles-section">
-            <div class="no-vehicles-section">
+        <div *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !isEmployeeFormVisible && !isUpdateEmployeeFormVisible && isNavLinkCompanyVehiclesActive" class="company-vehicles-section">
+
+          <div *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !isEmployeeFormVisible && !isUpdateEmployeeFormVisible && isNavLinkCompanyVehiclesActive && !hasVehicles" class="no-vehicles-section">
               <div class="no-vehicles-title">
                 <h1>{{'COMPANY.NO_VEHICLES_TEXT' | translate}}</h1>
               </div>
-              <div class="no-vehicles-button" (click)="addVehicle()">
+              <div class="no-vehicles-button" (click)="openAddVehicleForm()">
                 {{'COMPANY.ADD_VEHICLES_BUTTON' | translate}}
             </div>
         </div>
 
-        <div class="company-vehicles-list">
+        <div *ngIf="hasCompany && isLoggedIn && !updateFormVisible && !isEmployeeFormVisible && !isUpdateEmployeeFormVisible && isNavLinkCompanyVehiclesActive && hasVehicles" class="company-vehicles-list">
 
-          <div class="search-result">
-            <div class="search-result-image-section">
-              <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+          <ng-container *ngFor="let vehicle of pagedVehicles">
+            <div class="search-result">
+              <div class="search-result-image-section">
+                <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+              </div>
+              <div class="search-result-info">
+                <div id="vehicle-buttons">
+                  <div id="vehicle-title-container">
+                    <h3 class="search-result-title">{{ vehicle.title }}</h3>
+                  </div>
+
+                  <div id="vehicle-buttons-container">
+                    <div id="update-vehicle-button" (click)="showUpdateVehicleUpdateForm(vehicle)">{{'COMPANY.EMPLOYEE_TABLE_UPDATE' | translate}}</div>
+                    <div id="delete-vehicle-button" (click)="deleteVehicle(vehicle)">{{'COMPANY.EMPLOYEE_TABLE_DELETE' | translate}}</div>
+                  </div>
+                </div>
+                <p class="search-result-description">
+                  {{vehicle.description}}
+                </p>
+                <p class="search-result-price">{{vehicle.pricePerDay}}$ {{'COMPANY.PER_DAY' | translate}}</p>
+                <div class="important-vehicle-info">
+                  <p>{{'COMPANY.YEAR' | translate}}: {{vehicle.productionYear}}</p>
+                  <p>{{'COMPANY.ENGINE_POWER' | translate}}: {{vehicle.enginePower}}</p>
+                  <p>{{ vehicle.transmissionType == 1 ? ('Automatic') : ('Manual') }}</p>
+                  <p>{{ vehicle.isAvailable ? ('COMPANY.AVAILABLE' | translate) : ('COMPANY.NOT_AVAILABLE' | translate) }}</p>
+                  <p>{{'COMPANY.DATE_ADDED' | translate}}: {{vehicle.lastUpdated.slice(0, 10)}}</p>
+                </div>
+              </div>
             </div>
-            <div class="search-result-info">
-              <h3 class="search-result-title">Mercedes-Benz GLS</h3>
-              <p class="search-result-description">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
-              <p class="search-result-price" style="">350$ {{'COMPANY.PER_DAY' | translate}}</p>
+          </ng-container>
+
+          <div class="paginatorVehicles">
+            <button (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+            <span>Page {{currentPage}} / {{Math.ceil(vehicles.length / pageSize)}}</span>
+            <button (click)="nextPage()" [disabled]="currentPage * pageSize >= vehicles.length">Next</button>
+          </div>
+
+          <div id="add-vehicle-button">
+            <div class="no-vehicles-button" (click)="openAddVehicleForm()">
+              {{'COMPANY.ADD_VEHICLES_BUTTON' | translate}}
             </div>
           </div>
 
-          <div class="search-result">
-            <div class="search-result-image-section">
-              <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
-            </div>
-            <div class="search-result-info">
-              <h3 class="search-result-title">Mercedes-Benz GLS</h3>
-              <p class="search-result-description">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
-              <p class="search-result-price" style="">350$ {{'COMPANY.PER_DAY' | translate}}</p>
+          <div *ngIf="isVehicleFormVisible && isNavLinkCompanyVehiclesActive && !isUpdateEmployeeFormVisible && !isEmployeeFormVisible && !updateFormVisible" class="vehicle-form-section">
+            <div class="vehicle-form-box">
+              <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
+                <div class="close-update-button" (click)="closeAddVehicleForm(); stepperAddVehicleForm.reset();"><p>X</p></div>
+              </div>
+
+              <h2 style="text-align: center;">{{'COMPANY.FORM_ADD_VEHICLE' | translate}}</h2>
+
+              <mat-stepper orientation="horizontal" #stepperAddVehicleForm>
+
+                <!-- Step 1: Basic Info -->
+                <mat-step [stepControl]="companyVehicleBasicInfoForm">
+                  <form [formGroup]="companyVehicleBasicInfoForm">
+                    <ng-template matStepLabel>{{'COMPANY.FORM_BASIC_INFO' | translate}}</ng-template>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_TITLE' | translate}}</mat-label>
+                      <input matInput formControlName="title" required>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_BRAND' | translate}}</mat-label>
+                      <mat-select formControlName="brandId" (selectionChange)="onBrandChange($event.value)" required>
+                        <mat-option *ngFor="let brand of vehicleBrands" [value]="brand.id">{{ brand.brandName }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_MODEL' | translate}}</mat-label>
+                      <mat-select formControlName="vehicleModelID" required>
+                        <mat-option *ngFor="let model of vehicleModels" [value]="model.id">{{ model.modelName }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_PRICE_PER_DAY' | translate}}</mat-label>
+                      <input matInput type="number" formControlName="pricePerDay" required>
+                    </mat-form-field>
+
+                    <div>
+                      <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    </div>
+                  </form>
+                </mat-step>
+
+                <!-- Step 2: Technical Data -->
+                <mat-step [stepControl]="companyTechincalDataFormGroup">
+                  <form [formGroup]="companyTechincalDataFormGroup">
+                    <ng-template matStepLabel>{{'COMPANY.FORM_TECHNICAL_DATA' | translate}}</ng-template>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_FUEL_TYPE' | translate}}</mat-label>
+                      <mat-select formControlName="fuelType" (selectionChange)="onFuelTypeChange()" required>
+                        <mat-option *ngFor="let fuel of fuelTypes" [value]="fuel.value">{{ fuel.label }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_TRANSMISSION' | translate}}</mat-label>
+                      <mat-select formControlName="transmissionType" required>
+                        <mat-option *ngFor="let transmission of transmissionTypes" [value]="transmission.value">{{ transmission.label }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_ENGINE_DISPLACEMENT' | translate}}</mat-label>
+                      <input matInput type="number" formControlName="engineDisplacement" required>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_ENGINE_POWER' | translate}}</mat-label>
+                      <input matInput type="number" formControlName="enginePower" required>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_AIR_CONDITIONING' | translate}}</mat-label>
+                      <mat-select formControlName="airConditioning" required>
+                        <mat-option *ngFor="let ac of airConditioningOptions" [value]="ac.value">{{ ac.label }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_SEATS' | translate}}</mat-label>
+                      <input matInput type="number" formControlName="numberOfSeats">
+                    </mat-form-field>
+
+                    <mat-checkbox formControlName="towingHitch">{{'COMPANY.FORM_TOWING_HITCH' | translate}}</mat-checkbox>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_PRODUCTION_YEAR' | translate}}</mat-label>
+                      <mat-select formControlName="productionYear" required>
+                        <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <div>
+                      <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    </div>
+                  </form>
+                </mat-step>
+
+                <!-- Step 3: Description -->
+                <mat-step [stepControl]="companyDescriptionFormGroup">
+                  <form [formGroup]="companyDescriptionFormGroup">
+                    <ng-template matStepLabel>{{'COMPANY.FORM_DESCRIPTION' | translate}}</ng-template>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_DESCRIPTION' | translate}}</mat-label>
+                      <textarea matInput formControlName="description"></textarea>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_CATEGORY' | translate}}</mat-label>
+                      <mat-select formControlName="vehicleCategoryID" required>
+                        <mat-option *ngFor="let category of vehicleCategories" [value]="category.id">{{ category.name }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_CITY' | translate}}</mat-label>
+                      <mat-select formControlName="cityID" required>
+                        <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-checkbox formControlName="avaliable">{{'COMPANY.FORM_AVAILABLE' | translate}}</mat-checkbox>
+
+                    <div>
+                      <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    </div>
+                  </form>
+                </mat-step>
+
+                <!-- Step 4: Images -->
+                <mat-step>
+                  <ng-template matStepLabel>{{'COMPANY.FORM_IMAGES' | translate}}</ng-template>
+
+                  <input
+                    #fileInput
+                    type="file"
+                    (change)="onVehicleImageChange($event)"
+                    multiple
+                    accept="image/*"
+                    hidden
+                  >
+
+                  <div class="add-vehicle-images">
+                    <div class="custom-file-upload-button" (click)="fileInput.click()">
+                      {{ 'COMPANY.UPLOAD_IMAGES' | translate }}
+                    </div>
+                    <p>{{'COMPANY.FORM_IMAGE_NOTE' | translate}}</p>
+                  </div>
+
+                  <div class="image-preview-container">
+                    <div *ngFor="let image of uploadedImages; let i = index" class="image-preview">
+                      <img style="max-width: 100px; max-height: 100px;" [src]="image" alt="Vehicle Image">
+                      <button style="width: 20px; height: 20px;" mat-icon-button color="warn" (click)="removeImage(i)">✕</button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </mat-step>
+
+                /*Finish*/
+                <mat-step>
+                  <ng-template matStepLabel>{{'COMPANY.STEPPER_DONE' | translate}}</ng-template>
+                  <p>{{'COMPANY.STEPPER_DONE_TEXT' | translate}}</p>
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" (click)="stepperAddVehicleForm.reset()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
+                    <button class="company-create-button-form" (click)="onSubmit();stepperAddVehicleForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                  </div>
+                </mat-step>
+
+              </mat-stepper>
+
             </div>
           </div>
 
-          <div class="search-result">
-            <div class="search-result-image-section">
-              <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
-            </div>
-            <div class="search-result-info">
-              <h3 class="search-result-title">Mercedes-Benz GLS</h3>
-              <p class="search-result-description">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
-              <p class="search-result-price" style="">350$ {{'COMPANY.PER_DAY' | translate}}</p>
-            </div>
+          <div class="vehicle-update-form-section" *ngIf="isVehicleUpdateFormVisible">
+            <div class="vehicle-update-form-box">
+              <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100%;">
+                <div class="close-update-button" (click)="closeUpdateVehicleForm(); stepperUpdateVehicleForm.reset();"><p>X</p></div>
+              </div>
+
+              <h2 style="text-align: center;">{{'COMPANY.FORM_UPDATE_VEHICLE' | translate}}</h2>
+
+              <mat-stepper orientation="horizontal" #stepperUpdateVehicleForm>
+
+                <!-- Step 1: Basic Info -->
+                <mat-step [stepControl]="companyUpdateVehicleBasicInfoForm">
+                  <form [formGroup]="companyUpdateVehicleBasicInfoForm">
+                    <ng-template matStepLabel>{{'COMPANY.FORM_BASIC_INFO' | translate}}</ng-template>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_TITLE' | translate}}</mat-label>
+                      <input matInput formControlName="title" required>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_BRAND' | translate}}</mat-label>
+                      <mat-select formControlName="brandId" (selectionChange)="onBrandChange($event.value)" required>
+                        <mat-option *ngFor="let brand of vehicleBrands" [value]="brand.id">{{ brand.brandName }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_MODEL' | translate}}</mat-label>
+                      <mat-select formControlName="vehicleModelID" required>
+                        <mat-option *ngFor="let model of vehicleModels" [value]="model.id">{{ model.modelName }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_PRICE_PER_DAY' | translate}}</mat-label>
+                      <input matInput type="number" formControlName="pricePerDay" required>
+                    </mat-form-field>
+
+                    <div>
+                      <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    </div>
+                  </form>
+                </mat-step>
+
+                <!-- Step 2: Technical Data -->
+                <mat-step [stepControl]="companyUpdateTechincalDataFormGroup">
+                  <form [formGroup]="companyUpdateTechincalDataFormGroup">
+                    <ng-template matStepLabel>{{'COMPANY.FORM_TECHNICAL_DATA' | translate}}</ng-template>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_FUEL_TYPE' | translate}}</mat-label>
+                      <mat-select formControlName="fuelType" (selectionChange)="onFuelTypeChange()" required>
+                        <mat-option *ngFor="let fuel of fuelTypes" [value]="fuel.value">{{ fuel.label }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_TRANSMISSION' | translate}}</mat-label>
+                      <mat-select formControlName="transmissionType" required>
+                        <mat-option *ngFor="let transmission of transmissionTypes" [value]="transmission.value">{{ transmission.label }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_ENGINE_DISPLACEMENT' | translate}}</mat-label>
+                      <input matInput type="number" formControlName="engineDisplacement" required>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_ENGINE_POWER' | translate}}</mat-label>
+                      <input matInput type="number" formControlName="enginePower" required>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_AIR_CONDITIONING' | translate}}</mat-label>
+                      <mat-select formControlName="airConditioning" required>
+                        <mat-option *ngFor="let ac of airConditioningOptions" [value]="ac.value">{{ ac.label }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_SEATS' | translate}}</mat-label>
+                      <input matInput type="number" formControlName="numberOfSeats">
+                    </mat-form-field>
+
+                    <mat-checkbox formControlName="towingHitch">{{'COMPANY.FORM_TOWING_HITCH' | translate}}</mat-checkbox>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_PRODUCTION_YEAR' | translate}}</mat-label>
+                      <mat-select formControlName="productionYear" required>
+                        <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <div>
+                      <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    </div>
+                  </form>
+                </mat-step>
+
+                <!-- Step 3: Description -->
+                <mat-step [stepControl]="companyUpdateDescriptionFormGroup">
+                  <form [formGroup]="companyUpdateDescriptionFormGroup">
+                    <ng-template matStepLabel>{{'COMPANY.FORM_DESCRIPTION' | translate}}</ng-template>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_DESCRIPTION' | translate}}</mat-label>
+                      <textarea matInput formControlName="description"></textarea>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_CATEGORY' | translate}}</mat-label>
+                      <mat-select formControlName="vehicleCategoryID" required>
+                        <mat-option *ngFor="let category of vehicleCategories" [value]="category.id">{{ category.name }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-label>{{'COMPANY.FORM_CITY' | translate}}</mat-label>
+                      <mat-select formControlName="cityID" required>
+                        <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-checkbox formControlName="avaliable">{{'COMPANY.FORM_AVAILABLE' | translate}}</mat-checkbox>
+
+                    <div>
+                      <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    </div>
+                  </form>
+                </mat-step>
+
+                <!-- Step 4: Images -->
+                <mat-step>
+                  <ng-template matStepLabel>{{'COMPANY.FORM_IMAGES' | translate}}</ng-template>
+
+                  <input
+                    #fileInput
+                    type="file"
+                    (change)="onVehicleImageChange($event)"
+                    multiple
+                    accept="image/*"
+                    hidden
+                  >
+
+                  <div class="add-vehicle-images">
+                    <div class="custom-file-upload-button" (click)="fileInput.click()">
+                      {{ 'COMPANY.UPLOAD_IMAGES' | translate }}
+                    </div>
+                    <p>{{'COMPANY.FORM_IMAGE_NOTE' | translate}}</p>
+                  </div>
+
+                  <div class="image-preview-container">
+                    <div *ngFor="let image of uploadedImages; let i = index" class="image-preview">
+                      <img style="max-width: 100px; max-height: 100px;" [src]="image" alt="Vehicle Image">
+                      <button style="width: 20px; height: 20px;" mat-icon-button color="warn" (click)="removeImage(i)">✕</button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                  </div>
+                </mat-step>
+
+                /*Finish*/
+                <mat-step>
+                  <ng-template matStepLabel>{{'COMPANY.STEPPER_DONE' | translate}}</ng-template>
+                  <p>{{'COMPANY.STEPPER_DONE_TEXT' | translate}}</p>
+                  <div>
+                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
+                    <button class="company-create-button-form" (click)="stepperUpdateVehicleForm.reset()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
+                    <button class="company-create-button-form" (click)="onUpdateVehicle();stepperUpdateVehicleForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                  </div>
+                </mat-step>
+
+              </mat-stepper>
+              </div>
           </div>
+
+        </div>
 
         </div>
 

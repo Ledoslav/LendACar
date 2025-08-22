@@ -153,6 +153,115 @@ namespace LendACarAPI.Endpoints
             return Ok(vehicleDtos);
         }
 
+        [HttpGet("getCompanyAdminUserId")]
+        public async Task<IActionResult> GetVehiclesCompanyAdminEmail([FromQuery] int UserId, [FromQuery] string? CompanyAdminEmail, CancellationToken cancellationToken)
+        {
+                var employee = await db.CompanyEmployees
+                .FirstOrDefaultAsync(e => e.UserId == UserId, cancellationToken);
+
+                var admin = await db.CompanyEmployees
+                .FirstOrDefaultAsync(a => a.CompanyId == employee.CompanyId && a.CompanyAdminEmail != null, cancellationToken);
+
+                return Ok(admin.UserId);
+       
+        }
+
+        [HttpGet("getByCompanyAdminEmail")]
+        public async Task<IActionResult> GetVehiclesByCompanyAdminEmail([FromQuery]int UserId, [FromQuery] string? CompanyAdminEmail , CancellationToken cancellationToken)
+        {
+            if(CompanyAdminEmail == null)
+            {
+                var employee = await db.CompanyEmployees
+                .FirstOrDefaultAsync(e => e.UserId == UserId, cancellationToken);
+
+                var admin = await db.CompanyEmployees
+                .FirstOrDefaultAsync(a => a.CompanyId == employee.CompanyId && a.CompanyAdminEmail != null, cancellationToken);
+
+                var vehicles = await db.Vehicles
+                .Where(v => v.UserID == admin.UserId)
+                .Include(v => v.VehicleModel)
+                .Include(v => v.VehicleCategory)
+                .Include(v => v.User)
+                .Include(v => v.City)
+                .ThenInclude(c => c.Country)
+                .ToListAsync(cancellationToken);
+
+                if (!vehicles.Any()) return BadRequest("No vehicles found for this user");
+
+                var vehicleDtos = vehicles.Select(vehicle => new VehicleDto
+                {
+                    Id = vehicle.Id,
+                    Title = vehicle.Title,
+                    EngineDisplacement = vehicle.EngineDisplacement,
+                    EnginePower = vehicle.EnginePower,
+                    TransmissionType = vehicle.TransmissionType,
+                    FuelType = vehicle.FuelType,
+                    AirConditioning = vehicle.AirConditioning,
+                    NumberOfSeats = vehicle.NumberOfSeats,
+                    TowingHitch = vehicle.TowingHitch,
+                    Description = vehicle.Description,
+                    ProductionYear = vehicle.ProductionYear,
+                    Avaliable = vehicle.Avaliable,
+                    AverageRating = vehicle.AverageRating,
+                    PricePerDay = vehicle.PricePerDay,
+                    VehicleCategoryID = vehicle.VehicleCategoryID,
+                    VehicleCategory = vehicle.VehicleCategory,
+                    VehicleModelID = vehicle.VehicleModelID,
+                    VehicleModel = vehicle.VehicleModel,
+                    UserID = vehicle.UserID,
+                    User = vehicle.User,
+                    CityID = vehicle.CityID,
+                    LastUpdated = vehicle.LastUpdated,
+                }).ToList();
+
+                return Ok(vehicleDtos);
+            }
+            else
+            {
+                var companyEmployee = await db.CompanyEmployees
+                .Where(e => e.CompanyAdminEmail == CompanyAdminEmail)
+                .ToListAsync(cancellationToken);
+
+                var vehicles = await db.Vehicles
+                .Where(v => v.UserID == companyEmployee[0].UserId)
+                .Include(v => v.VehicleModel)
+                .Include(v => v.VehicleCategory)
+                .Include(v => v.User)
+                .Include(v => v.City)
+                .ThenInclude(c => c.Country)
+                .ToListAsync(cancellationToken);
+
+                if (!vehicles.Any()) return BadRequest("No vehicles found for this user");
+
+                var vehicleDtos = vehicles.Select(vehicle => new VehicleDto
+                {
+                    Id = vehicle.Id,
+                    Title = vehicle.Title,
+                    EngineDisplacement = vehicle.EngineDisplacement,
+                    EnginePower = vehicle.EnginePower,
+                    TransmissionType = vehicle.TransmissionType,
+                    FuelType = vehicle.FuelType,
+                    AirConditioning = vehicle.AirConditioning,
+                    NumberOfSeats = vehicle.NumberOfSeats,
+                    TowingHitch = vehicle.TowingHitch,
+                    Description = vehicle.Description,
+                    ProductionYear = vehicle.ProductionYear,
+                    Avaliable = vehicle.Avaliable,
+                    AverageRating = vehicle.AverageRating,
+                    PricePerDay = vehicle.PricePerDay,
+                    VehicleCategoryID = vehicle.VehicleCategoryID,
+                    VehicleCategory = vehicle.VehicleCategory,
+                    VehicleModelID = vehicle.VehicleModelID,
+                    VehicleModel = vehicle.VehicleModel,
+                    UserID = vehicle.UserID,
+                    User = vehicle.User,
+                    CityID = vehicle.CityID,
+                    LastUpdated = vehicle.LastUpdated,
+                }).ToList();
+
+                return Ok(vehicleDtos);
+            }
+        }
 
         [HttpPost("addNew")]
         [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]

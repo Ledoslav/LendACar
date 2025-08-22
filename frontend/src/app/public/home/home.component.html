@@ -1,4 +1,4 @@
-<div class="landing-page">
+<div class="{{this.mode}} landing-page">
   <img class="vector" src="Vector.png" />
   <div class="side-bar">
     <div class="menu-item" routerLinkActive="active" routerLink="/public/home" ><img src="Home.svg" alt="Home"> <span>{{'SIDEBAR.HOME' | translate}}</span></div>
@@ -11,6 +11,14 @@
     <div routerLinkActive="active" routerLink="/user/profile/my-vehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
     <div *ngIf="isOwner || isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div *ngIf="isOwner || isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.MY_COMPANY' | translate}}</span></div>
+
+    <div class="mode-select" (click)="toggleDarkMode()">
+      <p>Dark mode</p>
+      <div class="switch" [class.clicked]="switchClicked">
+        <div id="modeSwitch">
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="content">
@@ -45,116 +53,108 @@
             <h1 style="font-size: 58px; font-weight: bold;">LendACar!</h1>
           </div>
           <div class="overlap-group">
-            <p class="text-wrapper">Looking to rent a vehicle?</p>
-            <p class="p">Explore a wide range of vehicles and get started</p>
+            <p class="text-wrapper">{{'HOME.TITLE' | translate}}</p>
+            <p class="p">{{'HOME.DESCRIPTION' | translate}}</p>
           </div>
         </div>
 
       <div class="search-bar">
-        <mat-form-field appearance="outline" class="pretraga">
-          <input matInput placeholder="Search a vehicle">
-        </mat-form-field>
+        <form [formGroup]="searchGroup" class="search-bar-form">
+          <mat-form-field appearance="outline" class="pretraga">
+            <input matInput formControlName="search" placeholder="{{'HOME.SEARCH_PLACEHOLDER' | translate}}">
+          </mat-form-field>
+        </form>
 
         <div class="pretraga-tipka" (click)="openSearch()">
-          <p>Search</p>
+          <p>{{'HOME.SEARCH_BUTTON' | translate}}</p>
         </div>
       </div>
       </div>
 
 
     <div class="form-section">
-
-      <div class="location-dropdown">
+      <form [formGroup]="formGroup">
+        <!-- Country -->
         <mat-form-field appearance="outline" class="small">
-          <mat-label>Country</mat-label>
-          <mat-select>
-            <mat-option *ngFor="let country of ['Bosnia and Hercegovina', 'Croatia', 'Serbia']" [value]="country">
-              {{ country }}
+          <mat-label>{{'HOME.FORM_COUNTRY' | translate}}</mat-label>
+          <mat-select formControlName="country" (selectionChange)="onCountryChange($event.value)">
+            <mat-option *ngFor="let country of countries" [value]="country">
+              {{ country.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
 
-      <div class="pick-up-location">
+        <!-- Pick-Up Location -->
         <mat-form-field appearance="outline" class="small">
-          <mat-label>Pick-Up Location</mat-label>
-          <mat-select>
-            <mat-option *ngFor="let location of ['Sarajevo', 'Mostar', 'Konjic']" [value]="location">
-              {{ location }}
+          <mat-label>{{'HOME.FORM_PICKUP_LOCATION' | translate}}</mat-label>
+          <mat-select formControlName="pickUpLocation">
+            <mat-option *ngFor="let city of cities" [value]="city">
+              {{ city.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
 
-      <div class="drop-off-location">
+        <!-- Drop-Off Location -->
         <mat-form-field appearance="outline" class="small">
-          <mat-label>Drop-Off Location</mat-label>
-          <mat-select>
-            <mat-option *ngFor="let location of ['Sarajevo', 'Mostar', 'Konjic']" [value]="location">
-              {{ location }}
+          <mat-label>{{'HOME.FORM_DROP_LOCATION' | translate}}</mat-label>
+          <mat-select formControlName="returnLocation">
+            <mat-option *ngFor="let city of cities" [value]="city">
+              {{ city.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
 
-
-      <div class="pick-up-time">
+        <!-- Pick-up Date -->
         <mat-form-field appearance="outline" class="small">
-          <mat-label>Pick-up Date</mat-label>
-          <input matInput [matDatepicker]="picker1">
+          <mat-label>{{'HOME.FORM_PICKUP_DATE' | translate}}</mat-label>
+          <input matInput [matDatepicker]="picker1" formControlName="pickUpDate">
           <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
-      </div>
 
-      <div class="drop-off-time">
+        <!-- Drop-off Date -->
         <mat-form-field appearance="outline" class="small">
-          <mat-label>Drop-off Date</mat-label>
-          <input matInput [matDatepicker]="picker2">
+          <mat-label>{{'HOME.FORM_DROP_DATE' | translate}}</mat-label>
+          <input matInput [matDatepicker]="picker2" formControlName="returnDate">
           <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
           <mat-datepicker #picker2></mat-datepicker>
         </mat-form-field>
-      </div>
-    </div>
+      </form>
 
-    <img style="width: 50%; position: absolute; left: 20%; top: 50%; opacity: 0.5;" src="SUV_Home_Page.png" alt="SUV">
-    <img class="vector1" src="Vector.png" />
+      <img style="width: 50%; position: absolute; left: 20%; top: 50%; opacity: 0.5; z-index: -1;" src="SUV_Home_Page.png" alt="SUV"></div>
 
     <div class="special-deals">
       <div class="special-deals-title">
-        <h3 style="color: #5a6268; width: 100%; text-align: center; font-weight: 700;">Naše ponude</h3>
+        <h3 style="color: #5a6268; width: 100%; text-align: center; font-weight: 700;">{{'HOME.OUR_DEALS' | translate}}</h3>
       </div>
 
       <div class="deals">
-        <div class="deal">
-          <div style="width: 100%; height:60%; background-color: #5a6268; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+        <div (click)="prev()" id="left-arrow"><</div>
+        <div class="deal" *ngFor="let vehicle of vehicles">
+          <div class="deal-vehicle">
             <img style="width: 100%" src="SUV_Home_Page.png" alt="SUV">
           </div>
-          <p style="width: 100%; height: 40px; margin:5px;color: #5a6268">Mercedes Benz GLS</p>
-        </div>
-        <div class="deal">
-          <div style="width: 100%; height:60%; background-color: #5a6268; border-top-left-radius: 10px; border-top-right-radius: 10px;">
-            <img style="width: 100%" src="SUV_Home_Page.png" alt="SUV">
+          <div class="deal-info">
+            <p id="title">{{vehicle.title}}</p>
+            <p id="description">{{vehicle.description}}</p>
+            <p id="price">{{vehicle.pricePerDay}}$ per day</p>
           </div>
-          <p style="width: 100%; height: 40px; margin:5px;color: #5a6268">Mercedes Benz GLS</p>
         </div>
-        <div class="deal">
-          <div style="width: 100%; height:60%; background-color: #5a6268; border-top-left-radius: 10px; border-top-right-radius: 10px;">
-            <img style="width: 100%" src="SUV_Home_Page.png" alt="SUV">
-          </div>
-          <p style="width: 100%; height: 40px; margin:5px;color: #5a6268">Mercedes Benz GLS</p>
-        </div>
+        <div (click)="next()" id="right-arrow">></div>
       </div>
     </div>
+
     <footer class="footer">
+      <img class="vector1" src="Vector.png" alt="Vector"/>
+
       <div class="footer-content">
         <div class="vehicle-logos">
           <img src="VehicleLogos.png" alt="Vehicle Logos">
         </div>
         <div>
-          <h3 class="footer-title">©2025 SparkWave. All rights reserved.</h3>
+          <h3 class="footer-title">©2025 SparkWave. {{'HOME.ALL_RIGHTS_RESERVED' | translate}}.</h3>
         </div>
       </div>
     </footer>
-  </div>
+</div>
 </div>
