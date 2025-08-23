@@ -34,4 +34,20 @@ public class MyPagingRequest
 {
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 20;
+    public string Search { get; set; } = "";
+    public int FromPrice { get; set; } = 1;
+    public int ToPrice { get; set; } = 15000;
+    public bool AllDateActive { get; set; } = false;
+    public bool Last24Active { get; set; } = false;
+    public bool Last7Active { get; set; } = false;
+    public bool LastMonthActive { get; set; } = false;
+    public bool AllTransActive { get; set; } = false;
+    public bool ManualTransActive { get; set; } = false;
+    public bool AutomaticTransActive { get; set; } = false;
+    public bool AllFuelActive { get; set; } = false;
+    public bool PetrolActive { get; set; } = false;
+    public bool DieselActive { get; set; } = false;
+    public bool OtherFuelActive { get; set; } = false;
+    public bool SpecialOffersActive { get; set; } = false;
+    public bool SpecialEquipmentActive { get; set; } = false;
 }

@@ -9,6 +9,22 @@ import { MyConfig } from '../my-config';
 interface pagingRequest{
   pageNumber: number;
   pageSize: number;
+  search: string;
+  fromPrice: number;
+  toPrice: number;
+  last24Active: boolean;
+  last7Active: boolean;
+  lastMonthActive: boolean;
+  manualTransActive: boolean;
+  automaticTransActive: boolean;
+  petrolActive: boolean;
+  dieselActive: boolean;
+  otherFuelActive: boolean;
+  specialOffersActive: boolean;
+  specialEquipmentActive: boolean;
+  allDateActive: boolean;
+  allTransActive: boolean;
+  allFuelActive: boolean;
 }
 
 @Injectable({
@@ -26,13 +42,30 @@ export class VehicleService{
     return this.http.get<VehiclesDto[]>( this.baseUrl + `VehicleModelAndBrand/getModelsByBrandId/${brandId}`);
   }
 
-  getVehicle(paging: pagingRequest):Observable<VehicleDto[]>{
-    const params = new HttpParams()
+  getVehicle(paging: pagingRequest): Observable<VehicleDto[]> {
+    let params = new HttpParams()
       .set('PageNumber', paging.pageNumber)
-      .set('PageSize', paging.pageSize);
+      .set('PageSize', paging.pageSize)
+      .set('Search', paging.search)
+      .set('FromPrice', paging.fromPrice)
+      .set('ToPrice', paging.toPrice)
+      .set('AllDateActive', String(paging.allDateActive))
+      .set('Last24Active', String(paging.last24Active))
+      .set('Last7Active', String(paging.last7Active))
+      .set('LastMonthActive', String(paging.lastMonthActive))
+      .set('AllTransActive', String(paging.allTransActive))
+      .set('ManualTransActive', String(paging.manualTransActive))
+      .set('AutomaticTransActive', String(paging.automaticTransActive))
+      .set('AllFuelActive', String(paging.allFuelActive))
+      .set('PetrolActive', String(paging.petrolActive))
+      .set('DieselActive', String(paging.dieselActive))
+      .set('OtherFuelActive', String(paging.otherFuelActive))
+      .set('SpecialOffersActive', String(paging.specialOffersActive))
+      .set('SpecialEquipmentActive', String(paging.specialEquipmentActive));
 
-    return this.http.get<VehicleDto[]>(this.baseUrl + 'Vehicle/get',{params});
+    return this.http.get<VehicleDto[]>(this.baseUrl + 'Vehicle/get', { params });
   }
+
 
   LoadVehicles(){
     return this.http.get("http://localhost:7000/api/VehicleModelAndBrand/getModel/all");

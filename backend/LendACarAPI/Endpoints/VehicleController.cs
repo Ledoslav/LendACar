@@ -1,4 +1,5 @@
-﻿using LendACarAPI.Data;
+﻿using CloudinaryDotNet;
+using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
 using LendACarAPI.Filters;
@@ -8,6 +9,7 @@ using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,40 +35,114 @@ namespace LendACarAPI.Endpoints
                 .Include(v => v.User)
                 .Include(v => v.City)
                 .ThenInclude(c => c.Country)
-                .Select(vehicle => new VehicleDto()
+                .AsQueryable();
+
+
+            if (!string.IsNullOrWhiteSpace(pagedParams.Search))
+            {
+                var searchLower = pagedParams.Search.ToLower();
+                query = query.Where(v => v.Title.ToLower().Contains(searchLower));
+            }
+
+            // --- Price range filter ---
+                query = query.Where(v => v.PricePerDay >= pagedParams.FromPrice);
+                query = query.Where(v => v.PricePerDay <= pagedParams.ToPrice);
+
+
+            // --- Date filters ---
+            if (!pagedParams.AllDateActive)
+            {
+                if (pagedParams.Last24Active)
                 {
-                    Id = vehicle.Id,
-                    Title = vehicle.Title,
-                    EngineDisplacement = vehicle.EngineDisplacement,
-                    EnginePower = vehicle.EnginePower,
-                    TransmissionType = vehicle.TransmissionType,
-                    FuelType = vehicle.FuelType,
-                    AirConditioning = vehicle.AirConditioning,
-                    NumberOfSeats = vehicle.NumberOfSeats,
-                    TowingHitch = vehicle.TowingHitch,
-                    Description = vehicle.Description,
-                    ProductionYear = vehicle.ProductionYear,
-                    Avaliable = vehicle.Avaliable,
-                    AverageRating = vehicle.AverageRating,
-                    PricePerDay = vehicle.PricePerDay,
-                    VehicleCategoryID = vehicle.VehicleCategoryID,
-                    VehicleCategory = vehicle.VehicleCategory,
-                    VehicleModelID = vehicle.VehicleModelID,
-                    VehicleModel = vehicle.VehicleModel,
-                    UserID = vehicle.UserID,
-                    User = vehicle.User,
-                    CityID = vehicle.CityID,
-                    LastUpdated = vehicle.LastUpdated,
-                });
+                    var from = DateTime.UtcNow.AddDays(-1);
+                    query = query.Where(v => v.LastUpdated >= from);
+                }
+                if (pagedParams.Last7Active)
+                {
+                    var from = DateTime.UtcNow.AddDays(-7);
+                    query = query.Where(v => v.LastUpdated >= from);
+                }
+                if (pagedParams.LastMonthActive)
+                {
+                    var from = DateTime.UtcNow.AddMonths(-1);
+                    query = query.Where(v => v.LastUpdated >= from);
+                }
+            }
 
-            var vehicles = await MyPagedList<VehicleDto>.CreateAsync(query, pagedParams, cancellationToken);
+            // --- Transmission filters ---
+            if (!pagedParams.AllTransActive)
+            {
+                var transConditions = new List<int>();
+                if (pagedParams.ManualTransActive) transConditions.Add(0);
+                if (pagedParams.AutomaticTransActive) transConditions.Add(1);
+                // Add other TransmissionType values as needed: 2 - AutomatedManual, 3 - DCT, 4 - CVT
+                if (transConditions.Any()) query = query.Where(v => transConditions.Contains(v.TransmissionType));
+            }
 
+            // --- Fuel filters ---
+            if (!pagedParams.AllFuelActive)
+            {
+                var fuelConditions = new List<int>();
+                if (pagedParams.PetrolActive) fuelConditions.Add(0);
+                if (pagedParams.DieselActive) fuelConditions.Add(1);
+                if (pagedParams.OtherFuelActive)
+                {
+                    fuelConditions.Add(2); // Electric
+                    fuelConditions.Add(3); // Hybrid
+                    fuelConditions.Add(4); // LPG
+                    fuelConditions.Add(5); // CNG
+                }
+                if (fuelConditions.Any()) query = query.Where(v => fuelConditions.Contains(v.FuelType));
+            }
+
+            // --- Special offers ---
+            if (pagedParams.SpecialOffersActive)
+            {
+                // Example: price discount < 0, or some other condition
+                query = query.Where(v => v.PricePerDay < 100); // example placeholder
+            }
+
+            // --- Special equipment ---
+            if (pagedParams.SpecialEquipmentActive)
+            {
+                query = query.Where(v => v.TowingHitch); // or other equipment flags
+            }
+
+            // --- Select DTO ---
+            var vehicleQuery = query.Select(vehicle => new VehicleDto
+            {
+                Id = vehicle.Id,
+                Title = vehicle.Title,
+                EngineDisplacement = vehicle.EngineDisplacement,
+                EnginePower = vehicle.EnginePower,
+                TransmissionType = vehicle.TransmissionType,
+                FuelType = vehicle.FuelType,
+                AirConditioning = vehicle.AirConditioning,
+                NumberOfSeats = vehicle.NumberOfSeats,
+                TowingHitch = vehicle.TowingHitch,
+                Description = vehicle.Description,
+                ProductionYear = vehicle.ProductionYear,
+                Avaliable = vehicle.Avaliable,
+                AverageRating = vehicle.AverageRating,
+                PricePerDay = vehicle.PricePerDay,
+                VehicleCategoryID = vehicle.VehicleCategoryID,
+                VehicleCategory = vehicle.VehicleCategory,
+                VehicleModelID = vehicle.VehicleModelID,
+                VehicleModel = vehicle.VehicleModel,
+                UserID = vehicle.UserID,
+                User = vehicle.User,
+                CityID = vehicle.CityID,
+                LastUpdated = vehicle.LastUpdated
+            });
+
+            var vehicles = await MyPagedList<VehicleDto>.CreateAsync(vehicleQuery, pagedParams, cancellationToken);
             Response.AddPaginationHeader(vehicles);
 
-            if (vehicles.DataItems.Length == 0) return BadRequest();
-
+            if (!vehicles.DataItems.Any()) return Ok(vehicles.DataItems);
             return Ok(vehicles.DataItems);
         }
+
+
 
         [HttpGet("getById/{id}")]
         public async Task<IActionResult> GetVehicleById(int id)

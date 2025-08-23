@@ -687,9 +687,9 @@
           </ng-container>
 
           <div class="paginatorVehicles">
-            <button (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+            <button (click)="prevPage()" [disabled]="currentPage === 1">{{'HOME.PREV' | translate}}</button>
             <span>Page {{currentPage}} / {{Math.ceil(vehicles.length / pageSize)}}</span>
-            <button (click)="nextPage()" [disabled]="currentPage * pageSize >= vehicles.length">Next</button>
+            <button (click)="nextPage()" [disabled]="currentPage * pageSize >= vehicles.length">{{'HOME.NEXT' |  translate}}</button>
           </div>
 
           <div id="add-vehicle-button">

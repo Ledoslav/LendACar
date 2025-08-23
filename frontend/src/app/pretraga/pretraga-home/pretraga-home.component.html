@@ -1,5 +1,5 @@
-<div class="landing-page">
-  <img class="vector" src="Vector.png" />
+<div class="{{this.mode}} landing-page">
+  <img class="vector" src="Vector.png" alt="Vector"/>
   <div class="side-bar">
     <div class="menu-item" routerLinkActive="active" routerLink="/public/home" ><img src="Home.svg" alt="Home"> <span>{{'SIDEBAR.HOME' | translate}}</span></div>
     <div class="menu-item"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
@@ -9,8 +9,16 @@
     <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
     <div class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div routerLinkActive="active" routerLink="/user/profile/my-vehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
-    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item" routerLink="/company/dashboard"><img src="Plussquare.svg" alt="Create Company"> <span>{{'SIDEBAR.CREATE_COMPANY' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div *ngIf="isOwner || isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.MY_COMPANY' | translate}}</span></div>
+
+    <div class="mode-select" (click)="toggleDarkMode()">
+      <p>Dark mode</p>
+      <div class="switch" [class.clicked]="switchClicked">
+        <div id="modeSwitch">
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="content">
@@ -47,20 +55,22 @@
       </div>
 
       <div class="search-bar">
-        <mat-form-field appearance="outline" class="pretraga">
-          <input matInput placeholder="Search a vehicle">
-        </mat-form-field>
+        <form [formGroup]="searchGroup" class="search-bar-form">
+          <mat-form-field appearance="outline" class="pretraga">
+            <input matInput placeholder="{{'HOME.SEARCH_PLACEHOLDER' | translate}}" formControlName="search">
+          </mat-form-field>
+        </form>
 
-        <div class="pretraga-tipka">
-            <p>Search</p>
+        <div class="pretraga-tipka" (click)="search()">
+            <p>{{'HOME.SEARCH_BUTTON' | translate}}</p>
         </div>
 
         <div class="pretraga-filter" (click)="openDialogFilter()">
-            <p><img style="width:15px; height: 15px; margin-right: 5px" src="Chevrondown.svg" alt="Filter">Filter</p>
+            <p><img style="width:15px; height: 15px; margin-right: 5px" src="Chevrondown.svg" alt="Filter">{{'HOME.FILTER' | translate}}</p>
         </div>
 
         <div class="pretraga-info">
-          <p>13 results found</p>
+          <p>{{this.vehicles.length}} {{'HOME.RESULTS_FOUND' | translate}}</p>
         </div>
 
       </div>
@@ -69,98 +79,84 @@
     <div *ngIf="this.isFilterOpen" class="filter-section">
         <p>Publish Date</p>
         <div class="filter-date">
-          <div id="all" [class.active] = "allDateActive" (click)="toggleAllActive('allDate')"><p>All</p></div>
-          <div id="last24" [class.active] = "last24Active" (click)="toggleActive('last24')"><p>Last 24 hours</p></div>
-          <div id="last7" [class.active] = "last7Active" (click)="toggleActive('last7')"><p>Last 7 days</p></div>
-          <div id="lastMonth" [class.active] = "lastMonthActive" (click)="toggleActive('lastMonth')"><p>Last month</p></div>
+          <div id="all" [class.active] = "allDateActive" (click)="toggleAllActive('allDate')"><p>{{'HOME.ALL' | translate}}</p></div>
+          <div id="last24" [class.active] = "last24Active" (click)="toggleActive('last24')"><p>{{'HOME.LAST_24_HOURS' | translate}}</p></div>
+          <div id="last7" [class.active] = "last7Active" (click)="toggleActive('last7')"><p>{{'HOME.LAST_7_DAYS' |translate}}</p></div>
+          <div id="lastMonth" [class.active] = "lastMonthActive" (click)="toggleActive('lastMonth')"><p>{{'HOME.LAST_MONTH' | translate}}</p></div>
         </div>
 
         <div class="vehicle-info">
           <div>
             <p>Transmission</p>
-            <div id="allTrans" [class.active] = "allTransActive" (click)="toggleAllActive('allTrans')"><p>All</p></div>
-            <div id="manualTrans" [class.active] = "manualTransActive" (click)="toggleActive('manualTrans')"><p>Manual</p></div>
-            <div id="automaticTrans" [class.active] = "automaticTransActive" (click)="toggleActive('automaticTrans')"><p>Automatic</p></div>
+            <div id="allTrans" [class.active] = "allTransActive" (click)="toggleAllActive('allTrans')"><p>{{'HOME.ALL' | translate}}</p></div>
+            <div id="manualTrans" [class.active] = "manualTransActive" (click)="toggleActive('manualTrans')"><p>{{'HOME.MANUAL' | translate}}</p></div>
+            <div id="automaticTrans" [class.active] = "automaticTransActive" (click)="toggleActive('automaticTrans')"><p>{{'HOME.AUTOMATIC' | translate}}</p></div>
           </div>
 
           <div>
             <p>Fuel type</p>
-            <div id="allFuel" [class.active] = "allFuelActive" (click)="toggleAllActive('allFuel')"><p>All</p></div>
-            <div id="petrol" [class.active] = "petrolActive" (click)="toggleActive('petrol')"><p>Petrol</p></div>
-            <div id="diesel" [class.active] = "dieselActive" (click)="toggleActive('diesel')"><p>Diesel</p></div>
-            <div id="otherFuel" [class.active] = "otherFuelActive" (click)="toggleActive('otherFuel')"><p>Other</p></div>
+            <div id="allFuel" [class.active] = "allFuelActive" (click)="toggleAllActive('allFuel')"><p>{{'HOME.ALL' | translate}}</p></div>
+            <div id="petrol" [class.active] = "petrolActive" (click)="toggleActive('petrol')"><p>{{'HOME.PETROL' | translate}}</p></div>
+            <div id="diesel" [class.active] = "dieselActive" (click)="toggleActive('diesel')"><p>{{'HOME.DIESEL' | translate}}</p></div>
+            <div id="otherFuel" [class.active] = "otherFuelActive" (click)="toggleActive('otherFuel')"><p>{{'HOME.OTHER' | translate}}</p></div>
           </div>
 
           <div>
             <p>Other</p>
-            <div id="specialOffers" [class.active] = "specialOffersActive" (click)="toggleActive('specialOffers')"><p>Include special offers</p></div>
-            <div id="specialEquipment" [class.active] = "specialEquipmentActive" (click)="toggleActive('specialEquipment')"><p>Has special equipment</p></div>
+            <div id="specialOffers" [class.active] = "specialOffersActive" (click)="toggleActive('specialOffers')"><p>{{'HOME.INCLUDE_SPECIAL_OFFERS' | translate}}</p></div>
+            <div id="specialEquipment" [class.active] = "specialEquipmentActive" (click)="toggleActive('specialEquipment')"><p>{{'HOME.HAS_SPECIAL_EQUIPMENT' | translate}}</p></div>
           </div>
         </div>
 
         <div class="filter-price-range">
           <p>Price range</p>
           <div class="filter-price-range-text">
-            <p id="fromPrice">From 0KM</p>
-            <p id="toPrice">To 100000KM</p>
+            <p id="fromPrice">{{'HOME.FROM' |translate}} {{this.priceFrom}}KM</p>
+            <p id="toPrice">{{'HOME.TO' |translate}} {{this.priceTo}}KM</p>
           </div>
 
-          <mat-slider class="price-slider" min="200" max="500">
-            <input value="300" matSliderStartThumb>
-            <input value="400" matSliderEndThumb>
+          <mat-slider class="price-slider" min="1" max="15000">
+            <input (valueChange)="setPriceFrom($event)"  value="1" matSliderStartThumb>
+            <input (valueChange)="setPriceTo($event)" value="15000" matSliderEndThumb>
           </mat-slider>
         </div>
     </div>
 
     <div class="content-section">
-      <div class="search-result">
-        <div class="search-result-image-section">
-          <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+      <ng-container *ngFor="let vehicle of vehicles">
+        <div class="search-result">
+          <div class="search-result-image-section">
+            <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+          </div>
+          <div class="search-result-info">
+            <div id="vehicle-buttons">
+              <div id="vehicle-title-container">
+                <h3 class="search-result-title">{{ vehicle.title }}</h3>
+              </div>
+            </div>
+            <p class="search-result-description">
+              {{vehicle.description}}
+            </p>
+            <p class="search-result-price">{{vehicle.pricePerDay}}KM {{'COMPANY.PER_DAY' | translate}}</p>
+            <div class="important-vehicle-info">
+              <p>{{'COMPANY.YEAR' | translate}}: {{vehicle.productionYear}}</p>
+              <p>{{'COMPANY.ENGINE_POWER' | translate}}: {{vehicle.enginePower}}</p>
+              <p>{{ vehicle.transmissionType == 1 ? ('Automatic') : ('Manual') }}</p>
+              <p>{{ vehicle.isAvailable ? ('COMPANY.AVAILABLE' | translate) : ('COMPANY.NOT_AVAILABLE' | translate) }}</p>
+              <p>{{'COMPANY.DATE_ADDED' | translate}}: {{vehicle.lastUpdated.slice(0, 10)}}</p>
+            </div>
+          </div>
         </div>
-        <div class="search-result-info">
-          <h3 style="font-weight: bold; color: black;">Mercedes-Benz GLS</h3>
-          <p style="color: #5a6268; width: 100%; height: 100%;">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
-          <p style="color: #5a6268; width: 100%; height: 100%; font-weight: bold; font-size: 20px; color: #007bff; text-align: center">350$ per day</p>
-        </div>
-      </div>
-      <div class="search-result">
-        <div class="search-result-image-section">
-          <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
-        </div>
-        <div class="search-result-info">
-          <h3 style="font-weight: bold; color: black;">Mercedes-Benz GLS</h3>
-          <p style="color: #5a6268; width: 100%; height: 100%;">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
-          <p style="color: #5a6268; width: 100%; height: 100%; font-weight: bold; font-size: 20px; color: #007bff; text-align: center">350$ per day</p>
-        </div>
-      </div>
-      <div class="search-result">
-        <div class="search-result-image-section">
-          <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
-        </div>
-        <div class="search-result-info">
-          <h3 style="font-weight: bold; color: black;">Mercedes-Benz GLS</h3>
-          <p style="color: #5a6268; width: 100%; height: 100%;">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
-          <p style="color: #5a6268; width: 100%; height: 100%; font-weight: bold; font-size: 20px; color: #007bff; text-align: center">350$ per day</p>
-        </div>
-      </div>
-      <div class="search-result">
-        <div class="search-result-image-section">
-          <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
-        </div>
-        <div class="search-result-info">
-          <h3 style="font-weight: bold; color: black;">Mercedes-Benz GLS</h3>
-          <p style="color: #5a6268; width: 100%; height: 100%;">Izvrsno vozilo za svakodnevno putovanje, sa visokom kvalitetom i sigurnošću!</p>
-          <p style="color: #5a6268; width: 100%; height: 100%; font-weight: bold; font-size: 20px; color: #007bff; text-align: center">350$ per day</p>
-        </div>
-      </div>
+      </ng-container>
     </div>
 
     <div class="pagination">
-        <mat-paginator class="mat-paginator" [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
-        </mat-paginator>
+      <div class="paginatorVehicles">
+        <button (click)="prevPage()">{{'HOME.PREV' | translate}}</button>
+        <span>{{'HOME.PAGE' |translate}} {{this.paging.pageNumber}} / {{Math.ceil(vehicles.length / (vehicles.length/2))}}</span>
+        <button (click)="nextPage()">{{'HOME.NEXT' | translate}}</button>
+      </div>
     </div>
-
-    <img class="vector1" src="Vector.png"/>
 
     <footer class="footer">
       <div class="footer-content">
@@ -168,7 +164,7 @@
           <img src="VehicleLogos.png" alt="Vehicle Logos">
         </div>
         <div>
-          <h3 class="footer-title">©2025 SparkWave. All rights reserved.</h3>
+          <h3 class="footer-title">©2025 SparkWave. {{'HOME.ALL_RIGHTS_RESERVED' | translate}}.</h3>
         </div>
       </div>
     </footer>

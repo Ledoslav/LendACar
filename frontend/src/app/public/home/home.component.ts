@@ -89,6 +89,7 @@ export class HomeComponent implements OnInit {
       }
     })
 
+    this.paging.search = sessionStorage.getItem('search') || '';
     this.getVehicles(this.paging);
     this.loadCountries();
   }
@@ -106,7 +107,23 @@ export class HomeComponent implements OnInit {
   vehicles:any = [];
   paging: pagingRequest = {
     pageNumber: 1,
-    pageSize: 3
+    pageSize: 3,
+    search: '',
+    fromPrice: 1,
+    toPrice: 15000,
+    last24Active: false,
+    last7Active: false,
+    lastMonthActive: false,
+    manualTransActive: false,
+    automaticTransActive: false,
+    petrolActive: false,
+    dieselActive: false,
+    otherFuelActive: false,
+    specialOffersActive: false,
+    specialEquipmentActive: false,
+    allDateActive: false,
+    allTransActive: false,
+    allFuelActive: false
   }
   countries: any = [];
   cities: any = [];
@@ -204,9 +221,30 @@ loadCities(countryId: number){
       localStorage.setItem('mode', this.mode);
     }
   }
+
+  search(){
+    this.paging.search = String(this.searchGroup.value.search);
+    this.getVehicles(this.paging);
+  }
 }
 
 interface pagingRequest{
   pageNumber: number;
   pageSize: number;
+  search: string;
+  fromPrice: number;
+  toPrice: number;
+  last24Active: boolean;
+  last7Active: boolean;
+  lastMonthActive: boolean;
+  manualTransActive: boolean;
+  automaticTransActive: boolean;
+  petrolActive: boolean;
+  dieselActive: boolean;
+  otherFuelActive: boolean;
+  specialOffersActive: boolean;
+  specialEquipmentActive: boolean;
+  allDateActive: boolean;
+  allTransActive: boolean;
+  allFuelActive: boolean;
 }
