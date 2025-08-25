@@ -38,9 +38,9 @@
       <div class="vehicle-cards" *ngIf="user?.isVerified && vehicles">
         <div *ngFor="let vehicle of filteredVehicles" class="vehicle-card">
           <div class="vehicle-image">
-            <img src="LAC_logo.png" alt="{{ vehicle.title }}" />
-            <button class="prev-btn" (click)="changeImage(-1)">&#8249;</button>
-            <button class="next-btn" (click)="changeImage(1)">&#8250;</button>
+            <button (click)="changeImage(vehicle, -1)">&#10094;</button>
+            <img [src]="getCurrentImage(vehicle)" alt="{{ vehicle.title }}">
+            <button (click)="changeImage(vehicle, 1)">&#10095;</button>
           </div>
           <h4>{{ vehicle.title }}</h4>
           <p class="availability">

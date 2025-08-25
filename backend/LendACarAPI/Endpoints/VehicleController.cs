@@ -17,13 +17,15 @@ namespace LendACarAPI.Endpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VehicleController : ControllerBase
+    public class VehicleController: ControllerBase
     {
         private readonly ApplicationDbContext db;
+        private readonly IPhotoService photoService;
 
-        public VehicleController(ApplicationDbContext db)
+        public VehicleController(ApplicationDbContext db, IPhotoService photoService)
         {
             this.db = db;
+            this.photoService = photoService ?? throw new ArgumentNullException(nameof(photoService));
         }
 
         [HttpGet("get")]
@@ -195,7 +197,8 @@ namespace LendACarAPI.Endpoints
                 .Include(v => v.VehicleCategory)
                 .Include(v => v.User)
                 .Include(v => v.City)
-                .ThenInclude(c => c.Country)
+                    .ThenInclude(c => c.Country)
+                .Include(v => v.VehicleImages) // include images
                 .ToListAsync(cancellationToken);
 
             if (!vehicles.Any()) return BadRequest("No vehicles found for this user");
@@ -223,11 +226,20 @@ namespace LendACarAPI.Endpoints
                 UserID = vehicle.UserID,
                 User = vehicle.User,
                 CityID = vehicle.CityID,
+                City = vehicle.City,
                 LastUpdated = vehicle.LastUpdated,
+                VehicleImages = vehicle.VehicleImages
+                    .Select(img => new VehicleImageDto
+                    {
+                        Id = img.Id,
+                        ImageUrl = img.ImageUrl,
+                        PublicId = img.PublicId
+                    }).ToList()
             }).ToList();
 
             return Ok(vehicleDtos);
         }
+
 
         [HttpGet("getCompanyAdminUserId")]
         public async Task<IActionResult> GetVehiclesCompanyAdminEmail([FromQuery] int UserId, [FromQuery] string? CompanyAdminEmail, CancellationToken cancellationToken)
@@ -457,7 +469,7 @@ namespace LendACarAPI.Endpoints
             if (vehicle == null) return NotFound("Vehicle not found");
 
             // Check if there are images associated with the vehicle and delete them
-            var vehicleImages = await db.VehicleImages.Where(vi => vi.VehicleID == id).ToListAsync();
+            var vehicleImages = await db.VehicleImages.Where(vi => vi.VehicleId == id).ToListAsync();
 
             if (vehicleImages.Any())
             {
@@ -471,6 +483,89 @@ namespace LendACarAPI.Endpoints
 
             return NoContent();
         }
+
+        [HttpPost("upload")]
+        [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
+        public async Task<ActionResult<VehicleDto>> CreateVehicle([FromForm] VehicleUploadDto dto, List<IFormFile> images, CancellationToken cancellationToken)
+        {
+            var vehicle = new Vehicle
+            {
+                Title = dto.Title,
+                VehicleModelID = dto.VehicleModelID,
+                PricePerDay = dto.PricePerDay,
+                FuelType = dto.FuelType,
+                TransmissionType = dto.TransmissionType,
+                EngineDisplacement = dto.EngineDisplacement,
+                EnginePower = dto.EnginePower,
+                AirConditioning = dto.AirConditioning,
+                NumberOfSeats = dto.NumberOfSeats,
+                TowingHitch = dto.TowingHitch,
+                ProductionYear = dto.ProductionYear,
+                Description = dto.Description,
+                VehicleCategoryID = dto.VehicleCategoryID,
+                CityID = dto.CityID,
+                Avaliable = dto.Avaliable,
+                UserID = dto.UserID 
+            };
+
+            db.Vehicles.Add(vehicle);
+            await db.SaveChangesAsync(cancellationToken);
+
+            // handle images
+            if (images != null && images.Any())
+            {
+                foreach (var file in images)
+                {
+                    var result = await photoService.AddPhotoAsync(file);
+                    db.VehicleImages.Add(new VehicleImage
+                    {
+                        VehicleId = vehicle.Id,
+                        ImageUrl = result.SecureUrl.AbsoluteUri,
+                        PublicId = result.PublicId
+                    });
+                }
+                await db.SaveChangesAsync(cancellationToken);
+
+                // Reload VehicleImages for DTO
+                await db.Entry(vehicle).Collection(v => v.VehicleImages).LoadAsync(cancellationToken);
+            }
+
+
+            // return mapped DTO
+            var vehicleDto = new VehicleDto
+            {
+                Id = vehicle.Id,
+                Title = vehicle.Title,
+                EngineDisplacement = vehicle.EngineDisplacement,
+                EnginePower = vehicle.EnginePower,
+                TransmissionType = vehicle.TransmissionType,
+                FuelType = vehicle.FuelType,
+                AirConditioning = vehicle.AirConditioning,
+                NumberOfSeats = vehicle.NumberOfSeats,
+                TowingHitch = vehicle.TowingHitch,
+                Description = vehicle.Description,
+                ProductionYear = vehicle.ProductionYear,
+                Avaliable = vehicle.Avaliable,
+                AverageRating = vehicle.AverageRating,
+                PricePerDay = vehicle.PricePerDay,
+                VehicleCategoryID = vehicle.VehicleCategoryID,
+                VehicleCategory = vehicle.VehicleCategory,
+                VehicleModelID = vehicle.VehicleModelID,
+                VehicleModel = vehicle.VehicleModel,
+                UserID = vehicle.UserID,
+                User = vehicle.User,
+                CityID = vehicle.CityID,
+                LastUpdated = vehicle.LastUpdated,
+                VehicleImages = vehicle.VehicleImages.Select(img => new VehicleImageDto
+                {
+                    Id = img.Id,
+                    ImageUrl = img.ImageUrl
+                }).ToList()
+            };
+
+            return Ok(vehicleDto);
+        }
+
 
     }
 }

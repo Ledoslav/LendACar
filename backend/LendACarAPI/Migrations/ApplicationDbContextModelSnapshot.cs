@@ -502,12 +502,16 @@ namespace LendACarAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("VehicleID")
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("VehicleID");
+                    b.HasIndex("VehicleId");
 
                     b.ToTable("VehicleImages");
                 });
@@ -912,8 +916,8 @@ namespace LendACarAPI.Migrations
             modelBuilder.Entity("LendACarAPI.Data.Models.VehicleImage", b =>
                 {
                     b.HasOne("LendACarAPI.Data.Models.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleID")
+                        .WithMany("VehicleImages")
+                        .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -980,6 +984,11 @@ namespace LendACarAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("UserSecurityQuestionAnswer");
+                });
+
+            modelBuilder.Entity("LendACarAPI.Data.Models.Vehicle", b =>
+                {
+                    b.Navigation("VehicleImages");
                 });
 
             modelBuilder.Entity("LendACarAPI.Data.Models.User", b =>

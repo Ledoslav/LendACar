@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { VehicleDto } from '../Models/VehicleDto';
+import { VehicleDto, VehicleWithImagesDto } from '../Models/VehicleDto';
 import { Observable } from 'rxjs';
 import { MyConfig } from '../my-config';
 
@@ -38,6 +38,10 @@ export class VehicleListingService {
     return this.http.get<VehicleDto[]>(`${this.baseUrl}vehicle/getByUser/${userId}`);
   }
 
+  getVehiclesByUserWithImages(userId: number): Observable<VehicleWithImagesDto[]> {
+    return this.http.get<VehicleWithImagesDto[]>(`${this.baseUrl}vehicle/getByUser/${userId}`);
+  }
+
   getVehiclesByCompanyAdminEmail(userId: number, companyAdminEmail: string | null): Observable<VehicleDto[]> {
     let params = new HttpParams().set('userId', userId.toString());
 
@@ -67,6 +71,10 @@ export class VehicleListingService {
   // Upload a new vehicle
   uploadVehicle(vehicle: VehicleUploadDto): Observable<VehicleUploadDto> {
     return this.http.post<VehicleDto>(`${this.baseUrl}vehicle/addNew`, vehicle);
+  }
+
+  uploadVehicleWithImages(formData: FormData): Observable<VehicleDto> {
+  return this.http.post<VehicleDto>(`${this.baseUrl}vehicle/upload`, formData);
   }
 
   // Update an existing vehicle
