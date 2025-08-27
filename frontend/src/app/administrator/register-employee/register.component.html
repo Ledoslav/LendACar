@@ -75,7 +75,7 @@
 
     <mat-form-field appearance="outline" class="w-100 mb-2">
       <mat-label>Birth Date</mat-label>
-      <input matInput [matDatepicker]="birthDatePicker" id="birthDate" name="birthDate" formControlName="birthDate" required />
+      <input matInput [matDatepicker]="birthDatePicker" [max]="maxDate" id="birthDate" name="birthDate" formControlName="birthDate" required />
       <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #birthDatePicker></mat-datepicker>
       <mat-error *ngIf="employeeForm.get('birthDate')?.touched && employeeForm.get('birthDate')?.invalid">

@@ -128,8 +128,14 @@ export class RegisterComponent implements OnInit {
   }
 
   formatDate(){
-    this.employee.birthDate=this.datePipe.transform(Date.parse(this.employee.birthDate),"yyyy-MM-dd");
-    this.employee.dateOfHire=this.datePipe.transform(this.employee.dateOfHire,"yyyy-MM-dd");
+    if (this.employee.birthDate) {
+      const [year, month, day] = this.employee.birthDate.split('-').map(Number);
+      this.employee.birthDate = new Date(year, month - 1, day); // month is 0-indexed
+    }
+    if (this.employee.dateOfHire) {
+      const [year, month, day] = this.employee.dateOfHire.split('-').map(Number);
+      this.employee.dateOfHire = new Date(year, month - 1, day); // month is 0-indexed
+    }
   }
 
   loadCities(){
@@ -166,22 +172,23 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  // compareDates(dateString:string):boolean{
-  //   const currentDate = new Date();
-  //   const parsedDate=new Date(dateString);
-  //   if(parsedDate.getTime() < currentDate.getTime()) return false;
-  //
-  //   return true;
-  // }
 
   register(form: any) {
     const formData = { ...this.employeeForm.value };
 
     if (formData.birthDate) {
-      formData.birthDate=formData.birthDate.toISOString().split('T')[0];
+
+      const year = formData.birthDate.getFullYear();
+      const month = String(formData.birthDate.getMonth() + 1).padStart(2, '0');
+      const day = String(formData.birthDate.getDate()).padStart(2, '0');
+      formData.birthDate = `${year}-${month}-${day}`;
     }
     if (formData.dateOfHire) {
-      formData.dateOfHire=formData.dateOfHire.toISOString().split('T')[0];
+
+      const year = formData.dateOfHire.getFullYear();
+      const month = String(formData.dateOfHire.getMonth() + 1).padStart(2, '0');
+      const day = String(formData.dateOfHire.getDate()).padStart(2, '0');
+      formData.dateOfHire = `${year}-${month}-${day}`;
     }
 
     this.employeeService.Register(formData).subscribe({
@@ -194,8 +201,35 @@ export class RegisterComponent implements OnInit {
   }
 
   update(){
-    console.log(this.employeeForm.value)
-    this.adminService.UpdateEmployee(this.employeeForm.value).subscribe({
+    let formData = { ...this.employeeForm.value };
+
+
+    if (formData.birthDate) {
+      if (formData.birthDate instanceof Date) {
+        // Format date as yyyy-MM-dd without timezone conversion
+        const year = formData.birthDate.getFullYear();
+        const month = String(formData.birthDate.getMonth() + 1).padStart(2, '0');
+        const day = String(formData.birthDate.getDate()).padStart(2, '0');
+        formData.birthDate = `${year}-${month}-${day}`;
+      } else if (typeof formData.birthDate === 'string') {
+
+        formData.birthDate = formData.birthDate;
+      }
+    }
+    if (formData.dateOfHire) {
+      if (formData.dateOfHire instanceof Date) {
+        // Format date as yyyy-MM-dd without timezone conversion
+        const year = formData.dateOfHire.getFullYear();
+        const month = String(formData.dateOfHire.getMonth() + 1).padStart(2, '0');
+        const day = String(formData.dateOfHire.getDate()).padStart(2, '0');
+        formData.dateOfHire = `${year}-${month}-${day}`;
+      } else if (typeof formData.dateOfHire === 'string') {
+
+        formData.dateOfHire = formData.dateOfHire;
+      }
+    }
+
+    this.adminService.UpdateEmployee(formData).subscribe({
       next:result=> {
         this.employee = result;
         this.formatDate();
