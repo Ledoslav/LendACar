@@ -151,15 +151,17 @@ namespace LendACarAPI.Endpoints
         {
             var vehicle = await db.Vehicles
                 .Include(v => v.VehicleModel)
+                .ThenInclude(v => v.VehicleBrand)
                 .Include(v => v.VehicleCategory)
                 .Include(v => v.User)
                 .Include(v => v.City)
                 .ThenInclude(c => c.Country)
+                .Include(v => v.VehicleImages)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (vehicle == null) return NotFound("Vehicle not found");
 
-            var vehicleCategoryDto = new VehicleDto
+            var vehicleDto = new VehicleDto
             {
                 Id = vehicle.Id,
                 Title = vehicle.Title,
@@ -183,9 +185,16 @@ namespace LendACarAPI.Endpoints
                 User = vehicle.User,
                 CityID = vehicle.CityID,
                 LastUpdated = vehicle.LastUpdated,
+                VehicleImages = vehicle.VehicleImages
+                    .Select(img => new VehicleImageDto
+                    {
+                        Id = img.Id,
+                        ImageUrl = img.ImageUrl,
+                        PublicId = img.PublicId
+                    }).ToList()
             };
 
-            return Ok(vehicleCategoryDto);
+            return Ok(vehicleDto);
         }
 
         [HttpGet("getByUser/{userId}")]

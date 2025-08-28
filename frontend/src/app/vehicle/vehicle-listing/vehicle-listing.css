@@ -1,0 +1,302 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.dashboard-container {
+  display: flex;
+  margin: 3vh auto 0 auto;
+  height: 85vh;   /* full screen height */
+  width: 85vw;    /* full screen width */
+  box-sizing: border-box;
+  gap: 16px;       /* space between left and right parts */
+  padding: 16px;   /* padding around whole layout */
+  border-radius: 12px;
+}
+
+.left-part {
+  flex: 65;
+  display: grid;
+  grid-template-rows: 3fr 2fr; /* ratio 60/40 */
+  gap: 16px;
+}
+
+.right-part {
+  flex: 35;
+  display: grid;
+  grid-template-rows: 2fr 2fr 3fr; 
+  gap: 16px;
+}
+
+.reservation-info {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.reviews {
+  background: rgba(0, 0, 0, 0.7);
+  border-bottom-right-radius: 16px;
+}
+
+.image-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  border-top-left-radius: 16px;
+  padding: 16px;
+  height: 100%; /* fill grid row */
+  box-sizing: border-box;
+}
+
+.vehicle-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: left;
+  margin: 0;
+}
+
+.main-image-wrapper {
+  flex: 1 1 0; /* allow to grow and shrink */
+  min-height: 0; /* allow shrinking */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.main-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+  border-radius: 10px;
+}
+
+.main-image-wrapper:hover .main-image {
+  transform: scale(1.2);
+}
+
+/* Thumbnail section */
+.thumbnail-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+}
+
+.thumbnails {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.thumbnails::-webkit-scrollbar {
+  display: none;
+}
+
+.thumbnails img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.thumbnails img.selected {
+  border: 4px solid steelblue;
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.arrow-btn:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.arrow-btn.left {
+  left: 0;
+}
+
+.arrow-btn.right {
+  right: 0;
+}
+
+.user-info {
+  background: rgba(0, 0, 0, 0.7);
+  border-top-right-radius: 16px;
+  padding: 2rem; /* use relative units for spacing */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: #fff;
+  box-sizing: border-box;
+  height: 100%; /* fill grid row */
+}
+
+/* Owner username at the top left */
+.owner-username {
+  font-weight: bold;
+  font-size: clamp(1rem, 2vw, 1.5rem); /* scales with screen size */
+}
+
+/* Main row for avatar + user text */
+.user-details {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start; /* align text to top of avatar */
+  flex: 1;
+  flex-wrap: wrap; /* allows wrapping on small screens */
+}
+
+/* Avatar styling */
+.avatar-wrapper {
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: clamp(80px, 15vw, 150px); /* scales between 80px and 150px */
+  height: clamp(80px, 15vw, 150px);
+  border-radius: 5%;
+  object-fit: cover;
+  border: 3px solid;
+}
+
+/* Full name styling */
+.full-name {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: bold;
+}
+
+/* Contact (phone) styling */
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  margin-left: 18px;
+}
+
+.contact .icon {
+  width: clamp(20px, 3vw, 28px);
+  height: clamp(20px, 3vw, 28px);
+}
+
+/* Message button */
+/* Ensure the button is on top and interactive */
+.user-text .message-btn {
+  display: inline-flex;          /* fits content */
+  align-items: center;
+  gap: 0.6rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  max-width: fit-content;
+  transition: background-color 0.2s ease;
+  z-index: 5;                  /* ensure on top */
+  pointer-events: auto;        /* ensure it can be hovered/clicked */
+}
+
+/* Hover effect */
+.user-text .message-btn:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Optional: prevent stretching */
+.user-text {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;    /* prevents button from stretching full width */
+  gap: 0.8rem;
+}
+
+.message-btn .icon {
+  width: clamp(20px, 3vw, 28px);
+  height: clamp(20px, 3vw, 28px);
+}
+
+.car-info {
+  background: rgba(0, 0, 0, 0.7);
+  border-bottom-left-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Two-column grid for 10 items */
+.car-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem 2rem; /* row gap 1.5rem, column gap 2rem */
+}
+
+/* Each item */
+.car-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+/* Placeholder icon */
+.icon-placeholder {
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+/* Text next to icon */
+.info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/* Title above info */
+.info-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+/* Value */
+.info-value {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Description below grid */
+.car-description {
+  font-size: 1rem;
+  opacity: 0.9;
+  line-height: 1.4;
+}

@@ -80,6 +80,7 @@
     background-color: #fff;
     position: relative;
     background-color: inherit;
+    cursor: pointer;
   }
 
   .vehicle-image {

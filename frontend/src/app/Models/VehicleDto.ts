@@ -16,12 +16,23 @@ export interface VehicleDto {
   vehicleCategoryID: number;
   vehicleCategory: any; // You can refine this type
   vehicleModelID: number;
-  vehicleModel: any; // You can refine this type
+  vehicleModel: VehicleModel; // You can refine this type
   userID: number;
   user: any; // You can refine this type
   cityID: number;
   city: any; // You can refine this type
   lastUpdated: string;
+}
+
+export interface VehicleModel{
+  id: number;
+  modelName: string;
+  vehicleBrand: VehicleBrand;
+}
+
+export interface VehicleBrand{
+  id: number;
+  brandName: string;
 }
 
 export interface VehicleWithImagesDto {

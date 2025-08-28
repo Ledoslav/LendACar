@@ -36,7 +36,7 @@
       </div>
 
       <div class="vehicle-cards" *ngIf="user?.isVerified && vehicles">
-        <div *ngFor="let vehicle of filteredVehicles" class="vehicle-card">
+        <div *ngFor="let vehicle of filteredVehicles" class="vehicle-card" (click)="goToVehicle(vehicle.id)">
           <div class="vehicle-image">
             <button (click)="changeImage(vehicle, -1)">&#10094;</button>
             <img [src]="getCurrentImage(vehicle)" alt="{{ vehicle.title }}">

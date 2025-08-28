@@ -3,6 +3,7 @@ import { UserService } from '../../services/user.service';
 import { VehicleListingService } from '../../services/vehiclelisting.service';
 import { UserDto } from '../../Models/UserDto';
 import { VehicleDto, VehicleWithImagesDto } from '../../Models/VehicleDto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-vehicles',
@@ -20,7 +21,8 @@ export class MyVehiclesComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private vehicleService: VehicleListingService
+    private vehicleService: VehicleListingService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -78,5 +80,9 @@ export class MyVehiclesComponent implements OnInit {
     if (currentIndex >= vehicle.vehicleImages.length) currentIndex = 0;
 
     this.vehicleImageIndexes[vehicle.id] = currentIndex;
+  }
+
+  goToVehicle(vehicleId: number) {
+    this.router.navigate(['/vehicle/listing', vehicleId]);
   }
 }

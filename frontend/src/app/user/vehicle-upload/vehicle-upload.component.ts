@@ -201,18 +201,18 @@ export class VehicleUploadComponent implements OnInit {
 
     const formData = new FormData();
 
-    // Append vehicle fields (exclude images)
+    // Append all vehicle fields (skip 'images')
     Object.entries(this.vehicleForm.value).forEach(([key, value]) => {
-      if (key === 'images') return; // skip FormGroup images
+      if (key === 'images') return;
       if (typeof value === 'boolean') value = value.toString();
       formData.append(key, value as string | Blob);
     });
 
-    // Append the userID
+    // Append userID
     formData.append('userID', this.userID.toString());
 
-    // Append each file under 'images'
-    this.uploadedFiles.forEach(file => formData.append('images', file));
+    // Append actual files (full resolution)
+    this.uploadedFiles.forEach(file => formData.append('images', file, file.name));
 
     this.vehicleService.uploadVehicleWithImages(formData).subscribe({
       next: response => {
@@ -222,6 +222,7 @@ export class VehicleUploadComponent implements OnInit {
       error: err => console.error('Upload failed:', err)
     });
   }
+
 
 
 }

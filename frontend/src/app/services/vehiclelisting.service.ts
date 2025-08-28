@@ -68,6 +68,10 @@ export class VehicleListingService {
     return this.http.get<VehicleDto>(`${this.baseUrl}vehicle/getById/${vehicleId}`);
   }
 
+  getVehicleByIdWithImages(vehicleId: number): Observable<VehicleWithImagesDto> {
+    return this.http.get<VehicleWithImagesDto>(`${this.baseUrl}vehicle/getById/${vehicleId}`);
+  }
+
   // Upload a new vehicle
   uploadVehicle(vehicle: VehicleUploadDto): Observable<VehicleUploadDto> {
     return this.http.post<VehicleDto>(`${this.baseUrl}vehicle/addNew`, vehicle);
