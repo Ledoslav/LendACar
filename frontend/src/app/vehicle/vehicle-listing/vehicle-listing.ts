@@ -159,4 +159,7 @@ export class VehicleListingComponent implements OnInit {
   }
 
 
+  openChat() {
+    this.router.navigate(['/chat']);
+  }
 }
