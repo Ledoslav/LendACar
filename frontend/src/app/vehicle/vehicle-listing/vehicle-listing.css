@@ -130,7 +130,7 @@ html, body {
 }
 
 .arrow-btn:hover {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #007bff;
 }
 
 .arrow-btn.left {
@@ -223,7 +223,7 @@ html, body {
 
 /* Hover effect */
 .user-text .message-btn:hover {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #1e4fa0;
 }
 
 /* Optional: prevent stretching */
@@ -299,4 +299,69 @@ html, body {
   font-size: 1rem;
   opacity: 0.9;
   line-height: 1.4;
+}
+
+.reservation-info {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  color: white;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.reservation-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.reservation-icon {
+  width: clamp(40px, 6vw, 60px);
+  height: clamp(40px, 6vw, 60px);
+  object-fit: contain;
+}
+
+.reservation-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.reservation-title {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: bold;
+}
+
+.reservation-value {
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  font-weight: 500;
+}
+
+/* Button styling */
+.begin-reservation-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 1.5rem;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-weight: bold;
+  cursor: pointer;
+  pointer-events: auto;       /* important */
+  transition: background-color 0.3s ease;
+  position: relative;         /* ensures it’s not overlapped */
+  z-index: 2;                 /* above any parent background */
+}
+
+
+
+.begin-reservation-btn:hover {
+  background-color: #1e4fa0;
 }

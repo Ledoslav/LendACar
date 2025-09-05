@@ -2,15 +2,16 @@
     margin-top: 30px;
     display: flex;
     gap: 20px;
+    width: 85vw;  
     justify-content: center;
   }
 
   .user-info-card {
     width: 300px;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: transparent;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
   }
 
   .user-info-card .user-avatar {
@@ -48,9 +49,9 @@
   .vehicle-list-card {
     flex-grow: 1;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: transparent;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
     position: relative;
   }
 
@@ -64,7 +65,7 @@
   .search-bar select {
     padding: 8px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid transparent;
   }
 
   .vehicle-cards {
@@ -75,12 +76,15 @@
 
   .vehicle-card {
     padding: 10px;
-    border: 1px solid #ddd;
     border-radius: 8px;
-    background-color: #fff;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(0, 0, 0, 0.7);
     position: relative;
-    background-color: inherit;
     cursor: pointer;
+  }
+
+  .vehicle-card:hover{
+    border: 2px solid #007bff;
   }
 
   .vehicle-image {
@@ -148,5 +152,23 @@
   .no-vehicles-message p {
     font-weight: bold;
   }
+
+.listing-button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    z-index: 9999;
+    pointer-events: auto;
+}
+
+.listing-button:hover{
+  background-color: #025ab9;
+}
 
 

@@ -1,0 +1,267 @@
+.reservation-stepper {
+  display: flex;
+  flex-direction: column;
+  height: 85vh;   /* full screen height */
+  width: 80vw;    /* full screen width */
+  padding: 40px;   /* more breathing room */
+  box-sizing: border-box;
+  position: relative; /* ensure it's above any background layers */
+  pointer-events: auto; /* allow interaction */
+}
+
+/* Progress dots row */
+.progress-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  width: 100%;
+  pointer-events: auto;
+  position: relative;
+}
+
+.dot {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  transition: background 0.3s;
+}
+
+.dot.active {
+  background: #007bff; /* blue for active */
+}
+
+.line {
+  flex: 1;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.7);
+  margin: 0 15px;
+}
+
+/* Bottom part split into form + info */
+.bottom-part {
+  display: flex;
+  flex: 1;
+  gap: 30px;
+  width: 100%;
+  position: relative;
+  pointer-events: auto;
+}
+
+/* Form takes 70%, info takes 30% */
+.form {
+  flex: 0 0 70%;
+  background: rgba(0, 0, 0, 0.7);
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  padding: 30px;
+  min-width: 400px;
+  position: relative;  /* ensures clickable */
+  z-index: 2;          /* above sibling info */
+  pointer-events: auto;
+}
+
+.info {
+  flex: 0 0 30%;
+  background: rgba(0, 0, 0, 0.7);
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  padding: 30px;
+  min-width: 250px;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Responsive behavior */
+@media (max-width: 900px) {
+  .bottom-part {
+    flex-direction: column;
+  }
+
+  .form,
+  .info {
+    flex: 1 1 auto;
+    min-width: unset;
+  }
+}
+
+/* Vehicle image */
+.vehicle-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  pointer-events: auto;
+  position: relative;
+}
+
+/* Title */
+.vehicle-title {
+  font-size: 20px;
+  margin: 0 0 10px 0;
+  pointer-events: auto;
+}
+
+/* Thin line */
+hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 15px 0;
+  pointer-events: auto;
+}
+
+/* Owner info */
+.owner-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.owner-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: lightgray;
+  pointer-events: auto;
+}
+
+.owner-username {
+  font-weight: bold;
+  pointer-events: auto;
+}
+
+.owner-fullname {
+  font-size: 14px;
+  color: #555;
+  pointer-events: auto;
+}
+
+/* Price info */
+.price-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  margin: 15px 0;
+  pointer-events: auto;
+}
+
+.price-icon {
+  width: 24px;
+  height: 24px;
+  pointer-events: auto;
+}
+
+.price {
+  font-weight: bold;
+  pointer-events: auto;
+}
+
+/* Calculated price block */
+.calculated-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  color: rgba(0,0,0,0.7);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-top: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.calc-icon {
+  width: 24px;
+  height: 24px;
+  pointer-events: auto;
+}
+
+.total-price {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 18px;
+  pointer-events: auto;
+}
+
+.form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.form label {
+  font-weight: bold;
+  margin-top: 10px;
+  color: white;
+  pointer-events: auto;
+}
+
+.form input,
+.form select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.form input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.card-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  pointer-events: auto;
+  position: relative;
+}
+
+.step-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.step-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.step-buttons button:hover {
+  opacity: 0.8;
+}
+
+.step-buttons button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+}
+
+.step-buttons button[type="button"] {
+  background-color: gray;
+  color: white;
+}

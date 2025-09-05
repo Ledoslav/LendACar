@@ -293,6 +293,60 @@ namespace LendACarAPI.Migrations
                     b.ToTable("Polls");
                 });
 
+            modelBuilder.Entity("LendACarAPI.Data.Models.Reservation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DropOffCityID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DropOffDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCashPayment")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PickUpCityID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PickUpDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RenterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DropOffCityID");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("PickUpCityID");
+
+                    b.HasIndex("RenterId");
+
+                    b.HasIndex("VehicleID");
+
+                    b.ToTable("Reservations");
+                });
+
             modelBuilder.Entity("LendACarAPI.Data.Models.SecurityQuestion", b =>
                 {
                     b.Property<int>("Id")
@@ -846,6 +900,49 @@ namespace LendACarAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("City");
+                });
+
+            modelBuilder.Entity("LendACarAPI.Data.Models.Reservation", b =>
+                {
+                    b.HasOne("LendACarAPI.Data.Models.City", "DropOffCity")
+                        .WithMany()
+                        .HasForeignKey("DropOffCityID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LendACarAPI.Data.Models.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LendACarAPI.Data.Models.City", "PickUpCity")
+                        .WithMany()
+                        .HasForeignKey("PickUpCityID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LendACarAPI.Data.Models.User", "Renter")
+                        .WithMany()
+                        .HasForeignKey("RenterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LendACarAPI.Data.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DropOffCity");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("PickUpCity");
+
+                    b.Navigation("Renter");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("LendACarAPI.Data.Models.UserReview", b =>

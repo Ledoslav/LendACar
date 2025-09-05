@@ -3,7 +3,7 @@ import { UserService } from '../../services/user.service';
 import { VehicleListingService } from '../../services/vehiclelisting.service';
 import { UserDto } from '../../Models/UserDto';
 import { VehicleDto, VehicleWithImagesDto } from '../../Models/VehicleDto';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-vehicle-listing',
@@ -21,7 +21,8 @@ export class VehicleListingComponent implements OnInit {
   constructor(
     private userService: UserService,
     private vehicleService: VehicleListingService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -83,6 +84,10 @@ export class VehicleListingComponent implements OnInit {
     if (this.thumbnailsContainer) {
       this.thumbnailsContainer.nativeElement.scrollBy({ left: -this.scrollAmount, behavior: 'smooth' });
     }
+  }
+
+  goToReservationForm(){
+    this.router.navigate(['/vehicle/reservationForm/' + this.vehicleId]);
   }
 
 

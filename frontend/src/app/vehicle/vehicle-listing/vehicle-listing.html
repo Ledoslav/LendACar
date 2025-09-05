@@ -129,10 +129,29 @@
     </div>
   </div>
       </div>
-
+      
       <div class="reservation-info">
-
+        <div class="reservation-item">
+          <img src="money-white.png" alt="Price Icon" class="reservation-icon">
+          <div class="reservation-text">
+            <div class="reservation-title">Price per day</div>
+            <div class="reservation-value">{{ vehicle?.pricePerDay || 'N/A' }} BAM</div>
+          </div>
+        </div>
+      
+        <div class="reservation-item">
+          <img src="LAC_waypoint.png" alt="City Icon" class="reservation-icon">
+          <div class="reservation-text">
+            <div class="reservation-title">City</div>
+            <div class="reservation-value">{{ vehicle?.city?.name || 'Unknown' }}</div>
+          </div>
+        </div>
+      
+        <button class="begin-reservation-btn" (click)="goToReservationForm()" [disabled]="!user" *ngIf="user && user.id != vehicle?.userID">
+          Begin Reservation
+        </button>
       </div>
+
 
       <div class="reviews">
 

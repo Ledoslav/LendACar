@@ -2,7 +2,10 @@
     <!-- User Info Card -->
     <div class="user-info-card">
       <div class="user-avatar">
-        <img src="BlankAvatar.png" alt="User Avatar" class="avatar-image" />
+        <img 
+        [src]="user?.profilePhotoUrl || 'BlankAvatar.png'" 
+        alt="{{ user?.username }}" 
+        class="avatar-image">
       </div>
       <div class="user-details">
         <h3>{{ user?.username }}</h3>
@@ -36,7 +39,7 @@
       </div>
 
       <div class="vehicle-cards" *ngIf="user?.isVerified && vehicles">
-        <div *ngFor="let vehicle of filteredVehicles" class="vehicle-card" (click)="goToVehicle(vehicle.id)">
+        <div *ngFor="let vehicle of filteredVehicles" class="vehicle-card" >
           <div class="vehicle-image">
             <button (click)="changeImage(vehicle, -1)">&#10094;</button>
             <img [src]="getCurrentImage(vehicle)" alt="{{ vehicle.title }}">
@@ -47,6 +50,7 @@
             <img [src]="vehicle.avaliable ? 'marks/checkmark.png' : 'marks/xmark.png'" alt="status" width="5%" height="5%" />
             {{ vehicle.avaliable ? 'Available' : 'Unavailable' }}
           </p>
+          <button class="listing-button" (click)="goToVehicle(vehicle.id)">Go to listing</button>
         </div>
       </div>
     </div>

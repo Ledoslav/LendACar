@@ -1,0 +1,91 @@
+<div class="reservation-stepper">
+
+  <div class="bottom-part">
+
+    <!-- Form area -->
+    <div class="form">
+
+            <form #reservationForm="ngForm" (ngSubmit)="confirm()">
+    
+                <!-- Pick-up -->
+                <label>Pick-up Date & Time</label>
+                <input type="datetime-local" [(ngModel)]="pickUpDateTime" [min]="today" name="pickUpDateTime" (change)="updateTotalPrice()" required />
+    
+                <label>Pick-up Country</label>
+                <select [(ngModel)]="pickUpCountryId" name="pickUpCountry" (change)="loadPickUpCities()" required>
+                    <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+                </select>
+    
+                <label>Pick-up City</label>
+                <select [(ngModel)]="pickUpCityId" name="pickUpCity" required>
+                    <option *ngFor="let city of pickUpCities" [value]="city.id">{{ city.name }}</option>
+                </select>
+    
+                <!-- Drop-off -->
+                <label>Drop-off Date & Time</label>
+                <input type="datetime-local" [(ngModel)]="dropOffDateTime" name="dropOffDateTime" [min]="pickUpDateTime || today" (change)="updateTotalPrice()" required />
+    
+                <label>Drop-off Country</label>
+                <select [(ngModel)]="dropOffCountryId" name="dropOffCountry" (change)="loadDropOffCities()" required>
+                    <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+                </select>
+    
+                <label>Drop-off City</label>
+                <select [(ngModel)]="dropOffCityId" name="dropOffCity" required>
+                    <option *ngFor="let city of dropOffCities" [value]="city.id">{{ city.name }}</option>
+                </select>
+    
+                <!-- Payment -->
+                <label>Payment Method</label>
+                <label>
+                    <input type="radio" [(ngModel)]="isCashPayment" [value]="true" name="paymentMethod" /> Cash
+                </label>
+                <label>
+                    <input type="radio" [(ngModel)]="isCashPayment" [value]="false" name="paymentMethod" /> Card
+                </label>
+    
+                <div *ngIf="!isCashPayment" class="card-fields">
+                    <label>Card Number</label>
+                    <input type="text" placeholder="1234 5678 9012 3456" />
+    
+                    <label>Expiry Date</label>
+                    <input type="month" />
+    
+                    <label>CVV</label>
+                    <input type="text" placeholder="123" />
+                </div>
+    
+                <!-- Buttons -->
+                <div class="step-buttons">
+                    <button type="button" (click)="cancel()">Cancel</button>
+                    <button type="submit">Confirm</button>
+                </div>
+            </form>
+
+    </div>
+
+    <!-- Info area -->
+    <div class="info" *ngIf="vehicle">
+      <img class="vehicle-image" [src]="vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? vehicle.vehicleImages[0].imageUrl : 'Image-not-found.png'" alt="Vehicle" />
+      <h2 class="vehicle-title">{{ vehicle.title }}</h2>
+      <hr />
+      <div class="owner-info">
+        <img [src]="vehicle.user?.profilePhotoUrl || 'BlankAvatar.png'" alt="{{ vehicle.user?.username }}" class="owner-avatar"/>
+        <div>
+          <div class="owner-username">{{ vehicle.user?.username }}</div>
+          <div class="owner-fullname">{{ vehicle.user?.firstName }} {{ vehicle.user?.lastName }}</div>
+        </div>
+      </div>
+      <hr />
+      <div class="price-info">
+        <img class="price-icon" src="money-white.png" alt="Price icon" />
+        <span class="price"> Price per day: {{ vehicle.pricePerDay }} BAM</span>
+      </div>
+      <div class="calculated-price">
+        <img class="calc-icon" src="money-black.png" alt="Calc icon" />
+        <span class="total-price"> {{totalPrice}} BAM</span>
+      </div>
+    </div>
+
+  </div>
+</div>
