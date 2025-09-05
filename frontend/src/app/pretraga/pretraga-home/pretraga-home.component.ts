@@ -5,6 +5,7 @@ import {CompanyEmployeeService} from '../../services/companyemployee.service';
 import {VehicleService} from '../../services/vehicle.service';
 import {FormBuilder, Validators} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pretraga-home',
@@ -17,6 +18,7 @@ export class PretragaHomeComponent implements OnInit {
   companyEmployeeService = inject(CompanyEmployeeService);
   vehicleService = inject(VehicleService);
   translateService = inject(TranslateService);
+  router = inject(Router);
 
   isFilterOpen: boolean = false;
   last24Active: boolean = false;
@@ -290,6 +292,11 @@ export class PretragaHomeComponent implements OnInit {
     this.getVehicles(this.paging);
     console.log(this.paging);
   }
+
+  RouteToListing(vehicleId:number) {
+    this.router.navigate(['/vehicle/listing/' + vehicleId]);
+  }
+
 }
 interface pagingRequest{
   pageNumber: number;

@@ -9,7 +9,6 @@
     <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
     <div class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
-    <div routerLinkActive="active" routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
     <div *ngIf="isOwner || isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div *ngIf="isOwner || isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.MY_COMPANY' | translate}}</span></div>
 
@@ -131,9 +130,9 @@
 
       <div class="deals">
         <div (click)="prev()" id="left-arrow"><</div>
-        <div class="deal" *ngFor="let vehicle of vehicles">
+        <div class="deal" *ngFor="let vehicle of vehicles" (click)="RouteToListing(vehicle.id)">
           <div class="deal-vehicle">
-            <img style="width: 100%" src="SUV_Home_Page.png" alt="SUV">
+            <img class="search-result-image" [src]="vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? vehicle.vehicleImages[0].imageUrl : 'Image-not-found.png'" alt="Image" />
           </div>
           <div class="deal-info">
             <p id="title">{{vehicle.title}}</p>

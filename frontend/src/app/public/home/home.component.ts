@@ -227,6 +227,11 @@ loadCities(countryId: number){
     this.paging.search = String(this.searchGroup.value.search);
     this.getVehicles(this.paging);
   }
+
+  RouteToListing(vehicleId:number) {
+    this.router.navigate(['/vehicle/listing/' + vehicleId]);
+  }
+
 }
 
 interface pagingRequest{

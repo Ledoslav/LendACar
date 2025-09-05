@@ -8,7 +8,7 @@
     <div class="menu-item"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
     <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
     <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div routerLinkActive="active" routerLink="/user/profile/my-vehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
+    <div routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
     <div *ngIf="isOwner || isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div *ngIf="isOwner || isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.MY_COMPANY' | translate}}</span></div>
 
@@ -124,13 +124,13 @@
 
     <div class="content-section">
       <ng-container *ngFor="let vehicle of vehicles">
-        <div class="search-result">
+        <div class="search-result" (click)="RouteToListing(vehicle.id)">
           <div class="search-result-image-section">
             <div class="image-buttons">
               <button class="carousel-btn left" (click)="prevImage(vehicle)">&#60;</button>
               <button class="carousel-btn right" (click)="nextImage(vehicle)">&#62;</button>
             </div>
-            <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
+            <img class="search-result-image" [src]="vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? vehicle.vehicleImages[0].imageUrl : 'Image-not-found.png'" alt="Search Result Image" />
           </div>
           <div class="search-result-info">
             <div id="vehicle-buttons">
@@ -147,7 +147,7 @@
               <p>{{'COMPANY.YEAR' | translate}}: {{vehicle.productionYear}}</p>
               <p>{{'COMPANY.ENGINE_POWER' | translate}}: {{vehicle.enginePower}}</p>
               <p>{{ vehicle.transmissionType == 1 ? ('Automatic') : ('Manual') }}</p>
-              <p>{{ vehicle.isAvailable ? ('COMPANY.AVAILABLE' | translate) : ('COMPANY.NOT_AVAILABLE' | translate) }}</p>
+              <p>{{ vehicle.isAvailable ? ('COMPANY.NOT_AVAILABLE' | translate) : ('COMPANY.AVAILABLE' | translate) }}</p>
               <p>{{'COMPANY.DATE_ADDED' | translate}}: {{vehicle.lastUpdated.slice(0, 10)}}</p>
             </div>
           </div>

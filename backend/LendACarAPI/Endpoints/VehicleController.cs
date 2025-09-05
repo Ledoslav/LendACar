@@ -37,6 +37,7 @@ namespace LendACarAPI.Endpoints
                 .Include(v => v.User)
                 .Include(v => v.City)
                 .ThenInclude(c => c.Country)
+                .Include(v => v.VehicleImages)
                 .AsQueryable();
 
 
@@ -134,7 +135,12 @@ namespace LendACarAPI.Endpoints
                 UserID = vehicle.UserID,
                 User = vehicle.User,
                 CityID = vehicle.CityID,
-                LastUpdated = vehicle.LastUpdated
+                LastUpdated = vehicle.LastUpdated,
+                VehicleImages = vehicle.VehicleImages.Select(img => new VehicleImageDto
+                {
+                    Id = img.Id,
+                    ImageUrl = img.ImageUrl
+                }).ToList()
             });
 
             var vehicles = await MyPagedList<VehicleDto>.CreateAsync(vehicleQuery, pagedParams, cancellationToken);
