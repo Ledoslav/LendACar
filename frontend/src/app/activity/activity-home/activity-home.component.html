@@ -1,0 +1,10 @@
+<app-navbar></app-navbar>
+<div class="activity-list">
+  <h3>Recent Activities</h3>
+  <ul>
+    <li *ngFor="let activity of activities">
+      <div class="activity-time">{{ activity.time }}</div>
+      <div class="activity-desc" [innerHTML]="activity.description"></div>
+    </li>
+  </ul>
+</div>

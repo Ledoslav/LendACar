@@ -1,15 +1,16 @@
+
 <div class="dashboard-container">
 
-    <div class="left-part"> 
+    <div class="left-part">
       <div class="image-container" >
         <!-- Vehicle Title -->
         <h2 class="vehicle-title">{{ vehicle?.title || 'Vehicle Title' }}</h2>
-      
+
         <!-- Main image with zoom option -->
         <div class="main-image-wrapper">
           <img [src]="selectedImageUrl" alt="{{ vehicle?.title }}" class="main-image">
         </div>
-      
+
         <!-- Thumbnails + arrow buttons -->
         <div class="thumbnail-wrapper">
           <button class="arrow-btn left" (click)="prevImage()">◀</button>
@@ -61,7 +62,7 @@
                 <div class="info-value">{{ vehicle ? getTransmissionType(vehicle.transmissionType) : "Unknown"}}</div>
               </div>
             </div>
-      
+
             <div class="car-info-item">
               <img src="snowflake.png" alt="AC Icon" class="icon-placeholder">
               <div class="info-text">
@@ -84,7 +85,7 @@
               </div>
             </div>
           </div>
-      
+
           <!-- Description section -->
           <div class="car-description">
             {{vehicle?.description}}
@@ -102,9 +103,9 @@
   <div class="user-details">
     <!-- Avatar -->
     <div class="avatar-wrapper">
-      <img 
-        [src]="vehicle?.user?.profilePhotoUrl || 'BlankAvatar.png'" 
-        alt="{{ vehicle?.user?.username }}" 
+      <img
+        [src]="vehicle?.user?.profilePhotoUrl || 'BlankAvatar.png'"
+        alt="{{ vehicle?.user?.username }}"
         class="avatar">
     </div>
 
@@ -129,7 +130,7 @@
     </div>
   </div>
       </div>
-      
+
       <div class="reservation-info">
         <div class="reservation-item">
           <img src="money-white.png" alt="Price Icon" class="reservation-icon">
@@ -138,7 +139,7 @@
             <div class="reservation-value">{{ vehicle?.pricePerDay || 'N/A' }} BAM</div>
           </div>
         </div>
-      
+
         <div class="reservation-item">
           <img src="LAC_waypoint.png" alt="City Icon" class="reservation-icon">
           <div class="reservation-text">
@@ -146,7 +147,7 @@
             <div class="reservation-value">{{ vehicle?.city?.name || 'Unknown' }}</div>
           </div>
         </div>
-      
+
         <button class="begin-reservation-btn" (click)="goToReservationForm()" [disabled]="!user" *ngIf="user && user.id != vehicle?.userID">
           Begin Reservation
         </button>
