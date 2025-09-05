@@ -119,12 +119,12 @@ export class VehicleListingComponent implements OnInit {
     }
   }
 
-  public getACType(transmissionId: number): string {
-    if (transmissionId === null || transmissionId === undefined) {
+  public getACType(acId: number): string {
+    if (acId === null || acId === undefined) {
       return "Unknown";
     }
 
-    switch (transmissionId) {
+    switch (acId) {
       case 0: return "None";
       case 1: return "Single-Zone";
       case 2: return "Double-Zone";
