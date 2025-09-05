@@ -2,22 +2,27 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { VehicleListingService } from '../../services/vehiclelisting.service';
 import { UserDto } from '../../Models/UserDto';
-import { VehicleDto } from '../../Models/VehicleDto';
+import { VehicleDto, VehicleWithImagesDto } from '../../Models/VehicleDto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-vehicles',
   templateUrl: './my-vehicles.component.html',
-  styleUrl: './my-vehicles.component.css'
+  styleUrls: ['./my-vehicles.component.css']
 })
 export class MyVehiclesComponent implements OnInit {
   user: UserDto | null = null;
-  vehicles: VehicleDto[] = [];
+  vehicles: VehicleWithImagesDto[] = [];
   searchText: string = '';
   availabilityFilter: string = 'all';
+  
+  // Track currently displayed image for each vehicle
+  vehicleImageIndexes: { [vehicleId: number]: number } = {};
 
   constructor(
     private userService: UserService,
-    private vehicleService: VehicleListingService
+    private vehicleService: VehicleListingService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -28,12 +33,18 @@ export class MyVehiclesComponent implements OnInit {
   }
 
   loadUserVehicles(): void {
-    this.vehicleService.getVehiclesByUser(this.user!.id).subscribe((data) => {
+    this.vehicleService.getVehiclesByUserWithImages(this.user!.id).subscribe((data) => {
       this.vehicles = data;
+      // Initialize image indexes
+      this.vehicles.forEach(v => {
+        this.vehicleImageIndexes[v.id] = 0;
+      });
+      console.log(this.vehicles);
     });
+
   }
 
-  get filteredVehicles(): VehicleDto[] {
+  get filteredVehicles(): VehicleWithImagesDto[] {
     let filtered = this.vehicles;
 
     if (this.searchText) {
@@ -51,8 +62,27 @@ export class MyVehiclesComponent implements OnInit {
     return filtered;
   }
 
-  changeImage(direction: number): void {
-    // Implement image scroll functionality if you want to allow multiple images per vehicle.
-    console.log('Image change:', direction);
+  getCurrentImage(vehicle: VehicleWithImagesDto): string {
+    const index = this.vehicleImageIndexes[vehicle.id] || 0;
+    return vehicle.vehicleImages?.length
+      ? vehicle.vehicleImages[index].imageUrl
+      : 'Image-not-found.png'; // fallback image
+  }
+
+  changeImage(vehicle: VehicleWithImagesDto, direction: number): void {
+    if (!vehicle.vehicleImages || vehicle.vehicleImages.length === 0) return;
+
+    let currentIndex = this.vehicleImageIndexes[vehicle.id] || 0;
+    currentIndex += direction;
+
+    // Loop around
+    if (currentIndex < 0) currentIndex = vehicle.vehicleImages.length - 1;
+    if (currentIndex >= vehicle.vehicleImages.length) currentIndex = 0;
+
+    this.vehicleImageIndexes[vehicle.id] = currentIndex;
+  }
+
+  goToVehicle(vehicleId: number) {
+    this.router.navigate(['/vehicle/listing', vehicleId]);
   }
 }

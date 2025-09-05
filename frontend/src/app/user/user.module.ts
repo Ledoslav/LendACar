@@ -59,7 +59,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     LanguageSelectorComponent
   ],
   exports: [
-    LanguageSelectorComponent
+    LanguageSelectorComponent,
+    NavbarComponent
   ],
     imports: [
         CommonModule,

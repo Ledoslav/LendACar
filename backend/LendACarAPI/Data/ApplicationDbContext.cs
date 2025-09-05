@@ -37,6 +37,7 @@ namespace LendACarAPI.Data
         public DbSet<Poll> Polls { get; set; }
         public DbSet<SecurityQuestion> SecurityQuestions { get; set; }
         public DbSet<UserSecurityQuestionAnswer> UserSecurityQuestionAnswers { get; set; }
+        public DbSet<Reservation> Reservations {  get; set; }
 
 
 
@@ -92,6 +93,39 @@ namespace LendACarAPI.Data
                 .SetValueComparer(dictionaryComparer);
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Reservation>()
+                    .Property(r => r.Price)
+                    .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Renter)
+                .WithMany()
+                .HasForeignKey(r => r.RenterId)
+                .OnDelete(DeleteBehavior.Restrict); // prevent cascade
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Owner)
+                .WithMany()
+                .HasForeignKey(r => r.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict); // prevent cascade
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Vehicle)
+                .WithMany()
+                .HasForeignKey(r => r.VehicleID)
+                .OnDelete(DeleteBehavior.Restrict); // safe
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.DropOffCity)
+                .WithMany()
+                .HasForeignKey(r => r.DropOffCityID)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.PickUpCity)
+                .WithMany()
+                .HasForeignKey(r => r.PickUpCityID)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

@@ -42,7 +42,14 @@ namespace LendACarAPI.DTOs
         [Required]
         public int CityID { get; set; }
         public City City { get; set; }
-        public DateTime LastUpdated {  get; set; }
+        public DateTime LastUpdated { get; set; }
 
+        public List<VehicleImageDto> VehicleImages { get; set; } = new();
+    }
+    public class VehicleImageDto
+    {
+        public int Id { get; set; }
+        public string ImageUrl { get; set; }
+        public string? PublicId { get; set; } // optional, if you need to manage deletes in Cloudinary/etc.
     }
 }

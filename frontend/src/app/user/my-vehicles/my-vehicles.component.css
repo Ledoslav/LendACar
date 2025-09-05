@@ -2,15 +2,16 @@
     margin-top: 30px;
     display: flex;
     gap: 20px;
+    width: 85vw;  
     justify-content: center;
   }
 
   .user-info-card {
     width: 300px;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: transparent;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
   }
 
   .user-info-card .user-avatar {
@@ -48,9 +49,9 @@
   .vehicle-list-card {
     flex-grow: 1;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: transparent;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
     position: relative;
   }
 
@@ -64,7 +65,7 @@
   .search-bar select {
     padding: 8px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid transparent;
   }
 
   .vehicle-cards {
@@ -75,43 +76,61 @@
 
   .vehicle-card {
     padding: 10px;
-    border: 1px solid #ddd;
     border-radius: 8px;
-    background-color: #fff;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(0, 0, 0, 0.7);
     position: relative;
-    background-color: inherit;
-  }
-
-  .vehicle-card .vehicle-image {
-    position: relative;
-  }
-
-  .vehicle-card .vehicle-image img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-
-  .vehicle-card .prev-btn,
-  .vehicle-card .next-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px;
     cursor: pointer;
   }
 
-  .vehicle-card .prev-btn {
-    left: 10px;
+  .vehicle-card:hover{
+    border: 2px solid #007bff;
   }
 
-  .vehicle-card .next-btn {
-    right: 10px;
-  }
+  .vehicle-image {
+  position: relative;
+  width: 100%; /* adjust as needed */
+  height: 60%; /* adjust as needed */
+  margin: auto;
+}
+
+.vehicle-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Common styles for both arrows */
+.vehicle-image button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 20px;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+/* Left arrow */
+.vehicle-image button:first-of-type {
+  left: 5px;
+}
+
+/* Right arrow */
+.vehicle-image button:last-of-type {
+  right: 5px;
+}
+
+.vehicle-image button:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
 
   .availability {
     font-size: 14px;
@@ -133,5 +152,23 @@
   .no-vehicles-message p {
     font-weight: bold;
   }
+
+.listing-button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    z-index: 9999;
+    pointer-events: auto;
+}
+
+.listing-button:hover{
+  background-color: #025ab9;
+}
 
 

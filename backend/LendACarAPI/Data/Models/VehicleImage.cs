@@ -10,7 +10,8 @@ namespace LendACarAPI.Data.Models
 
         [ForeignKey(nameof(Vehicle))]
         [Required]
-        public int VehicleID { get; set; }
+        public int VehicleId { get; set; }
+        public string PublicId { get; set; }
         public Vehicle? Vehicle { get; set; }
 
         [Required]

@@ -20,7 +20,7 @@ namespace LendACarAPI.Data.Models
         public int NumberOfSeats { get; set; }
         public bool TowingHitch { get; set; }
         public string Description { get; set; }
-        public int ProductionYear {  get; set; }
+        public int ProductionYear { get; set; }
         [Required]
         public bool Avaliable { get; set; } = false;
         public double AverageRating { get; set; } = 0.0;
@@ -51,5 +51,6 @@ namespace LendACarAPI.Data.Models
         public int CityID { get; set; }
         public City? City { get; set; }
 
+        public ICollection<VehicleImage> VehicleImages { get; set; } = new List<VehicleImage>();
     }
 }

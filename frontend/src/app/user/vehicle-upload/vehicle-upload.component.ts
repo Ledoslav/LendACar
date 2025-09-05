@@ -53,6 +53,7 @@ export class VehicleUploadComponent implements OnInit {
   userID: number;
   uploadedImages: string[] = [];
   vehicleForm!: FormGroup;
+  uploadedFiles: File[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -139,46 +140,89 @@ export class VehicleUploadComponent implements OnInit {
     }
   }
 
-  removeImage(index: number): void {
-  this.uploadedImages.splice(index, 1);
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files) return;
+
+    for (let i = 0; i < input.files.length; i++) {
+      const file = input.files[i];
+
+      // Only allow images
+      if (!file.type.startsWith('image/')) continue;
+
+      // Max 15 images
+      if (this.uploadedFiles.length >= 15) {
+        alert('You can upload a maximum of 15 images.');
+        break;
+      }
+
+      this.uploadedFiles.push(file);
+
+      // Generate preview
+      const reader = new FileReader();
+      reader.onload = () => this.uploadedImages.push(reader.result as string);
+      reader.readAsDataURL(file);
+    }
   }
 
-  
-    // Handle files selected through the file input
-    onFileSelected(event: any): void {
-      this.handleFiles(event.target.files);
-    }
-  
-    // Handle files dropped via drag-and-drop
-    onFileDrop(event: any): void {
-      this.handleFiles(event.files);
-    }
-  
-    // Process the dropped/selected files
-    private handleFiles(files: FileList): void {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            this.uploadedImages.push(reader.result as string);
-          };
-          reader.readAsDataURL(file);
-        }
+
+  // Handle files dropped via drag-and-drop
+  onFileDrop(event: any): void {
+    if (!event.files) return;
+    this.addFiles(event.files);
+  }
+
+  private addFiles(files: FileList) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) continue;
+
+      if (this.uploadedFiles.length >= 15) {
+        alert('You can upload a maximum of 15 images.');
+        break;
       }
+
+      this.uploadedFiles.push(file);
+
+      // Optional: preview the image
+      const reader = new FileReader();
+      reader.onload = () => this.uploadedImages.push(reader.result as string);
+      reader.readAsDataURL(file);
     }
+  }
+
+  removeImage(index: number): void {
+    this.uploadedImages.splice(index, 1);
+    this.uploadedFiles.splice(index, 1);
+  }
 
   onSubmit() {
-    if (this.vehicleForm.valid) {
-      const vehicleData = this.vehicleForm.value;
-      vehicleData.userID = this.userID; // Assign the userID
-      vehicleData.averageRating = 0.0; // Set default rating
+    if (!this.vehicleForm.valid) return;
 
-      console.log(vehicleData);
-      this.vehicleService.uploadVehicle(vehicleData).subscribe(response => {
+    const formData = new FormData();
+
+    // Append all vehicle fields (skip 'images')
+    Object.entries(this.vehicleForm.value).forEach(([key, value]) => {
+      if (key === 'images') return;
+      if (typeof value === 'boolean') value = value.toString();
+      formData.append(key, value as string | Blob);
+    });
+
+    // Append userID
+    formData.append('userID', this.userID.toString());
+
+    // Append actual files (full resolution)
+    this.uploadedFiles.forEach(file => formData.append('images', file, file.name));
+
+    this.vehicleService.uploadVehicleWithImages(formData).subscribe({
+      next: response => {
         console.log('Vehicle uploaded successfully:', response);
         void this.router.navigateByUrl('/user/myVehicles');
-      });
-    }
+      },
+      error: err => console.error('Upload failed:', err)
+    });
   }
+
+
+
 }
