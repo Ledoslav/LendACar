@@ -2,11 +2,11 @@
   <img class="vector" src="Vector.png" />
   <div class="side-bar">
     <div class="menu-item" routerLinkActive="active" routerLink="/public/home" ><img src="Home.svg" alt="Home"> <span>{{'SIDEBAR.HOME' | translate}}</span></div>
-    <div class="menu-item"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
+    <div class="menu-item" routerLinkActive="active" routerLink="/activity/"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
     <div class="menu-item" routerLinkActive="active" routerLink="/chat"><img src="Messagesquare.svg" alt="Chats"> <span>{{'SIDEBAR.CHATS' | translate}}</span></div>
     <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
-    <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
+    <div class="menu-item" routerLinkActive="active" routerLink="/saved/"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
+    <div class="menu-item" routerLinkActive="active" routerLink="/user/profile/reservation-history"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
     <div class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
     <div *ngIf="isOwner || isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>

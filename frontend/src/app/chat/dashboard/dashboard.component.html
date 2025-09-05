@@ -1,45 +1,58 @@
-<div class="chat-wrapper">
+<app-navbar></app-navbar>
+<div class="{{this.mode}} chat-wrapper">
   <!-- Sidebar -->
   <div class="chat-sidebar">
     <div class="sidebar-header">Chats</div>
     <ul class="chat-list">
-      <li class="chat-item">
-        <img src="assets/profile1.jpg" alt="User">
+      <li
+        class="chat-item"
+        *ngFor="let chat of chats"
+        [class.active]="chat === selectedChat"
+        (click)="selectChat(chat)"
+      >
+        <img [src]="chat.avatar" alt="User">
         <div class="chat-details">
-          <div class="chat-name">John Doe</div>
-          <div class="chat-last-message">Hey, how’s it going?</div>
+          <div class="chat-name">{{ chat.name }}</div>
+          <div class="chat-last-message">{{ chat.lastMessage }}</div>
         </div>
-        <div class="chat-time">10:30 AM</div>
-      </li>
-      <li class="chat-item">
-        <img src="assets/profile2.jpg" alt="User">
-        <div class="chat-details">
-          <div class="chat-name">Jane Smith</div>
-          <div class="chat-last-message">Let’s meet up later.</div>
-        </div>
-        <div class="chat-time">9:45 AM</div>
-      </li>
-      <li class="chat-item">
-        <img src="assets/profile3.jpg" alt="User">
-        <div class="chat-details">
-          <div class="chat-name">Alex Johnson</div>
-          <div class="chat-last-message">Sent you the files.</div>
-        </div>
-        <div class="chat-time">Yesterday</div>
+        <div class="chat-time">{{ chat.time }}</div>
       </li>
     </ul>
   </div>
 
   <!-- Chat Container -->
-  <div class="chat-container">
-    <div class="chat-header">Chat</div>
+  <!-- Chat Container -->
+  <div class="chat-container" *ngIf="selectedChat">
+
+    <!-- Vehicle Banner -->
+    <div class="vehicle-banner">
+      Reserved Vehicle: <span>{{ selectedChat.vehicle }}</span>
+    </div>
+
+    <div class="chat-header">{{ selectedChat.name }}</div>
     <div class="chat-body">
-      <div class="message received">Hello! How can I help you?</div>
-      <div class="message sent">Hi! I need some assistance.</div>
+      <div
+        *ngFor="let message of selectedChat.messages"
+        class="message"
+        [ngClass]="{ 'sent': message.sender === 'me', 'received': message.sender === 'them' }"
+      >
+        {{ message.text }}
+      </div>
     </div>
     <div class="chat-footer">
-      <input type="text" placeholder="Type a message...">
-      <button>Send</button>
+      <input
+        type="text"
+        placeholder="Type a message..."
+        [(ngModel)]="newMessage"
+        (keyup.enter)="sendMessage()"
+      >
+      <button (click)="sendMessage()">Send</button>
     </div>
+  </div>
+
+
+  <!-- If no chat is selected -->
+  <div class="chat-container" *ngIf="!selectedChat">
+    <div class="chat-header">Select a chat</div>
   </div>
 </div>
