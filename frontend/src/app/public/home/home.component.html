@@ -9,16 +9,12 @@
     <div class="menu-item"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
     <div class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
+
     <div *ngIf="isOwner || isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div *ngIf="isOwner || isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.MY_COMPANY' | translate}}</span></div>
 
-    <div class="mode-select" (click)="toggleDarkMode()">
-      <p>Dark mode</p>
-      <div class="switch" [class.clicked]="switchClicked">
-        <div id="modeSwitch">
-        </div>
-      </div>
-    </div>
+    <div *ngIf="isLoggedIn && !companyAdminEmail && !isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div *ngIf="isLoggedIn && !companyAdminEmail && !isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.CREATE_COMPANY' | translate}}</span></div>
   </div>
 
   <div class="content">

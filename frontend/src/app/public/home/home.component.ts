@@ -80,8 +80,12 @@ export class HomeComponent implements OnInit {
     if(this.isAppUser == false || this.isLoggedIn == false) {
       this.isOwner = false;
       this.isEmployee = false;
+
+      console.log(this.isOwner, this.isEmployee);
+
       return;
     }
+
 
     this.companyEmployeeService.getCompanyAdminEmail(this.userId).subscribe({
       next: (response2) => {
@@ -101,6 +105,7 @@ export class HomeComponent implements OnInit {
 
     this.companyEmployeeService.getEmployeeForAdmin(this.userId).subscribe({
       next: (response) =>{
+
         if(response == null){
           return;
         }

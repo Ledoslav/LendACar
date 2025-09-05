@@ -64,6 +64,7 @@ export class PretragaHomeComponent implements OnInit {
   }
   priceFrom: number = 1;
   priceTo: number = 15000;
+  imageIndex: number = 0;
 
   _formBuilder = inject(FormBuilder);
 
@@ -239,12 +240,14 @@ export class PretragaHomeComponent implements OnInit {
   }
 
   getVehicles(paging: pagingRequest) {
-
     this.vehicleService.getVehicle(paging).subscribe({
       next: (response) => {
-        this.vehicles = response;
+        this.vehicles = response.map((v: any) => ({
+          ...v,
+          imageIndex: 0
+        }));
       }
-    })
+    });
   }
 
   nextPage() {
@@ -267,12 +270,20 @@ export class PretragaHomeComponent implements OnInit {
     window.scrollTo(0, 0);
   }
 
-  prevImage(vehicle:any){
-    return;
+  prevImage(vehicle: any, direction: number) {
+    if (!vehicle.vehicleImages?.length) return;
+
+    vehicle.imageIndex += direction;
+
+    if (vehicle.imageIndex < 0) {
+      vehicle.imageIndex = vehicle.vehicleImages.length - 1; // loop back to last
+    } else if (vehicle.imageIndex >= vehicle.vehicleImages.length) {
+      vehicle.imageIndex = 0; // loop back to first
+    }
   }
 
-  nextImage(vehicle:any){
-    return;
+  nextImage(vehicle: any, direction: number) {
+    this.prevImage(vehicle, direction); // reuse same logic
   }
 
   protected readonly Math = Math;

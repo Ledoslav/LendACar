@@ -287,6 +287,7 @@ namespace LendACarAPI.Endpoints
                 .Include(v => v.User)
                 .Include(v => v.City)
                 .ThenInclude(c => c.Country)
+                .Include(v => v.VehicleImages)
                 .ToListAsync(cancellationToken);
 
                 if (!vehicles.Any()) return BadRequest("No vehicles found for this user");
@@ -315,6 +316,11 @@ namespace LendACarAPI.Endpoints
                     User = vehicle.User,
                     CityID = vehicle.CityID,
                     LastUpdated = vehicle.LastUpdated,
+                    VehicleImages = vehicle.VehicleImages.Select(img => new VehicleImageDto
+                    {
+                        Id = img.Id,
+                        ImageUrl = img.ImageUrl
+                    }).ToList()
                 }).ToList();
 
                 return Ok(vehicleDtos);
@@ -332,6 +338,7 @@ namespace LendACarAPI.Endpoints
                 .Include(v => v.User)
                 .Include(v => v.City)
                 .ThenInclude(c => c.Country)
+                .Include(v => v.VehicleImages)
                 .ToListAsync(cancellationToken);
 
                 if (!vehicles.Any()) return BadRequest("No vehicles found for this user");
@@ -360,6 +367,11 @@ namespace LendACarAPI.Endpoints
                     User = vehicle.User,
                     CityID = vehicle.CityID,
                     LastUpdated = vehicle.LastUpdated,
+                    VehicleImages = vehicle.VehicleImages.Select(img => new VehicleImageDto
+                    {
+                        Id = img.Id,
+                        ImageUrl = img.ImageUrl
+                    }).ToList()
                 }).ToList();
 
                 return Ok(vehicleDtos);

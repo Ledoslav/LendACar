@@ -488,6 +488,13 @@
   transition: 150ms;
 }
 
+.dark-mode .search-result-image{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
 /*LIGHT MODE*/
 
 .light-mode .circle-element {
@@ -976,6 +983,14 @@
 .light-mode span{
   color: #007bff;
 }
+
+.light-mode .search-result-image{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

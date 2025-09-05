@@ -27,14 +27,6 @@
             </ul>
           </div>
 
-          <div class="mode-select" (click)="toggleDarkMode()">
-            <p>Dark mode</p>
-            <div class="switch" [class.clicked]="switchClicked">
-              <div id="modeSwitch">
-              </div>
-            </div>
-          </div>
-
           <div class="mt-5 d-flex" id="BackDiv">
             <button style="width: 100%;" type="button" class="btn btn-primary" routerLink="/public/home">{{'COMPANY.STEPPER_BACK' | translate}}</button>
           </div>
@@ -659,11 +651,10 @@
             <div class="search-result">
               <div class="search-result-image-section">
                 <div class="image-buttons">
-                  <button class="carousel-btn left" (click)="prevImage(vehicle)">&#60;</button>
-                  <button class="carousel-btn right" (click)="nextImage(vehicle)">&#62;</button>
+                  <button class="carousel-btn left" (click)="prevImage(vehicle, -1)">&#60;</button>
+                  <button class="carousel-btn right" (click)="nextImage(vehicle, +1)">&#62;</button>
                 </div>
-                <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
-              </div>
+                <img (click)="RouteToListing(vehicle.id)" class="search-result-image" [src]="vehicle.vehicleImages && vehicle.vehicleImages.length > 0? vehicle.vehicleImages[vehicle.imageIndex].imageUrl: 'Image-not-found.png'" alt="Search Result Image"/>              </div>
               <div class="search-result-info">
                 <div id="vehicle-buttons">
                   <div id="vehicle-title-container">
@@ -845,7 +836,7 @@
                   <input
                     #fileInput
                     type="file"
-                    (change)="onVehicleImageChange($event)"
+                    (change)="onFileImagesSelected($event)"
                     multiple
                     accept="image/*"
                     hidden

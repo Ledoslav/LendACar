@@ -1,4 +1,4 @@
-<div class="landing-page">
+<div class="{{this.mode}} landing-page">
     <!-- New Header Section with Background -->
     <div class="col-md-11 my-3">
       <div class="d-flex">
@@ -28,15 +28,19 @@
                   <button class="btn w-100 text-center list-button" routerLink="verification-request" routerLinkActive="active-link">{{'PROFILE.SIDEBAR.VERIFICATION_REQUEST' | translate}}</button>
                 </li>
                 <li class="list-group-item p-2 mb-2">
-                  <button class="btn w-100 text-center list-button" routerLink="my-vehicles" routerLinkActive="active-link">{{'PROFILE.SIDEBAR.MY_VEHICLES' | translate}}</button>
-                </li>
-                <li class="list-group-item p-2 mb-2">
                   <button class="btn w-100 text-center list-button" routerLink="reservation-history" routerLinkActive="active-link">{{'PROFILE.SIDEBAR.RESERVATION_HISTORY' | translate}}</button>
                 </li>
                 <li class="list-group-item p-2 mb-2">
                   <button class="btn w-100 text-center list-button" routerLink="close-account" routerLinkActive="active-link">{{'PROFILE.SIDEBAR.CLOSE_ACCOUNT' | translate}}</button>
                 </li>
               </ul>
+              <div class="mode-select" (click)="toggleDarkMode()">
+                <p>Dark mode</p>
+                <div class="switch" [class.clicked]="switchClicked">
+                  <div id="modeSwitch">
+                  </div>
+                </div>
+              </div>
               <div class="d-flex justify-content-center">
                 <button class="btn w-75 mt-4 p-2"
                         style="border-radius: 50px;background-color: #ffffff; color: black" (click)="accountService.Logout()">{{'PROFILE.SIDEBAR.LOGOUT' | translate}}</button>

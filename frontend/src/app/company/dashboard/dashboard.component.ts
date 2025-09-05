@@ -19,6 +19,8 @@ import {MatPaginator} from '@angular/material/paginator';
 import {CityService} from '../../services/city.service';
 import {CountryService} from '../../services/country.service';
 import {VehicleDto} from '../../Models/VehicleDto';
+import {Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,6 +33,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   // Injectabels
   accountService = inject(UserService); // Inject UserService
   authService = inject(MyAuthServiceService);
+  router = inject(Router);
 
   // Form controls
   isFormVisible = false;
@@ -86,6 +89,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   vehicleModels: any = [];
   vehicleCategories: any = [];
   vehicleBrands: any = [];
+  uploadedFiles: File[] = [];
   uploadedImages: string[] = [];
   cities: any = [];
   countries: any = [];
@@ -120,6 +124,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   user:any;
   vehicleModel:any;
   vehicleCategory:any;
+  imageIndex: number = 0;
 
   //Other
   username: any;
@@ -261,7 +266,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     private vehicleCategoriesService: VehicleCategoriesService,
     private vehicleModelsBrandsService: VehicleService,
     private cityService: CityService,
-    private countryService: CountryService) {
+    private countryService: CountryService,
+    private snackBar: MatSnackBar) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -911,8 +917,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   getVehicles() {
     this.vehicleListingService.getVehiclesByCompanyAdminEmail(this.userId, this.companyAdminEmail).subscribe({
       next: (vehicles) => {
-        this.vehicles = vehicles;
+        this.vehicles = vehicles.map((v: any) => ({
+          ...v,
+          imageIndex: 0
+        }));
         console.log(this.vehicles);
+
         this.hasVehicles = true;
       },
       error: (error) => {
@@ -1019,47 +1029,49 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
 // Submit the vehicle
   onSubmit() {
-    if (this.companyVehicleBasicInfoForm.valid &&
-      this.companyTechincalDataFormGroup.valid &&
-      this.companyDescriptionFormGroup.valid) {
-
-      const basic = this.companyVehicleBasicInfoForm.value;
-      const technical = this.companyTechincalDataFormGroup.value;
-      const description = this.companyDescriptionFormGroup.value;
-
-      const vehicleData: VehicleUploadDto = {
-        title: basic.title || '',
-        vehicleModelID: Number(basic.vehicleModelID),
-        vehicleCategoryID: Number(description.vehicleCategoryID),
-        pricePerDay: Number(basic.pricePerDay),
-        engineDisplacement: Number(technical.engineDisplacement),
-        enginePower: Number(technical.enginePower),
-        transmissionType: Number(technical.transmissionType),
-        fuelType: Number(technical.fuelType),
-        airConditioning: Number(technical.airConditioning),
-        numberOfSeats: Number(technical.numberOfSeats),
-        towingHitch: technical.towingHitch ?? false,
-        productionYear: Number(technical.productionYear),
-        description: description.description || '',
-        cityID: Number(description.cityID),
-        avaliable: description.avaliable ?? false,
-        userID: this.companyAdminUserId,
-        averageRating: 0
-      };
-
-      console.log(vehicleData);
-
-      this.vehicleListingService.uploadVehicle(vehicleData).subscribe({
-        next: response => {
-          console.log('Vehicle uploaded', response)
-          this.getVehicles();
-          this.isVehicleFormVisible = false;
-        },
-        error: err => console.error(err)
-      });
+    if (
+      !this.companyVehicleBasicInfoForm.valid ||
+      !this.companyTechincalDataFormGroup.valid ||
+      !this.companyDescriptionFormGroup.valid
+    ) {
+      return;
     }
-  }
 
+    const basic = this.companyVehicleBasicInfoForm.value;
+    const technical = this.companyTechincalDataFormGroup.value;
+    const description = this.companyDescriptionFormGroup.value;
+
+    const formData = new FormData();
+
+    // 🔹 Append all fields one by one (flat, like in your working example)
+    formData.append('title', basic.title ?? '');
+    formData.append('vehicleModelID', String(basic.vehicleModelID));
+    formData.append('vehicleCategoryID', String(description.vehicleCategoryID));
+    formData.append('pricePerDay', String(basic.pricePerDay));
+    formData.append('engineDisplacement', String(technical.engineDisplacement));
+    formData.append('enginePower', String(technical.enginePower));
+    formData.append('transmissionType', String(technical.transmissionType));
+    formData.append('fuelType', String(technical.fuelType));
+    formData.append('airConditioning', String(technical.airConditioning));
+    formData.append('numberOfSeats', String(technical.numberOfSeats));
+    formData.append('towingHitch', String(technical.towingHitch ?? false));
+    formData.append('productionYear', String(technical.productionYear));
+    formData.append('description', description.description ?? '');
+    formData.append('cityID', String(description.cityID));
+    formData.append('avaliable', String(description.avaliable ?? false)); // ✅ watch spelling here
+    formData.append('userID', String(this.companyAdminUserId));
+    formData.append('averageRating', '0');
+
+    this.uploadedFiles.forEach(file => formData.append('images', file, file.name));
+
+    this.vehicleListingService.uploadVehicleWithImages(formData).subscribe({
+      next: response => {
+        console.log('Vehicle uploaded successfully:', response);
+        void this.router.navigateByUrl('/user/myVehicles');
+      },
+      error: err => console.error('Upload failed:', err)
+    });
+  }
 
   getCountries(){
     this.countryService.getAllCountries().subscribe(countries => this.countries = countries);
@@ -1124,17 +1136,28 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   }
 
   deleteVehicle(vehicle: any) {
-
-    console.log(vehicle);
-
-    this.vehicleListingService.deleteVehicle(vehicle.id).subscribe({
-      next: response => {
-        console.log('Vehicle deleted', response)
-        this.getVehicles();
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      width: '350px',
+      data: {
+        title: 'Delete Vehicle',
+        message: `Are you sure you want to delete "${vehicle.title}"?`
       },
-      error: err => console.error(err)
+      position: { top: '20px' } // positions the dialog at the top
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) { // true if user clicked Yes
+        this.vehicleListingService.deleteVehicle(vehicle.id).subscribe({
+          next: response => {
+            console.log('Vehicle deleted', response);
+            this.getVehicles();
+          },
+          error: err => console.error(err)
+        });
+      }
     });
   }
+
 
   closeUpdateVehicleForm() {
     this.isVehicleUpdateFormVisible = false;
@@ -1215,12 +1238,48 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     }
   }
 
-  prevImage(vehicle:any){
-    return;
+  prevImage(vehicle: any, direction: number) {
+    vehicle.imageIndex += direction;
+    if (vehicle.imageIndex < 0) {
+      vehicle.imageIndex = vehicle.vehicleImages.length - 1; // wrap around
+    }
   }
 
-  nextImage(vehicle:any){
-    return;
+  nextImage(vehicle: any, direction: number) {
+    vehicle.imageIndex += direction;
+    if (vehicle.imageIndex >= vehicle.vehicleImages.length) {
+      vehicle.imageIndex = 0; // wrap around
+    }
+  }
+
+
+  RouteToListing(vehicleId:number) {
+    this.router.navigate(['/vehicle/listing/' + vehicleId]);
+  }
+
+  onFileImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files) return;
+
+    for (let i = 0; i < input.files.length; i++) {
+      const file = input.files[i];
+
+      // Only allow images
+      if (!file.type.startsWith('image/')) continue;
+
+      // Max 15 images
+      if (this.uploadedFiles.length >= 15) {
+        alert('You can upload a maximum of 15 images.');
+        break;
+      }
+
+      this.uploadedFiles.push(file);
+
+      // Generate preview
+      const reader = new FileReader();
+      reader.onload = () => this.uploadedImages.push(reader.result as string);
+      reader.readAsDataURL(file);
+    }
   }
 }
 

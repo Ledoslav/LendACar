@@ -69,6 +69,152 @@
   background-color: #0056b3;
 }
 
+.dark-mode .mode-select{
+  display: flex;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+  height: 50px;
+  background-color: #eeeeee;
+  border-radius: 10px;
+}
+
+.dark-mode .mode-select>p{
+  color: #343a40;
+  margin: 0;
+  margin-left: 10px;
+}
+
+.dark-mode .switch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: #444;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.dark-mode .switch::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s ease; /* smooth animation */
+}
+
+.dark-mode .switch.clicked::before {
+  transform: translateX(30px); /* move knob to the right */
+}
+
+
+.dark-mode #modeSwitch{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height:30px;
+  border-radius: 50%;
+  border: 1px solid #343a40;
+  background-color: #343a40;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.dark-mode #modeSwitch2{
+  width: 20px;
+  height:20px;
+  border-radius: 50%;
+  border: 1px solid #343a40;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  cursor: pointer;
+  transition: 150ms;
+}
+
+/* LIGHT MODE */
+
+.light-mode .mode-select{
+  display: flex;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+  height: 50px;
+  background-color: #eeeeee;
+  border-radius: 10px;
+}
+
+.light-mode .mode-select>p{
+  color: #343a40;
+  margin: 0;
+  margin-left: 10px;
+}
+
+.light-mode .switch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: #444;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.light-mode .switch::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s ease; /* smooth animation */
+}
+
+.light-mode .switch.clicked::before {
+  transform: translateX(30px); /* move knob to the right */
+}
+
+
+.light-mode #modeSwitch{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height:30px;
+  border-radius: 50%;
+  border: 1px solid #343a40;
+  background-color: #343a40;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.light-mode #modeSwitch2{
+  width: 20px;
+  height:20px;
+  border-radius: 50%;
+  border: 1px solid #343a40;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  cursor: pointer;
+  transition: 150ms;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .card-body {
