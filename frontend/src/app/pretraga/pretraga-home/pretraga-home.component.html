@@ -70,7 +70,7 @@
         </div>
 
         <div class="pretraga-info">
-          <p>{{this.vehicles.length}} {{'HOME.RESULTS_FOUND' | translate}}</p>
+          <p>~{{(Math.ceil(this.vehicles.length / (this.vehicles.length/2)))*4}} {{'HOME.RESULTS_FOUND' | translate}}</p>
         </div>
 
       </div>
@@ -111,13 +111,13 @@
         <div class="filter-price-range">
           <p>Price range</p>
           <div class="filter-price-range-text">
-            <p id="fromPrice">{{'HOME.FROM' |translate}} {{this.priceFrom}}KM</p>
-            <p id="toPrice">{{'HOME.TO' |translate}} {{this.priceTo}}KM</p>
+            <p id="fromPrice">{{'HOME.FROM' |translate}} <input id="priceFromInput" [(ngModel)]="priceFrom" (ngModelChange)="setPriceFrom($event)" matInput>KM</p>
+            <p id="toPrice">{{'HOME.TO' |translate}} <input id="priceToInput" [(ngModel)]="priceTo" (ngModelChange)="setPriceTo($event)" matInput>KM</p>
           </div>
 
           <mat-slider class="price-slider" min="1" max="15000">
-            <input (valueChange)="setPriceFrom($event)"  value="1" matSliderStartThumb>
-            <input (valueChange)="setPriceTo($event)" value="15000" matSliderEndThumb>
+            <input [(ngModel)]="priceFrom" (ngModelChange)="setPriceFrom($event)" value="1" matSliderStartThumb>
+            <input [(ngModel)]="priceTo" (ngModelChange)="setPriceTo($event)" value="15000" matSliderEndThumb>
           </mat-slider>
         </div>
     </div>
@@ -126,12 +126,17 @@
       <ng-container *ngFor="let vehicle of vehicles">
         <div class="search-result">
           <div class="search-result-image-section">
+            <div class="image-buttons">
+              <button class="carousel-btn left" (click)="prevImage(vehicle)">&#60;</button>
+              <button class="carousel-btn right" (click)="nextImage(vehicle)">&#62;</button>
+            </div>
             <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
           </div>
           <div class="search-result-info">
             <div id="vehicle-buttons">
               <div id="vehicle-title-container">
                 <h3 class="search-result-title">{{ vehicle.title }}</h3>
+                <p id="posted-by">Posted by: {{vehicle.user.username}}</p>
               </div>
             </div>
             <p class="search-result-description">
@@ -153,7 +158,7 @@
     <div class="pagination">
       <div class="paginatorVehicles">
         <button (click)="prevPage()">{{'HOME.PREV' | translate}}</button>
-        <span>{{'HOME.PAGE' |translate}} {{this.paging.pageNumber}} / {{Math.ceil(vehicles.length / (vehicles.length/2))}}</span>
+        <span>{{'HOME.PAGE' |translate}} {{this.paging.pageNumber}} / {{Math.ceil(this.vehicles.length / (this.vehicles.length/2))}}</span>
         <button (click)="nextPage()">{{'HOME.NEXT' | translate}}</button>
       </div>
     </div>

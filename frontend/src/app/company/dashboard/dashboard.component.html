@@ -160,7 +160,7 @@
                         [cropperStaticHeight]="250"
                         [resizeToWidth]="400"
                         [resizeToHeight]="400"
-                        [imageQuality]="0.8"
+                        [imageQuality]="100"
                         format="jpeg"
                         style="max-width: 400px; max-height: 400px; display: block; margin: 0 auto;"
                         (imageCropped)="imageCropped($event)"
@@ -299,7 +299,7 @@
                         [cropperStaticHeight]="250"
                         [resizeToWidth]="400"
                         [resizeToHeight]="400"
-                        [imageQuality]="0.8"
+                        [imageQuality]="100"
                         format="jpeg"
                         style="max-width: 400px; max-height: 400px; display: block; margin: 0 auto;"
                         (imageCropped)="imageCropped($event)"
@@ -658,6 +658,10 @@
           <ng-container *ngFor="let vehicle of pagedVehicles">
             <div class="search-result">
               <div class="search-result-image-section">
+                <div class="image-buttons">
+                  <button class="carousel-btn left" (click)="prevImage(vehicle)">&#60;</button>
+                  <button class="carousel-btn right" (click)="nextImage(vehicle)">&#62;</button>
+                </div>
                 <img class="search-result-image" src="SUV_Home_Page.png" alt="Search Result Image">
               </div>
               <div class="search-result-info">

@@ -7,6 +7,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 import {CountryService} from '../../services/country.service';
 import {CityService} from '../../services/city.service';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
@@ -20,15 +21,52 @@ export class HomeComponent implements OnInit {
   vehicleService=inject(VehicleService);
   countryService=inject(CountryService);
   cityService=inject(CityService);
+  translateService=inject(TranslateService);
 
   constructor(
     private router: Router
   ) {}
 
+
+  private _formBuilder = inject(FormBuilder);
+
+  isLoggedIn: boolean=false;
+  isAppUser:boolean=false;
+
+  userId: any = 0 || null;
+  employee: any = null;
+  isEmployee: boolean = false;
+  isOwner: boolean = false;
+  companyAdminEmail: any = null;
+  vehicles:any = [];
+  paging: pagingRequest = {
+    pageNumber: 1,
+    pageSize: 3,
+    search: '',
+    fromPrice: 1,
+    toPrice: 15000,
+    last24Active: false,
+    last7Active: false,
+    lastMonthActive: false,
+    manualTransActive: false,
+    automaticTransActive: false,
+    petrolActive: false,
+    dieselActive: false,
+    otherFuelActive: false,
+    specialOffersActive: false,
+    specialEquipmentActive: false,
+    allDateActive: false,
+    allTransActive: false,
+    allFuelActive: false
+  }
+  countries: any = [];
+  cities: any = [];
+  switchClicked: boolean = false;
+  mode: string = 'light-mode';
+
   ngOnInit(): void {
     this.isLoggedIn=this.authService.isLoggedIn();
     this.isAppUser=this.authService.isAppUser();
-
     this.userId = this.accountService.currentUser()?.id;
 
     if(localStorage.getItem('mode') == 'dark-mode'){
@@ -94,42 +132,6 @@ export class HomeComponent implements OnInit {
     this.loadCountries();
   }
 
-  private _formBuilder = inject(FormBuilder);
-
-  isLoggedIn: boolean=false;
-  isAppUser:boolean=false;
-
-  userId: any = 0 || null;
-  employee: any = null;
-  isEmployee: boolean = false;
-  isOwner: boolean = false;
-  companyAdminEmail: any = null;
-  vehicles:any = [];
-  paging: pagingRequest = {
-    pageNumber: 1,
-    pageSize: 3,
-    search: '',
-    fromPrice: 1,
-    toPrice: 15000,
-    last24Active: false,
-    last7Active: false,
-    lastMonthActive: false,
-    manualTransActive: false,
-    automaticTransActive: false,
-    petrolActive: false,
-    dieselActive: false,
-    otherFuelActive: false,
-    specialOffersActive: false,
-    specialEquipmentActive: false,
-    allDateActive: false,
-    allTransActive: false,
-    allFuelActive: false
-  }
-  countries: any = [];
-  cities: any = [];
-  switchClicked: boolean = false;
-  mode: string = 'light-mode';
-
   formGroup = this._formBuilder.group({
     country: ['', [Validators.required]],
     pickUpLocation: ['', [Validators.required]],
@@ -141,7 +143,6 @@ export class HomeComponent implements OnInit {
   searchGroup = this._formBuilder.group({
     search: ['', [Validators.required]]
   });
-
 
   openSearch() {
 
@@ -180,7 +181,7 @@ export class HomeComponent implements OnInit {
   }
 
   getVehicles(paging: pagingRequest){
-    this.vehicleService.getVehicle(this.paging).subscribe({
+    this.vehicleService.getVehicle(paging).subscribe({
       next: (response) =>{
         this.vehicles = response;
       }

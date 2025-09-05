@@ -34,7 +34,7 @@ public class MyPagingRequest
 {
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 20;
-    public string Search { get; set; } = "";
+    public string? Search { get; set; } = "";
     public int FromPrice { get; set; } = 1;
     public int ToPrice { get; set; } = 15000;
     public bool AllDateActive { get; set; } = false;

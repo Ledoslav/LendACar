@@ -4,6 +4,7 @@ import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
 import {VehicleService} from '../../services/vehicle.service';
 import {FormBuilder, Validators} from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pretraga-home',
@@ -15,6 +16,7 @@ export class PretragaHomeComponent implements OnInit {
   authService = inject(MyAuthServiceService);
   companyEmployeeService = inject(CompanyEmployeeService);
   vehicleService = inject(VehicleService);
+  translateService = inject(TranslateService);
 
   isFilterOpen: boolean = false;
   last24Active: boolean = false;
@@ -235,6 +237,7 @@ export class PretragaHomeComponent implements OnInit {
   }
 
   getVehicles(paging: pagingRequest) {
+
     this.vehicleService.getVehicle(paging).subscribe({
       next: (response) => {
         this.vehicles = response;
@@ -262,6 +265,14 @@ export class PretragaHomeComponent implements OnInit {
     window.scrollTo(0, 0);
   }
 
+  prevImage(vehicle:any){
+    return;
+  }
+
+  nextImage(vehicle:any){
+    return;
+  }
+
   protected readonly Math = Math;
 
   setPriceFrom($event: any) {
@@ -277,6 +288,7 @@ export class PretragaHomeComponent implements OnInit {
   search(){
     this.paging.search = String(this.searchGroup.value.search);
     this.getVehicles(this.paging);
+    console.log(this.paging);
   }
 }
 interface pagingRequest{

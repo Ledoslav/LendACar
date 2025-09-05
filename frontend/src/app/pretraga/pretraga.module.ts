@@ -12,32 +12,33 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {UserModule} from '../user/user.module';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSlider, MatSliderRangeThumb, MatSliderThumb} from "@angular/material/slider";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 
 @NgModule({
   declarations: [
     PretragaHomeComponent
   ],
-    imports: [
-        CommonModule,
-        PretragaRoutingModule,
-        MatDatepicker,
-        MatDatepickerInput,
-        MatDatepickerToggle,
-        MatFormField,
-        MatInput,
-        MatLabel,
-        MatOption,
-        MatSelect,
-        MatSuffix,
-        TranslatePipe,
-        UserModule,
-        MatPaginator,
-        MatSlider,
-        MatSliderThumb,
-        MatSliderRangeThumb,
-        ReactiveFormsModule
-    ]
+  imports: [
+    CommonModule,
+    PretragaRoutingModule,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatOption,
+    MatSelect,
+    MatSuffix,
+    TranslatePipe,
+    UserModule,
+    MatPaginator,
+    MatSlider,
+    MatSliderThumb,
+    MatSliderRangeThumb,
+    ReactiveFormsModule,
+    FormsModule
+  ]
 })
 export class PretragaModule { }

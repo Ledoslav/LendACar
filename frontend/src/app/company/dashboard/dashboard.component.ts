@@ -1214,6 +1214,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       });
     }
   }
+
+  prevImage(vehicle:any){
+    return;
+  }
+
+  nextImage(vehicle:any){
+    return;
+  }
 }
 
 

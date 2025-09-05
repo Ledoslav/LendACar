@@ -993,6 +993,44 @@ body{
   width:70%;
 }
 
+.dark-mode .carousel-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 10px;
+  z-index: 10;
+  border-radius: 50%;
+}
+
+.dark-mode .carousel-btn.left {
+  margin: 5px;
+  transition: 150ms;
+}
+
+.dark-mode .carousel-btn.left:hover {
+  width: 45px;
+  height: 45px;
+}
+
+.dark-mode .carousel-btn.right {
+  margin: 5px;
+  transition: 150ms;
+}
+
+.dark-mode .carousel-btn.right:hover {
+  width: 45px;
+  height: 45px;
+}
+
+.dark-mode .image-buttons{
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+}
 
 
 /*LIGHT MODE*/
@@ -1968,3 +2006,41 @@ body{
   width:70%;
 }
 
+.light-mode .carousel-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 10px;
+  z-index: 10;
+  border-radius: 50%;
+}
+
+.light-mode .carousel-btn.left {
+  margin: 5px;
+  transition: 150ms;
+}
+
+.light-mode .carousel-btn.left:hover {
+  width: 45px;
+  height: 45px;
+}
+
+.light-mode .carousel-btn.right {
+  margin: 5px;
+  transition: 150ms;
+}
+
+.light-mode .carousel-btn.right:hover {
+  width: 45px;
+  height: 45px;
+}
+
+.light-mode .image-buttons{
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+}

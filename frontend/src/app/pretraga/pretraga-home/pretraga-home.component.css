@@ -388,7 +388,6 @@
 .dark-mode .search-result:hover{
   width: 100%;
   background: linear-gradient(75deg, rgba(255, 255, 255, 0.64), rgba(37, 37, 37, 0));
-  cursor: pointer;
 }
 
 .dark-mode .search-result-image{
@@ -723,7 +722,6 @@
   width: 100%;
   background: #083467;
   .search-result-price{color:white}
-  cursor: pointer;
 }
 
 .dark-mode .search-result-image{
@@ -800,6 +798,62 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+}
+
+.dark-mode #vehicle-title-container{
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Century Gothic';
+}
+
+#priceFromInput,#priceToInput{
+  width: 100px;
+  text-decoration: none;
+  background-color: white;
+  border: 1px solid #007bff;
+  padding: 5px;
+  margin: 0 5px;
+  border-radius: 15px;
+  color: #007bff;
+}
+
+.dark-mode .carousel-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 10px;
+  z-index: 10;
+  border-radius: 50%;
+}
+
+.dark-mode .carousel-btn.left {
+  margin: 5px;
+  transition: 150ms;
+}
+
+.dark-mode .carousel-btn.left:hover {
+  width: 45px;
+  height: 45px;
+}
+
+.dark-mode .carousel-btn.right {
+  margin: 5px;
+  transition: 150ms;
+}
+
+.dark-mode .carousel-btn.right:hover {
+  width: 45px;
+  height: 45px;
+}
+
+.dark-mode .image-buttons{
+  position: absolute;
+  display: flex;
   justify-content: space-between;
 }
 
@@ -1187,7 +1241,9 @@
 .light-mode .search-result:hover{
   width: 100%;
   background: linear-gradient(75deg, rgba(255, 255, 255, 0.64), rgba(37, 37, 37, 0));
-  cursor: pointer;
+  #posted-by{
+    color: white;
+  }
 }
 
 .light-mode .search-result-image{
@@ -1524,7 +1580,6 @@
     color: white;
     border-color: white;
   }
-  cursor: pointer;
 }
 
 .light-mode .search-result-image{
@@ -1601,6 +1656,52 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+}
+
+.light-mode #vehicle-title-container{
+  display: flex;
+  color: black;
+  justify-content: space-between;
+  font-family: 'Century Gothic';
+}
+
+.light-mode .carousel-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 10px;
+  z-index: 10;
+  border-radius: 50%;
+}
+
+.light-mode .carousel-btn.left {
+  margin: 5px;
+  transition: 150ms;
+}
+
+.light-mode .carousel-btn.left:hover {
+  width: 45px;
+  height: 45px;
+}
+
+.light-mode .carousel-btn.right {
+  margin: 5px;
+  transition: 150ms;
+}
+
+.light-mode .carousel-btn.right:hover {
+  width: 45px;
+  height: 45px;
+}
+
+.light-mode .image-buttons{
+  position: absolute;
+  display: flex;
   justify-content: space-between;
 }
 
