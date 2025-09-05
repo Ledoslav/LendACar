@@ -190,6 +190,7 @@ namespace LendACarAPI.Endpoints
                 UserID = vehicle.UserID,
                 User = vehicle.User,
                 CityID = vehicle.CityID,
+                City = vehicle.City,
                 LastUpdated = vehicle.LastUpdated,
                 VehicleImages = vehicle.VehicleImages
                     .Select(img => new VehicleImageDto
@@ -544,7 +545,7 @@ namespace LendACarAPI.Endpoints
             {
                 foreach (var file in images)
                 {
-                    var result = await photoService.AddPhotoAsync(file);
+                    var result = await photoService.AddVehiclePhotoAsync(file);
                     db.VehicleImages.Add(new VehicleImage
                     {
                         VehicleId = vehicle.Id,
