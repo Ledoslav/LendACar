@@ -520,7 +520,8 @@ namespace LendACarAPI.Endpoints
                 VehicleCategoryID = dto.VehicleCategoryID,
                 CityID = dto.CityID,
                 Avaliable = dto.Avaliable,
-                UserID = dto.UserID 
+                UserID = dto.UserID,
+                LastUpdated = DateTime.UtcNow
             };
 
             db.Vehicles.Add(vehicle);
