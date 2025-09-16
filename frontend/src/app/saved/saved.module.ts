@@ -4,16 +4,18 @@ import { CommonModule } from '@angular/common';
 import { SavedRoutingModule } from './saved-routing.module';
 import { SavedHomeComponent } from './saved-home/saved-home.component';
 import {UserModule} from '../user/user.module';
+import {TranslatePipe} from "@ngx-translate/core";
 
 
 @NgModule({
   declarations: [
     SavedHomeComponent
   ],
-  imports: [
-    CommonModule,
-    SavedRoutingModule,
-    UserModule
-  ]
+    imports: [
+        CommonModule,
+        SavedRoutingModule,
+        UserModule,
+        TranslatePipe
+    ]
 })
 export class SavedModule { }

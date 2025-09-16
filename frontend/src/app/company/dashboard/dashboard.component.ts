@@ -21,6 +21,7 @@ import {CountryService} from '../../services/country.service';
 import {VehicleDto} from '../../Models/VehicleDto';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {ActivityService, ActivityCreateRequest} from '../../services/activity-service';
 
 @Component({
   selector: 'app-dashboard',
@@ -267,7 +268,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     private vehicleModelsBrandsService: VehicleService,
     private cityService: CityService,
     private countryService: CountryService,
-    private snackBar: MatSnackBar) {
+    private snackBar: MatSnackBar,
+    private activityService: ActivityService) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -416,6 +418,26 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     }
   }
 
+  addActivity(_variant:number, _companyEmployeeId:number, _vehicleId:number, _newVehicleId:number){
+
+    var activity:ActivityCreateRequest = {
+      userId:this.userId,
+      variant: _variant,
+      companyEmployeeId: _companyEmployeeId,
+      vehicleId:_vehicleId,
+      newVehicleId:_newVehicleId
+    }
+
+    this.activityService.create(activity).subscribe({
+      next:(response:any) =>{
+        console.log(response);
+      },
+      error:(err:any)=>{
+        console.log(err);
+      }
+    })
+
+  }
 
 // Helper method to handle no employees found
   private handleNoEmployees(): void {
@@ -462,7 +484,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
             this.employees = employees;
             this.dataSource = new MatTableDataSource(this.employees);
             this.downloadEmployeeCredentials(username, newEmployee.employeePassword, newEmployee.firstName, newEmployee.lastName);
-            window.location.reload();
+            this.addActivity(1,response.id,0,0);
+
+            // window.location.reload();
           },
           error: (error) => {
             console.error('Error fetching employees:', error);
@@ -511,6 +535,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
           next: (employees) => {
             this.employees = employees;
             this.dataSource = new MatTableDataSource(this.employees);
+            this.addActivity(2, response.id,0,0);
           },
           error: (error) => {
             console.error('Error fetching employees:', error);
@@ -539,6 +564,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         this.companyEmployeeService.deleteEmployee(userIdToDelete).subscribe({});
         window.location.reload();
         this.snackbarService.showSuccessMessage('Employee deleted successfully!')
+        this.addActivity(3,userIdToDelete,0,0);
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
@@ -645,6 +671,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.companyService.createCompany(companyData).subscribe(
       () => {
         this.snackbarService.showSuccessMessage('Company created successfully');
+        this.addActivity(10,0,0,0);
         window.location.reload();
       },
       (error) => {
@@ -671,6 +698,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.companyService.updateCompanyByUserId(this.userId, companyUpdateData).subscribe(
       () => {
         this.snackbarService.showSuccessMessage('Company updated successfully');
+        this.addActivity(11,0,0,0);
         window.location.reload();
       },
       (error) => {
@@ -838,6 +866,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.companyService.deleteCompanyByUserId(this.userId).subscribe(
       () => {
         this.snackbarService.showSuccessMessage('Company deleted successfully');
+        this.addActivity(12,0,0,0);
         window.location.reload();
       },
       (error) => {
@@ -886,18 +915,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.companyEmployeeUpdateBirthDateFormGroup.patchValue({
       birthDate: employee.birthDate
     });
-  }
-
-  toggleDarkMode() {
-    this.switchClicked = !this.switchClicked;
-
-    if (this.switchClicked) {
-      this.mode = 'dark-mode';
-      localStorage.setItem('mode', this.mode);
-    } else {
-      this.mode = 'light-mode';
-      localStorage.setItem('mode', this.mode);
-    }
   }
 
   setActiveNavLink(activeNav: string) {
@@ -1067,6 +1084,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.vehicleListingService.uploadVehicleWithImages(formData).subscribe({
       next: response => {
         console.log('Vehicle uploaded successfully:', response);
+        this.addActivity(23,0,0,response.id);
         void this.router.navigateByUrl('/user/myVehicles');
       },
       error: err => console.error('Upload failed:', err)
@@ -1147,6 +1165,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) { // true if user clicked Yes
+        this.addActivity(24,0,0,vehicle.id);
         this.vehicleListingService.deleteVehicle(vehicle.id).subscribe({
           next: response => {
             console.log('Vehicle deleted', response);

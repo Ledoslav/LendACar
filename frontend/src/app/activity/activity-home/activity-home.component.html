@@ -1,10 +1,27 @@
 <app-navbar></app-navbar>
-<div class="activity-list">
-  <h3>Recent Activities</h3>
-  <ul>
-    <li *ngFor="let activity of activities">
-      <div class="activity-time">{{ activity.time }}</div>
-      <div class="activity-desc" [innerHTML]="activity.description"></div>
-    </li>
-  </ul>
+
+<div class="{{this.mode}}">
+
+<div class="activity-container">
+  <h2>{{'ACTIVITY.FEED' | translate}}</h2>
+  <hr />
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="loading">Loading...</div>
+
+  <!-- Scrollable Activity List -->
+  <div class="scrollable-activities" *ngIf="!loading && activities.length > 0">
+    <ul class="activity-list">
+      <li *ngFor="let act of activities">
+        <div [innerHTML]="act.description"></div>
+        <small style="align-self: flex-end">{{ act.dateOfActivity | date: 'short' }}</small>
+      </li>
+    </ul>
+  </div>
+
+  <p *ngIf="!loading && activities.length === 0">No activities found.</p>
+</div>
 </div>

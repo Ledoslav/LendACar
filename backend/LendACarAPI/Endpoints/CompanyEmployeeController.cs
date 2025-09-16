@@ -208,7 +208,7 @@ namespace LendACarAPI.Endpoints
             _context.CompanyEmployees.Add(companyEmployee);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Employee added successfully.", username = newUser.Username });
+            return Ok(new { message = "Employee added successfully.", username = newUser.Username, id=newUser.Id });
         }
 
         [HttpPut("UpdateEmployee")]
@@ -261,7 +261,7 @@ namespace LendACarAPI.Endpoints
             }
 
             await _context.SaveChangesAsync();
-            return Ok(new { message = "Employee updated successfully." });
+            return Ok(new { message = "Employee updated successfully.", employee.UserId });
         }
 
 

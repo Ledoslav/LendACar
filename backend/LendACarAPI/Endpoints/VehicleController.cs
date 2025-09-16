@@ -146,8 +146,7 @@ namespace LendACarAPI.Endpoints
             var vehicles = await MyPagedList<VehicleDto>.CreateAsync(vehicleQuery, pagedParams, cancellationToken);
             Response.AddPaginationHeader(vehicles);
 
-            if (!vehicles.DataItems.Any()) return Ok(vehicles.DataItems);
-            return Ok(vehicles.DataItems);
+            return Ok(new { vehicles.TotalCount,vehicles.TotalPages, vehicles.DataItems });
         }
 
 

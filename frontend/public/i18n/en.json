@@ -251,6 +251,12 @@
     "OUR_DEALS": "Our Deals",
     "PER_DAY": "per day",
     "ALL_RIGHTS_RESERVED": "All rights reserved"
+  },
+  "ACTIVITY": {
+  "FEED": "Activity Feed"
+},
+  "SAVED":{
+    "NO_SAVED": "No saved vehicles here..."
   }
 
 }

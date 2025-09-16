@@ -251,6 +251,12 @@
     "OUR_DEALS": "Naše ponude",
     "PER_DAY": "po danu",
     "ALL_RIGHTS_RESERVED": "Sva prava zauzeta"
+  },
+  "ACTIVITY": {
+    "FEED": "Aktivnosti"
+  },
+  "SAVED":{
+    "NO_SAVED": "Nema spašenih vozila ovdje..."
   }
 
 }

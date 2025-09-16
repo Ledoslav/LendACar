@@ -125,18 +125,37 @@
       </div>
 
       <div class="deals">
-        <div (click)="prev()" id="left-arrow"><</div>
-        <div class="deal" *ngFor="let vehicle of vehicles" (click)="RouteToListing(vehicle.id)">
+        <!-- Left arrow -->
+        <div
+          (click)="prev()"
+          [id]="paging.pageNumber <= 1 ? 'left-arrow-gray' : 'left-arrow'">
+          <
+        </div>
+
+        <!-- Vehicle list -->
+        <div
+          class="deal"
+          *ngFor="let vehicle of vehicles.dataItems"
+          (click)="RouteToListing(vehicle.id)">
           <div class="deal-vehicle">
-            <img class="search-result-image" [src]="vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? vehicle.vehicleImages[0].imageUrl : 'Image-not-found.png'" alt="Image" />
+            <img
+              class="search-result-image"
+              [src]="vehicle.vehicleImages?.length ? vehicle.vehicleImages[0].imageUrl : 'Image-not-found.png'"
+              alt="Image" />
           </div>
           <div class="deal-info">
-            <p id="title">{{vehicle.title}}</p>
-            <p id="description">{{vehicle.description}}</p>
-            <p id="price">{{vehicle.pricePerDay}}$ per day</p>
+            <p id="title">{{ vehicle.title }}</p>
+            <p id="description">{{ vehicle.description.slice(0,30) }}...</p>
+            <p id="price">{{ vehicle.pricePerDay }}$ per day</p>
           </div>
         </div>
-        <div (click)="next()" id="right-arrow">></div>
+
+        <!-- Right arrow -->
+        <div
+          (click)="next()"
+          [id]="paging.pageNumber >= vehicles.totalPages ? 'right-arrow-gray' : 'right-arrow'">
+          >
+        </div>
       </div>
     </div>
 

@@ -1,1 +1,87 @@
-<app-navbar></app-navbar>
+<div class="{{this.mode}} landing-page">
+  <img class="vector" src="Vector.png" alt="Vector"/>
+  <div class="side-bar">
+    <div class="menu-item" routerLinkActive="active" routerLink="/public/home" ><img src="Home.svg" alt="Home"> <span>{{'SIDEBAR.HOME' | translate}}</span></div>
+    <div class="menu-item" routerLinkActive="active" routerLink="/activity/"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
+    <div class="menu-item" routerLinkActive="active" routerLink="/chat/"><img src="Messagesquare.svg" alt="Chats"> <span>{{'SIDEBAR.CHATS' | translate}}</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div class="menu-item" routerLinkActive="active" routerLink="/saved/"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
+    <div class="menu-item" routerLinkActive="active" routerLink="/user/profile/reservation-history"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
+    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div *ngIf="isOwner || isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.MY_COMPANY' | translate}}</span></div>
+
+    <div *ngIf="isLoggedIn && !companyAdminEmail && !isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div *ngIf="isLoggedIn && !companyAdminEmail && !isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.CREATE_COMPANY' | translate}}</span></div>
+  </div>
+
+  <div class="content">
+    <div class="nav-bar">
+      <div class="nav-left">
+        <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
+        <language-selector></language-selector>
+      </div>
+      @if (!isAppUser){
+        <div class="right-section" style="cursor: pointer;">
+          <a routerLink="/user/login" style="margin-right: 5px; text-decoration: none; font-weight: 500" >{{ "NAVBAR.LOGIN" | translate }}</a>
+          <a routerLink="/user/register" style="margin-left: 5px; text-decoration: none;font-weight: 500">{{ "NAVBAR.REGISTER" | translate }}</a>
+        </div>
+      } @else {
+        <div class="right-section" routerLink="/user/profile" style="cursor: pointer;">
+          <span class="text-wrapper-17">{{ accountService.currentUser()?.username }}</span>
+          <img *ngIf="accountService.currentUser()?.profilePhotoUrl!=null" class="profile-icon" style="border-radius: 20px" [src]="accountService.currentUser()?.profilePhotoUrl" alt="Profile">
+          <img *ngIf="accountService.currentUser()?.profilePhotoUrl==null" class="profile-icon" style="border-radius: 20px" src="/defaultProfilePic.png" alt="Profile">
+        </div>
+      }
+    </div>
+
+    <div class="content-section">
+      <div *ngIf="noSaved" class="no-company-section" >
+        <div class="no-company-title">
+          <h1 id="noCompanyTitle">{{'SAVED.NO_SAVED' | translate}}</h1>
+        </div>
+      </div>
+
+      <ng-container *ngFor="let vehicle of vehicles">
+        <div *ngIf="vehicle.isBookmarked" class="search-result">
+          <div class="search-result-image-section">
+            <div class="image-buttons">
+              <button class="carousel-btn left" (click)="prevImage(vehicle, -1)">&#60;</button>
+              <button class="carousel-btn right" (click)="nextImage(vehicle, +1)">&#62;</button>
+              <button class="carousel-btn right">
+                <img
+                  class="bookmark"
+                  [class.filled]="vehicle.isBookmarked"
+                  (click)="toggleBookmark(vehicle)"
+                  src="Bookmark.svg"
+                  alt="Bookmark"
+                />
+              </button>
+            </div>
+            <img class="search-result-image" [src]="vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? vehicle.vehicleImages[vehicle.imageIndex]?.imageUrl : 'Image-not-found.png'" alt="Search Result Image" />
+          </div>
+          <div class="search-result-info" (click)="RouteToListing(vehicle.id)">
+            <div id="vehicle-buttons">
+              <div id="vehicle-title-container">
+                <h3 class="search-result-title">{{ vehicle.title }}</h3>
+                <p id="posted-by">Posted by: {{vehicle.user.username}}</p>
+              </div>
+            </div>
+            <p class="search-result-description">
+              {{vehicle.description.slice(0,70)}}...
+            </p>
+            <p class="search-result-price">{{vehicle.pricePerDay}}KM {{'COMPANY.PER_DAY' | translate}}</p>
+            <div class="important-vehicle-info">
+              <p>{{'COMPANY.YEAR' | translate}}: {{vehicle.productionYear}}</p>
+              <p>{{'COMPANY.ENGINE_POWER' | translate}}: {{vehicle.enginePower}}</p>
+              <p>{{ vehicle.transmissionType == 1 ? ('Automatic') : ('Manual') }}</p>
+              <p>{{ vehicle.isAvailable ? ('COMPANY.NOT_AVAILABLE' | translate) : ('COMPANY.AVAILABLE' | translate) }}</p>
+              <p>{{'COMPANY.DATE_ADDED' | translate}}: {{vehicle.lastUpdated.slice(0, 10)}}</p>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+</div>
+</div>

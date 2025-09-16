@@ -22,6 +22,8 @@ export class HomeComponent implements OnInit {
   countryService=inject(CountryService);
   cityService=inject(CityService);
   translateService=inject(TranslateService);
+  edgeReachedLeft: boolean=false;
+  edgeReachedRight: boolean=false;
 
   constructor(
     private router: Router
@@ -167,19 +169,23 @@ export class HomeComponent implements OnInit {
 
   prev(){
     if(this.paging.pageNumber == 1){
+      this.edgeReachedLeft=true;
       return;
     }
 
+    this.edgeReachedLeft=false;
     this.paging.pageNumber--;
 
     this.getVehicles(this.paging);
   }
 
   next(){
-    if(this.vehicles.length < this.paging.pageSize){
+    if(this.vehicles.totalPages == this.paging.pageNumber){
+      this.edgeReachedRight=true;
       return;
     }
 
+    this.edgeReachedRight=false;
     this.paging.pageNumber++;
 
     this.getVehicles(this.paging);

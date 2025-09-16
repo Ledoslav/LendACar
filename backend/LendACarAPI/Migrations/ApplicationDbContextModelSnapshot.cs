@@ -24,6 +24,55 @@ namespace LendACarAPI.Migrations
 
             modelBuilder.HasSequence("PersonSequence");
 
+            modelBuilder.Entity("LendACarAPI.Data.Models.Activity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("DateOfActivity")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Variant")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Activitys");
+                });
+
+            modelBuilder.Entity("LendACarAPI.Data.Models.Bookmark", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bookmarks");
+                });
+
             modelBuilder.Entity("LendACarAPI.Data.Models.City", b =>
                 {
                     b.Property<int>("Id")
@@ -802,6 +851,17 @@ namespace LendACarAPI.Migrations
                     b.HasIndex("UserSecurityQuestionAnswerId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("LendACarAPI.Data.Models.Activity", b =>
+                {
+                    b.HasOne("LendACarAPI.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("LendACarAPI.Data.Models.City", b =>

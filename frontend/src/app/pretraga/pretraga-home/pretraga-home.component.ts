@@ -6,6 +6,7 @@ import {VehicleService} from '../../services/vehicle.service';
 import {FormBuilder, Validators} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import {Bookmark, BookmarkService} from '../../services/bookmark-service';
 
 @Component({
   selector: 'app-pretraga-home',
@@ -18,6 +19,7 @@ export class PretragaHomeComponent implements OnInit {
   companyEmployeeService = inject(CompanyEmployeeService);
   vehicleService = inject(VehicleService);
   translateService = inject(TranslateService);
+  bookmarkService = inject(BookmarkService);
   router = inject(Router);
 
   isFilterOpen: boolean = false;
@@ -64,13 +66,15 @@ export class PretragaHomeComponent implements OnInit {
   }
   priceFrom: number = 1;
   priceTo: number = 15000;
-  imageIndex: number = 0;
+  pageInfo:any;
+  bookmarks: Bookmark[] = [];
 
   _formBuilder = inject(FormBuilder);
 
   searchGroup = this._formBuilder.group({
     search: ['', [Validators.required]]
   });
+
 
 
   ngOnInit(): void {
@@ -139,10 +143,29 @@ export class PretragaHomeComponent implements OnInit {
 
     this.paging.search = sessionStorage.getItem('search') || '';
     this.getVehicles(this.paging);
+    this.loadBookmarks();
   }
 
   isLoggedIn: boolean = false;
   isAppUser: boolean = false;
+
+  loadBookmarks() {
+    this.bookmarkService.getBookmarks(this.userId).subscribe({
+      next: (res) => {
+        this.bookmarks = res;
+
+        // Mark vehicles that are already bookmarked
+        this.vehicles.forEach((v:any) => {
+          v.isBookmarked = this.bookmarks.some(b => b.vehicleId === v.id);
+        });
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  isBookmarked(vehicleId: number): boolean {
+    return this.bookmarks.some(b => b.vehicleId === vehicleId);
+  }
 
   openDialogFilter() {
     this.isFilterOpen = !this.isFilterOpen;
@@ -227,31 +250,22 @@ export class PretragaHomeComponent implements OnInit {
     }
   }
 
-  toggleDarkMode() {
-    this.switchClicked = !this.switchClicked;
-
-    if (this.switchClicked) {
-      this.mode = 'dark-mode';
-      localStorage.setItem('mode', this.mode);
-    } else {
-      this.mode = 'light-mode';
-      localStorage.setItem('mode', this.mode);
-    }
-  }
-
   getVehicles(paging: pagingRequest) {
     this.vehicleService.getVehicle(paging).subscribe({
-      next: (response) => {
-        this.vehicles = response.map((v: any) => ({
-          ...v,
+      next: (response:any) => {
+        this.vehicles = response.dataItems.map((x: any) => ({
+          ...x,
           imageIndex: 0
         }));
+
+        this.pageInfo = response;
+        this.loadBookmarks();
       }
     });
   }
 
   nextPage() {
-    if (this.vehicles.length < this.paging.pageSize) {
+    if (this.pageInfo.totalPages == this.paging.pageNumber) {
       return;
     }
 
@@ -307,6 +321,20 @@ export class PretragaHomeComponent implements OnInit {
   RouteToListing(vehicleId:number) {
     this.router.navigate(['/vehicle/listing/' + vehicleId]);
   }
+
+  toggleBookmark(vehicle: any) {
+    this.bookmarkService.toggleBookmark(this.userId, vehicle.id).subscribe({
+      next: () => {
+        // Toggle locally so UI updates immediately
+        vehicle.isBookmarked = !vehicle.isBookmarked;
+      },
+      error: (err) => {
+        console.error('Failed to update bookmark', err);
+      }
+    });
+  }
+
+
 
 }
 interface pagingRequest{

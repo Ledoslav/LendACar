@@ -65,7 +65,7 @@
         </div>
 
         <div class="pretraga-info">
-          <p>~{{(Math.ceil(this.vehicles.length / (this.vehicles.length/2)))*4}} {{'HOME.RESULTS_FOUND' | translate}}</p>
+          <p>{{this.pageInfo?.totalCount}} {{'HOME.RESULTS_FOUND' | translate}}</p>
         </div>
 
       </div>
@@ -124,8 +124,17 @@
             <div class="image-buttons">
               <button class="carousel-btn left" (click)="prevImage(vehicle, -1)">&#60;</button>
               <button class="carousel-btn right" (click)="nextImage(vehicle, +1)">&#62;</button>
+              <button class="carousel-btn right">
+                <img
+                  class="bookmark"
+                  [class.filled]="vehicle.isBookmarked"
+                  (click)="toggleBookmark(vehicle)"
+                  src="Bookmark.svg"
+                  alt="Bookmark"
+                />
+              </button>
             </div>
-            <img class="search-result-image" [src]="vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? vehicle.vehicleImages[vehicle.imageIndex].imageUrl : 'Image-not-found.png'" alt="Search Result Image" />
+            <img class="search-result-image" [src]="vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? vehicle.vehicleImages[vehicle.imageIndex]?.imageUrl : 'Image-not-found.png'" alt="Search Result Image" />
           </div>
           <div class="search-result-info" (click)="RouteToListing(vehicle.id)">
             <div id="vehicle-buttons">
@@ -135,7 +144,7 @@
               </div>
             </div>
             <p class="search-result-description">
-              {{vehicle.description}}
+              {{vehicle.description.slice(0,70)}}...
             </p>
             <p class="search-result-price">{{vehicle.pricePerDay}}KM {{'COMPANY.PER_DAY' | translate}}</p>
             <div class="important-vehicle-info">
@@ -153,7 +162,7 @@
     <div class="pagination">
       <div class="paginatorVehicles">
         <button (click)="prevPage()">{{'HOME.PREV' | translate}}</button>
-        <span>{{'HOME.PAGE' |translate}} {{this.paging.pageNumber}} / {{Math.ceil(this.vehicles.length / (this.vehicles.length/2))}}</span>
+        <span>{{'HOME.PAGE' |translate}} {{this.paging.pageNumber}} / {{this.pageInfo?.totalPages}}</span>
         <button (click)="nextPage()">{{'HOME.NEXT' | translate}}</button>
       </div>
     </div>

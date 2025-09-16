@@ -10,6 +10,7 @@ import { VehicleWithImagesDto } from '../../Models/VehicleDto';
 import { ReservationCreateDto, ReservationStatus } from '../../Models/ReservationDto';
 import { Country } from '../../Models/Country';
 import { City } from '../../Models/City';
+import {ActivityCreateRequest, ActivityService} from '../../services/activity-service';
 
 @Component({
   selector: 'app-reservation-form',
@@ -43,7 +44,8 @@ export class ReservationFormComponent implements OnInit {
     private countryService: CountryService,
     private cityService: CityService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private activityService: ActivityService,
   ) {}
 
   ngOnInit(): void {
@@ -104,6 +106,27 @@ export class ReservationFormComponent implements OnInit {
     this.totalPrice = this.totalDays * this.vehicle?.pricePerDay!;
   }
 
+  addActivity(_variant:number, _companyEmployeeId:number, _vehicleId:number, _newVehicleId:number){
+
+    var activity:ActivityCreateRequest = {
+      userId:Number(this.user?.id),
+      variant: _variant,
+      companyEmployeeId: _companyEmployeeId,
+      vehicleId:_vehicleId,
+      newVehicleId:_newVehicleId
+    }
+
+    this.activityService.create(activity).subscribe({
+      next:(response:any) =>{
+        console.log(response);
+      },
+      error:(err:any)=>{
+        console.log(err);
+      }
+    })
+
+  }
+
 
   cancel() {
     this.router.navigate(['/vehicle/listing/' + this.vehicleId]);
@@ -126,6 +149,8 @@ export class ReservationFormComponent implements OnInit {
       pickUpCityID: this.pickUpCityId,
       dropOffCityID: this.dropOffCityId
     };
+
+    this.addActivity(30,0,dto.vehicleID,0);
 
     this.reservationService.create(dto).subscribe({
       next: () => this.router.navigate(['/vehicle/listing/' + this.vehicleId]),

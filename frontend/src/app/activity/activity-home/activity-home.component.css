@@ -1,44 +1,174 @@
-.activity-list {
-  background: #1e1e1e;
-  border-radius: 10px;
-  width: 60%;
-  height: 40%;
-  margin-left: 25%;
-  padding: 15px;
-  margin-top: 20px;
-  color: white;
-  box-shadow: 0px 2px 6px rgba(0,0,0,0.3);
+/* === DARK MODE === */
+.dark-mode .activity-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  border-radius: 24px;
+  background: rgba(30, 30, 30, 0.6); /* semi-transparent dark glass */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 9999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #f1f1f1; /* light text */
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.activity-list h3 {
-  margin-bottom: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  border-bottom: 1px solid #333;
-  padding-bottom: 5px;
+.dark-mode .scrollable-activities {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+  border-radius: 16px;
+  background: rgba(40, 40, 40, 0.5);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+  margin-top: 1rem;
 }
 
-.activity-list ul {
+.dark-mode .scrollable-activities::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dark-mode .scrollable-activities::-webkit-scrollbar-thumb {
+  background-color: rgba(200, 200, 200, 0.3);
+  border-radius: 3px;
+}
+
+.dark-mode .scrollable-activities::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.dark-mode .activity-list {
   list-style: none;
+  padding: 0.5rem;
   margin: 0;
-  padding: 0;
 }
 
-.activity-list li {
+.dark-mode .activity-list li {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 12px;
+  justify-content: space-between;
+  align-items: center;
+  color: #f5f5f5;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.activity-time {
-  font-size: 12px;
-  color: #aaa;
-  margin-right: 10px;
-  width: 70px;
-  flex-shrink: 0;
+.dark-mode .activity-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
-.activity-desc {
-  flex: 1;
-  font-size: 14px;
+.dark-mode .error {
+  color: #ff6b6b;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.dark-mode .clear-btn {
+  margin-top: 1rem;
+  background-color: #ff3b30;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  transition: background-color 0.2s ease;
+}
+
+.dark-mode .clear-btn:hover {
+  background-color: #e0352a;
+}
+
+/* === LIGHT MODE === */
+.light-mode .activity-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 9999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #343a40;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.light-mode .scrollable-activities {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.9);
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+  margin-top: 1rem;
+}
+
+.light-mode .scrollable-activities::-webkit-scrollbar {
+  width: 6px;
+}
+
+.light-mode .scrollable-activities::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+.light-mode .scrollable-activities::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0,0,0,0.35);
+}
+
+.light-mode .activity-list {
+  list-style: none;
+  padding: 0.5rem;
+  margin: 0;
+}
+
+.light-mode .activity-list li {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.light-mode .activity-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.light-mode .error {
+  color: #ff3b30;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.light-mode .clear-btn {
+  margin-top: 1rem;
+  background-color: #ff3b30;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: background-color 0.2s ease;
+}
+
+.light-mode .clear-btn:hover {
+  background-color: #e0352a;
 }

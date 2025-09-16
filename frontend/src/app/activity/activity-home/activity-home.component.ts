@@ -1,4 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
+import {Activity, ActivityCreateRequest, ActivityService} from '../../services/activity-service';
+import {UserService} from '../../services/user.service';
+import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
 
 @Component({
   selector: 'app-activity-home',
@@ -6,18 +9,53 @@ import {Component, OnInit} from '@angular/core';
   styleUrl: './activity-home.component.css'
 })
 export class ActivityHomeComponent implements OnInit{
+  activities: Activity[] = [];
+  loading = false;
+  error: string | null = null;
 
-  ngOnInit() {
+  accountService = inject(UserService); // Inject UserService
+  authService = inject(MyAuthServiceService);
+
+  // Form fields for creating activity
+  userId:any;
+  vehicleId!: number;
+  isAppUser: boolean = false;
+  isLoggedIn: boolean = false;
+  username:any;
+  mode:string = 'light-mode';
+
+  constructor(
+    private activityService: ActivityService,
+  ) {}
+
+  ngOnInit(): void {
+    this.isLoggedIn = this.authService.isLoggedIn();
+    this.isAppUser = this.authService.isAppUser();
+
+    if (localStorage.getItem('mode') == 'dark-mode') {
+      this.mode = 'dark-mode';
+    } else {
+      this.mode = 'light-mode';
+    }
+
+    if (this.isAppUser) {
+      this.username = this.accountService.currentUser()?.username;
+      this.userId = this.accountService.currentUser()?.id;
+      this.loadActivities();
+    }
   }
 
-  activities: { time: string; description: string }[] = [
-    {
-      time: '10:15 AM',
-      description: 'New employee Jamie Oliver added to company <b>Sparkwave</b>.'
-    },
-    {
-      time: '10:20 AM',
-      description: 'New vehicle <b>BMW E46</b> added to <b>Sparkwave</b> by Jamie Oliver.'
-    }
-  ];
+  /** Fetch activities from backend */
+  loadActivities(): void {
+    this.loading = true;
+    this.error = null;
+    this.activityService.getAll(this.userId).subscribe({
+      next: activities => {
+        this.activities = activities;
+        this.loading = false;
+        console.log(this.activities);
+      },
+      error: err => console.error("Failed to load activities", err)
+    });
+  }
 }

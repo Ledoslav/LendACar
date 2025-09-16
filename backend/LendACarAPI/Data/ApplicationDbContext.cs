@@ -38,6 +38,8 @@ namespace LendACarAPI.Data
         public DbSet<SecurityQuestion> SecurityQuestions { get; set; }
         public DbSet<UserSecurityQuestionAnswer> UserSecurityQuestionAnswers { get; set; }
         public DbSet<Reservation> Reservations {  get; set; }
+        public DbSet<Activity> Activitys { get; set; }
+        public DbSet<Bookmark> Bookmarks { get; set; }
 
 
 
