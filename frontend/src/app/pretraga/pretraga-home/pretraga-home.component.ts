@@ -7,6 +7,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import {Bookmark, BookmarkService} from '../../services/bookmark-service';
+import {ActivityCreateRequest, ActivityService} from '../../services/activity-service';
 
 @Component({
   selector: 'app-pretraga-home',
@@ -21,6 +22,7 @@ export class PretragaHomeComponent implements OnInit {
   translateService = inject(TranslateService);
   bookmarkService = inject(BookmarkService);
   router = inject(Router);
+  activityService = inject(ActivityService)
 
   isFilterOpen: boolean = false;
   last24Active: boolean = false;
@@ -327,6 +329,11 @@ export class PretragaHomeComponent implements OnInit {
       next: () => {
         // Toggle locally so UI updates immediately
         vehicle.isBookmarked = !vehicle.isBookmarked;
+        if(vehicle.isBookmarked){
+          this.addActivity(20,0,vehicle.id,0);
+        }else{
+          this.addActivity(22,0,vehicle.id,0);
+        }
       },
       error: (err) => {
         console.error('Failed to update bookmark', err);
@@ -334,7 +341,26 @@ export class PretragaHomeComponent implements OnInit {
     });
   }
 
+  addActivity(_variant:number, _companyEmployeeId:number, _vehicleId:number, _newVehicleId:number){
 
+    var activity:ActivityCreateRequest = {
+      userId:this.userId,
+      variant: _variant,
+      companyEmployeeId: _companyEmployeeId,
+      vehicleId:_vehicleId,
+      newVehicleId:_newVehicleId
+    }
+
+    this.activityService.create(activity).subscribe({
+      next:(response:any) =>{
+        console.log(response);
+      },
+      error:(err:any)=>{
+        console.log(err);
+      }
+    })
+
+  }
 
 }
 interface pagingRequest{
