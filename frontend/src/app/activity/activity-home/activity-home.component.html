@@ -1,27 +1,25 @@
 <app-navbar></app-navbar>
 
-<div class="{{this.mode}}">
+<div class="{{ mode }}">
+  <div class="activity-container">
+    <h2>{{ 'ACTIVITY.FEED' | translate }}</h2>
+    <hr />
 
-<div class="activity-container">
-  <h2>{{'ACTIVITY.FEED' | translate}}</h2>
-  <hr />
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <div *ngIf="loading">Loading...</div>
 
-  <!-- Error Message -->
-  <div *ngIf="error" class="error">{{ error }}</div>
+    <div class="scrollable-activities" *ngIf="!loading && activities.length > 0">
+      <ul class="activity-list">
+        <li *ngFor="let act of activities">
+          <div [innerHTML]="act.description"></div>
+          <small style="align-self: flex-end">{{ act.dateOfActivity | date: 'short' }}</small>
+        </li>
+      </ul>
+    </div>
 
-  <!-- Loading Indicator -->
-  <div *ngIf="loading">Loading...</div>
+    <p *ngIf="!loading && activities.length === 0">No activities found.</p>
 
-  <!-- Scrollable Activity List -->
-  <div class="scrollable-activities" *ngIf="!loading && activities.length > 0">
-    <ul class="activity-list">
-      <li *ngFor="let act of activities">
-        <div [innerHTML]="act.description"></div>
-        <small style="align-self: flex-end">{{ act.dateOfActivity | date: 'short' }}</small>
-      </li>
-    </ul>
+    <button *ngIf="!loading && activities.length > 0" class="clear-btn" (click)="clearAllActivities()">Clear All Activities</button>
   </div>
+</div>
 
-  <p *ngIf="!loading && activities.length === 0">No activities found.</p>
-</div>
-</div>

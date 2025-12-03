@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, AfterViewInit} from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
@@ -8,6 +8,7 @@ import {CountryService} from '../../services/country.service';
 import {CityService} from '../../services/city.service';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-home',
@@ -46,7 +47,7 @@ export class HomeComponent implements OnInit {
     pageSize: 3,
     search: '',
     fromPrice: 1,
-    toPrice: 15000,
+    toPrice: 70,
     last24Active: false,
     last7Active: false,
     lastMonthActive: false,
@@ -57,9 +58,15 @@ export class HomeComponent implements OnInit {
     otherFuelActive: false,
     specialOffersActive: false,
     specialEquipmentActive: false,
+    availableActive: false,
     allDateActive: false,
     allTransActive: false,
-    allFuelActive: false
+    allFuelActive: false,
+    pickUpLocation: 0,
+    dropOffLocation: 0,
+    country: 0,
+    pickUpDate: '',
+    dropOffDate: ''
   }
   countries: any = [];
   cities: any = [];
@@ -84,7 +91,7 @@ export class HomeComponent implements OnInit {
       this.isEmployee = false;
 
       console.log(this.isOwner, this.isEmployee);
-
+      this.getVehicles(this.paging);
       return;
     }
 
@@ -134,7 +141,6 @@ export class HomeComponent implements OnInit {
       }
     })
 
-    this.paging.search = sessionStorage.getItem('search') || '';
     this.getVehicles(this.paging);
     this.loadCountries();
   }
@@ -153,14 +159,10 @@ export class HomeComponent implements OnInit {
 
   openSearch() {
 
-    let country = this.formGroup.value.country;
-    let pickUpLocation = this.formGroup.value.pickUpLocation;
-    let returnLocation = this.formGroup.value.returnLocation;
-
     sessionStorage.setItem('search', String(this.searchGroup.value.search));
-    sessionStorage.setItem('country', String(JSON.stringify(country)));
-    sessionStorage.setItem('pickUpLocation', String(JSON.stringify(pickUpLocation)));
-    sessionStorage.setItem('returnLocation', String(JSON.stringify(returnLocation)));
+    sessionStorage.setItem('country', String(JSON.stringify(this.formGroup.value.country)));
+    sessionStorage.setItem('pickUpLocation', String(JSON.stringify(this.formGroup.value.pickUpLocation)));
+    sessionStorage.setItem('returnLocation', String(JSON.stringify(this.formGroup.value.returnLocation)));
     sessionStorage.setItem('pickUpDate', String(this.formGroup.value.pickUpDate));
     sessionStorage.setItem('returnDate', String(this.formGroup.value.returnDate));
 
@@ -192,9 +194,11 @@ export class HomeComponent implements OnInit {
   }
 
   getVehicles(paging: pagingRequest){
+
     this.vehicleService.getVehicle(paging).subscribe({
       next: (response) =>{
         this.vehicles = response;
+        console.log(this.vehicles)
       }
     })
   }
@@ -221,18 +225,6 @@ loadCities(countryId: number){
       }
     });
 }
-
-  toggleDarkMode() {
-    this.switchClicked = !this.switchClicked;
-
-    if (this.switchClicked) {
-      this.mode = 'dark-mode';
-      localStorage.setItem('mode', this.mode);
-    } else {
-      this.mode = 'light-mode';
-      localStorage.setItem('mode', this.mode);
-    }
-  }
 
   search(){
     this.paging.search = String(this.searchGroup.value.search);
@@ -264,4 +256,10 @@ interface pagingRequest{
   allDateActive: boolean;
   allTransActive: boolean;
   allFuelActive: boolean;
+  availableActive: boolean;
+  pickUpLocation: number;
+  dropOffLocation: number;
+  country: number;
+  pickUpDate: string;
+  dropOffDate: string;
 }

@@ -14,7 +14,6 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSlider, MatSliderRangeThumb, MatSliderThumb} from "@angular/material/slider";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
-
 @NgModule({
   declarations: [
     PretragaHomeComponent
@@ -38,7 +37,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
     MatSliderThumb,
     MatSliderRangeThumb,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
   ]
 })
 export class PretragaModule { }

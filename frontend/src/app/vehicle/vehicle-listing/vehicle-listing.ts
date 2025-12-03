@@ -4,6 +4,8 @@ import { VehicleListingService } from '../../services/vehiclelisting.service';
 import { UserDto } from '../../Models/UserDto';
 import { VehicleDto, VehicleWithImagesDto } from '../../Models/VehicleDto';
 import { ActivatedRoute, Router } from '@angular/router';
+import {ChatService} from '../../services/chat-service';
+import {ChatApiService} from '../../services/chat-api.service';
 
 @Component({
   selector: 'app-vehicle-listing',
@@ -22,7 +24,9 @@ export class VehicleListingComponent implements OnInit {
     private userService: UserService,
     private vehicleService: VehicleListingService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private chatService: ChatService,
+    private chatApi: ChatApiService
   ) {}
 
   ngOnInit(): void {
@@ -160,6 +164,7 @@ export class VehicleListingComponent implements OnInit {
 
 
   openChat() {
+    this.chatApi.startChat(Number(this.vehicle?.userID),Number(this.user?.id),this.vehicle?.user.username,String(this.vehicle?.title),Number(this.vehicle?.id),this.vehicle?.user.profilePhotoUrl, String(this.user?.username), String(this.user?.profilePhotoUrl)).subscribe({})
     this.router.navigate(['/chat']);
   }
 }

@@ -21,6 +21,14 @@
       <div class="nav-left">
         <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
         <language-selector></language-selector>
+
+        <div class="nav-admin-login" routerLinkActive="active" routerLink="/admin">
+          <p>Admin Dashboard</p>
+        </div>
+
+        <div class="nav-admin-login" routerLinkActive="active" routerLink="/employee">
+          <p>Employee Dashboard</p>
+        </div>
       </div>
       @if (!isAppUser){
         <div class="right-section" style="cursor: pointer;">

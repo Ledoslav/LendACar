@@ -52,8 +52,9 @@
 
         <!--Image of company-->
         <div *ngIf="hasCompany && isLoggedIn" class="company-image-section">
-          <div class="company-image">
+          <div class="company-image" (click)="ImageZoom()">
             <img id="companyImage" *ngIf="avatarPreviewUrl" [src]="avatarPreviewUrl" alt="Company Avatar" />
+            <img id="magnifying-glass-svg" src="magnifying-glass-10-svgrepo-com.svg" alt="Magnifying glass svg" />
           </div>
 
           <div class="company-image-title">
@@ -62,6 +63,12 @@
             <p style="font-family: 'Century Gothic'; margin:0;">{{'COMPANY.EMAIL' | translate}}: {{this.companyEmail}}</p>
             <p style="font-family: 'Century Gothic'; margin:0;">{{'COMPANY.PHONE' | translate}}: {{this.companyPhone}}</p>
           </div>
+        </div>
+
+        <!--Image Zoom-->
+        <div *ngIf="zoomClicked" class="company-image-zoom">
+          <img id="companyImageZoomed" *ngIf="avatarPreviewUrl" [src]="avatarPreviewUrl" alt="Company Avatar Zoom"/>
+          <button class="company-create-button-form" (click)="ImageZoom()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
         </div>
 
         <!--CREATE COMPANY---------------------------------------------------------------------------------------------------------------->

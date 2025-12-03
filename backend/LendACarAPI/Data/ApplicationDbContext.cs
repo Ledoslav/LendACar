@@ -40,7 +40,8 @@ namespace LendACarAPI.Data
         public DbSet<Reservation> Reservations {  get; set; }
         public DbSet<Activity> Activitys { get; set; }
         public DbSet<Bookmark> Bookmarks { get; set; }
-
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

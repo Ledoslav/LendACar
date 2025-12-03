@@ -54,6 +54,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   hasVehicles: boolean = false;
   isVehicleFormVisible: boolean = false;
   isVehicleUpdateFormVisible: boolean = false;
+  zoomClicked: boolean = false;
 
   // Company data
   companyName = '';
@@ -1299,6 +1300,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       reader.onload = () => this.uploadedImages.push(reader.result as string);
       reader.readAsDataURL(file);
     }
+  }
+
+  ImageZoom() {
+    this.zoomClicked = !this.zoomClicked;
   }
 }
 

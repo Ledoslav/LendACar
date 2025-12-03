@@ -2,13 +2,13 @@
   <img class="vector" src="Vector.png" />
   <div class="side-bar">
     <div class="menu-item" routerLinkActive="active" routerLink="/public/home" ><img src="Home.svg" alt="Home"> <span>{{'SIDEBAR.HOME' | translate}}</span></div>
-    <div class="menu-item" routerLinkActive="active" routerLink="/activity/"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
-    <div class="menu-item" routerLinkActive="active" routerLink="/chat"><img src="Messagesquare.svg" alt="Chats"> <span>{{'SIDEBAR.CHATS' | translate}}</span></div>
-    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item" routerLinkActive="active" routerLink="/saved/"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
-    <div class="menu-item" routerLinkActive="active" routerLink="/user/profile/reservation-history"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
-    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="menu-item" routerLinkActive="active" routerLink="/activity/"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="menu-item" routerLinkActive="active" routerLink="/chat"><img src="Messagesquare.svg" alt="Chats"> <span>{{'SIDEBAR.CHATS' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="menu-item" routerLinkActive="active" routerLink="/saved/"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="menu-item" routerLinkActive="active" routerLink="/user/profile/reservation-history"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
 
     <div *ngIf="isOwner || isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div *ngIf="isOwner || isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.MY_COMPANY' | translate}}</span></div>
@@ -22,6 +22,14 @@
       <div class="nav-left">
         <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
         <language-selector></language-selector>
+
+        <div class="nav-admin-login" routerLinkActive="active" routerLink="/admin">
+          <p>Admin Dashboard</p>
+        </div>
+
+        <div class="nav-admin-login" routerLinkActive="active" routerLink="/employee">
+          <p>Employee Dashboard</p>
+        </div>
       </div>
       @if (!isAppUser){
         <div class="right-section" style="cursor: pointer;">
@@ -125,19 +133,17 @@
       </div>
 
       <div class="deals">
-        <!-- Left arrow -->
         <div
           (click)="prev()"
           [id]="paging.pageNumber <= 1 ? 'left-arrow-gray' : 'left-arrow'">
           <
         </div>
 
-        <!-- Vehicle list -->
         <div
           class="deal"
           *ngFor="let vehicle of vehicles.dataItems"
           (click)="RouteToListing(vehicle.id)">
-          <div class="deal-vehicle">
+          <div *ngIf="vehicle" class="deal-vehicle">
             <img
               class="search-result-image"
               [src]="vehicle.vehicleImages?.length ? vehicle.vehicleImages[0].imageUrl : 'Image-not-found.png'"
@@ -146,11 +152,10 @@
           <div class="deal-info">
             <p id="title">{{ vehicle.title }}</p>
             <p id="description">{{ vehicle.description.slice(0,30) }}...</p>
-            <p id="price">{{ vehicle.pricePerDay }}$ per day</p>
+            <p id="price">{{ vehicle.pricePerDay }}KM per day</p>
           </div>
         </div>
 
-        <!-- Right arrow -->
         <div
           (click)="next()"
           [id]="paging.pageNumber >= vehicles.totalPages ? 'right-arrow-gray' : 'right-arrow'">
@@ -169,6 +174,21 @@
         <div>
           <h3 class="footer-title">©2025 SparkWave. {{'HOME.ALL_RIGHTS_RESERVED' | translate}}.</h3>
         </div>
+      </div>
+
+      <div class="about-us-section">
+        <div>
+          <p style="font-size: 20px; font-weight: bold;">{{'HOME.ABOUT_US_TITLE' | translate}}:</p>
+          <p>{{'HOME.ABOUT_US' | translate}}</p>
+        </div>
+        <div>
+          <p style="font-size: 20px; font-weight: bold;">{{'HOME.CONTACT_US' | translate}}:</p>
+          <p>TEL: +387 62 593 964</p>
+          <p>TEL2: +387 60 435 542 5</p>
+        </div>
+        <div>
+          <p style="font-size: 20px; font-weight: bold;">{{'HOME.OUR_OFFICE_LOCATIONS' | translate}}</p>
+          <div class="embed-map-fixed"><div class="embed-map-container"><iframe class="embed-map-frame" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=300&height=200&hl=en&q=Dzemala%20Bijedica%2099&t=&z=10&ie=UTF8&iwloc=B&output=embed"></iframe><a href="https://sprunkiretake.net" style="font-size:2px!important;color:gray!important;position:absolute;bottom:0;left:0;z-index:1;max-height:1px;overflow:hidden">sprunki retake</a></div><style>.embed-map-fixed{position:relative;text-align:right;width:300px;height:200px;}.embed-map-container{overflow:hidden;background:none!important;width:300px;height:200px;}.embed-map-frame{width:300px!important;height:200px!important;}</style></div>        </div>
       </div>
     </footer>
 </div>

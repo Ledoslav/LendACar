@@ -22,9 +22,15 @@ interface pagingRequest{
   otherFuelActive: boolean;
   specialOffersActive: boolean;
   specialEquipmentActive: boolean;
+  availableActive:boolean;
   allDateActive: boolean;
   allTransActive: boolean;
   allFuelActive: boolean;
+  pickUpLocation: number;
+  dropOffLocation: number;
+  country: number;
+  pickUpDate: string;
+  dropOffDate: string;
 }
 
 @Injectable({
@@ -61,6 +67,10 @@ export class VehicleService{
       .set('DieselActive', String(paging.dieselActive))
       .set('OtherFuelActive', String(paging.otherFuelActive))
       .set('SpecialOffersActive', String(paging.specialOffersActive))
+      .set('AvailableActive', paging.availableActive)
+      .set('PickUpLocation', paging.pickUpLocation)
+      .set('DropOffLocation', paging.dropOffLocation)
+      .set('Country', paging.country)
       .set('SpecialEquipmentActive', String(paging.specialEquipmentActive));
 
     return this.http.get<VehicleDto[]>(this.baseUrl + 'Vehicle/get', { params });

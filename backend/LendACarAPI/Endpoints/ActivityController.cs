@@ -123,8 +123,7 @@ namespace LendACarAPI.Endpoints
             }
 
 
-            // DELETE: api/activity
-            [HttpDelete]
+            [HttpDelete("all")]
             public async Task<IActionResult> DeleteAllActivities()
             {
                 var all = await _context.Activitys.ToListAsync();
@@ -133,6 +132,26 @@ namespace LendACarAPI.Endpoints
                     _context.Activitys.RemoveRange(all);
                     await _context.SaveChangesAsync();
                 }
+                return NoContent();
+            }
+
+            [HttpDelete]
+            public async Task<IActionResult> DeleteAllActivities([FromQuery] int userId)
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                    return NotFound($"User with id {userId} not found.");
+
+                var userActivities = await _context.Activitys
+                    .Where(a => a.UserId == userId)
+                    .ToListAsync();
+
+                if (!userActivities.Any())
+                    return NotFound($"No activities found for user with id {userId}.");
+
+                _context.Activitys.RemoveRange(userActivities);
+                await _context.SaveChangesAsync();
+
                 return NoContent();
             }
         }

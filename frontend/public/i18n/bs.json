@@ -248,15 +248,29 @@
     "FORM_DROP_LOCATION": "Mjesto dostave",
     "FORM_PICKUP_DATE": "Datum preuzimanja",
     "FORM_DROP_DATE": "Datum dostave",
-    "OUR_DEALS": "Naše ponude",
+    "OUR_DEALS": "Jeftine ponude",
     "PER_DAY": "po danu",
-    "ALL_RIGHTS_RESERVED": "Sva prava zauzeta"
+    "ALL_RIGHTS_RESERVED": "Sva prava zauzeta",
+    "ABOUT_US_TITLE": "O nama",
+    "ABOUT_US": "Mi smo kompanija sa sjedištem u Bosni i Hercegovini posvećena tome da svaki klik dovede do pravog vozila — kombinirajući kvalitet i pristupačne cijene.",
+    "CONTACT_US": "Kontaktirajte nas",
+    "OUR_OFFICE_LOCATIONS": "Lokacija naše poslovnice",
+    "AVAILABLE": "Dostupno",
+    "CLEAR_FILTERS": "Očisti Filtere",
+    "NO_RESULTS": "Nema rezultata..."
   },
   "ACTIVITY": {
     "FEED": "Aktivnosti"
   },
   "SAVED":{
     "NO_SAVED": "Nema spašenih vozila ovdje..."
+  },
+  "CHATS": {
+    "NO_CHATS": "Trenutno nemate chatova",
+    "CHATS": "Chatovi",
+    "SELECT_CHAT": "Izaberite chat",
+    "TODAY": "Danas u",
+    "SEND": "Posalji"
   }
 
 }

@@ -28,18 +28,15 @@ export class ActivityService {
 
   constructor(private http: HttpClient) {}
 
-  /** Get activities for a specific user */
   getAll(userId: number): Observable<Activity[]> {
     return this.http.get<Activity[]>(`${this.baseUrl}Activity?userId=${userId}`);
   }
 
-  /** Create a new activity */
   create(request: ActivityCreateRequest): Observable<Activity> {
     return this.http.post<Activity>(`${this.baseUrl}Activity`, request);
   }
 
-  /** Delete all activities */
-  deleteAll(): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}Activity`);
+  deleteById(userId: number) {
+    return this.http.delete(`${this.baseUrl}Activity?userId=${userId}`);
   }
 }

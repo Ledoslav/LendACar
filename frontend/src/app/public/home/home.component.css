@@ -103,7 +103,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  top: 90%;
+  top: 62%;
   object-fit: cover;
   width: 100%;
   height: 100vh;
@@ -525,7 +525,81 @@
   border-radius: 10px 10px 0 0;
 }
 
+.dark-mode .about-us-section{
+  width: 100%;
+  height: 300px;
+  background-color: black;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.dark-mode .about-us-section>div{
+  width: 30%;
+  height: 100%;
+}
+.dark-mode .about-us-section>div>p{
+  font-family: "Century Gothic";
+  margin: auto;
+  padding: 20px;
+}
+
+.dark-mode #map {
+  flex-shrink: 0;
+}
+
+.dark-mode .nav-admin-login{
+  background-color: #23272f;
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.dark-mode .nav-admin-login:hover{
+  cursor: pointer;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+}
+
+.dark-mode language-selector{
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.55);
+}
+
+.dark-mode language-selector:hover{
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+}
+
+.dark-mode .nav-admin-login>p{
+  margin: 0;
+}
+
 /*LIGHT MODE*/
+
+.light-mode .about-us-section{
+  width: 100%;
+  height: 300px;
+  background-color: #007bff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.light-mode .about-us-section>div{
+  width: 30%;
+  height: 100%;
+}
+.light-mode .about-us-section>div>p{
+  font-family: "Century Gothic";
+  margin: auto;
+  padding: 20px;
+}
+
+.light-mode #map {
+  flex-shrink: 0;
+}
 
 .light-mode .circle-element {
   width: 800px;
@@ -743,7 +817,7 @@
   width: 100%;
   max-width: 800px;
   background: #343a40;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
   padding: 20px;
   border-radius: 10px;
   margin-top: -100px;
@@ -1049,6 +1123,34 @@
   align-items: center;
   margin: 0 10px;
   transition: 200ms;
+}
+
+.light-mode .nav-admin-login{
+  background-color: #23272f;
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.light-mode .nav-admin-login:hover{
+  cursor: pointer;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+}
+
+.light-mode language-selector{
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.55);
+}
+
+.light-mode language-selector:hover{
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+}
+
+.light-mode .nav-admin-login>p{
+  margin: 0;
 }
 
 

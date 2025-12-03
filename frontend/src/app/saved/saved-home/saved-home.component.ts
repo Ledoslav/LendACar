@@ -35,7 +35,7 @@ export class SavedHomeComponent implements OnInit {
   employee: any;
   paging: pagingRequest = {
     pageNumber: 1,
-    pageSize: 4,
+    pageSize: 100,
     search: '',
     fromPrice: 1,
     toPrice: 15000,
@@ -51,7 +51,13 @@ export class SavedHomeComponent implements OnInit {
     specialEquipmentActive: false,
     allDateActive: false,
     allTransActive: false,
-    allFuelActive: false
+    allFuelActive: false,
+    availableActive: false,
+    pickUpLocation: 0,
+    dropOffLocation: 0,
+    country: 0,
+    pickUpDate: '',
+    dropOffDate: ''
   }
   pageInfo:any;
   bookmarks: Bookmark[] = [];
@@ -93,8 +99,6 @@ export class SavedHomeComponent implements OnInit {
       }
     });
 
-
-    this.paging.search = sessionStorage.getItem('search') || '';
     this.getVehicles(this.paging);
     this.loadBookmarks();
   }
@@ -110,7 +114,6 @@ export class SavedHomeComponent implements OnInit {
           ...x,
           imageIndex: 0
         }));
-
         this.pageInfo = response;
         this.loadBookmarks();
       }
@@ -228,7 +231,13 @@ interface pagingRequest{
   otherFuelActive: boolean;
   specialOffersActive: boolean;
   specialEquipmentActive: boolean;
+  availableActive: boolean;
   allDateActive: boolean;
   allTransActive: boolean;
   allFuelActive: boolean;
+  pickUpLocation: number;
+  dropOffLocation: number;
+  country: number;
+  pickUpDate: string;
+  dropOffDate: string;
 }

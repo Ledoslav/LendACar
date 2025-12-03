@@ -50,4 +50,10 @@ public class MyPagingRequest
     public bool OtherFuelActive { get; set; } = false;
     public bool SpecialOffersActive { get; set; } = false;
     public bool SpecialEquipmentActive { get; set; } = false;
+    public bool AvailableActive { get; set; } = false;
+    public int PickUpLocation { get; set; } = 0;
+    public int DropOffLocation { get; set; } = 0;
+    public int Country { get; set; } = 0;
+    public DateTime PickUpDate { get; set; }
+    public DateTime DropOffDate { get; set; }
 }

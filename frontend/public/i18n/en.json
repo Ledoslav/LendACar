@@ -248,15 +248,29 @@
     "FORM_DROP_LOCATION": "Drop-Off Location",
     "FORM_PICKUP_DATE": "Pick-Up Date",
     "FORM_DROP_DATE": "Drop-Off Date",
-    "OUR_DEALS": "Our Deals",
+    "OUR_DEALS": "Affordable Deals",
     "PER_DAY": "per day",
-    "ALL_RIGHTS_RESERVED": "All rights reserved"
+    "ALL_RIGHTS_RESERVED": "All rights reserved",
+    "ABOUT_US_TITLE": "About us",
+    "ABOUT_US": "We are a Bosnia & Herzegovina–based company dedicated to ensuring every click leads you to the right vehicle — combining quality with affordable prices.",
+    "CONTACT_US": "Contact Us",
+    "OUR_OFFICE_LOCATIONS": "Our office location",
+    "AVAILABLE": "Available",
+    "CLEAR_FILTERS": "Clear Filters",
+    "NO_RESULTS": "No results found..."
   },
   "ACTIVITY": {
   "FEED": "Activity Feed"
 },
   "SAVED":{
     "NO_SAVED": "No saved vehicles here..."
+  },
+  "CHATS": {
+    "NO_CHATS": "No chats yet.",
+    "CHATS": "Chats",
+    "SELECT_CHAT": "Select a chat",
+    "TODAY": "Today at",
+    "SEND": "Send"
   }
 
 }

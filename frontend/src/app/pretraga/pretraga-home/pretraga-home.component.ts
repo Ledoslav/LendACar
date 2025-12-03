@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import {Bookmark, BookmarkService} from '../../services/bookmark-service';
 import {ActivityCreateRequest, ActivityService} from '../../services/activity-service';
+import {CityService} from '../../services/city.service';
 
 @Component({
   selector: 'app-pretraga-home',
@@ -22,6 +23,7 @@ export class PretragaHomeComponent implements OnInit {
   translateService = inject(TranslateService);
   bookmarkService = inject(BookmarkService);
   router = inject(Router);
+  cityService=inject(CityService);
   activityService = inject(ActivityService)
 
   isFilterOpen: boolean = false;
@@ -38,6 +40,7 @@ export class PretragaHomeComponent implements OnInit {
   allDateActive: boolean = false;
   allTransActive: boolean = false;
   allFuelActive: boolean = false;
+  availableActive: boolean = false;
   isEmployee: boolean = false;
   isOwner: boolean = false;
   vehicles: any = [];
@@ -64,12 +67,21 @@ export class PretragaHomeComponent implements OnInit {
     specialEquipmentActive: false,
     allDateActive: false,
     allTransActive: false,
-    allFuelActive: false
+    allFuelActive: false,
+    availableActive: false,
+    pickUpLocation: 0,
+    dropOffLocation: 0,
+    country: 0,
+    pickUpDate: '',
+    dropOffDate: ''
   }
   priceFrom: number = 1;
   priceTo: number = 15000;
   pageInfo:any;
   bookmarks: Bookmark[] = [];
+  cities: any;
+  countryId: number = 0;
+  noVehiclesFlag: boolean = false;
 
   _formBuilder = inject(FormBuilder);
 
@@ -82,6 +94,11 @@ export class PretragaHomeComponent implements OnInit {
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
     this.isAppUser = this.authService.isAppUser();
+
+    this.paging.search = sessionStorage.getItem('search') || '';
+    this.paging.pickUpLocation = this.getCityId(sessionStorage.getItem('pickUpLocation') || '');
+    this.loadCities();
+    this.getVehicles(this.paging);
 
     this.userId = this.accountService.currentUser()?.id;
 
@@ -105,12 +122,14 @@ export class PretragaHomeComponent implements OnInit {
           this.companyAdminEmail = response2;
           this.isOwner = true;
           this.isEmployee = false;
+          this.loadBookmarks();
           return;
         }
 
         console.log("No company admin email found");
         this.isOwner = false;
         this.isEmployee = false;
+        this.loadBookmarks();
         return;
       }
     });
@@ -126,12 +145,15 @@ export class PretragaHomeComponent implements OnInit {
         if (this.employee.companyAdminEmail != null && this.employee.company.companyName == null) {
           this.isOwner = true;
           this.isEmployee = false;
+          this.loadBookmarks();
         } else if (this.employee.companyAdminEmail == null && this.employee.company.companyName != null) {
           this.isEmployee = true;
           this.isOwner = false;
+          this.loadBookmarks();
         } else if (this.employee.companyAdminEmail != null && this.employee.company.companyName != null) {
           this.isOwner = true;
           this.isEmployee = false;
+          this.loadBookmarks();
         } else {
           this.isOwner = false;
           this.isEmployee = false;
@@ -145,7 +167,6 @@ export class PretragaHomeComponent implements OnInit {
 
     this.paging.search = sessionStorage.getItem('search') || '';
     this.getVehicles(this.paging);
-    this.loadBookmarks();
   }
 
   isLoggedIn: boolean = false;
@@ -172,6 +193,20 @@ export class PretragaHomeComponent implements OnInit {
   openDialogFilter() {
     this.isFilterOpen = !this.isFilterOpen;
   }
+
+  getCityId(json: any): number {
+    if (!json || json.trim() === '') {
+      return 0;
+    }
+
+    try {
+      const obj = JSON.parse(json);
+      return obj?.id ?? 0;
+    } catch {
+      return 0;
+    }
+  }
+
 
   toggleAllActive(divActive: string) {
     if (divActive == "allDate") {
@@ -249,6 +284,9 @@ export class PretragaHomeComponent implements OnInit {
     } else if (divActive == "specialEquipment") {
       this.specialEquipmentActive = !this.specialEquipmentActive;
       this.paging.specialEquipmentActive = this.specialEquipmentActive;
+    }else if (divActive == "available"){
+      this.availableActive = !this.availableActive;
+      this.paging.availableActive = this.availableActive;
     }
   }
 
@@ -260,10 +298,30 @@ export class PretragaHomeComponent implements OnInit {
           imageIndex: 0
         }));
 
+        console.log(this.vehicles);
+        this.noVehiclesFlag = this.vehicles.length == 0;
+
         this.pageInfo = response;
-        this.loadBookmarks();
+
+        if(this.isLoggedIn){
+          this.loadBookmarks();
+        }
       }
     });
+  }
+
+  loadCities(): void {
+    this.cityService.GetAllCities().subscribe({
+      next: (response:any) => {
+        this.cities = response;
+        console.log(this.cities);
+      }
+    })
+  }
+
+  getCityNameById(id: number): string {
+    const city = this.cities?.find((c:any) => c.id === id);
+    return city ? city.name : '';
   }
 
   nextPage() {
@@ -316,8 +374,8 @@ export class PretragaHomeComponent implements OnInit {
 
   search(){
     this.paging.search = String(this.searchGroup.value.search);
+    this.paging.pageNumber = 1;
     this.getVehicles(this.paging);
-    console.log(this.paging);
   }
 
   RouteToListing(vehicleId:number) {
@@ -362,6 +420,78 @@ export class PretragaHomeComponent implements OnInit {
 
   }
 
+  clearAllFilters() {
+    this.last24Active = false;
+    this.last7Active = false;
+    this.lastMonthActive = false;
+    this.manualTransActive = false;
+    this.automaticTransActive = false;
+    this.petrolActive = false;
+    this.dieselActive = false;
+    this.otherFuelActive = false;
+    this.specialOffersActive = false;
+    this.specialEquipmentActive = false;
+    this.allDateActive = false;
+    this.allTransActive = false;
+    this.allFuelActive = false;
+    this.availableActive = false;
+    this.priceFrom = 1;
+    this.priceTo = 15000;
+
+    this.paging.last24Active = false;
+    this.paging.last7Active = false;
+    this.paging.lastMonthActive = false;
+    this.paging.manualTransActive = false;
+    this.paging.automaticTransActive = false;
+    this.paging.petrolActive = false;
+    this.paging.dieselActive = false;
+    this.paging.otherFuelActive = false;
+    this.paging.specialOffersActive = false;
+    this.paging.specialEquipmentActive = false;
+    this.paging.allDateActive = false;
+    this.paging.allTransActive = false;
+    this.paging.allFuelActive = false;
+    this.paging.availableActive = false;
+    this.paging.fromPrice = 1;
+    this.paging.toPrice = 15000;
+    this.paging.pageNumber = 1;
+
+    this.getVehicles(this.paging);
+  }
+
+  share(platform: string, vehicle: any) {
+    const url = encodeURIComponent(`https://your-domain.com/vehicle/${vehicle.id}`);
+
+    const text = encodeURIComponent(
+      `Check out this cool vehicle I found!\n\n` +
+      `Title: ${vehicle.title}\n` +
+      `Posted by: ${vehicle.user.username}\n` +
+      `Transmission: ${vehicle.transmissionType == 1 ? 'Automatic' : 'Manual'}\n` +
+      `Year: ${vehicle.productionYear}\n` +
+      `Engine Power: ${vehicle.enginePower} HP\n` +
+      `Price: ${vehicle.pricePerDay} KM/day\n`
+    );
+
+    let shareUrl = '';
+
+    switch(platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+        break;
+    }
+
+    window.open(shareUrl, '_blank', 'width=600,height=400');
+  }
+
 }
 interface pagingRequest{
   pageNumber: number;
@@ -382,5 +512,11 @@ interface pagingRequest{
   allDateActive: boolean;
   allTransActive: boolean;
   allFuelActive: boolean;
+  pickUpLocation: number;
+  dropOffLocation: number;
+  country: number;
+  pickUpDate: string;
+  dropOffDate: string;
+  availableActive:boolean;
 }
 

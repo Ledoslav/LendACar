@@ -40,6 +40,10 @@ namespace LendACarAPI.Endpoints
                 .Include(v => v.VehicleImages)
                 .AsQueryable();
 
+            var company = db.CompanyEmployees
+                .Include(v => v.Company)
+                .AsQueryable();
+
 
             if (!string.IsNullOrWhiteSpace(pagedParams.Search))
             {
@@ -102,13 +106,23 @@ namespace LendACarAPI.Endpoints
             if (pagedParams.SpecialOffersActive)
             {
                 // Example: price discount < 0, or some other condition
-                query = query.Where(v => v.PricePerDay < 100); // example placeholder
+                query = query.Where(v => v.PricePerDay < 100);
             }
 
             // --- Special equipment ---
             if (pagedParams.SpecialEquipmentActive)
             {
                 query = query.Where(v => v.TowingHitch); // or other equipment flags
+            }
+
+            if (pagedParams.PickUpLocation != 0)
+            {
+                query = query.Where(v => v.CityID == pagedParams.PickUpLocation);
+            }
+
+            if(pagedParams.AvailableActive)
+            {
+                query = query.Where(v => !v.Avaliable);
             }
 
             // --- Select DTO ---

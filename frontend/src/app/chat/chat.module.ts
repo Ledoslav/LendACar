@@ -4,6 +4,7 @@ import { ChatRoutingModule } from './chat-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {UserModule} from "../user/user.module";
 import {FormsModule} from '@angular/forms';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import {FormsModule} from '@angular/forms';
     CommonModule,
     ChatRoutingModule,
     UserModule,
-    FormsModule
+    FormsModule,
+    TranslatePipe
   ]
 })
 export class ChatModule { }

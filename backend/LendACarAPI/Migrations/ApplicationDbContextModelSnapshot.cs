@@ -73,6 +73,74 @@ namespace LendACarAPI.Migrations
                     b.ToTable("Bookmarks");
                 });
 
+            modelBuilder.Entity("LendACarAPI.Data.Models.Chat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomerAvatar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DealerAvatar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DealerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DealerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Vehicle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Chats");
+                });
+
+            modelBuilder.Entity("LendACarAPI.Data.Models.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("ChatMessages");
+                });
+
             modelBuilder.Entity("LendACarAPI.Data.Models.City", b =>
                 {
                     b.Property<int>("Id")
@@ -864,6 +932,15 @@ namespace LendACarAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("LendACarAPI.Data.Models.ChatMessage", b =>
+                {
+                    b.HasOne("LendACarAPI.Data.Models.Chat", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("LendACarAPI.Data.Models.City", b =>
                 {
                     b.HasOne("LendACarAPI.Data.Models.Country", "Country")
@@ -1141,6 +1218,11 @@ namespace LendACarAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("UserSecurityQuestionAnswer");
+                });
+
+            modelBuilder.Entity("LendACarAPI.Data.Models.Chat", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("LendACarAPI.Data.Models.Vehicle", b =>

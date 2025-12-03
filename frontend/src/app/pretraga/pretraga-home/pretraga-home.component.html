@@ -2,15 +2,15 @@
   <img class="vector" src="Vector.png" alt="Vector"/>
   <div class="side-bar">
     <div class="menu-item" routerLinkActive="active" routerLink="/public/home" ><img src="Home.svg" alt="Home"> <span>{{'SIDEBAR.HOME' | translate}}</span></div>
-    <div class="menu-item" routerLinkActive="active" routerLink="/activity/"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
-    <div class="menu-item" routerLinkActive="active" routerLink="/chat/"><img src="Messagesquare.svg" alt="Chats"> <span>{{'SIDEBAR.CHATS' | translate}}</span></div>
-    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div class="menu-item" routerLinkActive="active" routerLink="/saved/"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
-    <div class="menu-item" routerLinkActive="active" routerLink="/user/profile/reservation-history"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
-    <div class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
-    <div *ngIf="isOwner || isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
-    <div *ngIf="isOwner || isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.MY_COMPANY' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="menu-item" routerLinkActive="active" routerLink="/activity/"><img src="Bell.svg" alt="Activity"> <span>{{'SIDEBAR.ACTIVITY' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="menu-item" routerLinkActive="active" routerLink="/chat/"><img src="Messagesquare.svg" alt="Chats"> <span>{{'SIDEBAR.CHATS' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="menu-item" routerLinkActive="active" routerLink="/saved/"><img src="Bookmark.svg" alt="Saved"> <span>{{'SIDEBAR.SAVED' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="menu-item" routerLinkActive="active" routerLink="/user/profile/reservation-history"><img src="Key.svg" alt="Reserved"> <span>{{'SIDEBAR.RESERVED' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" routerLinkActive="active" routerLink="/user/myVehicles" class="menu-item"><img src="Truck.svg" alt="My Vehicles"> <span>{{'SIDEBAR.MY_VEHICLES' | translate}}</span></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="separator"><img src="Minus.svg" alt="Separator"></div>
+    <div *ngIf="isOwner || isEmployee || isLoggedIn" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.MY_COMPANY' | translate}}</span></div>
 
     <div *ngIf="isLoggedIn && !companyAdminEmail && !isEmployee" class="separator"><img src="Minus.svg" alt="Separator"></div>
     <div *ngIf="isLoggedIn && !companyAdminEmail && !isEmployee" class="menu-item" routerLinkActive="active" routerLink="/company/dashboard"><img src="User.svg" alt="Create Company"> <span>{{'SIDEBAR.CREATE_COMPANY' | translate}}</span></div>
@@ -21,6 +21,15 @@
       <div class="nav-left">
         <div class="logo"><img src="LAC_logo.png" alt="Logo"></div>
         <language-selector></language-selector>
+
+        <div class="nav-admin-login" routerLinkActive="active" routerLink="/admin">
+          <p>Admin Dashboard</p>
+        </div>
+
+        <div class="nav-admin-login" routerLinkActive="active" routerLink="/employee">
+          <p>Employee Dashboard</p>
+        </div>
+
       </div>
       @if (!isAppUser){
         <div class="right-section" style="cursor: pointer;">
@@ -100,6 +109,7 @@
             <p>Other</p>
             <div id="specialOffers" [class.active] = "specialOffersActive" (click)="toggleActive('specialOffers')"><p>{{'HOME.INCLUDE_SPECIAL_OFFERS' | translate}}</p></div>
             <div id="specialEquipment" [class.active] = "specialEquipmentActive" (click)="toggleActive('specialEquipment')"><p>{{'HOME.HAS_SPECIAL_EQUIPMENT' | translate}}</p></div>
+            <div id="available" [class.active]="availableActive" (click)="toggleActive('available')"><p>{{'HOME.AVAILABLE' | translate}}</p></div>
           </div>
         </div>
 
@@ -115,6 +125,8 @@
             <input [(ngModel)]="priceTo" (ngModelChange)="setPriceTo($event)" value="15000" matSliderEndThumb>
           </mat-slider>
         </div>
+
+      <button class="clear-btn" (click)="clearAllFilters()">{{'HOME.CLEAR_FILTERS' | translate}}</button>
     </div>
 
     <div class="content-section">
@@ -151,15 +163,36 @@
               <p>{{'COMPANY.YEAR' | translate}}: {{vehicle.productionYear}}</p>
               <p>{{'COMPANY.ENGINE_POWER' | translate}}: {{vehicle.enginePower}}</p>
               <p>{{ vehicle.transmissionType == 1 ? ('Automatic') : ('Manual') }}</p>
-              <p>{{ vehicle.isAvailable ? ('COMPANY.NOT_AVAILABLE' | translate) : ('COMPANY.AVAILABLE' | translate) }}</p>
+              <p>{{ vehicle.avaliable ? ('COMPANY.NOT_AVAILABLE' | translate) : ('COMPANY.AVAILABLE' | translate) }}</p>
               <p>{{'COMPANY.DATE_ADDED' | translate}}: {{vehicle.lastUpdated.slice(0, 10)}}</p>
+              <p>{{ this.getCityNameById(vehicle.cityID) }}</p>
+
+              <div class="important-vehicle-info-share">
+                <button (click)="share('facebook', vehicle); $event.stopPropagation();" >
+                  <i class="fa-brands fa-facebook"></i>
+                </button>
+                <button (click)="share('twitter', vehicle); $event.stopPropagation();">
+                  <i class="fa-brands fa-twitter"></i>
+                </button>
+                <button (click)="share('linkedin', vehicle); $event.stopPropagation();">
+                  <i class="fa-brands fa-linkedin"></i>
+                </button>
+                <button (click)="share('whatsapp', vehicle); $event.stopPropagation();">
+                  <i class="fa-brands fa-whatsapp"></i>
+                </button>
+              </div>
+
             </div>
           </div>
         </div>
       </ng-container>
     </div>
 
-    <div class="pagination">
+    <div class="no-vehicles-section" *ngIf="this.noVehiclesFlag">
+      <p>{{'HOME.NO_RESULTS' | translate}}</p>
+    </div>
+
+    <div *ngIf="!this.noVehiclesFlag" class="pagination">
       <div class="paginatorVehicles">
         <button (click)="prevPage()">{{'HOME.PREV' | translate}}</button>
         <span>{{'HOME.PAGE' |translate}} {{this.paging.pageNumber}} / {{this.pageInfo?.totalPages}}</span>

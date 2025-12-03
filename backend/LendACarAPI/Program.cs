@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using LendACarAPI.Hubs;
 using LendACarAPI.Services;
 using DotNetEnv;
+using LendACarAPI.Data.Models;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", false)
@@ -55,6 +56,7 @@ app.UseCors("AllowEverything");  // Apply the CORS policy
 app.UseAuthorization();
 
 app.MapHub<PollHub>("/pollHub");
+app.MapHub<ChatHub>("/chatHub");
 
 app.MapControllers();
 

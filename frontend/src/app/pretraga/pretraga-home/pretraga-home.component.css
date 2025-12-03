@@ -167,7 +167,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   object-fit: cover;
   z-index: 0;
   opacity: 0.5;
@@ -263,8 +263,8 @@
   position: absolute;
   top:35%;
   right: 22%;
-  width: 500px;
-  height: 500px;
+  width: 600px;
+  height: 700px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
@@ -435,16 +435,16 @@
   z-index: 1;
 }
 
-.dark-mode #all,#allFuel,#allTrans,#last24,#last7,#lastMonth,#petrol,#diesel,#otherFuel,#manualTrans,#automaticTrans,#specialOffers,#specialEquipment{
+.dark-mode #all,#allFuel,#allTrans,#last24,#last7,#lastMonth,#petrol,#diesel,#otherFuel,#manualTrans,#automaticTrans,#specialOffers,#specialEquipment,#available{
   background-color: white;
 }
 
-.dark-mode #all:hover,#allFuel:hover,#allTrans:hover,#last24:hover,#last7:hover,#lastMonth:hover,#petrol:hover,#diesel:hover,#otherFuel:hover,#manualTrans:hover,#automaticTrans:hover,#specialOffers:hover,#specialEquipment:hover{
+.dark-mode #all:hover,#allFuel:hover,#allTrans:hover,#last24:hover,#last7:hover,#lastMonth:hover,#petrol:hover,#diesel:hover,#otherFuel:hover,#manualTrans:hover,#automaticTrans:hover,#specialOffers:hover,#specialEquipment:hover,#available:hover{
   background-color: #e1e1e1;
   cursor: pointer;
 }
 
-.dark-mode #all.active,#allFuel.active,#allTrans.active,#last24.active,#last7.active,#lastMonth.active,#petrol.active,#diesel.active,#otherFuel.active,#manualTrans.active,#automaticTrans.active,#specialOffers.active,#specialEquipment.active{
+.dark-mode #all.active,#allFuel.active,#allTrans.active,#last24.active,#last7.active,#lastMonth.active,#petrol.active,#diesel.active,#otherFuel.active,#manualTrans.active,#automaticTrans.active,#specialOffers.active,#specialEquipment.active,#available.active{
   background-color: #e1e1e1;
 }
 
@@ -751,6 +751,34 @@
   height: 100%;
 }
 
+.dark-mode .nav-admin-login{
+  background-color: #23272f;
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.dark-mode .nav-admin-login:hover{
+  cursor: pointer;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+}
+
+.dark-mode language-selector{
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.55);
+}
+
+.dark-mode language-selector:hover{
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+}
+
+.dark-mode .nav-admin-login>p{
+  margin: 0;
+}
+
 .dark-mode .search-result-price{
   width: 100%;
   height: 100%;
@@ -779,17 +807,37 @@
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: flex-start;
   align-items: center;
   color: #eeeeee;
   font-weight: bold;
+}
+
+.dark-mode .important-vehicle-info-share{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: auto;
+}
+
+.dark-mode .important-vehicle-info-share>button{
+  background-color: #007bff;
+  border-radius: 50%;
+  margin: 0 10px;
+  width: 40px;
+  height: 40px;
+  transition: 150ms;
+}
+
+.dark-mode .important-vehicle-info-share>button:hover{
+  width: 45px;
+  height: 45px;
 }
 
 .dark-mode .important-vehicle-info>p{
   margin: 0 10px;
   border: 1px solid #eeeeee;
   border-radius: 25px;
-  padding: 5px;
+  padding: 5px 10px;
 }
 
 .dark-mode .search-bar-form{
@@ -869,6 +917,38 @@
   position: absolute;
   display: flex;
   justify-content: space-between;
+}
+
+.dark-mode .clear-btn {
+  margin-top: 1rem;
+  background-color: #ff3b30;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  transition: background-color 0.2s ease;
+}
+
+.dark-mode .clear-btn:hover {
+  background-color: #e0352a;
+}
+
+.dark-mode .no-vehicles-section{
+  width: 100%;
+  height: 200px;
+  padding: 50px;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dark-mode .no-vehicles-section>p{
+  font-family: "Century Gothic";
+  font-size: 30px;
 }
 
 /*LIGHT MODE*/
@@ -1304,16 +1384,16 @@
   z-index: 1;
 }
 
-.light-mode #all,#allFuel,#allTrans,#last24,#last7,#lastMonth,#petrol,#diesel,#otherFuel,#manualTrans,#automaticTrans,#specialOffers,#specialEquipment{
+.light-mode #all,#allFuel,#allTrans,#last24,#last7,#lastMonth,#petrol,#diesel,#otherFuel,#manualTrans,#automaticTrans,#specialOffers,#specialEquipment,#available{
   background-color: white;
 }
 
-.light-mode #all:hover,#allFuel:hover,#allTrans:hover,#last24:hover,#last7:hover,#lastMonth:hover,#petrol:hover,#diesel:hover,#otherFuel:hover,#manualTrans:hover,#automaticTrans:hover,#specialOffers:hover,#specialEquipment:hover{
+.light-mode #all:hover,#allFuel:hover,#allTrans:hover,#last24:hover,#last7:hover,#lastMonth:hover,#petrol:hover,#diesel:hover,#otherFuel:hover,#manualTrans:hover,#automaticTrans:hover,#specialOffers:hover,#specialEquipment:hover,#available:hover{
   background-color: #e1e1e1;
   cursor: pointer;
 }
 
-.light-mode #all.active,#allFuel.active,#allTrans.active,#last24.active,#last7.active,#lastMonth.active,#petrol.active,#diesel.active,#otherFuel.active,#manualTrans.active,#automaticTrans.active,#specialOffers.active,#specialEquipment.active{
+.light-mode #all.active,#allFuel.active,#allTrans.active,#last24.active,#last7.active,#lastMonth.active,#petrol.active,#diesel.active,#otherFuel.active,#manualTrans.active,#automaticTrans.active,#specialOffers.active,#specialEquipment.active,#available.active{
   background-color: #e1e1e1;
 }
 
@@ -1640,7 +1720,7 @@
   margin: 0 10px;
   border: 1px solid #007bff;
   border-radius: 25px;
-  padding: 5px;
+  padding: 5px 10px;
 }
 
 .light-mode .search-bar-form{
@@ -1709,6 +1789,87 @@
 .light-mode .bookmark.filled {
   filter: invert(42%) sepia(78%) saturate(600%) hue-rotate(180deg);
   /* or use your preferred effect to “fill” the icon */
+}
+
+.light-mode .clear-btn {
+  margin-top: 1rem;
+  background-color: #ff3b30;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: background-color 0.2s ease;
+}
+
+.light-mode .clear-btn:hover {
+  background-color: #e0352a;
+}
+
+.light-mode .nav-admin-login{
+  background-color: #23272f;
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.light-mode .nav-admin-login:hover{
+  cursor: pointer;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+}
+
+.light-mode language-selector{
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.55);
+}
+
+.light-mode language-selector:hover{
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+}
+
+.light-mode .nav-admin-login>p{
+  margin: 0;
+}
+
+.light-mode .no-vehicles-section{
+  width: 100%;
+  height: 200px;
+  padding: 50px;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.light-mode .no-vehicles-section>p{
+  font-family: "Century Gothic";
+  font-size: 30px;
+}
+
+.light-mode .important-vehicle-info-share{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: auto;
+}
+
+.light-mode .important-vehicle-info-share>button{
+  background-color: #23272f;
+  border-radius: 50%;
+  margin: 0 10px;
+  width: 40px;
+  height: 40px;
+  transition: 150ms;
+}
+
+.light-mode .important-vehicle-info-share>button:hover{
+  width: 45px;
+  height: 45px;
 }
 
 /* Responsive Design */
