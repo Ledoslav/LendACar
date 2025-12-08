@@ -20,7 +20,6 @@ namespace LendACarAPI.Endpoints
             _db = db;
         }
 
-        // GET: api/chat?userId=123
         [HttpGet]
         public async Task<IActionResult> GetUserChats([FromQuery] int userId)
         {
@@ -32,7 +31,6 @@ namespace LendACarAPI.Endpoints
             return Ok(chats);
         }
 
-        // GET: api/chat/5/messages
         [HttpGet("{chatId}/messages")]
         public async Task<IActionResult> GetMessages(int chatId)
         {
@@ -46,7 +44,6 @@ namespace LendACarAPI.Endpoints
             return Ok(chat.Messages.OrderBy(m => m.Timestamp));
         }
 
-        // POST: api/chat/start
         [HttpPost("start")]
         public async Task<IActionResult> StartChat([FromBody] StartChatDto dto)
         {
@@ -78,7 +75,6 @@ namespace LendACarAPI.Endpoints
             return Ok(chat);
         }
 
-        // POST: api/chat/send
         [HttpPost("send")]
         public async Task<IActionResult> SendMessage([FromBody] ChatMessage message)
         {
@@ -93,7 +89,6 @@ namespace LendACarAPI.Endpoints
             chat.Messages.Add(message);
             await _db.SaveChangesAsync();
 
-            // IMPORTANT: senderId must be sent!
             await _hubContext.Clients.Group($"chat-{message.ChatId}")
                 .SendAsync("ReceiveMessage", new
                 {
@@ -106,7 +101,6 @@ namespace LendACarAPI.Endpoints
             return Ok(message);
         }
 
-        // DELETE: api/chat/5
         [HttpDelete("{chatId}")]
         public async Task<IActionResult> DeleteChat(int chatId)
         {

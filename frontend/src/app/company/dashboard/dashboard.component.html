@@ -88,28 +88,89 @@
               <mat-step [stepControl]="basicInfoFormGroup">
                 <form [formGroup]="basicInfoFormGroup">
                   <ng-template matStepLabel>{{'COMPANY.COMPANY_BASIC_INFO_TITLE' | translate}}</ng-template>
+
+                  <!-- Company Name -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.COMPANY_NAME' | translate}}</mat-label>
                     <input matInput placeholder="e.g. Google" formControlName="companyName" required>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyName')?.hasError('required')">
+                      {{"ERROR.COMPANY_NAME_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyName')?.hasError('minlength')">
+                      {{"ERROR.MIN_LENGTH_2" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyName')?.hasError('maxlength')">
+                      {{"ERROR.MAX_LENGTH_50" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyName')?.hasError('pattern')">
+                      {{"ERROR.INVALID_FORMAT" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Phone -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.COMPANY_PHONE' | translate}}</mat-label>
                     <input matInput placeholder="e.g. 387-123-456" formControlName="companyPhone" required>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyPhone')?.hasError('required')">
+                      {{"ERROR.PHONE_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyPhone')?.hasError('pattern')">
+                      {{"ERROR.INVALID_PHONE" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Email -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.COMPANY_EMAIL' | translate}}</mat-label>
-                    <input matInput placeholder="e.g. 3k4t2@example.com" formControlName="companyEmail" required>
+                    <input matInput placeholder="e.g. example@example.com" formControlName="companyEmail" required>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyEmail')?.hasError('required')">
+                      {{"ERROR.EMAIL_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyEmail')?.hasError('email')">
+                      {{"ERROR.INVALID_EMAIL" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Address -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.COMPANY_ADDRESS' | translate}}</mat-label>
-                    <input matInput placeholder="e.g. 1 Main St, New York, NY" formControlName="companyAddress" required>
+                    <input matInput placeholder="e.g. 1 Main St" formControlName="companyAddress" required>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyAddress')?.hasError('required')">
+                      {{"ERROR.ADDRESS_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyAddress')?.hasError('minlength')">
+                      {{"ERROR.MIN_LENGTH_5" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyAddress')?.hasError('maxlength')">
+                      {{"ERROR.MAX_LENGTH_100" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyAddress')?.hasError('pattern')">
+                      {{"ERROR.INVALID_FORMAT" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Description -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.COMPANY_DESCRIPTION' | translate}} </mat-label>
-                    <textarea matInput placeholder="e.g. We are a company that specializes in electronics" formControlName="companyDescription" required></textarea>
+                    <textarea matInput placeholder="e.g. We specialize in..." formControlName="companyDescription" required></textarea>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyDescription')?.hasError('required')">
+                      {{"ERROR.DESCRIPTION_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyDescription')?.hasError('minlength')">
+                      {{"ERROR.MIN_LENGTH_5" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyDescription')?.hasError('maxlength')">
+                      {{"ERROR.MAX_LENGTH_100" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoFormGroup.get('companyDescription')?.hasError('pattern')">
+                      {{"ERROR.INVALID_FORMAT" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
                   <div>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext [disabled]="basicInfoFormGroup.invalid">
+                      {{'COMPANY.STEPPER_NEXT' | translate}}
+                    </button>
                   </div>
                 </form>
               </mat-step>
@@ -122,15 +183,28 @@
                   <p class="verificationText">{{'COMPANY.VERIFICATION_INSTRUCTIONS' | translate}}:</p>
 
                   <label class="custom-file-upload">
-                    <div class="custom-file-upload-button">{{'COMPANY.VERIFICATION_UPLOAD_BUTTON' | translate}}</div>
+                    <div class="custom-file-upload-button">
+                      {{'COMPANY.VERIFICATION_UPLOAD_BUTTON' | translate}}
+                    </div>
                     <input class="fileInput" accept="application/pdf" type="file" (change)="onFileSelected($event)">
                     {{ this.fileName }}
                   </label>
 
+                  <mat-error *ngIf="this.isFileSelected ? verificationFormGroup.valid : verificationFormGroup.invalid">
+                    {{"ERROR.VERIFICATION_REQUIRED" | translate}}
+                  </mat-error>
+
                   <div>
-                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
-                    <button *ngIf="this.isFileSelected" class="company-create-button-form" (click)="openCompanyPdf()">{{'COMPANY.VERIFICATION_VIEW_FILE_BUTTON' | translate}}</button>
+                    <button class="company-create-button-form" matStepperPrevious>
+                      {{'COMPANY.STEPPER_BACK' | translate}}
+                    </button>
+                    <button class="company-create-button-form" matStepperNext [disabled]="!this.isFileSelected">
+                      {{'COMPANY.STEPPER_NEXT' | translate}}
+                    </button>
+
+                    <button *ngIf="this.isFileSelected" class="company-create-button-form" (click)="openCompanyPdf()">
+                      {{'COMPANY.VERIFICATION_VIEW_FILE_BUTTON' | translate}}
+                    </button>
                   </div>
                 </form>
               </mat-step>
@@ -139,6 +213,8 @@
               <mat-step [stepControl]="avatarFormGroup">
                 <form [formGroup]="avatarFormGroup">
                   <ng-template matStepLabel>{{'COMPANY.AVATAR_TITLE' | translate}}</ng-template>
+
+
 
                   <div class="container">
                     <ng-container *ngIf="!showCropper && !companyAvatar">
@@ -189,9 +265,13 @@
                     </div>
                   </div>
 
+                  <mat-error *ngIf="!companyAvatar">
+                    {{"ERROR.AVATAR_REQUIRED" | translate}}
+                  </mat-error>
+
                   <div>
                     <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext [disabled]="!companyAvatar">{{'COMPANY.STEPPER_NEXT' | translate}}</button>
                   </div>
                 </form>
               </mat-step>
@@ -203,7 +283,7 @@
                 <div>
                   <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
                   <button class="company-create-button-form" (click)="stepper.reset(); resetForm()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
-                  <button class="company-create-button-form" (click)="createCompany();stepper.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                  <button class="company-create-button-form" [disabled]="!this.isFileSelected || !companyAvatar || basicInfoFormGroup.invalid"  (click)="createCompany();stepper.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
                 </div>
               </mat-step>
             </mat-stepper>
@@ -226,29 +306,95 @@
               /* Basic info */
               <mat-step [stepControl]="basicInfoUpdateFormGroup">
                 <form [formGroup]="basicInfoUpdateFormGroup">
-                  <ng-template matStepLabel>{{'COMPANY.COMPANY_BASIC_INFO_TITLE' | translate}}</ng-template>
+                  <ng-template matStepLabel>{{ 'COMPANY.COMPANY_BASIC_INFO_TITLE' | translate }}</ng-template>
+
+                  <!-- Company Name -->
                   <mat-form-field>
-                    <mat-label>{{'COMPANY.COMPANY_NAME' | translate}}</mat-label>
+                    <mat-label>{{ 'COMPANY.COMPANY_NAME' | translate }}</mat-label>
                     <input matInput placeholder="e.g. Google" formControlName="companyName" required>
+
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyName')?.hasError('required')">
+                      {{"ERROR.COMPANY_NAME_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyName')?.hasError('minlength')">
+                      {{"ERROR.MIN_LENGTH_2" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyName')?.hasError('maxlength')">
+                      {{"ERROR.MAX_LENGTH_50" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyName')?.hasError('pattern')">
+                      {{"ERROR.INVALID_FORMAT" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Phone -->
                   <mat-form-field>
-                    <mat-label>{{'COMPANY.COMPANY_PHONE' | translate}}</mat-label>
+                    <mat-label>{{ 'COMPANY.COMPANY_PHONE' | translate }}</mat-label>
                     <input matInput placeholder="e.g. 387-123-456" formControlName="companyPhone" required>
+
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyPhone')?.hasError('required')">
+                      {{"ERROR.PHONE_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyPhone')?.hasError('pattern')">
+                      {{"ERROR.INVALID_PHONE" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Email -->
                   <mat-form-field>
-                    <mat-label>{{'COMPANY.COMPANY_EMAIL' | translate}}</mat-label>
-                    <input matInput placeholder="e.g. 3k4t2@example.com" formControlName="companyEmail" required>
+                    <mat-label>{{ 'COMPANY.COMPANY_EMAIL' | translate }}</mat-label>
+                    <input matInput placeholder="e.g. example@example.com" formControlName="companyEmail" required>
+
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyEmail')?.hasError('required')">
+                      {{"ERROR.EMAIL_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyEmail')?.hasError('email')">
+                      {{"ERROR.INVALID_EMAIL" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Address -->
                   <mat-form-field>
-                    <mat-label>{{'COMPANY.COMPANY_ADDRESS' | translate}}</mat-label>
-                    <input matInput placeholder="e.g. 1 Main St, New York, NY" formControlName="companyAddress" required>
+                    <mat-label>{{ 'COMPANY.COMPANY_ADDRESS' | translate }}</mat-label>
+                    <input matInput placeholder="e.g. 1 Main St" formControlName="companyAddress" required>
+
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyAddress')?.hasError('required')">
+                      {{"ERROR.ADDRESS_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyAddress')?.hasError('minlength')">
+                      {{"ERROR.MIN_LENGTH_5" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyAddress')?.hasError('maxlength')">
+                      {{"ERROR.MAX_LENGTH_100" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyAddress')?.hasError('pattern')">
+                      {{"ERROR.INVALID_FORMAT" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Description -->
                   <mat-form-field>
-                    <mat-label>{{'COMPANY.COMPANY_DESCRIPTION' | translate}}</mat-label>
-                    <textarea matInput placeholder="e.g. We are a company that specializes in electronics" formControlName="companyDescription" required></textarea>
+                    <mat-label>{{ 'COMPANY.COMPANY_DESCRIPTION' | translate }}</mat-label>
+                    <textarea matInput placeholder="e.g. We specialize in..." formControlName="companyDescription" required></textarea>
+
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyDescription')?.hasError('required')">
+                      {{"ERROR.DESCRIPTION_REQUIRED" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyDescription')?.hasError('minlength')">
+                      {{"ERROR.MIN_LENGTH_5" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyDescription')?.hasError('maxlength')">
+                      {{"ERROR.MAX_LENGTH_100" | translate}}
+                    </mat-error>
+                    <mat-error *ngIf="basicInfoUpdateFormGroup.get('companyDescription')?.hasError('pattern')">
+                      {{"ERROR.INVALID_FORMAT" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
                   <div>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" matStepperNext [disabled]="basicInfoUpdateFormGroup.invalid">
+                      {{ 'COMPANY.STEPPER_NEXT' | translate }}
+                    </button>
                   </div>
                 </form>
               </mat-step>
@@ -261,15 +407,29 @@
                   <p class="verificationText">{{'COMPANY.VERIFICATION_INSTRUCTIONS' | translate}}</p>
 
                   <label class="custom-file-upload" style="text-decoration: underline;">
-                    <div class="custom-file-upload-button">{{'COMPANY.VERIFICATION_UPLOAD_BUTTON' | translate}}</div>
+                    <div class="custom-file-upload-button">
+                      {{'COMPANY.VERIFICATION_UPLOAD_BUTTON' | translate}}
+                    </div>
                     <input class="fileInput" accept="application/pdf" type="file" (change)="onFileSelected($event)">
                     {{ this.fileName }}
                   </label>
 
+                  <!-- mat-error like in CREATE form -->
+                  <mat-error *ngIf="!this.isFileSelected">
+                    {{"ERROR.VERIFICATION_REQUIRED" | translate}}
+                  </mat-error>
+
                   <div>
-                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
-                    <button *ngIf="this.isFileSelected" class="company-create-button-form" (click)="openCompanyPdf()">{{'COMPANY.VERIFICATION_VIEW_FILE_BUTTON' | translate}}</button>
+                    <button class="company-create-button-form" matStepperPrevious>
+                      {{'COMPANY.STEPPER_BACK' | translate}}
+                    </button>
+                    <button class="company-create-button-form" matStepperNext [disabled]="!this.isFileSelected">
+                      {{'COMPANY.STEPPER_NEXT' | translate}}
+                    </button>
+
+                    <button *ngIf="this.isFileSelected" class="company-create-button-form" (click)="openCompanyPdf()">
+                      {{'COMPANY.VERIFICATION_VIEW_FILE_BUTTON' | translate}}
+                    </button>
                   </div>
                 </form>
               </mat-step>
@@ -328,9 +488,17 @@
                     </div>
                   </div>
 
+                  <mat-error *ngIf="!companyAvatar">
+                    {{"ERROR.AVATAR_REQUIRED" | translate}}
+                  </mat-error>
+
                   <div>
-                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" matStepperPrevious>
+                      {{'COMPANY.STEPPER_BACK' | translate}}
+                    </button>
+                    <button class="company-create-button-form" matStepperNext [disabled]="!companyAvatar">
+                      {{'COMPANY.STEPPER_NEXT' | translate}}
+                    </button>
                   </div>
                 </form>
               </mat-step>
@@ -342,7 +510,7 @@
                 <div>
                   <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
                   <button class="company-create-button-form" (click)="stepperUpdate.reset(); resetForm()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
-                  <button class="company-create-button-form" (click)="updateCompany();stepperUpdate.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                  <button class="company-create-button-form" [disabled]="!this.isFileSelected || !companyAvatar || basicInfoUpdateFormGroup.invalid" (click)="updateCompany();stepperUpdate.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
                 </div>
               </mat-step>
             </mat-stepper>
@@ -442,27 +610,71 @@
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_FIRST_NAME' | translate}}</mat-label>
                     <input matInput placeholder="e.g. John" formControlName="firstName" required>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('firstName')?.hasError('required')">
+                      {{"ERROR.FIRST_NAME_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('firstName')?.hasError('pattern')">
+                      {{"ERROR.PATTERN_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_LAST_NAME' | translate}}</mat-label>
                     <input matInput placeholder="e.g. Doe" formControlName="lastName" required>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('lastName')?.hasError('required')">
+                      {{"ERROR.LAST_NAME_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('lastName')?.hasError('pattern')">
+                      {{"ERROR.PATTERN_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_PHONE' | translate}}</mat-label>
                     <input matInput placeholder="e.g. 387-123-456" formControlName="phoneNumber" required>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('phoneNumber')?.hasError('required')">
+                      {{"ERROR.PHONE_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('phoneNumber')?.hasError('pattern')">
+                      {{"ERROR.VALID_PHONE_NUMBER" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_EMAIL' | translate}}</mat-label>
                     <textarea matInput placeholder="e.g. johndoe@gmail.com" formControlName="email" required></textarea>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('email')?.hasError('required')">
+                      {{"ERROR.EMAIL_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('email')?.hasError('email')">
+                      {{"ERROR.INVALID_EMAIL" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_POSITION' | translate}}</mat-label>
                     <input matInput placeholder="e.g. Programmer" formControlName="title" required>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('title')?.hasError('required')">
+                      {{"ERROR.JOB_TITLE_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyEmployeeFormGroup.get('title')?.hasError('pattern')">
+                      {{"ERROR.PATTERN_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
 
                   <div>
                     <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" [disabled]="companyEmployeeFormGroup.invalid" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
                   </div>
                 </form>
               </mat-step>
@@ -475,13 +687,23 @@
                     <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS_FROM' | translate}}</mat-label>
                     <input matInput [ngxTimepicker]="startPicker" formControlName="startTime" readonly>
                     <ngx-material-timepicker #startPicker></ngx-material-timepicker>
+
+                    <mat-error *ngIf="workingHoursFormGroup.get('startTime')?.hasError('required')">
+                      {{"ERROR.START_TIME_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
 
                   <mat-form-field appearance="outline">
                     <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS_TO' | translate}}</mat-label>
                     <input matInput [ngxTimepicker]="endPicker" formControlName="endTime" readonly>
                     <ngx-material-timepicker #endPicker></ngx-material-timepicker>
+
+                    <mat-error *ngIf="workingHoursFormGroup.get('endTime')?.hasError('required')">
+                      {{"ERROR.END_TIME_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
 
                   <div class="days-checkboxes">
                     <mat-checkbox formControlName="monday">{{'COMPANY.EMPLOYEE_ADD_FORM_MONDAY' | translate}}</mat-checkbox>
@@ -495,7 +717,7 @@
 
                   <div>
                     <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" [disabled]="workingHoursFormGroup.invalid" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
                   </div>
                 </form>
               </mat-step>
@@ -509,11 +731,16 @@
                     <input matInput [matDatepicker]="picker" formControlName="birthDate">
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
+
+                    <mat-error *ngIf="companyEmployeeBirthDateFormGroup.get('birthDate')?.hasError('required')">
+                      {{"ERROR.BIRTH_DATE_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
 
                   <div>
                     <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" [disabled]="companyEmployeeBirthDateFormGroup.invalid" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
                   </div>
                 </form>
               </mat-step>
@@ -525,7 +752,7 @@
                 <div>
                   <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
                   <button class="company-create-button-form" (click)="stepperAddEmployeeForm.reset()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
-                  <button class="company-create-button-form" (click)="addEmployee();stepperAddEmployeeForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                  <button class="company-create-button-form" [disabled]="companyEmployeeBirthDateFormGroup.invalid || workingHoursFormGroup.invalid || companyEmployeeFormGroup.invalid" (click)="addEmployee();stepperAddEmployeeForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
                 </div>
               </mat-step>
             </mat-stepper>
@@ -546,50 +773,118 @@
               <mat-step [stepControl]="companyUpdateEmployeeFormGroup">
                 <form [formGroup]="companyUpdateEmployeeFormGroup">
                   <ng-template matStepLabel>{{'COMPANY.EMPLOYEE_ADD_FORM_BASIC_INFO' | translate}}</ng-template>
+
+                  <!-- First Name -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_FIRST_NAME' | translate}}</mat-label>
                     <input matInput placeholder="e.g. John" formControlName="firstName" required>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('firstName')?.hasError('required')">
+                      {{"ERROR.FIRST_NAME_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('firstName')?.hasError('pattern')">
+                      {{"ERROR.PATTERN_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Last Name -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_LAST_NAME' | translate}}</mat-label>
                     <input matInput placeholder="e.g. Doe" formControlName="lastName" required>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('lastName')?.hasError('required')">
+                      {{"ERROR.LAST_NAME_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('lastName')?.hasError('pattern')">
+                      {{"ERROR.PATTERN_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Phone -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_PHONE' | translate}}</mat-label>
                     <input matInput placeholder="e.g. 387-123-456" formControlName="phoneNumber" required>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('phoneNumber')?.hasError('required')">
+                      {{"ERROR.PHONE_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('phoneNumber')?.hasError('pattern')">
+                      {{"ERROR.VALID_PHONE_NUMBER" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Email -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_EMAIL' | translate}}</mat-label>
                     <textarea matInput placeholder="e.g. johndoe@gmail.com" formControlName="email" required></textarea>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('email')?.hasError('required')">
+                      {{"ERROR.EMAIL_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('email')?.hasError('email')">
+                      {{"ERROR.INVALID_EMAIL" | translate}}
+                    </mat-error>
                   </mat-form-field>
+
+                  <!-- Title -->
                   <mat-form-field>
                     <mat-label>{{'COMPANY.EMPLOYEE_TABLE_POSITION' | translate}}</mat-label>
                     <input matInput placeholder="e.g. Programmer" formControlName="title" required>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('title')?.hasError('required')">
+                      {{"ERROR.JOB_TITLE_REQUIRED" | translate}}
+                    </mat-error>
+
+                    <mat-error *ngIf="companyUpdateEmployeeFormGroup.get('title')?.hasError('pattern')">
+                      {{"ERROR.PATTERN_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
 
                   <div>
-                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" matStepperPrevious>
+                      {{'COMPANY.STEPPER_BACK' | translate}}
+                    </button>
+                    <button class="company-create-button-form"
+                            [disabled]="companyUpdateEmployeeFormGroup.invalid"
+                            matStepperNext>
+                      {{'COMPANY.STEPPER_NEXT' | translate}}
+                    </button>
                   </div>
                 </form>
               </mat-step>
+
 
               <mat-step [stepControl]="workingHoursUpdateFormGroup">
                 <form [formGroup]="workingHoursUpdateFormGroup">
                   <ng-template matStepLabel>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS' | translate}}</ng-template>
 
+                  <!-- Start Time -->
                   <mat-form-field appearance="outline">
                     <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS_FROM' | translate}}</mat-label>
                     <input matInput [ngxTimepicker]="startPicker" formControlName="startTime" readonly>
                     <ngx-material-timepicker #startPicker></ngx-material-timepicker>
+
+                    <mat-error *ngIf="workingHoursUpdateFormGroup.get('startTime')?.hasError('required')">
+                      {{"ERROR.START_TIME_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
 
+                  <!-- End Time -->
                   <mat-form-field appearance="outline">
                     <mat-label>{{'COMPANY.EMPLOYEE_ADD_FORM_WORKING_HOURS_TO' | translate}}</mat-label>
                     <input matInput [ngxTimepicker]="endPicker" formControlName="endTime" readonly>
                     <ngx-material-timepicker #endPicker></ngx-material-timepicker>
+
+                    <mat-error *ngIf="workingHoursUpdateFormGroup.get('endTime')?.hasError('required')">
+                      {{"ERROR.END_TIME_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
 
+                  <!-- Weekdays checkboxes (no errors needed for now) -->
                   <div class="days-checkboxes">
                     <mat-checkbox formControlName="monday">{{'COMPANY.EMPLOYEE_ADD_FORM_MONDAY' | translate}}</mat-checkbox>
                     <mat-checkbox formControlName="tuesday">{{'COMPANY.EMPLOYEE_ADD_FORM_TUESDAY' | translate}}</mat-checkbox>
@@ -601,11 +896,18 @@
                   </div>
 
                   <div>
-                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" matStepperPrevious>
+                      {{'COMPANY.STEPPER_BACK' | translate}}
+                    </button>
+                    <button class="company-create-button-form"
+                            [disabled]="workingHoursUpdateFormGroup.invalid"
+                            matStepperNext>
+                      {{'COMPANY.STEPPER_NEXT' | translate}}
+                    </button>
                   </div>
                 </form>
               </mat-step>
+
 
               <mat-step [stepControl]="companyEmployeeUpdateBirthDateFormGroup">
                 <form [formGroup]="companyEmployeeUpdateBirthDateFormGroup">
@@ -616,25 +918,48 @@
                     <input matInput [matDatepicker]="picker" formControlName="birthDate">
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
+
+                    <mat-error *ngIf="companyEmployeeUpdateBirthDateFormGroup.get('birthDate')?.hasError('required')">
+                      {{"ERROR.BIRTH_DATE_REQUIRED" | translate}}
+                    </mat-error>
                   </mat-form-field>
 
                   <div>
-                    <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" matStepperPrevious>
+                      {{'COMPANY.STEPPER_BACK' | translate}}
+                    </button>
+                    <button class="company-create-button-form"
+                            [disabled]="companyEmployeeUpdateBirthDateFormGroup.invalid"
+                            matStepperNext>
+                      {{'COMPANY.STEPPER_NEXT' | translate}}
+                    </button>
                   </div>
                 </form>
               </mat-step>
+
 
               /*Finish*/
               <mat-step>
                 <ng-template matStepLabel>{{'COMPANY.STEPPER_DONE' | translate}}</ng-template>
                 <p>{{'COMPANY.STEPPER_DONE_TEXT' | translate}}</p>
+
                 <div>
-                  <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                  <button class="company-create-button-form" (click)="stepperUpdateEmployeeForm.reset()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
-                  <button class="company-create-button-form" (click)="updateEmployee();stepperUpdateEmployeeForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                  <button class="company-create-button-form" matStepperPrevious>
+                    {{'COMPANY.STEPPER_BACK' | translate}}
+                  </button>
+
+                  <button class="company-create-button-form" (click)="stepperUpdateEmployeeForm.reset()">
+                    {{'COMPANY.STEPPER_RESET' | translate}}
+                  </button>
+
+                  <button class="company-create-button-form"
+                          [disabled]="companyUpdateEmployeeFormGroup.invalid || workingHoursUpdateFormGroup.invalid || companyEmployeeUpdateBirthDateFormGroup.invalid"
+                          (click)="updateEmployee();stepperUpdateEmployeeForm.reset()">
+                    {{'COMPANY.STEPPER_FINISH' | translate}}
+                  </button>
                 </div>
               </mat-step>
+
             </mat-stepper>
           </div>
         </div>
@@ -715,123 +1040,197 @@
                   <form [formGroup]="companyVehicleBasicInfoForm">
                     <ng-template matStepLabel>{{'COMPANY.FORM_BASIC_INFO' | translate}}</ng-template>
 
+                    <!-- Title -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_TITLE' | translate}}</mat-label>
                       <input matInput formControlName="title" required>
+                      <mat-error *ngIf="companyVehicleBasicInfoForm.get('title')?.hasError('required')">
+                        {{"ERROR.TITLE_REQUIRED" | translate}}
+                      </mat-error>
+                      <mat-error *ngIf="companyVehicleBasicInfoForm.get('title')?.hasError('pattern')">
+                        {{"ERROR.TITLE_INVALID" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Brand -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_BRAND' | translate}}</mat-label>
                       <mat-select formControlName="brandId" (selectionChange)="onBrandChange($event.value)" required>
-                        <mat-option *ngFor="let brand of vehicleBrands" [value]="brand.id">{{ brand.brandName }}</mat-option>
+                        <mat-option *ngFor="let brand of vehicleBrands" [value]="brand.id">
+                          {{ brand.brandName }}
+                        </mat-option>
                       </mat-select>
+                      <mat-error *ngIf="companyVehicleBasicInfoForm.get('brandId')?.hasError('required')">
+                        {{"ERROR.BRAND_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Model -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_MODEL' | translate}}</mat-label>
                       <mat-select formControlName="vehicleModelID" required>
                         <mat-option *ngFor="let model of vehicleModels" [value]="model.id">{{ model.modelName }}</mat-option>
                       </mat-select>
+                      <mat-error *ngIf="companyVehicleBasicInfoForm.get('vehicleModelID')?.hasError('required')">
+                        {{"ERROR.MODEL_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Price / day -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_PRICE_PER_DAY' | translate}}</mat-label>
                       <input matInput type="number" formControlName="pricePerDay" required>
+                      <mat-error *ngIf="companyVehicleBasicInfoForm.get('pricePerDay')?.hasError('required')">
+                        {{"ERROR.PRICE_PER_DAY_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
                     <div>
                       <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                      <button class="company-create-button-form" [disabled]="companyVehicleBasicInfoForm.invalid" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
                     </div>
                   </form>
                 </mat-step>
+
 
                 <!-- Step 2: Technical Data -->
                 <mat-step [stepControl]="companyTechincalDataFormGroup">
                   <form [formGroup]="companyTechincalDataFormGroup">
                     <ng-template matStepLabel>{{'COMPANY.FORM_TECHNICAL_DATA' | translate}}</ng-template>
 
+                    <!-- Fuel Type -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_FUEL_TYPE' | translate}}</mat-label>
-                      <mat-select formControlName="fuelType" (selectionChange)="onFuelTypeChange()" required>
+                      <mat-select formControlName="fuelType" required>
                         <mat-option *ngFor="let fuel of fuelTypes" [value]="fuel.value">{{ fuel.label }}</mat-option>
                       </mat-select>
+                      <mat-error *ngIf="companyTechincalDataFormGroup.get('fuelType')?.hasError('required')">
+                        {{"ERROR.FUEL_TYPE_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Transmission -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_TRANSMISSION' | translate}}</mat-label>
                       <mat-select formControlName="transmissionType" required>
                         <mat-option *ngFor="let transmission of transmissionTypes" [value]="transmission.value">{{ transmission.label }}</mat-option>
                       </mat-select>
+                      <mat-error *ngIf="companyTechincalDataFormGroup.get('transmissionType')?.hasError('required')">
+                        {{"ERROR.TRANSMISSION_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Engine Displacement -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_ENGINE_DISPLACEMENT' | translate}}</mat-label>
                       <input matInput type="number" formControlName="engineDisplacement" required>
+                      <mat-error *ngIf="companyTechincalDataFormGroup.get('engineDisplacement')?.hasError('required')">
+                        {{"ERROR.ENGINE_DISPLACEMENT_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Engine Power -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_ENGINE_POWER' | translate}}</mat-label>
                       <input matInput type="number" formControlName="enginePower" required>
+                      <mat-error *ngIf="companyTechincalDataFormGroup.get('enginePower')?.hasError('required')">
+                        {{"ERROR.ENGINE_POWER_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- AC -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_AIR_CONDITIONING' | translate}}</mat-label>
                       <mat-select formControlName="airConditioning" required>
                         <mat-option *ngFor="let ac of airConditioningOptions" [value]="ac.value">{{ ac.label }}</mat-option>
                       </mat-select>
+                      <mat-error *ngIf="companyTechincalDataFormGroup.get('airConditioning')?.hasError('required')">
+                        {{"ERROR.AIR_CONDITIONING_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Seats -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_SEATS' | translate}}</mat-label>
-                      <input matInput type="number" formControlName="numberOfSeats">
+                      <input matInput type="number" formControlName="numberOfSeats" required>
+                      <mat-error *ngIf="companyTechincalDataFormGroup.get('numberOfSeats')?.hasError('required')">
+                        {{"ERROR.NUMBER_OF_SEATS_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
-                    <mat-checkbox formControlName="towingHitch">{{'COMPANY.FORM_TOWING_HITCH' | translate}}</mat-checkbox>
+                    <!-- Towing Hitch -->
+                    <mat-checkbox formControlName="towingHitch">
+                      {{'COMPANY.FORM_TOWING_HITCH' | translate}}
+                    </mat-checkbox>
 
+                    <!-- Production Year -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_PRODUCTION_YEAR' | translate}}</mat-label>
                       <mat-select formControlName="productionYear" required>
                         <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
                       </mat-select>
+                      <mat-error *ngIf="companyTechincalDataFormGroup.get('productionYear')?.hasError('required')">
+                        {{"ERROR.YEAR_OF_PRODUCTION_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
                     <div>
                       <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                      <button class="company-create-button-form" [disabled]="companyTechincalDataFormGroup.invalid" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
                     </div>
                   </form>
                 </mat-step>
+
 
                 <!-- Step 3: Description -->
                 <mat-step [stepControl]="companyDescriptionFormGroup">
                   <form [formGroup]="companyDescriptionFormGroup">
                     <ng-template matStepLabel>{{'COMPANY.FORM_DESCRIPTION' | translate}}</ng-template>
 
+                    <!-- Description -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_DESCRIPTION' | translate}}</mat-label>
                       <textarea matInput formControlName="description"></textarea>
+                      <mat-error *ngIf="companyDescriptionFormGroup.get('description')?.hasError('required')">
+                        {{"ERROR.DESCRIPTION_REQUIRED" | translate}}
+                      </mat-error>
+                      <mat-error *ngIf="companyDescriptionFormGroup.get('description')?.hasError('pattern')">
+                        {{"ERROR.INVALID_FORMAT" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Category -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_CATEGORY' | translate}}</mat-label>
                       <mat-select formControlName="vehicleCategoryID" required>
-                        <mat-option *ngFor="let category of vehicleCategories" [value]="category.id">{{ category.name }}</mat-option>
+                        <mat-option *ngFor="let category of vehicleCategories" [value]="category.id">
+                          {{ category.name }}
+                        </mat-option>
                       </mat-select>
+                      <mat-error *ngIf="companyDescriptionFormGroup.get('vehicleCategoryID')?.hasError('required')">
+                        {{"ERROR.VEHICLE_CATEGORY_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- City -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_CITY' | translate}}</mat-label>
                       <mat-select formControlName="cityID" required>
                         <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</mat-option>
                       </mat-select>
+                      <mat-error *ngIf="companyDescriptionFormGroup.get('cityID')?.hasError('required')">
+                        {{"ERROR.CITY_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
-                    <mat-checkbox formControlName="avaliable">{{'COMPANY.FORM_AVAILABLE' | translate}}</mat-checkbox>
+                    <!-- Availability -->
+                    <mat-checkbox formControlName="avaliable">
+                      {{'COMPANY.FORM_AVAILABLE' | translate}}
+                    </mat-checkbox>
 
                     <div>
                       <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                      <button class="company-create-button-form" [disabled]="companyDescriptionFormGroup.invalid" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
                     </div>
                   </form>
                 </mat-step>
@@ -863,9 +1262,13 @@
                     </div>
                   </div>
 
+                  <mat-error *ngIf="uploadedImages.length == 0">
+                    {{"ERROR.IMAGES_REQUIRED" | translate}}
+                  </mat-error>
+
                   <div>
                     <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" [disabled]="uploadedImages.length == 0" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
                   </div>
                 </mat-step>
 
@@ -876,7 +1279,7 @@
                   <div>
                     <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
                     <button class="company-create-button-form" (click)="stepperAddVehicleForm.reset()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
-                    <button class="company-create-button-form" (click)="onSubmit();stepperAddVehicleForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                    <button class="company-create-button-form" [disabled]="companyVehicleBasicInfoForm.invalid || companyTechincalDataFormGroup.invalid || companyDescriptionFormGroup.invalid || uploadedImages.length == 0" (click)="onSubmit();stepperAddVehicleForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
                   </div>
                 </mat-step>
 
@@ -900,33 +1303,68 @@
                   <form [formGroup]="companyUpdateVehicleBasicInfoForm">
                     <ng-template matStepLabel>{{'COMPANY.FORM_BASIC_INFO' | translate}}</ng-template>
 
+                    <!-- Title -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_TITLE' | translate}}</mat-label>
                       <input matInput formControlName="title" required>
+
+                      <mat-error *ngIf="companyUpdateVehicleBasicInfoForm.get('title')?.hasError('required')">
+                        {{"ERROR.TITLE_REQUIRED" | translate}}
+                      </mat-error>
+                      <mat-error *ngIf="companyUpdateVehicleBasicInfoForm.get('title')?.hasError('pattern')">
+                        {{"ERROR.TITLE_INVALID" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Brand -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_BRAND' | translate}}</mat-label>
-                      <mat-select formControlName="brandId" (selectionChange)="onBrandChange($event.value)" required>
-                        <mat-option *ngFor="let brand of vehicleBrands" [value]="brand.id">{{ brand.brandName }}</mat-option>
+                      <mat-select formControlName="brandId" required (selectionChange)="onBrandChange($event.value)">
+                        <mat-option *ngFor="let brand of vehicleBrands" [value]="brand.id">
+                          {{ brand.brandName }}
+                        </mat-option>
                       </mat-select>
+
+                      <mat-error *ngIf="companyUpdateVehicleBasicInfoForm.get('brandId')?.hasError('required')">
+                        {{"ERROR.BRAND_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Model -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_MODEL' | translate}}</mat-label>
                       <mat-select formControlName="vehicleModelID" required>
-                        <mat-option *ngFor="let model of vehicleModels" [value]="model.id">{{ model.modelName }}</mat-option>
+                        <mat-option *ngFor="let model of vehicleModels" [value]="model.id">
+                          {{ model.modelName }}
+                        </mat-option>
                       </mat-select>
+
+                      <mat-error *ngIf="companyUpdateVehicleBasicInfoForm.get('vehicleModelID')?.hasError('required')">
+                        {{"ERROR.MODEL_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Price -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_PRICE_PER_DAY' | translate}}</mat-label>
                       <input matInput type="number" formControlName="pricePerDay" required>
+
+                      <mat-error *ngIf="companyUpdateVehicleBasicInfoForm.get('pricePerDay')?.hasError('required')">
+                        {{"ERROR.PRICE_PER_DAY_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
                     <div>
-                      <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                      <button class="company-create-button-form" matStepperPrevious>
+                        {{'COMPANY.STEPPER_BACK' | translate}}
+                      </button>
+
+                      <button
+                        class="company-create-button-form"
+                        [disabled]="companyUpdateVehicleBasicInfoForm.invalid"
+                        matStepperNext>
+                        {{'COMPANY.STEPPER_NEXT' | translate}}
+                      </button>
                     </div>
                   </form>
                 </mat-step>
@@ -936,54 +1374,95 @@
                   <form [formGroup]="companyUpdateTechincalDataFormGroup">
                     <ng-template matStepLabel>{{'COMPANY.FORM_TECHNICAL_DATA' | translate}}</ng-template>
 
+                    <!-- Fuel Type -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_FUEL_TYPE' | translate}}</mat-label>
-                      <mat-select formControlName="fuelType" (selectionChange)="onFuelTypeChange()" required>
+                      <mat-select formControlName="fuelType" required>
                         <mat-option *ngFor="let fuel of fuelTypes" [value]="fuel.value">{{ fuel.label }}</mat-option>
                       </mat-select>
+
+                      <mat-error *ngIf="companyUpdateTechincalDataFormGroup.get('fuelType')?.hasError('required')">
+                        {{"ERROR.FUEL_TYPE_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Transmission -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_TRANSMISSION' | translate}}</mat-label>
                       <mat-select formControlName="transmissionType" required>
-                        <mat-option *ngFor="let transmission of transmissionTypes" [value]="transmission.value">{{ transmission.label }}</mat-option>
+                        <mat-option *ngFor="let t of transmissionTypes" [value]="t.value">{{ t.label }}</mat-option>
                       </mat-select>
+
+                      <mat-error *ngIf="companyUpdateTechincalDataFormGroup.get('transmissionType')?.hasError('required')">
+                        {{"ERROR.TRANSMISSION_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Engine Displacement -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_ENGINE_DISPLACEMENT' | translate}}</mat-label>
                       <input matInput type="number" formControlName="engineDisplacement" required>
+
+                      <mat-error *ngIf="companyUpdateTechincalDataFormGroup.get('engineDisplacement')?.hasError('required')">
+                        {{"ERROR.ENGINE_DISPLACEMENT_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Engine Power -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_ENGINE_POWER' | translate}}</mat-label>
                       <input matInput type="number" formControlName="enginePower" required>
+
+                      <mat-error *ngIf="companyUpdateTechincalDataFormGroup.get('enginePower')?.hasError('required')">
+                        {{"ERROR.ENGINE_POWER_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Air Conditioning -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_AIR_CONDITIONING' | translate}}</mat-label>
                       <mat-select formControlName="airConditioning" required>
                         <mat-option *ngFor="let ac of airConditioningOptions" [value]="ac.value">{{ ac.label }}</mat-option>
                       </mat-select>
+
+                      <mat-error *ngIf="companyUpdateTechincalDataFormGroup.get('airConditioning')?.hasError('required')">
+                        {{"ERROR.AIR_CONDITIONING_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Seats -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_SEATS' | translate}}</mat-label>
-                      <input matInput type="number" formControlName="numberOfSeats">
+                      <input matInput type="number" formControlName="numberOfSeats" required>
+
+                      <mat-error *ngIf="companyUpdateTechincalDataFormGroup.get('numberOfSeats')?.hasError('required')">
+                        {{"ERROR.NUMBER_OF_SEATS_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
-                    <mat-checkbox formControlName="towingHitch">{{'COMPANY.FORM_TOWING_HITCH' | translate}}</mat-checkbox>
-
+                    <!-- Production Year -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_PRODUCTION_YEAR' | translate}}</mat-label>
                       <mat-select formControlName="productionYear" required>
                         <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
                       </mat-select>
+
+                      <mat-error *ngIf="companyUpdateTechincalDataFormGroup.get('productionYear')?.hasError('required')">
+                        {{"ERROR.YEAR_OF_PRODUCTION_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
                     <div>
-                      <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                      <button class="company-create-button-form" matStepperPrevious>
+                        {{'COMPANY.STEPPER_BACK' | translate}}
+                      </button>
+
+                      <button
+                        class="company-create-button-form"
+                        [disabled]="companyUpdateTechincalDataFormGroup.invalid"
+                        matStepperNext>
+                        {{'COMPANY.STEPPER_NEXT' | translate}}
+                      </button>
                     </div>
                   </form>
                 </mat-step>
@@ -993,30 +1472,60 @@
                   <form [formGroup]="companyUpdateDescriptionFormGroup">
                     <ng-template matStepLabel>{{'COMPANY.FORM_DESCRIPTION' | translate}}</ng-template>
 
+                    <!-- Description -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_DESCRIPTION' | translate}}</mat-label>
                       <textarea matInput formControlName="description"></textarea>
+
+                      <mat-error *ngIf="companyUpdateDescriptionFormGroup.get('description')?.hasError('required')">
+                        {{"ERROR.DESCRIPTION_REQUIRED" | translate}}
+                      </mat-error>
+                      <mat-error *ngIf="companyUpdateDescriptionFormGroup.get('description')?.hasError('pattern')">
+                        {{"ERROR.INVALID_FORMAT" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- Category -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_CATEGORY' | translate}}</mat-label>
                       <mat-select formControlName="vehicleCategoryID" required>
-                        <mat-option *ngFor="let category of vehicleCategories" [value]="category.id">{{ category.name }}</mat-option>
+                        <mat-option *ngFor="let category of vehicleCategories" [value]="category.id">
+                          {{ category.name }}
+                        </mat-option>
                       </mat-select>
+
+                      <mat-error *ngIf="companyUpdateDescriptionFormGroup.get('vehicleCategoryID')?.hasError('required')">
+                        {{"ERROR.VEHICLE_CATEGORY_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
+                    <!-- City -->
                     <mat-form-field>
                       <mat-label>{{'COMPANY.FORM_CITY' | translate}}</mat-label>
                       <mat-select formControlName="cityID" required>
                         <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</mat-option>
                       </mat-select>
+
+                      <mat-error *ngIf="companyUpdateDescriptionFormGroup.get('cityID')?.hasError('required')">
+                        {{"ERROR.CITY_REQUIRED" | translate}}
+                      </mat-error>
                     </mat-form-field>
 
-                    <mat-checkbox formControlName="avaliable">{{'COMPANY.FORM_AVAILABLE' | translate}}</mat-checkbox>
+                    <mat-checkbox formControlName="avaliable">
+                      {{'COMPANY.FORM_AVAILABLE' | translate}}
+                    </mat-checkbox>
 
                     <div>
-                      <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                      <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                      <button class="company-create-button-form" matStepperPrevious>
+                        {{'COMPANY.STEPPER_BACK' | translate}}
+                      </button>
+
+                      <button
+                        class="company-create-button-form"
+                        [disabled]="companyUpdateDescriptionFormGroup.invalid"
+                        matStepperNext>
+                        {{'COMPANY.STEPPER_NEXT' | translate}}
+                      </button>
                     </div>
                   </form>
                 </mat-step>
@@ -1048,9 +1557,13 @@
                     </div>
                   </div>
 
+                  <mat-error *ngIf="uploadedImages.length == 0">
+                    {{"ERROR.IMAGES_REQUIRED" | translate}}
+                  </mat-error>
+
                   <div>
                     <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
-                    <button class="company-create-button-form" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
+                    <button class="company-create-button-form" [disabled]="uploadedImages.length == 0" matStepperNext>{{'COMPANY.STEPPER_NEXT' | translate}}</button>
                   </div>
                 </mat-step>
 
@@ -1061,7 +1574,7 @@
                   <div>
                     <button class="company-create-button-form" matStepperPrevious>{{'COMPANY.STEPPER_BACK' | translate}}</button>
                     <button class="company-create-button-form" (click)="stepperUpdateVehicleForm.reset()">{{'COMPANY.STEPPER_RESET' | translate}}</button>
-                    <button class="company-create-button-form" (click)="onUpdateVehicle();stepperUpdateVehicleForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
+                    <button class="company-create-button-form" [disabled]="companyUpdateVehicleBasicInfoForm.invalid || companyUpdateTechincalDataFormGroup.invalid || companyUpdateDescriptionFormGroup.invalid || uploadedImages.length == 0" (click)="onUpdateVehicle();stepperUpdateVehicleForm.reset()">{{'COMPANY.STEPPER_FINISH' | translate}}</button>
                   </div>
                 </mat-step>
 
@@ -1071,6 +1584,10 @@
 
         </div>
 
+        </div>
+
+        <div *ngIf="isLoading" class="loader-overlay">
+          <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
         </div>
 
       </div>
