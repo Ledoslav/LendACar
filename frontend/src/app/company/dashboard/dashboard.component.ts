@@ -210,7 +210,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   });
 
   companyVehicleBasicInfoForm = this._formBuilder.group({
-    title: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    title: ['', [Validators.required]],
     brandId: [null as number | null, [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
     vehicleModelID: [null as number | null, [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
     pricePerDay: ['', [Validators.required]],
@@ -226,14 +226,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     productionYear: ['', [Validators.required]],
   });
   companyDescriptionFormGroup = this._formBuilder.group({
-    description: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    description: ['', [Validators.required]],
     vehicleCategoryID: [null as number | null, [Validators.required]],
     cityID: ['', [Validators.required]],
     avaliable: [true, [Validators.required]],
   });
 
   companyUpdateVehicleBasicInfoForm = this._formBuilder.group({
-    title: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    title: ['', [Validators.required]],
     brandId: [null as number | null, [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
     vehicleModelID: [null as number | null, [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
     pricePerDay: ['', [Validators.required]],
@@ -249,7 +249,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     productionYear: ['', [Validators.required]],
   });
   companyUpdateDescriptionFormGroup = this._formBuilder.group({
-    description: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    description: ['', [Validators.required]],
     vehicleCategoryID: [null as number | null, [Validators.required]],
     cityID: ['', [Validators.required]],
     avaliable: [true, [Validators.required]],
@@ -452,6 +452,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     const formTimeValue = this.workingHoursFormGroup.value;
     const formBirthDateValue = this.companyEmployeeBirthDateFormGroup.value;
 
+    this.isLoading = true;
+
     const newEmployee = {
       firstName: formValue.firstName!,
       lastName: formValue.lastName!,
@@ -486,8 +488,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
             this.dataSource = new MatTableDataSource(this.employees);
             this.downloadEmployeeCredentials(username, newEmployee.employeePassword, newEmployee.firstName, newEmployee.lastName);
             this.addActivity(1,response.id,0,0);
+            this.isLoading = false;
 
-            // window.location.reload();
+            window.location.reload();
           },
           error: (error) => {
             console.error('Error fetching employees:', error);
@@ -505,6 +508,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     const formValue = this.companyUpdateEmployeeFormGroup.value;
     const formTimeValue = this.workingHoursUpdateFormGroup.value;
     const formBirthDateValue = this.companyEmployeeUpdateBirthDateFormGroup.value;
+
+    this.isLoading = true;
 
     const updateEmployee = {
       userId: this.employeeIdToUpdate,
@@ -537,6 +542,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
             this.employees = employees;
             this.dataSource = new MatTableDataSource(this.employees);
             this.addActivity(2, response.id,0,0);
+            this.isLoading = false;
           },
           error: (error) => {
             console.error('Error fetching employees:', error);
@@ -661,6 +667,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
   createCompany() {
 
+    this.isLoading = true;
+
     const companyData = {
       ...this.basicInfoFormGroup.value,
       companyAvatar: this.companyAvatar, // If this is an uploaded File, make sure it's a File object, not a base64 string
@@ -683,9 +691,13 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     this.isFormVisible = false;
     this.fileName = "Upload a pdf file certificate";
+    this.isLoading = false;
   }
 
   updateCompany() {
+
+    this.isLoading = true;
+
     const companyUpdateData = {
       ...this.basicInfoUpdateFormGroup.value,
       companyAvatar: this.companyAvatar, // If this is an uploaded File, make sure it's a File object, not a base64 string
@@ -700,6 +712,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       () => {
         this.snackbarService.showSuccessMessage('Company updated successfully');
         this.addActivity(11,0,0,0);
+        this.isLoading = false;
         window.location.reload();
       },
       (error) => {
@@ -863,19 +876,36 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     }
   }
 
-  deleteCompany() {
-    this.companyService.deleteCompanyByUserId(this.userId).subscribe(
-      () => {
-        this.snackbarService.showSuccessMessage('Company deleted successfully');
-        this.addActivity(12,0,0,0);
-        window.location.reload();
-      },
-      (error) => {
-        this.snackbarService.showErrorMessage('Failed to delete company');
-        console.error('Error deleting company:', error);
+  deleteCompany(): void {
+
+    const deleteCompanyRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm deletion',
+        message: 'Are you sure you want to delete your company? This action cannot be undone.',
+        confirmButtonText: 'Delete'
       }
-    )
+    });
+
+    deleteCompanyRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.companyService.deleteCompanyByUserId(this.userId).subscribe(
+          () => {
+            this.snackbarService.showSuccessMessage('Company deleted successfully!');
+            this.addActivity(12, 0, 0, 0);
+            window.location.reload();
+          },
+          (error) => {
+            this.snackbarService.showErrorMessage('Failed to delete company');
+            console.error('Error deleting company:', error);
+          }
+        );
+      } else {
+        console.log('User canceled company deletion');
+      }
+    });
   }
+
 
   closeAddEmployeeForm() {
     this.isEmployeeFormVisible = false;
@@ -926,10 +956,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       this.isNavLinkHomeActive = false;
       this.isNavLinkCompanyVehiclesActive = true;
     }
-  }
-
-  addVehicle() {
-    return;
   }
 
   getVehicles() {
@@ -1055,6 +1081,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       return;
     }
 
+    this.isLoading = true;
+
     const basic = this.companyVehicleBasicInfoForm.value;
     const technical = this.companyTechincalDataFormGroup.value;
     const description = this.companyDescriptionFormGroup.value;
@@ -1086,7 +1114,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       next: response => {
         console.log('Vehicle uploaded successfully:', response);
         this.addActivity(23,0,0,response.id);
-        void this.router.navigateByUrl('/user/myVehicles');
+        this.isLoading = false;
       },
       error: err => console.error('Upload failed:', err)
     });
@@ -1124,6 +1152,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
   showUpdateVehicleUpdateForm(vehicle: any) {
     this.isVehicleUpdateFormVisible = true;
+    this.vehicleIdToUpdate = vehicle.id;
 
     console.log(vehicle);
     this.onBrandChange(vehicle.vehicleModel.vehicleBrandId);
@@ -1154,26 +1183,32 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     });
   }
 
-  deleteVehicle(vehicle: any) {
-    const dialogRef = this.dialog.open(DialogConfirmComponent, {
-      width: '350px',
+  deleteVehicle(vehicle: any): void {
+
+    const deleteVehicleRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
       data: {
-        title: 'Delete Vehicle',
-        message: `Are you sure you want to delete "${vehicle.title}"?`
-      },
-      position: { top: '20px' } // positions the dialog at the top
+        title: 'Confirm vehicle deletion',
+        message: `Are you sure you want to delete "${vehicle.title}"?`,
+        confirmButtonText: 'Delete'
+      }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) { // true if user clicked Yes
-        this.addActivity(24,0,0,vehicle.id);
+    deleteVehicleRef.afterClosed().subscribe(result => {
+      if (result) {
         this.vehicleListingService.deleteVehicle(vehicle.id).subscribe({
-          next: response => {
-            console.log('Vehicle deleted', response);
+          next: () => {
+            this.snackbarService.showSuccessMessage('Vehicle deleted successfully!');
+            this.addActivity(24, 0, 0, vehicle.id);
             this.getVehicles();
           },
-          error: err => console.error(err)
+          error: (err) => {
+            this.snackbarService.showErrorMessage('Failed to delete vehicle');
+            console.error('Error deleting vehicle:', err);
+          }
         });
+      } else {
+        console.log('User canceled vehicle deletion');
       }
     });
   }
@@ -1184,78 +1219,95 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   }
 
   onUpdateVehicle() {
-    if (this.companyUpdateVehicleBasicInfoForm.valid &&
-      this.companyUpdateTechincalDataFormGroup.valid &&
-      this.companyUpdateDescriptionFormGroup.valid) {
+    if (
+      this.companyUpdateVehicleBasicInfoForm.invalid ||
+      this.companyUpdateTechincalDataFormGroup.invalid ||
+      this.companyUpdateDescriptionFormGroup.invalid
+    ) return;
 
-      const basic = this.companyUpdateVehicleBasicInfoForm.value;
-      const technical = this.companyUpdateTechincalDataFormGroup.value;
-      const description = this.companyUpdateDescriptionFormGroup.value;
+    this.isLoading = true;
 
-      this.vehicleListingService.getVehiclesByUser(this.companyAdminUserId).subscribe({
-        next: (response) => {
-          for(let i = 0; i < response.length; i++){
-            if(response[i].title == basic.title && response[i].description == description.description){
-              this.vehicleIdToUpdate = response[i].id;
-              this.vehicleModel = response[i].vehicleModel;
-              this.vehicleCategory = response[i].vehicleCategory;
-              this.city = response[i].city;
-              this.user = response[i].user;
+    const basic = this.companyUpdateVehicleBasicInfoForm.value;
+    const technical = this.companyUpdateTechincalDataFormGroup.value;
+    const description = this.companyUpdateDescriptionFormGroup.value;
 
-              console.log(this.city);
-            }
-          }
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      });
+    // FIRST load the vehicle data you need
+    this.vehicleListingService.getVehiclesByUser(this.companyAdminUserId).subscribe({
+      next: (response) => {
 
-      const vehicleUpdateData: VehicleDto = {
-        id: this.vehicleIdToUpdate,
+        const match = response.find(v =>
+          v.id === this.vehicleIdToUpdate
+        );
 
-        // Basic info form
-        title: String(basic.title),
-        pricePerDay: Number(basic.pricePerDay),
-        productionYear: Number(technical.productionYear),
-        vehicleCategoryID: Number(description.vehicleCategoryID),
-        vehicleModelID: Number(basic.vehicleModelID),
-        cityID: Number(description.cityID),
+        if (!match) {
+          console.error("Vehicle not found for update.");
+          return;
+        }
 
-        // Technical form
-        engineDisplacement: Number(technical.engineDisplacement),
-        enginePower: Number(technical.enginePower),
-        transmissionType: Number(technical.transmissionType), // dropdown or radio from form
-        fuelType: Number(technical.fuelType),
-        airConditioning: Number(technical.airConditioning),
-        numberOfSeats: Number(technical.numberOfSeats),
-        towingHitch: Boolean(technical.towingHitch),
-        avaliable: Boolean(description.avaliable),
+        // Now set the values AFTER we have them
+        this.vehicleIdToUpdate = match.id;
+        this.vehicleModel = match.vehicleModel;
+        this.vehicleCategory = match.vehicleCategory;
+        this.city = match.city;
+        this.user = match.user;
 
-        // Description form
-        description: String(description.description),
+        console.log("Loaded before update:", {
+          id: this.vehicleIdToUpdate,
+          model: this.vehicleModel,
+          category: this.vehicleCategory,
+          city: this.city,
+          user: this.user
+        });
 
-        // Values you might set automatically
-        averageRating: 0,   // if user can't edit this
-        lastUpdated: new Date().toISOString(),
+        // NOW build the update object
+        const vehicleUpdateData: VehicleDto = {
+          id: this.vehicleIdToUpdate,
 
-        // Nested objects (if backend requires them, else can be null)
-        vehicleCategory: this.vehicleCategory,
-        vehicleModel: this.vehicleModel,
-        userID: this.companyAdminUserId,   // depends how you handle user
-        user: this.user,
-        city: this.city,
-      };
+          title: String(basic.title),
+          pricePerDay: Number(basic.pricePerDay),
+          productionYear: Number(technical.productionYear),
+          vehicleCategoryID: Number(description.vehicleCategoryID),
+          vehicleModelID: Number(basic.vehicleModelID),
+          cityID: Number(description.cityID),
 
-      this.vehicleListingService.updateVehicle(this.vehicleIdToUpdate,vehicleUpdateData).subscribe({
-        next: response => {
-          console.log('Vehicle uploaded', response)
-          this.getVehicles();
-          this.isVehicleFormVisible = false;
-        },
-        error: err => console.error(err)
-      });
-    }
+          engineDisplacement: Number(technical.engineDisplacement),
+          enginePower: Number(technical.enginePower),
+          transmissionType: Number(technical.transmissionType),
+          fuelType: Number(technical.fuelType),
+          airConditioning: Number(technical.airConditioning),
+          numberOfSeats: Number(technical.numberOfSeats),
+          towingHitch: Boolean(technical.towingHitch),
+          avaliable: Boolean(description.avaliable),
+
+          description: String(description.description),
+
+          averageRating: 0,
+          lastUpdated: new Date().toISOString(),
+
+          vehicleCategory: this.vehicleCategory,
+          vehicleModel: this.vehicleModel,
+          userID: this.companyAdminUserId,
+          user: this.user,
+          city: this.city,
+        };
+
+        console.log("Sending update:", vehicleUpdateData);
+
+        // SEND ONLY AFTER DATA IS LOADED
+        this.vehicleListingService.updateVehicle(this.vehicleIdToUpdate, vehicleUpdateData)
+          .subscribe({
+            next: response => {
+              console.log('Vehicle updated', response);
+              this.getVehicles();
+              this.isVehicleUpdateFormVisible = false;
+              this.isLoading = false;
+            },
+            error: err => console.error(err)
+          });
+      },
+
+      error: err => console.error(err)
+    });
   }
 
   prevImage(vehicle: any, direction: number) {
