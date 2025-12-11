@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace LendACarAPI.DTOs
 {
@@ -39,29 +40,39 @@ namespace LendACarAPI.DTOs
         [Required]
         public int VehicleModelID { get; set; }
 
+        [BindNever]
         [ValidateNever]
         public VehicleModel VehicleModel { get; set; }
 
         [Required]
         public int VehicleCategoryID { get; set; }
 
+        [BindNever]
         [ValidateNever]
         public VehicleCategory VehicleCategory { get; set; }
 
         [Required]
         public int UserID { get; set; }
 
+        [BindNever]
         [ValidateNever]
         public DriversLicense DriversLicense { get; set; }
 
         [Required]
         public int CityID { get; set; }
 
+        [BindNever]
+        [ValidateNever]
+        public User User { get; set; }
+
+        [BindNever]
         [ValidateNever]
         public City City { get; set; }
 
         public DateTime LastUpdated { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public List<VehicleImageDto> VehicleImages { get; set; } = new();
     }
 

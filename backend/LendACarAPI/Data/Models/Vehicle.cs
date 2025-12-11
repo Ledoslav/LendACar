@@ -51,6 +51,7 @@ namespace LendACarAPI.Data.Models
         public int CityID { get; set; }
         public City? City { get; set; }
 
+
         public ICollection<VehicleImage> VehicleImages { get; set; } = new List<VehicleImage>();
     }
 }

@@ -18,23 +18,20 @@ namespace LendACarAPI.Endpoints
             _context = context;
         }
 
-        // This endpoint checks if the logged-in user has a company
         [HttpGet("check/{userId}")]
         public async Task<ActionResult<bool>> CheckIfCompanyExists(int userId)
         {
-            // Check if the user has a company by matching the UserId
             var company = await _context.Companies
-                .FirstOrDefaultAsync(c => c.UserId == userId);  // Assumes that Company has UserId
+                .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (company == null)
             {
-                return false;  // Return false if no company exists
+                return false;  
             }
 
-            return true;  // Return true if a company exists
+            return true;  
         }
 
-        // You could also return company details if necessary
         [HttpGet("get/{userId}")]
         public async Task<ActionResult<Company>> GetCompanyByUserId(int userId)
         {
@@ -49,12 +46,10 @@ namespace LendACarAPI.Endpoints
             return company;
         }
 
-        // CompanyController.cs
         [HttpPost("create")]
         [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<ActionResult<Company>> CreateCompany([FromForm] CompanyCreateRequest request)
         {
-            // Check if the user already has a company
             var existingCompany = await _context.Companies
                 .FirstOrDefaultAsync(c => c.UserId == request.UserId);
 
@@ -63,7 +58,6 @@ namespace LendACarAPI.Endpoints
                 return Ok("This user already has a company.");
             }
 
-            // Create default WorkingHours if they don't exist
             var workingHour = await _context.WorkingHours
                 .FirstOrDefaultAsync(wh => wh.StartTime == new TimeOnly(9, 0) && wh.EndTime == new TimeOnly(17, 0));
 
@@ -71,8 +65,8 @@ namespace LendACarAPI.Endpoints
             {
                 workingHour = new WorkingHour
                 {
-                    StartTime = new TimeOnly(9, 0), // Default to 9:00 AM if not provided
-                    EndTime = new TimeOnly(17, 0), // Default to 5:00 PM if not provided
+                    StartTime = new TimeOnly(9, 0),
+                    EndTime = new TimeOnly(17, 0), 
                     Monday = true,
                     Tuesday = true,
                     Wednesday = true,
@@ -86,7 +80,6 @@ namespace LendACarAPI.Endpoints
                 await _context.SaveChangesAsync();
             }
 
-            // Create default CompanyPosition if it doesn't exist
             var companyPosition = await _context.CompanyPositions
                 .FirstOrDefaultAsync(cp => cp.Name == "Admin");
 
@@ -102,7 +95,6 @@ namespace LendACarAPI.Endpoints
                 await _context.SaveChangesAsync();
             }
 
-            // Map the incoming request to the company model
             var company = new Company
             {
                 CompanyName = request.CompanyName,
@@ -111,11 +103,10 @@ namespace LendACarAPI.Endpoints
                 CompanyEmail = request.CompanyEmail,
                 CompanyAddress = request.CompanyAddress,
                 UserId = request.UserId,
-                AverageRating = 0.0, // Initial average rating
+                AverageRating = 0.0,
                 FileName = request.FileName
             };
 
-            // Handle avatar if it's provided
             if (request.CompanyAvatar != null)
             {
                 using (var memoryStream = new MemoryStream())
@@ -134,11 +125,9 @@ namespace LendACarAPI.Endpoints
                 }
             }
 
-            // Add the company to the database
             _context.Companies.Add(company);
             await _context.SaveChangesAsync();
 
-            // Retrieve the user's email to set as the admin email
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Id == request.UserId);
 
@@ -147,17 +136,15 @@ namespace LendACarAPI.Endpoints
                 return Ok("User not found.");
             }
 
-            // Create the CompanyEmployee entry, making the user an admin
             var companyEmployee = new CompanyEmployee
             {
-                UserId = request.UserId, // The current user's ID
-                CompanyId = company.Id,  // The newly created company's ID
-                CompanyAdminEmail = user.EmailAdress, // Set the admin email to the user's email
-                CompanyPositionId = companyPosition.Id, // Link to the default 'Admin' position
-                WorkingHourId = workingHour.Id,// Link the newly created working hours to the employee
+                UserId = request.UserId, 
+                CompanyId = company.Id,  
+                CompanyAdminEmail = user.EmailAdress, 
+                CompanyPositionId = companyPosition.Id, 
+                WorkingHourId = workingHour.Id,
             };
 
-            // Add the employee to the CompanyEmployee table
             _context.CompanyEmployees.Add(companyEmployee);
             await _context.SaveChangesAsync();
 
@@ -176,13 +163,11 @@ namespace LendACarAPI.Endpoints
 
             int companyId = company.Id;
 
-            // Include Users but do NOT attempt to delete WorkingHours or Positions
             var companyEmployees = await _context.CompanyEmployees
                 .Include(ce => ce.User)
                 .Where(ce => ce.CompanyId == companyId)
                 .ToListAsync();
 
-            // Delete related Users (excluding owner)
             var usersToDelete = companyEmployees
                 .Where(ce => ce.UserId != userId && ce.User != null)
                 .Select(ce => ce.User)
@@ -191,10 +176,8 @@ namespace LendACarAPI.Endpoints
 
             _context.Users.RemoveRange(usersToDelete);
 
-            // Delete CompanyEmployees
             _context.CompanyEmployees.RemoveRange(companyEmployees);
 
-            // Delete the company itself
             _context.Companies.Remove(company);
 
             await _context.SaveChangesAsync();
@@ -213,7 +196,6 @@ namespace LendACarAPI.Endpoints
                 return Ok("Company not found for this user.");
             }
 
-            // Update the company details
             company.CompanyName = request.CompanyName ?? company.CompanyName;
             company.CompanyPhone = request.CompanyPhone ?? company.CompanyPhone;
             company.CompanyEmail = request.CompanyEmail ?? company.CompanyEmail;
@@ -221,7 +203,6 @@ namespace LendACarAPI.Endpoints
             company.CompanyAddress = request.CompanyAddress ?? company.CompanyAddress;
             company.FileName = request.FileName ?? company.FileName;
 
-            // Handle avatar update if provided
             if (request.CompanyAvatar != null)
             {
                 using (var memoryStream = new MemoryStream())
@@ -242,7 +223,7 @@ namespace LendACarAPI.Endpoints
 
             await _context.SaveChangesAsync();
 
-            return NoContent(); // Return 204 No Content
+            return NoContent();
         }
 
 

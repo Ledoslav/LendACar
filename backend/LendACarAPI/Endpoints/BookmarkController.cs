@@ -18,7 +18,6 @@ public class BookmarkController : ControllerBase
         _context = context;
     }
 
-    // POST: api/Bookmark
     [HttpPost]
     public async Task<IActionResult> ToggleBookmark([FromBody] BookmarkRequest request)
     {
@@ -27,7 +26,7 @@ public class BookmarkController : ControllerBase
 
         if (existing != null)
         {
-            _context.Bookmarks.Remove(existing); // Remove if already bookmarked
+            _context.Bookmarks.Remove(existing);
         }
         else
         {
@@ -43,7 +42,6 @@ public class BookmarkController : ControllerBase
         return NoContent();
     }
 
-    // GET: api/Bookmark?userId=1
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Bookmark>>> GetBookmarks([FromQuery] int userId)
     {

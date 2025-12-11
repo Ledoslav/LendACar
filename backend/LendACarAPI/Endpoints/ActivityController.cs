@@ -23,7 +23,6 @@ namespace LendACarAPI.Endpoints
                 _context = context;
             }
 
-            // GET: api/activity?userId=5
             [HttpGet]
             public async Task<ActionResult<IEnumerable<Activity>>> GetAllActivities([FromQuery] int userId)
             {
@@ -39,12 +38,10 @@ namespace LendACarAPI.Endpoints
             [HttpPost]
             public async Task<ActionResult<Activity>> PostActivity(ActivityCreateRequest request)
             {
-                // Validate User
                 var user = await _context.Users.FindAsync(request.UserId);
                 if (user == null)
                     return NotFound($"User with id {request.UserId} not found.");
 
-                // Try to load related entities – use FirstOrDefaultAsync so you don't get exceptions
                 var companyEmployee = await _context.CompanyEmployees
                     .Include(e => e.User)
                     .FirstOrDefaultAsync(s => request.CompanyEmployeeId == s.UserId);
@@ -62,7 +59,6 @@ namespace LendACarAPI.Endpoints
                     .Include(r => r.Vehicle)
                     .FirstOrDefaultAsync(s => s.RenterId == request.UserId && s.VehicleID == request.VehicleId);
 
-                // Build description safely
                 string description = request.Variant switch
                 {
                     // Employee
@@ -93,7 +89,6 @@ namespace LendACarAPI.Endpoints
                 };
 
 
-                // Optional: return BadRequest if a required entity for a variant is missing
                 if (string.IsNullOrWhiteSpace(description) || description.StartsWith("Activity variant") && request.Variant is 1 or 2 or 3 or 4)
                 {
                     return BadRequest("Required data for the selected variant could not be found.");
@@ -114,7 +109,6 @@ namespace LendACarAPI.Endpoints
                 }
                 catch (DbUpdateException ex)
                 {
-                    // Log ex if you have logging
                     return StatusCode(StatusCodes.Status500InternalServerError,
                         "An error occurred while saving the activity.");
                 }
