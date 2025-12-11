@@ -5,7 +5,7 @@ import {MyConfig} from '../my-config';
 
 @Injectable({ providedIn: 'root' })
 export class ChatApiService {
-  private base = MyConfig.api_address + '/api/chat'; // use the configured base URL
+  private base = MyConfig.api_address + 'chat'; // use the configured base URL
 
   constructor(private http: HttpClient) {}
 
@@ -48,6 +48,6 @@ export class ChatApiService {
   }
 
   deleteChat(chatId: number) {
-    return this.http.delete(`${MyConfig.api_address}/api/chat/${chatId}`);
+    return this.http.delete(`${MyConfig.api_address}chat/${chatId}`);
   }
 }

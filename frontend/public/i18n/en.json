@@ -289,6 +289,7 @@
     "AVATAR_REQUIRED": "Company avatar is required.",
     "FIRST_NAME_REQUIRED": "First name is required.",
     "LAST_NAME_REQUIRED": "Last name is required.",
+    "PATTERN_NAME": "Only letters are allowed.",
     "PATTERN_REQUIRED": "Only letters, numbers, spaces and hyphens are allowed.",
     "VALID_PHONE_NUMBER": "Enter a valid phone number (digits, +, -, spaces, parentheses).",
     "JOB_TITLE_REQUIRED": "Job title is required.",

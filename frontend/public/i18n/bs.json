@@ -289,6 +289,7 @@
     "AVATAR_REQUIRED": "Avatar kompanije je obavezan.",
     "FIRST_NAME_REQUIRED": "Ime je obavezno.",
     "LAST_NAME_REQUIRED": "Prezime je obavezno.",
+    "PATTERN_NAME": "Samo slova su dozvoljena.",
     "PATTERN_REQUIRED": "Samo slova, brojevi, razmaci i crte su dozvoljene.",
     "VALID_PHONE_NUMBER": "Unesite validan broj telefona (brojevi, +, -, navodnici, razmaci).",
     "JOB_TITLE_REQUIRED": "Naziv uloge obavezan.",

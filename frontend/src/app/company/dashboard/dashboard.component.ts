@@ -167,8 +167,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   });
 
   companyEmployeeFormGroup = this._formBuilder.group({
-    firstName: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
-    lastName: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
+    firstName: ['', [Validators.required, Validators.pattern(/^[A-Za-z\s\-]+$/)]],
+    lastName: ['', [Validators.required,  Validators.pattern(/^[A-Za-z\s\-]+$/)]],
     phoneNumber: ['', [Validators.required, Validators.pattern("^\\+?[0-9\\s\\-\\(\\)]+$")]],
     title: ['', [Validators.required, Validators.pattern(/^[\w\s\-]+$/)]],
     email: ['', [Validators.required, Validators.email]],
@@ -580,17 +580,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   }
 
   generateRandomPassword(length: number = 12): string {
-    // Only letters and digits for safe UTF-8 handling
     const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    // Optional: include some safe symbols if you like
     const safeSymbols = "!@#$%^&*";
 
     let password = "";
 
     for (let i = 0; i < length; i++) {
-      // Mix letters/digits and optional safe symbols
-      const useSymbol = Math.random() < 0.2; // 20% chance to pick a symbol
+      const useSymbol = Math.random() < 0.2;
       if (useSymbol) {
         password += safeSymbols[Math.floor(Math.random() * safeSymbols.length)];
       } else {
@@ -858,24 +855,27 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   }
 
   applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const searchTerm = filterValue.trim().toLowerCase();
+    this.dataSource.filter = searchTerm;
 
     this.dataSource.filterPredicate = (data: any, filter: string) => {
-      const searchTerm = filter.toLowerCase();
-
-      return data.user.firstName.toLowerCase().includes(searchTerm)
-        || data.user.lastName.toLowerCase().includes(searchTerm)
-        || data.user.phoneNumber.toLowerCase().includes(searchTerm)
-        || data.user.emailAdress.toLowerCase().includes(searchTerm)
-        || data.companyPosition.name.toLowerCase().includes(searchTerm)
-        || data.workingHour.startTime.toLowerCase().includes(searchTerm)
-        || data.workingHour.endTime.toLowerCase().includes(searchTerm)
+      return (
+        data.userId.toString().includes(searchTerm) ||
+        data.user.firstName.toLowerCase().includes(searchTerm) ||
+        data.user.lastName.toLowerCase().includes(searchTerm) ||
+        data.user.phoneNumber.toLowerCase().includes(searchTerm) ||
+        data.user.emailAdress.toLowerCase().includes(searchTerm) ||
+        data.companyPosition.name.toLowerCase().includes(searchTerm) ||
+        data.workingHour.startTime.toLowerCase().includes(searchTerm) ||
+        data.workingHour.endTime.toLowerCase().includes(searchTerm)
+      );
     };
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
+
 
   deleteCompany(): void {
 

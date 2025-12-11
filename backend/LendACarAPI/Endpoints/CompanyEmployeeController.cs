@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
+using LendACarAPI.DTOs;
 using LendACarAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,10 +27,10 @@ namespace LendACarAPI.Endpoints
         public async Task<ActionResult<CompanyEmployee>> GetCompanyEmployeeById(int compEmpId)
         {
             var companyEmployees = await _context.CompanyEmployees
-                .Include(ce => ce.User)              // Include User
-                .Include(ce => ce.CompanyPosition)   // Include CompanyPosition
-                .Include(ce => ce.Company)           // Include Company
-                .Include(ce => ce.WorkingHour)       // Include WorkingHour
+                .Include(ce => ce.User)              
+                .Include(ce => ce.CompanyPosition)   
+                .Include(ce => ce.Company)           
+                .Include(ce => ce.WorkingHour)       
                 .FirstOrDefaultAsync(e => e.UserId == compEmpId);
 
             if (companyEmployees == null)
@@ -43,7 +44,6 @@ namespace LendACarAPI.Endpoints
         [HttpGet("get/all")]
         public async Task<ActionResult<IEnumerable<CompanyEmployee>>> GetAllEmployeesForAdmin()
         {
-            // Get the current user's email from the request headers
             var currentUserEmail = Request.Headers["EmailAddress"].ToString();
 
             if (string.IsNullOrEmpty(currentUserEmail))
@@ -51,9 +51,8 @@ namespace LendACarAPI.Endpoints
                 return Unauthorized(new { message = "User is not authenticated." });
             }
 
-            // Step 1: Find the company admin using their email
             var companyAdmin = await _context.CompanyEmployees
-                .Include(ce => ce.User)  // Include User
+                .Include(ce => ce.User)
                 .FirstOrDefaultAsync(ce => ce.CompanyAdminEmail == currentUserEmail);
 
             if (companyAdmin == null)
@@ -61,15 +60,13 @@ namespace LendACarAPI.Endpoints
                 return Ok(new { message = "Company admin not found." });
             }
 
-            // Step 2: Get the company ID from the admin
             var companyId = companyAdmin.CompanyId;
 
-            // Step 3: Get all employees of the same company except the one with the company admin email
             var companyEmployees = await _context.CompanyEmployees
-                .Include(ce => ce.User)              // Include User
-                .Include(ce => ce.CompanyPosition)   // Include CompanyPosition
-                .Include(ce => ce.Company)           // Include Company
-                .Include(ce => ce.WorkingHour)       // Include WorkingHour
+                .Include(ce => ce.User)              
+                .Include(ce => ce.CompanyPosition)   
+                .Include(ce => ce.Company)           
+                .Include(ce => ce.WorkingHour)       
                 .Where(ce => ce.CompanyId == companyId && ce.CompanyAdminEmail != currentUserEmail) // Exclude the company admin
                 .ToListAsync();
 
@@ -84,12 +81,10 @@ namespace LendACarAPI.Endpoints
         [HttpDelete("delete/{userId}")]
         public async Task<IActionResult> DeleteEmployee(int userId)
         {
-            // Use a transaction to ensure all deletions succeed together
             await using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                // Step 1: Find the employee with related entities
                 var employee = await _context.CompanyEmployees
                     .Include(ce => ce.WorkingHour)
                     .Include(ce => ce.User)
@@ -98,21 +93,16 @@ namespace LendACarAPI.Endpoints
                 if (employee == null)
                     return NotFound(new { message = "Employee not found." });
 
-                // Step 2: Remove related working hours if exists
                 if (employee.WorkingHour != null)
                     _context.WorkingHours.Remove(employee.WorkingHour);
 
-                // Step 3: Remove the CompanyEmployee record
                 _context.CompanyEmployees.Remove(employee);
 
-                // Step 4: Remove the User record
                 if (employee.User != null)
                     _context.Users.Remove(employee.User);
 
-                // Step 5: Save changes
                 await _context.SaveChangesAsync();
 
-                // Commit transaction
                 await transaction.CommitAsync();
 
                 return Ok(new { message = "Employee successfully deleted." });
@@ -134,7 +124,15 @@ namespace LendACarAPI.Endpoints
                 return BadRequest(new { message = "Invalid employee data." });
             }
 
-            // Step 1: Find the company admin using their email
+            if (string.IsNullOrEmpty(request.FirstName) ||
+                string.IsNullOrEmpty(request.LastName) ||
+                string.IsNullOrEmpty(request.Email) ||
+                string.IsNullOrEmpty(request.Title))
+            {
+                return BadRequest(new { message = "Required fields are missing." });
+            }
+
+
             var companyAdmin = await _context.CompanyEmployees
                 .Include(ce => ce.User)
                 .FirstOrDefaultAsync(ce => ce.CompanyAdminEmail == request.CompanyAdminEmail);
@@ -167,7 +165,6 @@ namespace LendACarAPI.Endpoints
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // Step 4: Handle position
             var companyPosition = await _context.CompanyPositions
                 .FirstOrDefaultAsync(p => p.Name == request.Title);
 
@@ -178,7 +175,6 @@ namespace LendACarAPI.Endpoints
                 await _context.SaveChangesAsync();
             }
 
-            // Step 5: Create working hours
             var newWorkingHour = new WorkingHour
             {
                 StartTime = TimeOnly.Parse(request.StartTime),
@@ -233,20 +229,17 @@ namespace LendACarAPI.Endpoints
             if (employee == null)
                 return NotFound(new { message = "Employee not found." });
 
-            // Update company position
             if (employee.CompanyPosition != null)
                 employee.CompanyPosition.Name = employeeDto.Title;
             else
                 return BadRequest(new { message = "Employee does not have a valid company position." });
 
-            // Update user info
             employee.User.FirstName = employeeDto.FirstName;
             employee.User.LastName = employeeDto.LastName;
             employee.User.EmailAdress = employeeDto.Email;
             employee.User.PhoneNumber = employeeDto.PhoneNumber;
             employee.User.BirthDate = DateTime.Parse(employeeDto.BirthDate);
 
-            // Update working hours
             if (employee.WorkingHour != null)
             {
                 employee.WorkingHour.StartTime = TimeOnly.Parse(employeeDto.StartTime);
