@@ -88,7 +88,6 @@ namespace LendACarAPI.Endpoints{
         [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult<VehicleModel>> AddVehicleModel([FromBody] AddVehicleModelRequest request)
         {
-            // Check if the brand already exists
             var existingBrand = await _context.VehicleBrands
                 .FirstOrDefaultAsync(e => e.BrandName == request.BrandName);
 
@@ -96,7 +95,6 @@ namespace LendACarAPI.Endpoints{
 
             if (existingBrand == null)
             {
-                // Create a new brand if it doesn't exist
                 brand = new VehicleBrand
                 {
                     BrandName = request.BrandName,
@@ -104,18 +102,17 @@ namespace LendACarAPI.Endpoints{
                 };
 
                 _context.VehicleBrands.Add(brand);
-                await _context.SaveChangesAsync(); // Ensure the ID is generated
+                await _context.SaveChangesAsync();
             }
             else
             {
                 brand = existingBrand;
             }
 
-            // Create a new vehicle model
             var newVehicleModel = new VehicleModel
             {
                 ModelName = request.ModelName,
-                VehicleBrandId = brand.Id // Use the existing or newly created brand ID
+                VehicleBrandId = brand.Id
             };
 
             _context.VehicleModels.Add(newVehicleModel);

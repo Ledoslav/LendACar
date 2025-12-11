@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {MyConfig} from '../my-config';
 
 @Injectable({ providedIn: 'root' })
 export class ChatApiService {
-  private base = 'http://localhost:7000/api/chat'; // backend URL
+  private base = MyConfig.api_address + '/api/chat'; // use the configured base URL
 
   constructor(private http: HttpClient) {}
 
   getUserChats(userId: number): Observable<any[]> {
-    // backend expects query parameter ?userId=123
     return this.http.get<any[]>(`${this.base}?userId=${userId}`);
   }
 
@@ -17,7 +17,16 @@ export class ChatApiService {
     return this.http.get<any[]>(`${this.base}/${chatId}/messages`);
   }
 
-  startChat(dealerId: number, customerId: number, dealerName: string, vehicle: string, vehicleId: number, dealerAvatar: string, customerName:string,customerAvatar:string) {
+  startChat(
+    dealerId: number,
+    customerId: number,
+    dealerName: string,
+    vehicle: string,
+    vehicleId: number,
+    dealerAvatar: string,
+    customerName: string,
+    customerAvatar: string
+  ) {
     return this.http.post<any>(`${this.base}/start`, {
       DealerId: dealerId,
       CustomerId: customerId,
@@ -34,11 +43,11 @@ export class ChatApiService {
     return this.http.post<any>(`${this.base}/send`, {
       ChatId: chatId,
       SenderId: senderId,
-      Text: text
+      Text: text,
     });
   }
 
   deleteChat(chatId: number) {
-    return this.http.delete(`http://localhost:7000/api/Chat/${chatId}`);
+    return this.http.delete(`${MyConfig.api_address}/api/chat/${chatId}`);
   }
 }
