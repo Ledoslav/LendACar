@@ -5,6 +5,9 @@ import {UserService} from '../../services/user.service';
 import {UserDto} from '../../Models/UserDto';
 import {delay} from 'rxjs';
 import {Router} from '@angular/router';
+import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog-confirm.component';
+import {MatDialog} from '@angular/material/dialog';
+import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,8 +28,11 @@ export class DashboardComponent implements OnInit {
     private chatService: ChatService,
     private chatApi: ChatApiService,
     private userService: UserService,
-    private router:Router
+    private router: Router,
+    private dialog: MatDialog,
+    private snackbarService: MySnackbarService
   ) {}
+
 
   ngOnInit(): void {
 
@@ -139,19 +145,38 @@ export class DashboardComponent implements OnInit {
   }
 
   deleteChat(chat: Chat) {
-    if (!confirm(`Delete chat with ${chat.name}?`)) return;
+    const deleteChatRef = this.dialog.open(DialogConfirmComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirm chat deletion',
+        message: `Are you sure you want to delete the chat with "${chat.name}"?`,
+        confirmButtonText: 'Delete'
+      }
+    });
 
-    this.chatApi.deleteChat(chat.id).subscribe({
-      next: _ => {
-        this.chats = this.chats.filter(c => c.id !== chat.id);
+    deleteChatRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.chatApi.deleteChat(chat.id).subscribe({
+          next: () => {
+            this.chats = this.chats.filter(c => c.id !== chat.id);
 
-        // If the deleted chat was open — clear UI or open next one
-        if (this.selectedChat?.id === chat.id) {
-          this.selectedChat = this.chats.length > 0 ? this.chats[0] : null;
-        }
+            if (this.selectedChat?.id === chat.id) {
+              this.selectedChat = this.chats.length > 0 ? this.chats[0] : null;
+            }
+
+            this.snackbarService.showSuccessMessage('Chat deleted successfully!');
+          },
+          error: (err) => {
+            console.error('Error deleting chat:', err);
+            this.snackbarService.showErrorMessage('Failed to delete chat');
+          }
+        });
+      } else {
+        console.log('User canceled chat deletion');
       }
     });
   }
+
 
 
   sendMessage() {

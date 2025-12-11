@@ -999,14 +999,14 @@
                   </div>
                 </div>
                 <p class="search-result-description">
-                  {{vehicle.description}}
+                  {{vehicle.description.slice(0,70)}}...
                 </p>
                 <p class="search-result-price">{{vehicle.pricePerDay}}$ {{'COMPANY.PER_DAY' | translate}}</p>
                 <div class="important-vehicle-info">
                   <p>{{'COMPANY.YEAR' | translate}}: {{vehicle.productionYear}}</p>
                   <p>{{'COMPANY.ENGINE_POWER' | translate}}: {{vehicle.enginePower}}</p>
                   <p>{{ vehicle.transmissionType == 1 ? ('Automatic') : ('Manual') }}</p>
-                  <p>{{ vehicle.isAvailable ? ('COMPANY.AVAILABLE' | translate) : ('COMPANY.NOT_AVAILABLE' | translate) }}</p>
+                  <p>{{ vehicle.avaliable ? ('COMPANY.NOT_AVAILABLE' | translate) : ('COMPANY.AVAILABLE' | translate) }}</p>
                   <p>{{'COMPANY.DATE_ADDED' | translate}}: {{vehicle.lastUpdated.slice(0, 10)}}</p>
                 </div>
               </div>
@@ -1537,7 +1537,7 @@
                   <input
                     #fileInput
                     type="file"
-                    (change)="onVehicleImageChange($event)"
+                    (change)="onFileImagesSelected($event)"
                     multiple
                     accept="image/*"
                     hidden

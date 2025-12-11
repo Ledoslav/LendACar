@@ -12,17 +12,14 @@ export class CompanyService {
 
   constructor(private http: HttpClient) {}
 
-  // Check if a company exists for the user
   checkIfCompanyExists(userId: number): Observable<boolean> {
     return this.http.get<boolean>(`${this.baseUrl}/check/${userId}`);
   }
 
-  // Get company details if needed
   getCompanyByUserId(userId: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/get/${userId}`);
   }
 
-// API call to create a company
   createCompany(companyData: any): Observable<any> {
     const formData = new FormData();
 
@@ -36,7 +33,6 @@ export class CompanyService {
     formData.append('fileName', companyData.fileName);
 
     console.log('companyData:', companyData);
-    // Append the avatar image if it's provided
     if (companyData.companyAvatar) {
       formData.append('companyAvatar', companyData.companyAvatar, companyData.companyAvatar.name);
     }
@@ -55,7 +51,6 @@ export class CompanyService {
   updateCompanyByUserId(userId: number, companyData: any): Observable<void> {
     const formData = new FormData();
 
-    // Append text fields
     formData.append('companyName', companyData.companyName);
     formData.append('companyPhone', companyData.companyPhone);
     formData.append('companyDescription', companyData.companyDescription);
@@ -64,7 +59,6 @@ export class CompanyService {
     formData.append('userId', companyData.userId.toString());
     formData.append('fileName', companyData.fileName);
 
-    // Append the avatar image if it's provided
     if (companyData.companyAvatar) {
       formData.append('companyAvatar', companyData.companyAvatar, companyData.companyAvatar.name);
     }

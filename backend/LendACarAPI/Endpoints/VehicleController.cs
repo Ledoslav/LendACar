@@ -441,40 +441,78 @@ namespace LendACarAPI.Endpoints
 
         [HttpPut("update/{id}")]
         [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
-        public async Task<IActionResult> EditVehicle(int id, [FromBody] VehicleDto vehicleDto)
+        public async Task<IActionResult> EditVehicle(
+        int id,
+        [FromForm] VehicleDto dto,
+        [FromForm(Name = "newImages")] List<IFormFile>? newImages,
+        [FromForm(Name = "deletedImageIds")] List<int>? deletedImageIds,
+        CancellationToken cancellationToken)
         {
-            var vehicle = await db.Vehicles.FirstOrDefaultAsync(v => v.Id == id);
+            var vehicle = await db.Vehicles
+                .Include(v => v.VehicleImages)
+                .FirstOrDefaultAsync(v => v.Id == id);
 
-            if (vehicle == null) return NotFound("Vehicle not found");
+            if (vehicle == null)
+                return NotFound("Vehicle not found");
 
-            vehicle.Title = vehicleDto.Title;
-            vehicle.EngineDisplacement = vehicleDto.EngineDisplacement;
-            vehicle.EnginePower = vehicleDto.EnginePower;
-            vehicle.TransmissionType = vehicleDto.TransmissionType;
-            vehicle.FuelType = vehicleDto.FuelType;
-            vehicle.AirConditioning = vehicleDto.AirConditioning;
-            vehicle.NumberOfSeats = vehicleDto.NumberOfSeats;
-            vehicle.TowingHitch = vehicleDto.TowingHitch;
-            vehicle.Description = vehicleDto.Description;
-            vehicle.ProductionYear = vehicleDto.ProductionYear;
-            vehicle.Avaliable = vehicleDto.Avaliable;
-            vehicle.AverageRating = vehicleDto.AverageRating;
-            vehicle.PricePerDay = vehicleDto.PricePerDay;
-            vehicle.VehicleModelID = vehicleDto.VehicleModelID;
-            vehicle.UserID = vehicleDto.UserID;
-            vehicle.CityID = vehicleDto.CityID;
-            vehicle.LastUpdated = DateTime.Now;
+            // Update primitive fields (navigation props ignored)
+            vehicle.Title = dto.Title;
+            vehicle.EngineDisplacement = dto.EngineDisplacement;
+            vehicle.EnginePower = dto.EnginePower;
+            vehicle.TransmissionType = dto.TransmissionType;
+            vehicle.FuelType = dto.FuelType;
+            vehicle.AirConditioning = dto.AirConditioning;
+            vehicle.NumberOfSeats = dto.NumberOfSeats;
+            vehicle.TowingHitch = dto.TowingHitch;
+            vehicle.Description = dto.Description;
+            vehicle.ProductionYear = dto.ProductionYear;
+            vehicle.Avaliable = dto.Avaliable;
+            vehicle.PricePerDay = dto.PricePerDay;
+            vehicle.VehicleModelID = dto.VehicleModelID;
+            vehicle.VehicleCategoryID = dto.VehicleCategoryID;
+            vehicle.UserID = dto.UserID;
+            vehicle.CityID = dto.CityID;
+            vehicle.LastUpdated = DateTime.UtcNow;
 
-            await db.SaveChangesAsync();
+            // DELETE IMAGES
+            if (deletedImageIds != null)
+            {
+                foreach (var img in vehicle.VehicleImages.ToList())
+                {
+                    await photoService.DeletePhotoAsync(img.PublicId);
+                    db.VehicleImages.Remove(img);
+                }
 
+            }
+
+            // ADD NEW IMAGES
+            if (newImages != null)
+            {
+                foreach (var file in newImages)
+                {
+                    var upload = await photoService.AddVehiclePhotoAsync(file);
+
+                    db.VehicleImages.Add(new VehicleImage
+                    {
+                        VehicleId = vehicle.Id,
+                        ImageUrl = upload.SecureUrl.AbsoluteUri,
+                        PublicId = upload.PublicId
+                    });
+                }
+            }
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            // Reload full vehicle with images
             var returnVehicle = await db.Vehicles
+                .Include(v => v.VehicleImages)
                 .Include(v => v.VehicleModel)
                 .Include(v => v.VehicleCategory)
                 .Include(v => v.User)
                 .Include(v => v.City)
-                .ThenInclude(c => c.Country)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
+            // Return DTO
             return Ok(new VehicleDto
             {
                 Id = returnVehicle.Id,
@@ -499,8 +537,15 @@ namespace LendACarAPI.Endpoints
                 User = returnVehicle.User,
                 CityID = returnVehicle.CityID,
                 LastUpdated = returnVehicle.LastUpdated,
+                VehicleImages = returnVehicle.VehicleImages.Select(img => new VehicleImageDto
+                {
+                    Id = img.Id,
+                    ImageUrl = img.ImageUrl,
+                    PublicId = img.PublicId
+                }).ToList()
             });
         }
+
 
         [HttpDelete("remove/{id}")]
         public async Task<IActionResult> RemoveVehicle(int id)

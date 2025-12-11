@@ -84,7 +84,7 @@
               <p>{{'COMPANY.YEAR' | translate}}: {{vehicle.productionYear}}</p>
               <p>{{'COMPANY.ENGINE_POWER' | translate}}: {{vehicle.enginePower}}</p>
               <p>{{ vehicle.transmissionType == 1 ? ('Automatic') : ('Manual') }}</p>
-              <p>{{ vehicle.isAvailable ? ('COMPANY.NOT_AVAILABLE' | translate) : ('COMPANY.AVAILABLE' | translate) }}</p>
+              <p>{{ vehicle.avaliable ? ('COMPANY.NOT_AVAILABLE' | translate) : ('COMPANY.AVAILABLE' | translate) }}</p>
               <p>{{'COMPANY.DATE_ADDED' | translate}}: {{vehicle.lastUpdated.slice(0, 10)}}</p>
             </div>
           </div>

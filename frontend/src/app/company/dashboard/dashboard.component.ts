@@ -92,6 +92,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   vehicleCategories: any = [];
   vehicleBrands: any = [];
   uploadedFiles: File[] = [];
+  deletedImageIds: any[] = [];
   uploadedImages: string[] = [];
   cities: any = [];
   countries: any = [];
@@ -1089,7 +1090,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     const formData = new FormData();
 
-    // 🔹 Append all fields one by one (flat, like in your working example)
     formData.append('title', basic.title ?? '');
     formData.append('vehicleModelID', String(basic.vehicleModelID));
     formData.append('vehicleCategoryID', String(description.vehicleCategoryID));
@@ -1115,6 +1115,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         console.log('Vehicle uploaded successfully:', response);
         this.addActivity(23,0,0,response.id);
         this.isLoading = false;
+        this.closeAddVehicleForm();
+        this.getVehicles();
       },
       error: err => console.error('Upload failed:', err)
     });
@@ -1196,10 +1198,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     deleteVehicleRef.afterClosed().subscribe(result => {
       if (result) {
+        this.addActivity(24,0,0,vehicle.id);
+
         this.vehicleListingService.deleteVehicle(vehicle.id).subscribe({
           next: () => {
             this.snackbarService.showSuccessMessage('Vehicle deleted successfully!');
-            this.addActivity(24, 0, 0, vehicle.id);
             this.getVehicles();
           },
           error: (err) => {
@@ -1231,83 +1234,44 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     const technical = this.companyUpdateTechincalDataFormGroup.value;
     const description = this.companyUpdateDescriptionFormGroup.value;
 
-    // FIRST load the vehicle data you need
-    this.vehicleListingService.getVehiclesByUser(this.companyAdminUserId).subscribe({
-      next: (response) => {
+    const formData = new FormData();
 
-        const match = response.find(v =>
-          v.id === this.vehicleIdToUpdate
-        );
+    // 🔹 Append exactly like upload
+    formData.append('id', String(this.vehicleIdToUpdate));
+    formData.append('title', basic.title ?? '');
+    formData.append('vehicleModelID', String(basic.vehicleModelID));
+    formData.append('vehicleCategoryID', String(description.vehicleCategoryID));
+    formData.append('pricePerDay', String(basic.pricePerDay));
+    formData.append('engineDisplacement', String(technical.engineDisplacement));
+    formData.append('enginePower', String(technical.enginePower));
+    formData.append('transmissionType', String(technical.transmissionType));
+    formData.append('fuelType', String(technical.fuelType));
+    formData.append('airConditioning', String(technical.airConditioning));
+    formData.append('numberOfSeats', String(technical.numberOfSeats));
+    formData.append('towingHitch', String(technical.towingHitch ?? false));
+    formData.append('productionYear', String(technical.productionYear));
+    formData.append('description', description.description ?? '');
+    formData.append('cityID', String(description.cityID));
+    formData.append('avaliable', String(description.avaliable ?? false));
+    formData.append('userID', String(this.companyAdminUserId));
+    formData.append('averageRating', '0');
 
-        if (!match) {
-          console.error("Vehicle not found for update.");
-          return;
+    this.uploadedFiles.forEach(file => formData.append('newImages', file, file.name));
+
+    this.vehicleListingService.updateVehicle(this.vehicleIdToUpdate, formData)
+      .subscribe({
+        next: response => {
+          console.log('Vehicle updated successfully:', response);
+          this.addActivity(25,0,0,response.id);
+          this.closeUpdateVehicleForm();
+          this.getVehicles();
+          this.isLoading = false;
+        },
+        error: err => {
+          console.error('Update failed:', err);
+          this.isLoading = false;
         }
-
-        // Now set the values AFTER we have them
-        this.vehicleIdToUpdate = match.id;
-        this.vehicleModel = match.vehicleModel;
-        this.vehicleCategory = match.vehicleCategory;
-        this.city = match.city;
-        this.user = match.user;
-
-        console.log("Loaded before update:", {
-          id: this.vehicleIdToUpdate,
-          model: this.vehicleModel,
-          category: this.vehicleCategory,
-          city: this.city,
-          user: this.user
-        });
-
-        // NOW build the update object
-        const vehicleUpdateData: VehicleDto = {
-          id: this.vehicleIdToUpdate,
-
-          title: String(basic.title),
-          pricePerDay: Number(basic.pricePerDay),
-          productionYear: Number(technical.productionYear),
-          vehicleCategoryID: Number(description.vehicleCategoryID),
-          vehicleModelID: Number(basic.vehicleModelID),
-          cityID: Number(description.cityID),
-
-          engineDisplacement: Number(technical.engineDisplacement),
-          enginePower: Number(technical.enginePower),
-          transmissionType: Number(technical.transmissionType),
-          fuelType: Number(technical.fuelType),
-          airConditioning: Number(technical.airConditioning),
-          numberOfSeats: Number(technical.numberOfSeats),
-          towingHitch: Boolean(technical.towingHitch),
-          avaliable: Boolean(description.avaliable),
-
-          description: String(description.description),
-
-          averageRating: 0,
-          lastUpdated: new Date().toISOString(),
-
-          vehicleCategory: this.vehicleCategory,
-          vehicleModel: this.vehicleModel,
-          userID: this.companyAdminUserId,
-          user: this.user,
-          city: this.city,
-        };
-
-        console.log("Sending update:", vehicleUpdateData);
-
-        // SEND ONLY AFTER DATA IS LOADED
-        this.vehicleListingService.updateVehicle(this.vehicleIdToUpdate, vehicleUpdateData)
-          .subscribe({
-            next: response => {
-              console.log('Vehicle updated', response);
-              this.getVehicles();
-              this.isVehicleUpdateFormVisible = false;
-              this.isLoading = false;
-            },
-            error: err => console.error(err)
-          });
-      },
-
-      error: err => console.error(err)
-    });
+      });
   }
 
   prevImage(vehicle: any, direction: number) {

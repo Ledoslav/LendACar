@@ -82,9 +82,13 @@ export class VehicleListingService {
   }
 
   // Update an existing vehicle
-  updateVehicle(vehicleId: number, vehicle: VehicleDto): Observable<VehicleDto> {
-    return this.http.put<VehicleDto>(`${this.baseUrl}vehicle/update/${vehicleId}`, vehicle);
+  updateVehicle(vehicleId: number, formData: FormData): Observable<VehicleDto> {
+    return this.http.put<VehicleDto>(
+      `${this.baseUrl}vehicle/update/${vehicleId}`,
+      formData
+    );
   }
+
 
   // Delete a vehicle
   deleteVehicle(vehicleId: number): Observable<void> {
