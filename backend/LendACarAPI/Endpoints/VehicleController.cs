@@ -396,7 +396,6 @@ namespace LendACarAPI.Endpoints
         [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<IActionResult> AddVehicle([FromBody] VehicleUploadDto vehicleDto)
         {
-            // Check if the User with the provided UserID exists and is verified
             var user = await db.Users.FirstOrDefaultAsync(u => u.Id == vehicleDto.UserID);
 
             if (user == null)
@@ -409,7 +408,6 @@ namespace LendACarAPI.Endpoints
                 return BadRequest("User is not verified and cannot upload vehicles");
             }
 
-            // If the user exists and is verified, proceed with adding the vehicle
             var newVehicle = new Vehicle
             {
                 Title = vehicleDto.Title,
@@ -442,11 +440,10 @@ namespace LendACarAPI.Endpoints
         [HttpPut("update/{id}")]
         [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<IActionResult> EditVehicle(
-        int id,
-        [FromForm] VehicleDto dto,
-        [FromForm(Name = "newImages")] List<IFormFile>? newImages,
-        [FromForm(Name = "deletedImageIds")] List<int>? deletedImageIds,
-        CancellationToken cancellationToken)
+            int id,
+            [FromForm] VehicleDto dto,
+            [FromForm(Name = "newImages")] List<IFormFile>? newImages,
+            CancellationToken cancellationToken)
         {
             var vehicle = await db.Vehicles
                 .Include(v => v.VehicleImages)
@@ -455,7 +452,6 @@ namespace LendACarAPI.Endpoints
             if (vehicle == null)
                 return NotFound("Vehicle not found");
 
-            // Update primitive fields (navigation props ignored)
             vehicle.Title = dto.Title;
             vehicle.EngineDisplacement = dto.EngineDisplacement;
             vehicle.EnginePower = dto.EnginePower;
@@ -474,19 +470,17 @@ namespace LendACarAPI.Endpoints
             vehicle.CityID = dto.CityID;
             vehicle.LastUpdated = DateTime.UtcNow;
 
-            // DELETE IMAGES
-            if (deletedImageIds != null)
+            foreach (var img in vehicle.VehicleImages.ToList())
             {
-                foreach (var img in vehicle.VehicleImages.ToList())
+                if (!string.IsNullOrWhiteSpace(img.PublicId))
                 {
                     await photoService.DeletePhotoAsync(img.PublicId);
-                    db.VehicleImages.Remove(img);
                 }
 
+                db.VehicleImages.Remove(img);
             }
 
-            // ADD NEW IMAGES
-            if (newImages != null)
+            if (newImages != null && newImages.Any())
             {
                 foreach (var file in newImages)
                 {
@@ -503,7 +497,6 @@ namespace LendACarAPI.Endpoints
 
             await db.SaveChangesAsync(cancellationToken);
 
-            // Reload full vehicle with images
             var returnVehicle = await db.Vehicles
                 .Include(v => v.VehicleImages)
                 .Include(v => v.VehicleModel)
@@ -512,7 +505,6 @@ namespace LendACarAPI.Endpoints
                 .Include(v => v.City)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
-            // Return DTO
             return Ok(new VehicleDto
             {
                 Id = returnVehicle.Id,
@@ -546,7 +538,6 @@ namespace LendACarAPI.Endpoints
             });
         }
 
-
         [HttpDelete("remove/{id}")]
         public async Task<IActionResult> RemoveVehicle(int id)
         {
@@ -554,16 +545,14 @@ namespace LendACarAPI.Endpoints
 
             if (vehicle == null) return NotFound("Vehicle not found");
 
-            // Check if there are images associated with the vehicle and delete them
             var vehicleImages = await db.VehicleImages.Where(vi => vi.VehicleId == id).ToListAsync();
 
             if (vehicleImages.Any())
             {
-                db.VehicleImages.RemoveRange(vehicleImages);  // Remove all associated images
+                db.VehicleImages.RemoveRange(vehicleImages); 
                 await db.SaveChangesAsync();
             }
 
-            // Now remove the vehicle
             db.Vehicles.Remove(vehicle);
             await db.SaveChangesAsync();
 
@@ -598,7 +587,6 @@ namespace LendACarAPI.Endpoints
             db.Vehicles.Add(vehicle);
             await db.SaveChangesAsync(cancellationToken);
 
-            // handle images
             if (images != null && images.Any())
             {
                 foreach (var file in images)
@@ -613,12 +601,10 @@ namespace LendACarAPI.Endpoints
                 }
                 await db.SaveChangesAsync(cancellationToken);
 
-                // Reload VehicleImages for DTO
                 await db.Entry(vehicle).Collection(v => v.VehicleImages).LoadAsync(cancellationToken);
             }
 
 
-            // return mapped DTO
             var vehicleDto = new VehicleDto
             {
                 Id = vehicle.Id,
