@@ -1,8 +1,11 @@
-import {Component, inject, ViewChild} from '@angular/core';
+import {Component, inject, ViewChild, OnInit, AfterViewInit} from '@angular/core';
 import {VehicleService} from '../../services/vehicle.service';
 import {VehiclesDto} from '../../Models/VehiclesDto';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Subject, combineLatest } from 'rxjs';
+import { debounceTime, map, startWith } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-vehicle-overview',
@@ -10,11 +13,48 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrl: './vehicle-overview.component.css'
 })
 
-export class VehicleOverviewComponent {
+export class VehicleOverviewComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  ngOnInit(){
+  ngOnInit() {
+    this.noResults = false;
+    this.resultCount = 0;
     this.loadVehicles();
+
+    combineLatest([
+      this.search$.pipe(debounceTime(300), startWith('')),
+      this.brand$.pipe(startWith('')),
+      this.model$.pipe(startWith('')),
+      this.hasImage$.pipe(startWith(false)),
+      this.vehicleId$.pipe(startWith(null)),
+    ])
+      .pipe(
+        map(([search, brand, model, hasImage, vehicleId]) =>
+          this.vehicles.filter(vehicle => {
+
+            const textMatch =
+              vehicle.modelName.toLowerCase().includes(search) ||
+              vehicle.vehicleBrand.brandName.toLowerCase().includes(search);
+
+            const brandMatch = brand ? vehicle.vehicleBrand.brandName === brand : true;
+            const modelMatch = model ? vehicle.modelName === model : true;
+            const imageMatch = hasImage ? !!vehicle.vehicleBrand.icon : true;
+            const idMatch = vehicleId ? vehicle.id === vehicleId : true;
+
+            return textMatch && brandMatch && modelMatch && imageMatch && idMatch;
+          })
+        )
+      )
+      .subscribe(filtered => {
+        this.dataSource.data = filtered;
+        this.resultCount = filtered.length;
+        this.noResults = filtered.length === 0;
+
+        if (this.paginator) {
+          this.dataSource.paginator = this.paginator;
+          this.paginator.firstPage();
+        }
+      });
   }
 
   ngAfterViewInit() {
@@ -30,6 +70,15 @@ export class VehicleOverviewComponent {
   [key: string]: any; // Add this line to add an index signature
   models: string[] = [];
   filteredModels: string[] = []; // Filtered models based on the selected brand
+  search$ = new Subject<string>();
+  brand$ = new Subject<string>();
+  model$ = new Subject<string>();
+  hasImage$ = new Subject<boolean>();
+  vehicleId$ = new Subject<number | null>();
+
+  noResults = false;
+  resultCount = 0;
+
 
   filter = {
     vehicleId: null,
@@ -69,49 +118,86 @@ export class VehicleOverviewComponent {
 
   loadVehicles() {
     this.ServiceVehicle.LoadVehicles().subscribe({
-      next: (data) => {
-        console.log('Raw API response:', data);
+      next: (data: VehiclesDto[]) => {
+        this.vehicles = data.map(v => ({
+          ...v,
+          vehicleBrand: {
+            ...v.vehicleBrand,
+            icon: v.vehicleBrand.icon
+              ? `data:image/png;base64,${v.vehicleBrand.icon}`
+              : undefined
+          }
+        }));
 
-        this.vehicles = data as VehiclesDto[];
         this.dataSource.data = this.vehicles;
 
-        // Extract unique brand names
         this.uniqueBrands = [
-          ...new Set(this.vehicles.map((v) => v.vehicleBrand.brandName)),
+          ...new Set(this.vehicles.map(v => v.vehicleBrand.brandName))
         ];
 
-        // Update filtered models based on selected brand
         this.updateFilteredModels();
 
-        console.log('Loaded Vehicles:', this.vehicles);
+        // Reset filters
+        this.search$.next('');
+        this.brand$.next('');
+        this.model$.next('');
+        this.hasImage$.next(false);
+        this.vehicleId$.next(null);
       },
-      error: (error) => {
-        console.error('Error loading vehicles:', error);
-      },
+      error: err => console.error(err)
     });
   }
 
+  private base64ToByteArray(base64: string): Uint8Array {
+    const base64Data = base64.replace(/^data:image\/\w+;base64,/, '');
+    const byteChars = atob(base64Data);
+    const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
+    return new Uint8Array(byteNumbers);
+  }
 
-  onBrandChange() {
-    // Update filtered models when the brand changes
+
+  onSearch(event: Event) {
+    const value = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.search$.next(value);
+  }
+
+  onBrandChange(value: string) {
+    this.filter.brandName = value;
+    this.brand$.next(value);
     this.updateFilteredModels();
-    this.applyFilters();
+  }
+
+
+  onModelChange(value: string) {
+    this.model$.next(value);
+  }
+
+  onHasImageChange(value: boolean) {
+    this.hasImage$.next(value);
+  }
+
+  onVehicleIdChange(value: string) {
+    const parsedValue = value ? Number(value) : null;
+
+    if (value && isNaN(Number(parsedValue))) {
+      return;
+    }
+
+    this.vehicleId$.next(parsedValue);
   }
 
   updateFilteredModels() {
     if (this.filter.brandName) {
-      // Filter models by selected brand
       this.filteredModels = [
         ...new Set(
           this.vehicles
-            .filter((vehicle) => vehicle.vehicleBrand.brandName === this.filter.brandName)
-            .map((vehicle) => vehicle.modelName)
+            .filter((v) => v.vehicleBrand.brandName === this.filter.brandName)
+            .map((v) => v.modelName)
         ),
       ];
     } else {
-      // Show all models when no brand is selected
       this.filteredModels = [
-        ...new Set(this.vehicles.map((vehicle) => vehicle.modelName)),
+        ...new Set(this.vehicles.map((v) => v.modelName)),
       ];
     }
   }
@@ -124,49 +210,53 @@ export class VehicleOverviewComponent {
   }
 
   submitVehicleForm() {
+    const payload: any = {
+      ModelName: this.formVehicle.modelName,
+      BrandName: this.formVehicle.vehicleBrandName,
+      Icon: null
+    };
+
     if (this.formVehicle.icon) {
-      const base64Icon = this.formVehicle.icon.split(',')[1]; // Extract Base64 string
-      this.formVehicle.icon = base64Icon;
+      const base64 = this.formVehicle.icon.split(',')[1];
+      payload.Icon = base64;
     }
 
-    this.ServiceVehicle.AddVehicle(this.formVehicle).subscribe({
+    this.ServiceVehicle.AddVehicle(payload).subscribe({
       next: () => {
         console.log('Vehicle added successfully');
-        this.loadVehicles(); // Refresh vehicle list
-        this.formIsClosed = true; // Close the form after success
-        this.resetAddForm(); // Reset form fields
+        this.loadVehicles();
+        this.formIsClosed = true;
+        this.resetAddForm();
       },
-      error: (error) => {
-        console.error('There was an error adding the vehicle:', error);
-      },
+      error: (error) => console.error('Error adding vehicle:', error)
     });
   }
 
 
   submitUpdateForm() {
-    if (this.updateFormVehicle.icon) {
-      const base64Icon = this.updateFormVehicle.icon.split(',')[1]; // Extract Base64 string
-      this.updateFormVehicle.icon = base64Icon;
-    }
-
-    const updatedVehicleData = {
-      updateModelName: this.updateFormVehicle.updateModelName,
+    const payload: any = {
+      ModelName: this.updateFormVehicle.updateModelName,
+      BrandName: this.updateFormVehicle.updateBrandName,
       newModelName: this.updateFormVehicle.newModelName,
-      updateBrandName: this.updateFormVehicle.updateBrandName,
       newBrandName: this.updateFormVehicle.newBrandName,
-      icon: this.updateFormVehicle.icon // Ensure this property matches the backend
+      Icon: null
     };
 
-    this.ServiceVehicle.UpdateVehicle(updatedVehicleData).subscribe({
+    if (this.updateFormVehicle.icon) {
+      const base64 = this.updateFormVehicle.icon.split(',')[1];
+      payload.Icon = base64;
+    }
+
+    this.ServiceVehicle.UpdateVehicle(payload).subscribe({
       next: () => {
         console.log('Vehicle updated successfully');
-        this.loadVehicles(); // Refresh vehicle list
-        this.updateFormIsClosed = true; // Close the form after success
-        this.resetUpdateForm(); // Reset form fields
+        this.loadVehicles();
+        this.updateFormIsClosed = true;
+        this.resetUpdateForm();
       },
       error: (error) => {
-        console.error('There was an error updating the vehicle:', error);
-      },
+        console.error('Error updating vehicle:', error);
+      }
     });
   }
 
@@ -196,7 +286,6 @@ export class VehicleOverviewComponent {
   }
 
   editVehicle(vehicle: VehiclesDto) {
-    // Set the fields for updating
     this.updateFormVehicle.updateModelName = vehicle.modelName;
     this.updateFormVehicle.updateBrandName = vehicle.vehicleBrand.brandName;
 
@@ -207,7 +296,6 @@ export class VehicleOverviewComponent {
       ? 'data:image/png;base64,' + vehicle.vehicleBrand.icon
       : '';
 
-    // Open the update form
     this.updateFormIsClosed = !this.updateFormIsClosed;
   }
 
@@ -263,33 +351,17 @@ export class VehicleOverviewComponent {
   private handleFile(file: File, formKey: string): void {
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      this[formKey].icon = e.target.result; // Update the form icon with the Base64 string
+      this[formKey].icon = e.target.result;
     };
     reader.readAsDataURL(file);
   }
-
-  searchTerm: string = ''; // Store the search term
-
-  onSearch(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.searchTerm = input.value.toLowerCase(); // Convert to lowercase for case-insensitive matching
-
-    this.dataSource.data = this.vehicles.filter((vehicle) => {
-      const brandName = vehicle.vehicleBrand.brandName.toLowerCase();
-      const modelName = vehicle.modelName.toLowerCase();
-      return brandName.includes(this.searchTerm) || modelName.includes(this.searchTerm);
-    });
-
-    this.dataSource.paginator?.firstPage(); // Reset to the first page
-  }
-
 
   deleteBrand(number: number,name: string) {
     if(window.confirm("Are you sure you want to delete the ${name} brand? It will delete every model associated with this brand.")){
       this.ServiceVehicle.DeleteBrand(number).subscribe({
         next: () => {
           console.log('Vehicle deleted successfully');
-          this.loadVehicles(); // Refresh vehicle list
+          this.loadVehicles();
           location.reload();
         },
 

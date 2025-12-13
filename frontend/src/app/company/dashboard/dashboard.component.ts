@@ -22,6 +22,7 @@ import {VehicleDto} from '../../Models/VehicleDto';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ActivityService, ActivityCreateRequest} from '../../services/activity-service';
+import {ImageItem} from '../../Models/ImageItem';
 
 @Component({
   selector: 'app-dashboard',
@@ -93,7 +94,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   vehicleBrands: any = [];
   uploadedFiles: File[] = [];
   deletedImageIds: any[] = [];
-  uploadedImages: string[] = [];
+  uploadedImages: ImageItem[] = [];
+  existingImageIds: any[]=[];
   cities: any = [];
   countries: any = [];
   currentPage = 1;
@@ -256,7 +258,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     avaliable: [true, [Validators.required]],
   });
 
-// Add employee form visibility control
   showEmployeeForm() {
     this.isEmployeeFormVisible = true; // Show the form
   }
@@ -301,11 +302,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
             this.getCities();
             this.getVehicleCategories();
             this.getCompanyAdminId();
-            // Load company info for the owner
             this.companyService.getCompanyByUserId(this.userId).subscribe((company) => {
               this.setCompanyData(company);
 
-              // Load employees if owner
               this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
                 next: (employees) => {
                   this.employees = employees;
@@ -357,7 +356,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     }
   }
 
-  /** Reusable method to fill company data */
   private setCompanyData(company: any) {
     this.companyName = company.companyName;
     this.companyPhone = company.companyPhone;
@@ -365,7 +363,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.companyDescription = company.companyDescription;
     this.companyAddress = company.companyAddress;
 
-    // Handle company avatar
     if (company.companyAvatar && typeof company.companyAvatar === 'string') {
       const byteChars = atob(company.companyAvatar);
       const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
@@ -377,7 +374,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     }
     this.companyAvatarBackup = this.companyAvatar;
 
-    // Handle company file
     if (company.file && typeof company.file === 'string') {
       const byteChars = atob(company.file);
       const byteNumbers = Array.from(byteChars).map(c => c.charCodeAt(0));
@@ -490,7 +486,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
             this.downloadEmployeeCredentials(username, newEmployee.employeePassword, newEmployee.firstName, newEmployee.lastName);
             this.addActivity(1,response.id,0,0);
             this.isLoading = false;
-
+            this.closeAddEmployeeForm();
             window.location.reload();
           },
           error: (error) => {
@@ -544,6 +540,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
             this.dataSource = new MatTableDataSource(this.employees);
             this.addActivity(2, response.id,0,0);
             this.isLoading = false;
+            this.closeUpdateEmployeeForm();
           },
           error: (error) => {
             console.error('Error fetching employees:', error);
@@ -613,7 +610,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     doc.save("EmployeeCredentials-" + firstName + '-' + lastName + ".pdf");
   }
 
-  // Show the form
   showForm() {
     this.isFormVisible = true;
   }
@@ -669,7 +665,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     const companyData = {
       ...this.basicInfoFormGroup.value,
-      companyAvatar: this.companyAvatar, // If this is an uploaded File, make sure it's a File object, not a base64 string
+      companyAvatar: this.companyAvatar,
       file: this.file, // Your PDF file
       fileName: this.fileName,
       userId: this.userId
@@ -786,14 +782,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       return;
     }
 
-    // Convert blob to File
     this.companyAvatar = new File(
       [this.croppedImage],
       'company-avatar.png',
       {type: 'image/png'}
     );
 
-    // Hide cropper if needed
     this.showCropper = false;
 
     console.log('Company avatar stored for later:', this.companyAvatar);
@@ -889,11 +883,13 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     });
 
     deleteCompanyRef.afterClosed().subscribe(result => {
+
+      this.addActivity(12, 0, 0, 0);
+
       if (result) {
         this.companyService.deleteCompanyByUserId(this.userId).subscribe(
           () => {
             this.snackbarService.showSuccessMessage('Company deleted successfully!');
-            this.addActivity(12, 0, 0, 0);
             window.location.reload();
           },
           (error) => {
@@ -1014,31 +1010,17 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 }
 }
 
-// Called when fuel type changes
-  onFuelTypeChange() {
-    const fuelType = Number(this.companyTechincalDataFormGroup.get('fuelType')?.value);
-
-    if (fuelType === 2) { // Electric
-      this.companyTechincalDataFormGroup.get('transmissionType')?.setValue(1); // Automatic
-      this.companyTechincalDataFormGroup.get('transmissionType')?.disable();
-    } else {
-      this.companyTechincalDataFormGroup.get('transmissionType')?.enable();
-    }
-  }
-
-
-// Called when brand changes to fetch models
   onBrandChange(brandId: number, preselectModelId?: number) {
     this.vehicleModelsBrandsService.GetVehicleModelsByBrandId(brandId).subscribe({
       next: models => {
         this.vehicleModels = models;
-        this.companyUpdateVehicleBasicInfoForm.get('vehicleModelID')?.reset();
 
-        // if we’re editing, re-assign the model
         if (preselectModelId) {
           this.companyUpdateVehicleBasicInfoForm.patchValue({
             vehicleModelID: preselectModelId
           });
+        } else {
+          this.companyUpdateVehicleBasicInfoForm.get('vehicleModelID')?.reset();
         }
       },
       error: err => {
@@ -1047,32 +1029,16 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     });
   }
 
-// Image selection handler
-  onVehicleImageChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      const files = Array.from(input.files);
-      if (files.length + this.uploadedImages.length > 15) {
-        alert('You can upload a maximum of 15 images.');
-        return;
-      }
-
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>) => {
-          const result = e.target?.result as string;
-          this.uploadedImages.push(result);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  }
-
-  removeImage(index: number): void {
+  removeImage(index: number) {
     this.uploadedImages.splice(index, 1);
   }
 
-// Submit the vehicle
+  async urlToFile(url: string, filename: string): Promise<File> {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: blob.type });
+  }
+
   onSubmit() {
     if (
       !this.companyVehicleBasicInfoForm.valid ||
@@ -1156,13 +1122,20 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.isVehicleUpdateFormVisible = true;
     this.vehicleIdToUpdate = vehicle.id;
 
-    console.log(vehicle);
-    this.onBrandChange(vehicle.vehicleModel.vehicleBrandId);
+    this.onBrandChange(vehicle.vehicleModel.vehicleBrandId, vehicle.vehicleModel.id);
+
+    this.uploadedImages = vehicle.vehicleImages.map((img: any) => ({
+      url: img.imageUrl,
+      id:img.id,
+      file:null
+    }));
+
+    this.uploadedFiles = [];
 
     this.companyUpdateVehicleBasicInfoForm.patchValue({
       title: vehicle.title,
       brandId: vehicle.vehicleModel.vehicleBrandId,
-      vehicleModelID: vehicle.vehicleModelID,
+      vehicleModelID: vehicle.vehicleModel.id,
       pricePerDay:vehicle.pricePerDay,
     });
 
@@ -1221,7 +1194,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.isVehicleUpdateFormVisible = false;
   }
 
-  onUpdateVehicle() {
+  async onUpdateVehicle() {
     if (
       this.companyUpdateVehicleBasicInfoForm.invalid ||
       this.companyUpdateTechincalDataFormGroup.invalid ||
@@ -1236,7 +1209,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     const formData = new FormData();
 
-    // 🔹 Append exactly like upload
     formData.append('id', String(this.vehicleIdToUpdate));
     formData.append('title', basic.title ?? '');
     formData.append('vehicleModelID', String(basic.vehicleModelID));
@@ -1256,7 +1228,17 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     formData.append('userID', String(this.companyAdminUserId));
     formData.append('averageRating', '0');
 
-    this.uploadedFiles.forEach(file => formData.append('newImages', file, file.name));
+    for (let i = 0; i < this.uploadedImages.length; i++) {
+      let img = this.uploadedImages[i];
+
+      if (!img.file && img.url.startsWith('http')) {
+        img.file = await this.urlToFile(img.url, `existing_${i}.jpg`);
+      }
+
+      if (img.file) {
+        formData.append('newImages', img.file);
+      }
+    }
 
     this.vehicleListingService.updateVehicle(this.vehicleIdToUpdate, formData)
       .subscribe({
@@ -1293,27 +1275,20 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.router.navigate(['/vehicle/listing/' + vehicleId]);
   }
 
-  onFileImagesSelected(event: Event): void {
+  onFileImagesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
 
-    for (let i = 0; i < input.files.length; i++) {
-      const file = input.files[i];
-
-      // Only allow images
-      if (!file.type.startsWith('image/')) continue;
-
-      // Max 15 images
-      if (this.uploadedFiles.length >= 15) {
-        alert('You can upload a maximum of 15 images.');
-        break;
-      }
-
-      this.uploadedFiles.push(file);
-
-      // Generate preview
+    for (const file of Array.from(input.files)) {
       const reader = new FileReader();
-      reader.onload = () => this.uploadedImages.push(reader.result as string);
+
+      reader.onload = () => {
+        this.uploadedImages.push({
+          url: reader.result as string,
+          file: file
+        });
+      };
+
       reader.readAsDataURL(file);
     }
   }

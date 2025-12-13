@@ -136,7 +136,7 @@
             <div class="image-buttons">
               <button class="carousel-btn left" (click)="prevImage(vehicle, -1)">&#60;</button>
               <button class="carousel-btn right" (click)="nextImage(vehicle, +1)">&#62;</button>
-              <button class="carousel-btn right">
+              <button class="carousel-btn right" *ngIf="isLoggedIn">
                 <img
                   class="bookmark"
                   [class.filled]="vehicle.isBookmarked"

@@ -71,8 +71,8 @@ export class AdminUserUpdateComponent implements OnInit {
   datePipe=inject(DatePipe)
   originalIsVerified: boolean | undefined;
 
-  formatDate(){
-    this.user.birthDate=this.datePipe.transform(Date.parse(this.user.birthDate),"yyyy-MM-dd");
+  formatDate() {
+    this.user.birthDate = new Date(this.user.birthDate);
   }
 
   getCitiesAndUsers(userId:string):Observable<any>{

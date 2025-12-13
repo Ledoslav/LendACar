@@ -98,7 +98,9 @@ namespace LendACarAPI.Endpoints{
                 brand = new VehicleBrand
                 {
                     BrandName = request.BrandName,
-                    Icon = request.Icon
+                    Icon = !string.IsNullOrEmpty(request.Icon)
+                           ? Convert.FromBase64String(request.Icon)
+                           : null
                 };
 
                 _context.VehicleBrands.Add(brand);
@@ -125,6 +127,7 @@ namespace LendACarAPI.Endpoints{
             return Ok(VehicleModelWithBrand);
         }
 
+
         [HttpDelete("deleteModel/{vehicleModelId}")]
         [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         public async Task<ActionResult> DeleteVehicleModelById(int vehicleModelId)
@@ -150,30 +153,40 @@ namespace LendACarAPI.Endpoints{
             var vehicleBrandToDelete = await _context.VehicleBrands
                 .FirstOrDefaultAsync(c => c.Id == vehicleBrandId);
 
-            var vehicleModelsToDelete = await _context.VehicleModels
-                .Where(c => c.VehicleBrandId == vehicleBrandId)
+            if (vehicleBrandToDelete == null)
+                return NotFound(new { message = "Vehicle brand not found!" });
+
+
+            var vehicleModels = await _context.VehicleModels
+                .Where(m => m.VehicleBrandId == vehicleBrandId)
                 .ToListAsync();
 
-            if(vehicleBrandToDelete == null)
-            {
-                return NotFound(new { message = "Vehicle brand is not found!" });
-            }
 
-            if (vehicleModelsToDelete == null)
+            foreach (var model in vehicleModels)
             {
-                return NotFound(new { message = "Vehicle models are not found!" });
-            }
+                var vehicles = await _context.Vehicles
+                    .Where(v => v.VehicleModelID == model.Id)
+                    .ToListAsync();
 
-            foreach (var vehicleModel in vehicleModelsToDelete)
-            {
-                _context.VehicleModels.Remove(vehicleModel);
-                await _context.SaveChangesAsync();
+                foreach (var vehicle in vehicles)
+                {
+                    var reservations = await _context.Reservations
+                        .Where(r => r.VehicleID == vehicle.Id)
+                        .ToListAsync();
+
+                    _context.Reservations.RemoveRange(reservations);
+
+                    _context.Vehicles.Remove(vehicle);
+                }
+
+                _context.VehicleModels.Remove(model);
             }
 
             _context.VehicleBrands.Remove(vehicleBrandToDelete);
+
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Succesfully deleted vehicle brand!" });
+            return Ok(new { message = "Successfully deleted brand, models, vehicles, and reservations." });
         }
 
         [HttpPut("update/vehicle")]
@@ -187,18 +200,18 @@ namespace LendACarAPI.Endpoints{
                 .FirstOrDefaultAsync(c => c.BrandName.ToUpper() == request.BrandName.ToUpper());
 
             if (vehicleModelToUpdate == null)
-            {
                 return NotFound(new { message = "Model not found, update aborted" });
-            }
 
             if (vehicleBrandToUpdate == null)
-            {
-                return NotFound(new { message = "Model not found, update aborted" });
-            }
+                return NotFound(new { message = "Brand not found, update aborted" });
 
             vehicleModelToUpdate.ModelName = request.newModelName;
             vehicleBrandToUpdate.BrandName = request.newBrandName;
-            vehicleBrandToUpdate.Icon = request.Icon;
+
+            vehicleBrandToUpdate.Icon = !string.IsNullOrEmpty(request.Icon)
+                                        ? Convert.FromBase64String(request.Icon)
+                                        : vehicleBrandToUpdate.Icon;
+
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Update of vehicle is successful!" });
