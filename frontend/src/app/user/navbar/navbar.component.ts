@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {Router} from '@angular/router';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
@@ -12,6 +12,7 @@ import {CompanyEmployeeService} from '../../services/companyemployee.service';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   accountService=inject(UserService);
   router=inject(Router);
   authService=inject(MyAuthServiceService);

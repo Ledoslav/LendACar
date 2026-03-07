@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, ViewChild} from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import {CityService} from '../../services/city.service';
 import {EmployeeService} from '../../services/employee.service';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
@@ -18,6 +18,7 @@ import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
 
 
   constructor() {
@@ -76,15 +77,21 @@ export class RegisterComponent implements OnInit {
 
     this.employeeForm.get('countryId')?.valueChanges.subscribe(val=>{
       this.FilterCities(val);
-    })
+    
+    this.cdr.detectChanges();
+  })
 
     this.employeeForm.get('firstName')?.valueChanges.subscribe(val=>{
       this.generateEmail();
-    })
+    
+    this.cdr.detectChanges();
+  })
 
     this.employeeForm.get('lastName')?.valueChanges.subscribe(val=>{
       this.generateEmail();
-    })
+    
+    this.cdr.detectChanges();
+  })
 
   }
 
@@ -116,7 +123,9 @@ export class RegisterComponent implements OnInit {
   loadCountries(){
     this.countryService.getAllCountries().subscribe(res=>{
       this.countries = res;
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   getCitiesAndEmployee(employeeId:string):Observable<any>{
@@ -142,7 +151,9 @@ export class RegisterComponent implements OnInit {
   loadCities(){
     this.cityService.GetAllCities().subscribe(res=>{
       this.cities = res;
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   formatEmail(email:string):string{

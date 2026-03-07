@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {AdminService} from '../../services/administrator.service';
 import {Router} from '@angular/router';
 
@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
   styleUrl: './admin-login.component.css'
 })
 export class AdminLoginComponent implements OnInit  {
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
       const admin=localStorage.getItem('administrator');

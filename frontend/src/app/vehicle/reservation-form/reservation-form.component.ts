@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CountryService } from '../../services/country.service';
 import { CityService } from '../../services/city.service';
@@ -19,6 +19,7 @@ import {ActivityCreateRequest, ActivityService} from '../../services/activity-se
   styleUrls: ['./reservation-form.component.css']
 })
 export class ReservationFormComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   user: UserDto | null = null;
   vehicle: VehicleWithImagesDto | null = null;
   vehicleId: number | null = null;

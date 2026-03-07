@@ -1,5 +1,5 @@
 // poll-management.component.ts
-import { Component, OnInit, OnDestroy, AfterViewInit, AfterViewChecked, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, AfterViewChecked, inject, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
@@ -21,6 +21,7 @@ interface HTMLCanvasElement {
   styleUrls: ['./poll-management.component.css'],
 })
 export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
+  private cdr = inject(ChangeDetectorRef);
   employeeService=inject(EmployeeService);
   router=inject(Router);
 
@@ -62,11 +63,15 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
     this.http.get<any[]>(this.apiUrl).subscribe(
       (data) => {
         this.polls = data.map((poll) => this.calculateVotePercentages(poll));
-      },
+      
+    this.cdr.detectChanges();
+  },
       (error) => {
         console.error('Error fetching polls:', error);
         alert('Failed to load polls. Please check the server.');
-      }
+      
+    this.cdr.detectChanges();
+  }
     );
   }
 

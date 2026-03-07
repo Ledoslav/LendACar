@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {City} from '../../Models/City';
 import {CityService} from '../../services/city.service';
 import {AdminService} from '../../services/administrator.service';
@@ -12,6 +12,7 @@ import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
   styleUrl: './admin-edit-own-profile.component.css'
 })
 export class AdminEditOwnProfileComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   cities: City[] = [];
   model: any = {};
   adminEditForm: FormGroup;
@@ -50,7 +51,9 @@ export class AdminEditOwnProfileComponent implements OnInit {
           cityId: admin.cityId
         });
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
   Update() {

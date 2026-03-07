@@ -1,6 +1,6 @@
 import { EmployeeDto } from './../../Models/EmployeeDto';
 import { VerificationRequestDto } from './../../Models/VerificationRequestDto';
-import { Component,inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
@@ -21,6 +21,7 @@ import {CountryService} from '../../services/country.service';
   styleUrls: ['./verification-request.component.css']
 })
 export class VerificationRequestComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   employeeService=inject(EmployeeService);
   router=inject(Router);
 
@@ -61,15 +62,21 @@ export class VerificationRequestComponent implements OnInit {
     this.verificationService.GetVerificationRequests().subscribe(res=>{
       this.requests=res;
       this.filterRequests();
-    })
+    
+    this.cdr.detectChanges();
+  })
     this.userService.GetAllUsers().subscribe(res => {
       this.users = res.body || []; // Use `res.body` for the user array
       this.filterRequests();
-    });
+    
+    this.cdr.detectChanges();
+  });
     this.cityService.GetAllCities().subscribe(res => {
       this.cities = res;
       this.filterRequests();
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
 

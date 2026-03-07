@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {City} from '../../../Models/City';
 import {Country} from '../../../Models/Country';
@@ -15,6 +15,7 @@ import {MySnackbarService} from '../../../services/snackbars/my-snackbar.service
   styleUrl: './profile-page.component.css'
 })
 export class ProfilePageComponent implements OnInit{
+  private cdr = inject(ChangeDetectorRef);
   constructor() {
     this.model = this.accountService.currentUser();
 
@@ -36,7 +37,9 @@ export class ProfilePageComponent implements OnInit{
     this.loadCities();
     this.userEditForm.get('countryId')?.valueChanges.subscribe(val=>{
       this.FilterCities(val);
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   cities:City[]=[];
@@ -80,7 +83,9 @@ export class ProfilePageComponent implements OnInit{
     this.cityService.GetAllCities().subscribe(res=>{
       this.cities = res;
       this.FilterCities(this.accountService.currentUser()?.city.countryId);
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
 

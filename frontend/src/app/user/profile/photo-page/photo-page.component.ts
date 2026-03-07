@@ -1,4 +1,4 @@
-import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import {UserService} from '../../../services/user.service';
 import {ImageCroppedEvent, LoadedImage} from 'ngx-image-cropper';
 import {HttpClient} from '@angular/common/http';
@@ -13,6 +13,7 @@ import {DialogConfirmComponent} from '../../../shared/dialogs/dialog-confirm/dia
   styleUrl: './photo-page.component.css'
 })
 export class PhotoPageComponent implements OnInit{
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
 
@@ -143,6 +144,8 @@ export class PhotoPageComponent implements OnInit{
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 }

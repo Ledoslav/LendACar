@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {PasswordReset} from '../Models/PasswordReset';
@@ -15,6 +15,7 @@ import {MySnackbarService} from '../services/snackbars/my-snackbar.service';
   styleUrl: './forgot-password.component.css'
 })
 export class ForgotPasswordComponent  {
+  private cdr = inject(ChangeDetectorRef);
 
   model:PasswordReset= {
     emailAddress:"",
@@ -137,7 +138,9 @@ SubmitAnswer(){
     this.securityQuestionService.GetAllQuestions().subscribe(res => {
       this.questions = res;
       console.log(this.questions)
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   ComparePassword() {

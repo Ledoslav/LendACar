@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {VerificationRequestService} from '../../../services/verificationrequest.service';
 import {VerificationRequestDto} from '../../../Models/VerificationRequestDto';
 import {UserService} from '../../../services/user.service';
@@ -12,6 +12,7 @@ import {DatePipe} from '@angular/common';
   styleUrl: './verification-request-page.component.css'
 })
 export class VerificationRequestPageComponent implements OnInit{
+  private cdr = inject(ChangeDetectorRef);
   verificationService=inject(VerificationRequestService);
   accountService=inject(UserService);
   datePipe = inject(DatePipe);

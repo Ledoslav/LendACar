@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { VehicleListingService } from '../../services/vehiclelisting.service';
 import { CityService } from '../../services/city.service';
@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./vehicle-upload.component.css']
 })
 export class VehicleUploadComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
 
 
   fuelTypes = [

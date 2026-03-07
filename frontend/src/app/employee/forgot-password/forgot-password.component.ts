@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 
@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
   styleUrl: './forgot-password.component.css'
 })
 export class ForgotPasswordComponent {
+  private cdr = inject(ChangeDetectorRef);
   model:any={};
   passwordShow: boolean=false;
   repeatPassword:any;

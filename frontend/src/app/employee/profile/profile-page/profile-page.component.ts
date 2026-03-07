@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {City} from '../../../Models/City';
 import {Country} from '../../../Models/Country';
@@ -16,6 +16,7 @@ import {EmployeeDto} from '../../../Models/EmployeeDto';
   styleUrl: './profile-page.component.css'
 })
 export class ProfilePageComponent{
+  private cdr = inject(ChangeDetectorRef);
   constructor() {
     this.model = this.employeeService.currentEmployee()!;
 

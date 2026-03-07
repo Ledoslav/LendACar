@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit, inject} from '@angular/core';
+import { Component, OnInit, AfterViewInit, inject, ChangeDetectorRef } from '@angular/core';
 import { ChatService } from '../../services/chat-service';
 import { ChatApiService } from '../../services/chat-api.service';
 import {UserService} from '../../services/user.service';
@@ -16,6 +16,7 @@ import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
 
   mode: string = 'light-mode';
   connected = false;
@@ -71,7 +72,9 @@ export class DashboardComponent implements OnInit {
       });
 
       if (this.chats.length > 0) this.selectChat(this.chats[0]);
-    });
+    
+    this.cdr.detectChanges();
+  });
 
     this.chatService.connect().then(() => {
       this.chatService.onMessageReceived((msg) => {
@@ -123,7 +126,9 @@ export class DashboardComponent implements OnInit {
       });
 
       if (this.chats.length > 0) this.selectChat(this.chats[0]);
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
   selectChat(chat: Chat) {
@@ -138,7 +143,9 @@ export class DashboardComponent implements OnInit {
       if (this.chatService.connected) {
         this.chatService.joinChat(chat.id).catch(console.warn);
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
   RouteToListing(vehicleId:number) {
@@ -175,7 +182,9 @@ export class DashboardComponent implements OnInit {
       } else {
         console.log('User canceled chat deletion');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
 

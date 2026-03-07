@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import {UserService} from '../../../services/user.service';
 import {Router} from '@angular/router';
 import {DialogConfirmComponent} from '../../../shared/dialogs/dialog-confirm/dialog-confirm.component';
@@ -11,6 +11,7 @@ import {MatDialog} from '@angular/material/dialog';
   styleUrl: './close-account-page.component.css'
 })
 export class CloseAccountPageComponent {
+  private cdr = inject(ChangeDetectorRef);
 
   accountService=inject(UserService);
   router=inject(Router);
@@ -46,6 +47,8 @@ export class CloseAccountPageComponent {
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 }
