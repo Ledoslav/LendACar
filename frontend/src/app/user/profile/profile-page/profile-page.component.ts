@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
 import {MySnackbarService} from '../../../services/snackbars/my-snackbar.service';
 
 @Component({
+  standalone: false,
   selector: 'app-profile-page',
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'

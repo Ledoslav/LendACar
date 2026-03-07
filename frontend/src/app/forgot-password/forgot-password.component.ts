@@ -9,6 +9,7 @@ import {SecurityQuestion, SecurityQuestionService} from '../services/security-qu
 import {MySnackbarService} from '../services/snackbars/my-snackbar.service';
 
 @Component({
+  standalone: false,
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css'

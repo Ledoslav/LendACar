@@ -4,6 +4,7 @@ import {UserService} from '../../services/user.service';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 
 @Component({
+  standalone: false,
   selector: 'app-polls',
   templateUrl: './polls.component.html',
   styleUrls: ['./polls.component.css']

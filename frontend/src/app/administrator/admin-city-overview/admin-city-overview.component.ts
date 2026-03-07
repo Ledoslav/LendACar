@@ -11,6 +11,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog-confirm.component';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-city-overview',
   templateUrl: './admin-city-overview.component.html',
   styleUrl: './admin-city-overview.component.css'

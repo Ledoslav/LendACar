@@ -3,6 +3,7 @@ import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.
 import {Router} from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-not-authorized',
   templateUrl: './not-authorized.component.html',
   styleUrl: './not-authorized.component.css'

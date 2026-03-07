@@ -11,6 +11,7 @@ import { MySnackbarService } from '../../../services/snackbars/my-snackbar.servi
 import {MapQuestionTextToKey} from '../../../helper/map-question-text-to-key.helper';
 
 @Component({
+  standalone: false,
   selector: 'app-account-security-page',
   templateUrl: './account-security-page.component.html',
   styleUrl: './account-security-page.component.css'

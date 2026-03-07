@@ -5,6 +5,7 @@ import {UserService} from '../../../services/user.service';
 import {VehicleDto} from '../../../Models/VehicleDto';
 import { transmissionTypes } from '../../../shared/shared-data';
 @Component({
+  standalone: false,
   selector: 'app-my-vehicles-page',
   templateUrl: './my-vehicles-page.component.html',
   styleUrl: './my-vehicles-page.component.css'

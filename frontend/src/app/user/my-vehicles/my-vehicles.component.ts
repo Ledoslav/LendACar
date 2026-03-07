@@ -6,6 +6,7 @@ import { VehicleDto, VehicleWithImagesDto } from '../../Models/VehicleDto';
 import { Router } from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-my-vehicles',
   templateUrl: './my-vehicles.component.html',
   styleUrls: ['./my-vehicles.component.css']

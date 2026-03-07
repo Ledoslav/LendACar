@@ -9,6 +9,7 @@ import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 import {PaginatedResult} from '../../Models/Pagination';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-country-overview',
   templateUrl: './admin-country-overview.component.html',
   styleUrl: './admin-country-overview.component.css'

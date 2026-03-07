@@ -5,6 +5,7 @@ import { MyAuthServiceService } from '../../services/auth-service/my-auth-servic
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
+  standalone: false,
   selector: 'app-activity-home',
   templateUrl: './activity-home.component.html',
   styleUrls: ['./activity-home.component.css']

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { VehicleListingService } from '../../services/vehiclelisting.service';
 import { UserDto } from '../../Models/UserDto';
@@ -8,6 +8,7 @@ import {ChatService} from '../../services/chat-service';
 import {ChatApiService} from '../../services/chat-api.service';
 
 @Component({
+  standalone: false,
   selector: 'app-vehicle-listing',
   templateUrl: './vehicle-listing.html',
   styleUrls: ['./vehicle-listing.css']
@@ -26,7 +27,8 @@ export class VehicleListingComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private chatService: ChatService,
-    private chatApi: ChatApiService
+    private chatApi: ChatApiService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +43,7 @@ export class VehicleListingComponent implements OnInit {
           next: (vehicle) => {
             this.vehicle = vehicle; // save the data
             console.log('Vehicle loaded:', vehicle);
+            this.cdr.detectChanges();
           },
           error: (err) => {
             console.error('Failed to load vehicle', err);

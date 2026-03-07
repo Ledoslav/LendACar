@@ -7,6 +7,7 @@ import {EmployeeService} from '../../../services/employee.service';
 import {MySnackbarService} from '../../../services/snackbars/my-snackbar.service';
 
 @Component({
+  standalone: false,
   selector: 'app-account-security-page',
   templateUrl: './account-security-page.component.html',
   styleUrl: './account-security-page.component.css'

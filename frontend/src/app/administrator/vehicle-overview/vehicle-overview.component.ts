@@ -8,6 +8,7 @@ import { debounceTime, map, startWith } from 'rxjs/operators';
 
 
 @Component({
+  standalone: false,
   selector: 'app-vehicle-overview',
   templateUrl: './vehicle-overview.component.html',
   styleUrl: './vehicle-overview.component.css'

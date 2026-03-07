@@ -4,6 +4,7 @@ import {UserService} from '../../../services/user.service';
 import {Router} from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-profile-layout',
   templateUrl: './profile-layout.component.html',
   styleUrl: './profile-layout.component.css'

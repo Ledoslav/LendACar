@@ -25,6 +25,7 @@ import {ActivityService, ActivityCreateRequest} from '../../services/activity-se
 import {ImageItem} from '../../Models/ImageItem';
 
 @Component({
+  standalone: false,
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']

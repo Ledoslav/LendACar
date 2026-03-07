@@ -5,6 +5,7 @@ import {DialogConfirmComponent} from '../../../shared/dialogs/dialog-confirm/dia
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({
+  standalone: false,
   selector: 'app-close-account-page',
   templateUrl: './close-account-page.component.html',
   styleUrl: './close-account-page.component.css'

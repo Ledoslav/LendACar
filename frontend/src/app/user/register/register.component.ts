@@ -23,6 +23,7 @@ import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 
 @Component({
+  standalone: false,
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
