@@ -6,6 +6,7 @@ import {CompanyEmployeeService} from '../../services/companyemployee.service';
 
 
 @Component({
+  standalone: false,
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'

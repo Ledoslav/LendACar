@@ -10,6 +10,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 @Component({
+  standalone: false,
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']

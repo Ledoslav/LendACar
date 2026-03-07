@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @Component({
+  standalone: false,
   selector: 'app-reservation-history-page',
   templateUrl: './reservation-history-page.component.html',
   styleUrl: './reservation-history-page.component.css'

@@ -6,6 +6,7 @@ import {VerificationRequestSubmitDto} from '../../../Models/VerificationRequestS
 import {DatePipe} from '@angular/common';
 
 @Component({
+  standalone: false,
   selector: 'app-verification-request-page',
   templateUrl: './verification-request-page.component.html',
   styleUrl: './verification-request-page.component.css'

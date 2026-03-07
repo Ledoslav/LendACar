@@ -15,6 +15,7 @@ interface HTMLCanvasElement {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-poll-management',
   templateUrl: './poll-management.component.html',
   styleUrls: ['./poll-management.component.css'],

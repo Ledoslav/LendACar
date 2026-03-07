@@ -4,6 +4,7 @@ import {UserService} from '../../services/user.service';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
 
 @Component({
+  standalone: false,
   selector: 'app-not-found',
   templateUrl: './not-found.component.html',
   styleUrl: './not-found.component.css'

@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, ChangeDetectorRef} from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
@@ -11,6 +11,7 @@ import {ActivityCreateRequest, ActivityService} from '../../services/activity-se
 import {CityService} from '../../services/city.service';
 
 @Component({
+  standalone: false,
   selector: 'app-pretraga-home',
   templateUrl: './pretraga-home.component.html',
   styleUrl: './pretraga-home.component.css'
@@ -24,6 +25,7 @@ export class PretragaHomeComponent implements OnInit {
   bookmarkService = inject(BookmarkService);
   router = inject(Router);
   cityService=inject(CityService);
+  cdr = inject(ChangeDetectorRef);
   activityService = inject(ActivityService)
 
   isFilterOpen: boolean = false;
@@ -299,6 +301,7 @@ export class PretragaHomeComponent implements OnInit {
         }));
 
         console.log(this.vehicles);
+        this.cdr.detectChanges();
         this.noVehiclesFlag = this.vehicles.length == 0;
 
         this.pageInfo = response;

@@ -15,6 +15,7 @@ import {CountryService} from '../../services/country.service';
 
 
 @Component({
+  standalone: false,
   selector: 'app-verification-request',
   templateUrl: './verification-request.component.html',
   styleUrls: ['./verification-request.component.css']

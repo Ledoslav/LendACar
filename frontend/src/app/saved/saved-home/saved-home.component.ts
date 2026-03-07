@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
 import {ActivityCreateRequest, ActivityService} from '../../services/activity-service';
 
 @Component({
+  standalone: false,
   selector: 'app-saved-home',
   templateUrl: './saved-home.component.html',
   styleUrl: './saved-home.component.css'

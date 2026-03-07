@@ -7,6 +7,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {DialogConfirmComponent} from '../../../shared/dialogs/dialog-confirm/dialog-confirm.component';
 
 @Component({
+  standalone: false,
   selector: 'app-photo-page',
   templateUrl: './photo-page.component.html',
   styleUrl: './photo-page.component.css'

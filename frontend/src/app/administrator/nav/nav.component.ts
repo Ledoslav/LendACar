@@ -3,6 +3,7 @@ import {AdminService} from '../../services/administrator.service';
 import {Router} from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-nav-admin',
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.css'

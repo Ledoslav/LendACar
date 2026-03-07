@@ -14,6 +14,7 @@ import {debounceTime, distinctUntilChanged} from 'rxjs';
 
 
 @Component({
+  standalone: false,
   selector: 'app-admin-employee-overview',
   templateUrl: './admin-employee-overview.component.html',
   styleUrl: './admin-employee-overview.component.css'

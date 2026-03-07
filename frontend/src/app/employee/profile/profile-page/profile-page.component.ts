@@ -10,6 +10,7 @@ import {EmployeeService} from '../../../services/employee.service';
 import {EmployeeDto} from '../../../Models/EmployeeDto';
 
 @Component({
+  standalone: false,
   selector: 'app-profile-page',
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'

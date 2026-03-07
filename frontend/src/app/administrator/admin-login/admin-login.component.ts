@@ -3,6 +3,7 @@ import {AdminService} from '../../services/administrator.service';
 import {Router} from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-login',
   templateUrl: './admin-login.component.html',
   styleUrl: './admin-login.component.css'

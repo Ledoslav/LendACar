@@ -13,6 +13,7 @@ import { City } from '../../Models/City';
 import {ActivityCreateRequest, ActivityService} from '../../services/activity-service';
 
 @Component({
+  standalone: false,
   selector: 'app-reservation-form',
   templateUrl: './reservation-form.component.html',
   styleUrls: ['./reservation-form.component.css']

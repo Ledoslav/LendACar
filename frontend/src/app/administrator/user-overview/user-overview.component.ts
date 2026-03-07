@@ -14,6 +14,7 @@ import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog
 import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 @Component({
+  standalone: false,
   selector: 'app-user-overview',
   templateUrl: './user-overview.component.html',
   styleUrl: './user-overview.component.css'

@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, AfterViewInit} from '@angular/core';
+import {Component, inject, OnInit, AfterViewInit, ChangeDetectorRef} from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as L from 'leaflet';
 
 @Component({
+  standalone: false,
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
@@ -23,6 +24,7 @@ export class HomeComponent implements OnInit {
   countryService=inject(CountryService);
   cityService=inject(CityService);
   translateService=inject(TranslateService);
+  cdr = inject(ChangeDetectorRef);
   edgeReachedLeft: boolean=false;
   edgeReachedRight: boolean=false;
 
@@ -198,7 +200,8 @@ export class HomeComponent implements OnInit {
     this.vehicleService.getVehicle(paging).subscribe({
       next: (response) =>{
         this.vehicles = response;
-        console.log(this.vehicles)
+        console.log(this.vehicles);
+        this.cdr.detectChanges();
       }
     })
   }

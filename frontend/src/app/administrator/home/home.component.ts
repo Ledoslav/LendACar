@@ -5,6 +5,7 @@ import {DashboardTotalCountsDto, UserCountByMonth} from '../../Models/DashboardT
 import {Chart, registerables} from 'chart.js';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'

@@ -6,6 +6,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-edit-own-profile',
   templateUrl: './admin-edit-own-profile.component.html',
   styleUrl: './admin-edit-own-profile.component.css'

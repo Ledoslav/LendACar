@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-employee-layout',
   templateUrl: './employee-layout.component.html',
   styleUrl: './employee-layout.component.css'

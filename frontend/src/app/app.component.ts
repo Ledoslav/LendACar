@@ -6,6 +6,7 @@ import {EmployeeService} from './services/employee.service';
 import {AdminService} from './services/administrator.service';
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

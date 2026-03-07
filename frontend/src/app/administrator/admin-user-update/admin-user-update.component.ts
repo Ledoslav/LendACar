@@ -12,6 +12,7 @@ import {concatMap, Observable} from 'rxjs';
 import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-user-update',
   templateUrl: './admin-user-update.component.html',
   styleUrl: './admin-user-update.component.css'

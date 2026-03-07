@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 
 
 @Component({
+  standalone: false,
   selector: 'app-vehicle-upload',
   templateUrl: './vehicle-upload.component.html',
   styleUrls: ['./vehicle-upload.component.css']

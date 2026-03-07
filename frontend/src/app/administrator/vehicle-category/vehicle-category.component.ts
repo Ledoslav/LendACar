@@ -12,6 +12,7 @@ interface VehicleCategory {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-vehicle-categories',
   templateUrl: './vehicle-category.component.html',
   styleUrls: ['./vehicle-category.component.css']
