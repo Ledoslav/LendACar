@@ -35,7 +35,7 @@
             </div>
             <div class="info-item">
               <label>{{ 'VERIFICATION_REQUESTS.CITY' | translate }}</label>
-              <span>{{ getCityName(selectedUser.cityId) }}</span>
+              <span>{{ getCityName(selectedUser) }}</span>
             </div>
           </div>
           
@@ -146,9 +146,9 @@
         <tbody>
           <tr *ngFor="let request of filteredRequests; let i = index" (click)="selectRequest(request)" style="cursor: pointer;">
             <td class="fw-bold text-muted">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
-            <td class="fw-bold">{{ getUsername(request.userId) }}</td>
+            <td class="fw-bold">{{ getUsername(request) }}</td>
             <td>{{ request.requestDate | date:'short' }}</td>
-            <td>{{ getCityName(request.user?.cityId || 0) }}</td>
+            <td>{{ getCityName(request.user) }}</td>
             <td>
               <span class="status-badge" [ngClass]="{
                 'status-approved': request.requestStatus === 1,
