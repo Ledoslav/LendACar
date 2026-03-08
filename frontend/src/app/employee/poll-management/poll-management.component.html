@@ -40,7 +40,7 @@
       </button>
 
       <!-- Submit button to create the poll -->
-      <button type="submit" class="btn btn-primary create-btn" style="">Create Poll</button>
+      <button type="submit" class="btn btn-primary create-btn">Create Poll</button>
     </form>
 
     <!-- List of created polls -->
@@ -55,7 +55,7 @@
         </div>
 
         <!-- Graph for the poll -->
-        <canvas *ngIf="poll.chartData" id="pollChart{{poll.id}}" width="400" height="400"></canvas>
+        <canvas *ngIf="poll.chartData" #pollChart [attr.data-poll-id]="poll.id" width="400" height="400"></canvas>
       </div>
     </div>
 

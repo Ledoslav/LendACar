@@ -1,5 +1,5 @@
 // poll-management.component.ts
-import { Component, OnInit, OnDestroy, AfterViewInit, AfterViewChecked, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, ChangeDetectorRef, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
@@ -9,21 +9,19 @@ import {EmployeeService} from '../../services/employee.service';
 
 Chart.register(...registerables);
 
-// canvas.d.ts
-interface HTMLCanvasElement {
-  chartInstance?: Chart;  // Optional chart instance property
-}
-
 @Component({
   standalone: false,
   selector: 'app-poll-management',
   templateUrl: './poll-management.component.html',
   styleUrls: ['./poll-management.component.css'],
 })
-export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
+export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
-  employeeService=inject(EmployeeService);
-  router=inject(Router);
+  private ngZone = inject(NgZone);
+  employeeService = inject(EmployeeService);
+  router = inject(Router);
+
+  @ViewChildren('pollChart') chartCanvases!: QueryList<ElementRef<HTMLCanvasElement>>;
 
   polls: any[] = [];
   newPoll = {
@@ -33,7 +31,7 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
 
   private apiUrl = 'http://localhost:7000/api/Poll';
   private hubConnection!: HubConnection;
-  private isChartsRendered = false;
+  private chartInstances = new Map<number, Chart>();
 
   constructor(private http: HttpClient) {}
 
@@ -46,63 +44,67 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
     if (this.hubConnection) {
       this.hubConnection.stop();
     }
+    this.chartInstances.forEach(chart => chart.destroy());
+    this.chartInstances.clear();
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => this.renderCharts(), 0);
-  }
-
-  ngAfterViewChecked(): void {
-    if (this.polls.length && !this.isChartsRendered) {
+    // Re-render charts whenever the QueryList of canvases changes
+    this.chartCanvases.changes.subscribe(() => {
       this.renderCharts();
-      this.isChartsRendered = true;
-    }
+    });
+    
+    // Initial attempt
+    this.renderCharts();
   }
 
   loadPolls(): void {
-    this.http.get<any[]>(this.apiUrl).subscribe(
-      (data) => {
-        this.polls = data.map((poll) => this.calculateVotePercentages(poll));
-      
-    this.cdr.detectChanges();
-  },
-      (error) => {
+    this.http.get<any[]>(this.apiUrl).subscribe({
+      next: (data) => {
+        this.polls = (data || []).map((poll) => this.processPollData(poll));
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
         console.error('Error fetching polls:', error);
-        alert('Failed to load polls. Please check the server.');
-      
-    this.cdr.detectChanges();
-  }
-    );
+      }
+    });
   }
 
   updatePollList(updatedPoll: any): void {
-    const pollIndex = this.polls.findIndex((poll) => poll.id === updatedPoll.id);
+    const updatedId = updatedPoll.id ?? updatedPoll.Id;
+    const pollIndex = this.polls.findIndex((poll) => (poll.id ?? poll.Id) === updatedId);
+    
+    const processedPoll = this.processPollData(updatedPoll);
+    
     if (pollIndex !== -1) {
-      this.polls[pollIndex] = this.calculateVotePercentages(updatedPoll);
+      this.polls[pollIndex] = processedPoll;
     } else {
-      this.polls.push(this.calculateVotePercentages(updatedPoll));
+      this.polls.push(processedPoll);
     }
-    this.isChartsRendered = false;
+    
+    this.cdr.detectChanges();
   }
 
-  calculateVotePercentages(poll: any): any {
-    const votes: { [key: string]: number } = poll.votes;
-    const totalVotes: number = Object.values(votes).reduce((acc: number, voteCount: number) => acc + (voteCount || 0), 0);
+  processPollData(poll: any): any {
+    poll.id = poll.id ?? poll.Id;
+    
+    const votes: { [key: string]: number } = poll.votes || poll.Votes || {};
+    const totalVotes: number = Object.values(votes).reduce((acc: number, v: number) => acc + (v || 0), 0);
 
-    if (totalVotes === 0) {
-      return poll;
-    }
-
-    poll.options = poll.options.map((option: string) => ({
-      option: option,
-      votes: votes[option] || 0,
-      percentage: ((votes[option] || 0) / totalVotes) * 100
-    }));
+    const optionsRaw = poll.options || poll.Options || [];
+    poll.options = optionsRaw.map((opt: any) => {
+      const optionText = typeof opt === 'string' ? opt : (opt.option ?? opt.Option);
+      return {
+        option: optionText,
+        votes: votes[optionText] || 0,
+        percentage: totalVotes > 0 ? ((votes[optionText] || 0) / totalVotes) * 100 : 0
+      };
+    });
 
     poll.chartData = {
-      labels: poll.options.map((option: any) => option.option),
+      labels: poll.options.map((o: any) => o.option),
       datasets: [{
-        data: poll.options.map((option: any) => option.votes),
+        data: poll.options.map((o: any) => o.votes),
         backgroundColor: ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7"],
         borderColor: '#ffffff',
         borderWidth: 1
@@ -113,24 +115,42 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   renderCharts(): void {
-    this.polls.forEach((poll) => {
-      if (poll.chartData) {
-        const canvasElement = document.getElementById(`pollChart${poll.id}`) as HTMLCanvasElement;
-        if (canvasElement) {
-          // Destroy any existing chart instance before creating a new one
-          if (canvasElement.chartInstance) {
-            canvasElement.chartInstance.destroy();
-          }
+    if (!this.chartCanvases) return;
 
-          // Cast the canvas element to ChartItem
-          const chartInstance = new Chart(canvasElement as ChartItem, {
-            type: 'pie',
-            data: poll.chartData
-          });
+    this.chartCanvases.forEach((canvasRef) => {
+      const canvasElement = canvasRef.nativeElement;
+      const pollIdStr = canvasElement.getAttribute('data-poll-id');
+      const pollId = pollIdStr ? parseInt(pollIdStr) : null;
+      
+      if (pollId === null) return;
 
-          // Store the chart instance in the canvas element to reuse later
-          canvasElement.chartInstance = chartInstance;
+      const poll = this.polls.find(p => p.id === pollId);
+      
+      if (poll && poll.chartData) {
+        // Cleanup existing instance for this specific ID
+        if (this.chartInstances.has(pollId)) {
+          this.chartInstances.get(pollId)?.destroy();
+          this.chartInstances.delete(pollId);
         }
+        
+        const chartInstance = new Chart(canvasElement as ChartItem, {
+          type: 'pie',
+          data: poll.chartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false, // Allow CSS to control height
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#ffffff'
+                    }
+                }
+            }
+          }
+        });
+        
+        this.chartInstances.set(pollId, chartInstance);
       }
     });
   }
@@ -141,7 +161,9 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
       .build();
 
     this.hubConnection.on('ReceiveVoteUpdate', (updatedPoll) => {
-      this.updatePollList(updatedPoll);
+      this.ngZone.run(() => {
+        this.updatePollList(updatedPoll);
+      });
     });
 
     this.hubConnection.start().then(() => {
@@ -160,7 +182,7 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   createPoll(): void {
-    if (!this.newPoll.question || this.newPoll.options.some((option) => !option)) {
+    if (!this.newPoll.question || this.newPoll.options.some((o) => !o)) {
       alert('Please fill in the question and all options.');
       return;
     }
@@ -173,7 +195,6 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
       },
       error: (error) => {
         console.error('Error creating poll:', error);
-        alert('Failed to create the poll. Please try again.');
       },
     });
   }
