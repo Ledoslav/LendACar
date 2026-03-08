@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { LayoutComponent } from './layout/layout.component';
@@ -17,6 +16,7 @@ import { NgxCaptchaModule } from 'ngx-captcha';
 import { JwtModule } from "@auth0/angular-jwt";
 import {TokenInterceptor} from './interceptors/token.interceptor';
 import {ErrorInterceptor} from './interceptors/error.interceptor';
+import {ZoneInterceptor} from './interceptors/zone.interceptor';
 import {
   MatDialogModule,
 } from '@angular/material/dialog';
@@ -69,7 +69,6 @@ import {MatNativeDateModule} from '@angular/material/core';
 
   ],
   providers: [
-    provideAnimationsAsync(),
     DatePipe,
     {
       provide: HTTP_INTERCEPTORS,
@@ -79,6 +78,11 @@ import {MatNativeDateModule} from '@angular/material/core';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ZoneInterceptor,
       multi: true,
     }
   ],

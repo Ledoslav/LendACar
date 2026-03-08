@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import { VerificationRequestDto } from '../Models/VerificationRequestDto';
 import { VerificationRequestSubmitDto } from '../Models/VerificationRequestSubmitDto';
 import { MyConfig } from '../my-config';
@@ -15,6 +15,15 @@ export class VerificationRequestService {
 
   GetVerificationRequests(){
     return this.http.get<VerificationRequestDto[]>(this.baseUrl + '/get')
+  }
+
+  GetFilteredVerificationRequests(status?: number, searchQuery?: string, cityId?: number) {
+    let params = new HttpParams();
+    if (status !== undefined && status !== null) params = params.set('status', status.toString());
+    if (searchQuery) params = params.set('searchQuery', searchQuery);
+    if (cityId) params = params.set('cityId', cityId.toString());
+
+    return this.http.get<VerificationRequestDto[]>(this.baseUrl + '/getFiltered', { params });
   }
 
   GetVerificationRequestById(id:number){

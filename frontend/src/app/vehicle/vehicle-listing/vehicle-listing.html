@@ -30,57 +30,57 @@
             <div class="car-info-item">
               <img [src]="getBrandIcon()" alt="{{ vehicle?.vehicleModel?.vehicleBrand?.brandName }} Icon" class="icon-placeholder">
               <div class="info-text">
-                <div class="info-title">Brand</div>
+                <div class="info-title">{{ 'VEHICLE.LISTING.BRAND' | translate }}</div>
                 <div class="info-value">{{vehicle?.vehicleModel?.vehicleBrand?.brandName}}</div>
               </div>
             </div>
             <div class="car-info-item">
               <img src="generic_sedan.png" alt="Model Icon" class="icon-placeholder">
               <div class="info-text">
-                <div class="info-title">Model</div>
+                <div class="info-title">{{ 'VEHICLE.LISTING.MODEL' | translate }}</div>
                 <div class="info-value">{{vehicle?.vehicleModel?.modelName}}</div>
               </div>
             </div>
             <div class="car-info-item">
               <img src="engine.png" alt="Displacement Icon" class="icon-placeholder">
               <div class="info-text">
-                <div class="info-title">Displacement</div>
+                <div class="info-title">{{ 'VEHICLE.LISTING.DISPLACEMENT' | translate }}</div>
                 <div class="info-value">{{vehicle?.engineDisplacement}}</div>
               </div>
             </div>
             <div class="car-info-item">
               <img src="gears-white.png" alt="Power Icon" class="icon-placeholder">
               <div class="info-text">
-                <div class="info-title">Power</div>
+                <div class="info-title">{{ 'VEHICLE.LISTING.POWER' | translate }}</div>
                 <div class="info-value">{{vehicle?.enginePower}}ps</div>
               </div>
             </div>
             <div class="car-info-item">
               <img src="gear-shift-white.png" alt="Transmission Icon" class="icon-placeholder">
               <div class="info-text">
-                <div class="info-title">Transmission</div>
-                <div class="info-value">{{ vehicle ? getTransmissionType(vehicle.transmissionType) : "Unknown"}}</div>
+                <div class="info-title">{{ 'VEHICLE.LISTING.TRANSMISSION' | translate }}</div>
+                <div class="info-value">{{ vehicle ? (getTransmissionType(vehicle.transmissionType) | translate) : ("Unknown" | translate)}}</div>
               </div>
             </div>
 
             <div class="car-info-item">
               <img src="snowflake.png" alt="AC Icon" class="icon-placeholder">
               <div class="info-text">
-                <div class="info-title">Air Conditioning</div>
-                <div class="info-value">{{ vehicle ? getACType(vehicle.airConditioning) : "Unknown"}}</div>
+                <div class="info-title">{{ 'VEHICLE.LISTING.AC' | translate }}</div>
+                <div class="info-value">{{ vehicle ? (getACType(vehicle.airConditioning) | translate) : ("Unknown" | translate)}}</div>
               </div>
             </div>
             <div class="car-info-item">
               <img src="gas.png" alt="Fuel Icon" class="icon-placeholder">
               <div class="info-text">
-                <div class="info-title">Fuel</div>
-                <div class="info-value">{{ vehicle ? getFuelType(vehicle.fuelType) : "Unknown"}}</div>
+                <div class="info-title">{{ 'VEHICLE.LISTING.FUEL' | translate }}</div>
+                <div class="info-value">{{ vehicle ? (getFuelType(vehicle.fuelType) | translate) : ("Unknown" | translate)}}</div>
               </div>
             </div>
             <div class="car-info-item">
               <img src="calendar.png" alt="Year Icon" class="icon-placeholder">
               <div class="info-text">
-                <div class="info-title">Production Year</div>
+                <div class="info-title">{{ 'VEHICLE.LISTING.PRODUCTION_YEAR' | translate }}</div>
                 <div class="info-value">{{vehicle?.productionYear}}</div>
               </div>
             </div>
@@ -97,7 +97,7 @@
       <div class="user-info">
         <!-- Owner username -->
   <div class="owner-username">
-    Owner: {{ vehicle?.user?.username || 'Unknown' }}
+    {{ 'VEHICLE.LISTING.OWNER' | translate }}: {{ vehicle?.user?.username || ('Unknown' | translate) }}
   </div>
 
   <div class="user-details">
@@ -125,7 +125,7 @@
       <!-- Message button -->
       <button *ngIf="vehicle?.userID != user?.id" class="message-btn" (click)="openChat()">
         <img src="message_logo.png" alt="Message" class="icon">
-        Message Now
+        {{ 'VEHICLE.LISTING.MESSAGE_NOW' | translate }}
       </button>
     </div>
   </div>
@@ -135,7 +135,7 @@
         <div class="reservation-item">
           <img src="money-white.png" alt="Price Icon" class="reservation-icon">
           <div class="reservation-text">
-            <div class="reservation-title">Price per day</div>
+            <div class="reservation-title">{{ 'VEHICLE.LISTING.PRICE_PER_DAY' | translate }}</div>
             <div class="reservation-value">{{ vehicle?.pricePerDay || 'N/A' }} BAM</div>
           </div>
         </div>
@@ -143,13 +143,13 @@
         <div class="reservation-item">
           <img src="LAC_waypoint.png" alt="City Icon" class="reservation-icon">
           <div class="reservation-text">
-            <div class="reservation-title">City</div>
-            <div class="reservation-value">{{ vehicle?.city?.name || 'Unknown' }}</div>
+            <div class="reservation-title">{{ 'VEHICLE.LISTING.CITY' | translate }}</div>
+            <div class="reservation-value">{{ vehicle?.city?.name || ('Unknown' | translate) }}</div>
           </div>
         </div>
 
         <button class="begin-reservation-btn" (click)="goToReservationForm()" [disabled]="!user" *ngIf="user && user.id != vehicle?.userID">
-          Begin Reservation
+          {{ 'VEHICLE.LISTING.BEGIN_RESERVATION' | translate }}
         </button>
       </div>
 

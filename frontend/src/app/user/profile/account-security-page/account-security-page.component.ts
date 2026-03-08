@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {PasswordResetService} from '../../../services/password-reset.service';
 import {SecurityQuestion, SecurityQuestionService} from '../../../services/security-question.service';
@@ -17,6 +17,7 @@ import {MapQuestionTextToKey} from '../../../helper/map-question-text-to-key.hel
   styleUrl: './account-security-page.component.css'
 })
 export class AccountSecurityPageComponent implements OnInit{
+  private cdr = inject(ChangeDetectorRef);
 
   model:any={};
   questions:any[]=[]
@@ -70,7 +71,9 @@ export class AccountSecurityPageComponent implements OnInit{
         ...q,
         questionTextKey: MapQuestionTextToKey(q.id)
       }));
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   ChangePassword() {
@@ -147,7 +150,9 @@ export class AccountSecurityPageComponent implements OnInit{
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
   ChangeQuestionConfirmDialog() {
@@ -166,7 +171,9 @@ export class AccountSecurityPageComponent implements OnInit{
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
   AddQuestionConfirmDialog() {
@@ -185,7 +192,9 @@ export class AccountSecurityPageComponent implements OnInit{
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
 }

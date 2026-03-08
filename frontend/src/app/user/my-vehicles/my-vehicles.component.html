@@ -11,10 +11,10 @@
         <h3>{{ user?.username }}</h3>
         <p>{{ user?.city?.name }}</p>
         <p>{{ user?.emailAddress }}</p>
-        <p>{{ user?.averageRating }} stars</p>
+        <p>{{ user?.averageRating }} {{ 'VEHICLE.MY_VEHICLES.STARS' | translate }}</p>
       </div>
       <button class="upload-button" [routerLink]="['/user/vehicleUpload']" [disabled]="!user?.isVerified">
-      Upload Vehicle
+      {{ 'VEHICLE.MY_VEHICLES.UPLOAD_VEHICLE' | translate }}
     </button>
 
     </div>
@@ -22,20 +22,20 @@
     <!-- Vehicle List Card -->
     <div class="vehicle-list-card" style="max-width: 800px;">
       <div class="search-bar">
-        <input type="text" placeholder="Search by vehicle title..." [(ngModel)]="searchText" style="width: 80%;"/>
+        <input type="text" [placeholder]="'VEHICLE.MY_VEHICLES.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchText" style="width: 80%;"/>
         <select [(ngModel)]="availabilityFilter">
-          <option value="all">All</option>
-          <option value="available">Available</option>
-          <option value="unavailable">Unavailable</option>
+          <option value="all">{{ 'HOME.ALL' | translate }}</option>
+          <option value="available">{{ 'HOME.AVAILABLE' | translate }}</option>
+          <option value="unavailable">{{ 'COMPANY.NOT_AVAILABLE' | translate }}</option>
         </select>
       </div>
 
       <div *ngIf="!user?.isVerified" class="verification-message">
-        <p>Unverified users cannot upload vehicles</p>
+        <p>{{ 'VEHICLE.MY_VEHICLES.UNVERIFIED_WARNING' | translate }}</p>
       </div>
 
       <div *ngIf="user?.isVerified && vehicles?.length === 0" class="no-vehicles-message">
-        <p>You don't have any uploaded vehicles</p>
+        <p>{{ 'VEHICLE.MY_VEHICLES.NO_VEHICLES' | translate }}</p>
       </div>
 
       <div class="vehicle-cards" *ngIf="user?.isVerified && vehicles">
@@ -48,9 +48,9 @@
           <h4>{{ vehicle.title }}</h4>
           <p class="availability">
             <img [src]="vehicle.avaliable ? 'marks/checkmark.png' : 'marks/xmark.png'" alt="status" width="5%" height="5%" />
-            {{ vehicle.avaliable ? 'Available' : 'Unavailable' }}
+            {{ (vehicle.avaliable ? 'HOME.AVAILABLE' : 'COMPANY.NOT_AVAILABLE') | translate }}
           </p>
-          <button class="listing-button" (click)="goToVehicle(vehicle.id)">Go to listing</button>
+          <button class="listing-button" (click)="goToVehicle(vehicle.id)">{{ 'VEHICLE.MY_VEHICLES.GO_TO_LISTING' | translate }}</button>
         </div>
       </div>
     </div>

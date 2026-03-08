@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {AdminService} from '../../services/administrator.service';
 import {HttpClient} from '@angular/common/http';
 import {DashboardTotalCountsDto, UserCountByMonth} from '../../Models/DashboardTotalCountsDto';
@@ -11,6 +11,7 @@ import {Chart, registerables} from 'chart.js';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   ngOnInit(): void {
       Chart.register(...registerables);
       this.LoadDashboardData();
@@ -28,7 +29,9 @@ export class HomeComponent implements OnInit {
     this.adminService.GetDashboardData().subscribe(data=>{
       this.dashboardData=data;
       this.initialiseLineCharts();
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   initialiseLineCharts() {

@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {VehicleService} from '../../../services/vehicle.service';
 import {UserService} from '../../../services/user.service';
@@ -11,6 +11,7 @@ import { transmissionTypes } from '../../../shared/shared-data';
   styleUrl: './my-vehicles-page.component.css'
 })
 export class MyVehiclesPageComponent implements OnInit{
+  private cdr = inject(ChangeDetectorRef);
   userVehicles:VehicleDto[]=[];
   vehiclesService=inject(VehicleService);
   accountService=inject(UserService);

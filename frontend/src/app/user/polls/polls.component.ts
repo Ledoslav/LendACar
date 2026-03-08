@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {UserService} from '../../services/user.service';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
@@ -10,6 +10,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
   styleUrls: ['./polls.component.css']
 })
 export class PollsComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   accountService=inject(UserService);
   
   logout() {
@@ -43,11 +44,15 @@ export class PollsComponent implements OnInit {
     this.http.get<any[]>(this.apiUrl).subscribe(
       (data) => {
         this.polls = data.map((poll) => this.calculateVotePercentages(poll));
-      },
+      
+    this.cdr.detectChanges();
+  },
       (error) => {
         console.error('Error fetching polls:', error);
         alert('Failed to load polls. Please check the server.');
-      }
+      
+    this.cdr.detectChanges();
+  }
     );
   }
 

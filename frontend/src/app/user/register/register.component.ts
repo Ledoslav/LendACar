@@ -1,4 +1,4 @@
-import {Component, inject, model, OnInit} from '@angular/core';
+import { Component, inject, model, OnInit, ChangeDetectorRef } from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
@@ -29,6 +29,7 @@ import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
     ngOnInit(): void {
         this.loadCountries();
         this.loadCities();
@@ -110,20 +111,26 @@ export class RegisterComponent implements OnInit {
   loadCountries(){
     this.countryService.getAllCountries().subscribe(res=>{
         this.countries=res;
-      })
+      
+    this.cdr.detectChanges();
+  })
   }
 
   loadCities(){
     this.cityService.GetAllCities().subscribe(res=>{
       this.cities = res;
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   loadSecurityQuestion(){
     this.securityQuestionService.GetAllQuestions().subscribe(res=>{
       this.questions=res;
       console.log(this.questions)
-    })
+    
+    this.cdr.detectChanges();
+  })
 }
 
 showQuestions:boolean=true;

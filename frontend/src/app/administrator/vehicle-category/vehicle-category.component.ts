@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { isElementAccessExpression } from 'typescript';
 import {AdminService} from '../../services/administrator.service';
@@ -18,6 +18,7 @@ interface VehicleCategory {
   styleUrls: ['./vehicle-category.component.css']
 })
 export class VehicleCategoriesComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   adminService=inject(AdminService);
   router=inject(Router);
 
@@ -42,7 +43,9 @@ export class VehicleCategoriesComponent implements OnInit {
           ...category,
           icon: category.icon ? `data:image/png;base64,${category.icon}` : undefined,
         }));
-      },
+      
+    this.cdr.detectChanges();
+  },
       (error) => console.error('Failed to fetch categories:', error)
     );
   }
@@ -63,7 +66,9 @@ export class VehicleCategoriesComponent implements OnInit {
           icon: category.icon ? `data:image/png;base64,${category.icon}` : undefined,
         });
         this.resetForm();
-      },
+      
+    this.cdr.detectChanges();
+  },
       (error) => console.error('Failed to add category:', error)
     );
   }
@@ -73,7 +78,9 @@ export class VehicleCategoriesComponent implements OnInit {
       () => {
         this.loadCategories();
         this.resetForm();
-      },
+      
+    this.cdr.detectChanges();
+  },
       (error) => console.error('Failed to update category:', error)
     );
   }

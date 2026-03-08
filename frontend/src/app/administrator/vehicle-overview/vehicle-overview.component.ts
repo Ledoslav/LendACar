@@ -1,4 +1,4 @@
-import {Component, inject, ViewChild, OnInit, AfterViewInit} from '@angular/core';
+import { Component, inject, ViewChild, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import {VehicleService} from '../../services/vehicle.service';
 import {VehiclesDto} from '../../Models/VehiclesDto';
 import { MatPaginator } from '@angular/material/paginator';
@@ -15,6 +15,7 @@ import { debounceTime, map, startWith } from 'rxjs/operators';
 })
 
 export class VehicleOverviewComponent implements OnInit, AfterViewInit {
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   ngOnInit() {
@@ -55,7 +56,9 @@ export class VehicleOverviewComponent implements OnInit, AfterViewInit {
           this.dataSource.paginator = this.paginator;
           this.paginator.firstPage();
         }
-      });
+      
+    this.cdr.detectChanges();
+  });
   }
 
   ngAfterViewInit() {

@@ -8,7 +8,9 @@ import { FormsModule } from '@angular/forms'
 import { VehicleListingComponent } from './vehicle-listing/vehicle-listing';
 import { UserModule } from "../user/user.module";
 import { ReservationFormComponent } from './reservation-form/reservation-form.component';
+import { ReservationSuccessComponent } from './reservation-success/reservation-success.component';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @NgModule({
@@ -16,14 +18,16 @@ import { GoogleMapsModule } from '@angular/google-maps';
     LayoutComponent,
     DashboardComponent,
     VehicleListingComponent,
-    ReservationFormComponent
+    ReservationFormComponent,
+    ReservationSuccessComponent
   ],
   imports: [
     CommonModule,
     VehicleRoutingModule,
     FormsModule,
     UserModule,
-    GoogleMapsModule
+    GoogleMapsModule,
+    TranslateModule
 ]
 })
 export class VehicleModule { }

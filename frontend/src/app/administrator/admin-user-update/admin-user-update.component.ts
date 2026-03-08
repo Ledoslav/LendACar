@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -18,6 +18,7 @@ import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
   styleUrl: './admin-user-update.component.css'
 })
 export class AdminUserUpdateComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
 
   constructor() {
     this.userEditForm=this.fb.group({
@@ -53,7 +54,9 @@ export class AdminUserUpdateComponent implements OnInit {
           } else {
             this.userEditForm.get('isUserVerifiedStatusChanged')?.setValue(false, { emitEvent: false });
           }
-        });
+        
+    this.cdr.detectChanges();
+  });
     }
 
     user:any;
