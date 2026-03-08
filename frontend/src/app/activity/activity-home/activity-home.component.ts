@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Activity, ActivityService } from '../../services/activity-service';
 import { UserService } from '../../services/user.service';
 import { MyAuthServiceService } from '../../services/auth-service/my-auth-service.service';
@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./activity-home.component.css']
 })
 export class ActivityHomeComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   activities: Activity[] = [];
   loading = false;
   error: string | null = null;
@@ -77,6 +78,8 @@ export class ActivityHomeComponent implements OnInit {
         verticalPosition: 'bottom',
         panelClass: this.mode === 'dark-mode' ? ['snackbar-dark'] : ['snackbar-light']
       });
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 }

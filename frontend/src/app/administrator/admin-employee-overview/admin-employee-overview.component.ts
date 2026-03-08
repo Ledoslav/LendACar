@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {EmployeeDto} from '../../Models/EmployeeDto';
 import {EmployeeService} from '../../services/employee.service';
 import {FormBuilder, Validators} from '@angular/forms';
@@ -20,6 +20,7 @@ import {debounceTime, distinctUntilChanged} from 'rxjs';
   styleUrl: './admin-employee-overview.component.css'
 })
 export class AdminEmployeeOverviewComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
 
   showCityField: boolean = false;
   router = inject(Router);
@@ -54,7 +55,9 @@ export class AdminEmployeeOverviewComponent implements OnInit {
         this.employeeSearchForm.get('cityId')?.enable();
 
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
 
     this.employeeSearchForm.valueChanges.pipe(
       debounceTime(500),
@@ -62,7 +65,9 @@ export class AdminEmployeeOverviewComponent implements OnInit {
     ).subscribe(()=>{
       if(!this.employeeSearchForm.invalid)
         this.filterEmployees();
-    })
+    
+    this.cdr.detectChanges();
+  })
 
 
   }
@@ -195,6 +200,8 @@ export class AdminEmployeeOverviewComponent implements OnInit {
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 }

@@ -16,6 +16,7 @@ import { AccountSecurityPageComponent } from './profile/account-security-page/ac
 import { PhotoPageComponent } from './profile/photo-page/photo-page.component';
 import {ImageCropperComponent} from 'ngx-image-cropper';
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {TranslateModule} from '@ngx-translate/core';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
         ReactiveFormsModule,
         DatePipe,
         ImageCropperComponent,
-        MatProgressSpinner
+        MatProgressSpinner,
+        TranslateModule
     ]
 })
 export class EmployeeModule { }

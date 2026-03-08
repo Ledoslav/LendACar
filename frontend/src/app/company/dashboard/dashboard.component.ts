@@ -1,5 +1,5 @@
 // dashboard.component.ts
-import {Component, ElementRef, inject, OnInit, ViewChild, AfterViewInit, AfterViewChecked, OnDestroy} from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild, AfterViewInit, AfterViewChecked, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import {CompanyService} from '../../services/company.service';
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
@@ -32,6 +32,7 @@ import {ImageItem} from '../../Models/ImageItem';
 })
 
 export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
+  private cdr = inject(ChangeDetectorRef);
 
   // Injectabels
   accountService = inject(UserService); // Inject UserService
@@ -574,7 +575,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
   generateRandomPassword(length: number = 12): string {
@@ -677,11 +680,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         this.snackbarService.showSuccessMessage('Company created successfully');
         this.addActivity(10,0,0,0);
         window.location.reload();
-      },
+      
+    this.cdr.detectChanges();
+  },
       (error) => {
         this.snackbarService.showErrorMessage('Failed to create company');
         console.error('Error creating company:', error);
-      }
+      
+    this.cdr.detectChanges();
+  }
     );
 
     this.isFormVisible = false;
@@ -709,11 +716,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         this.addActivity(11,0,0,0);
         this.isLoading = false;
         window.location.reload();
-      },
+      
+    this.cdr.detectChanges();
+  },
       (error) => {
         this.snackbarService.showErrorMessage('Failed to update company');
         console.error('Error updating company:', error);
-      }
+      
+    this.cdr.detectChanges();
+  }
     );
   }
 
@@ -819,7 +830,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
   closeUpdateForm() {
@@ -901,7 +914,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       } else {
         console.log('User canceled company deletion');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
 
@@ -1187,7 +1202,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       } else {
         console.log('User canceled vehicle deletion');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
 

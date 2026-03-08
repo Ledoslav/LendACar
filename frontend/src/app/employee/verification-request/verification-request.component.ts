@@ -1,7 +1,8 @@
 import { EmployeeDto } from './../../Models/EmployeeDto';
 import { VerificationRequestDto } from './../../Models/VerificationRequestDto';
-import { Component,inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import {Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
 import {EmployeeService} from '../../services/employee.service';
@@ -12,6 +13,7 @@ import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
 import {Country} from '../../Models/Country';
 import {CountryService} from '../../services/country.service';
+import {TranslateService} from '@ngx-translate/core';
 
 
 @Component({
@@ -21,12 +23,14 @@ import {CountryService} from '../../services/country.service';
   styleUrls: ['./verification-request.component.css']
 })
 export class VerificationRequestComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   employeeService=inject(EmployeeService);
   router=inject(Router);
 
   userService=inject(UserService);
   cityService=inject(CityService);
   verificationService=inject(VerificationRequestService);
+  private translate = inject(TranslateService);
 
 
   requests: VerificationRequestDto[] = [];
@@ -39,14 +43,17 @@ export class VerificationRequestComponent implements OnInit {
 
 
   filter: string = 'all';
-  searchQuery: string = ''; // New property for the search query
-  employeeId: number = 0; // Placeholder for logged-in employee's ID
-  comment: string = ''; // komentar koji uposlenik unosi kao razlog odobrenja ili odbijanja
+  searchQuery: string = '';
+  employeeId: number = 0;
+  comment: string = '';
 
-  // Pagination
+  // Pagination & Filtering
   currentPage: number = 1;
   pageSize: number = 10;
   totalPages: number = 1;
+  totalResults: number = 0;
+  selectedCityId: number = 0;
+  private filterSubject = new Subject<{search: string, status: string, city: number}>();
 
   constructor(private http: HttpClient) {}
 
@@ -54,61 +61,69 @@ export class VerificationRequestComponent implements OnInit {
     const currentEmployee = this.employeeService.currentEmployee();
     this.employeeId = currentEmployee?.id || 0;
 
+    this.translate.use('en');
+
+    this.setupFilterStream();
     this.fetchData();
+    this.triggerFilter();
+  }
+
+  setupFilterStream(): void {
+    this.filterSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+      switchMap(params => {
+        let statusNum: number | undefined = undefined;
+        if (params.status === 'active') statusNum = 2;
+        else if (params.status === 'approved') statusNum = 1;
+        else if (params.status === 'denied') statusNum = 0;
+        else if (params.status === 'all') statusNum = -1;
+
+        return this.verificationService.GetFilteredVerificationRequests(statusNum, params.search, params.city);
+      })
+    ).subscribe(res => {
+      this.requests = res;
+      this.totalResults = res.length;
+      this.applyLocalPagination();
+      this.cdr.detectChanges();
+    });
+  }
+
+  triggerFilter(): void {
+    this.currentPage = 1;
+    this.filterSubject.next({
+      search: this.searchQuery,
+      status: this.filter,
+      city: this.selectedCityId
+    });
   }
 
   fetchData(): void {
-    this.verificationService.GetVerificationRequests().subscribe(res=>{
-      this.requests=res;
-      this.filterRequests();
-    })
     this.userService.GetAllUsers().subscribe(res => {
-      this.users = res.body || []; // Use `res.body` for the user array
-      this.filterRequests();
+      this.users = res.body || [];
+      this.cdr.detectChanges();
     });
     this.cityService.GetAllCities().subscribe(res => {
       this.cities = res;
-      this.filterRequests();
+      this.cdr.detectChanges();
     });
   }
 
-
-  filterRequests(): void {
-    let filtered = this.requests;
-
-    // Apply filter
-    if (this.filter === 'active') {
-      filtered = filtered.filter((req) => req.requestStatus === 2);
-    } else if (this.filter === 'approved') {
-      filtered = filtered.filter((req) => req.requestStatus === 1);
-    } else if (this.filter === 'denied') {
-      filtered = filtered.filter((req) => req.requestStatus === 0);
-    }
-
-    // Apply search query
-    if (this.searchQuery.trim() !== '') {
-      filtered = filtered.filter((req) => {
-        const username = this.getUsername(req.userId).toLowerCase();
-        return username.includes(this.searchQuery.toLowerCase());
-      });
-    }
-
-    // Set total pages
-    this.totalPages = Math.ceil(filtered.length / this.pageSize);
-
-    // Paginate the filtered requests
+  applyLocalPagination(): void {
+    this.totalPages = Math.ceil(this.requests.length / this.pageSize) || 1;
     const startIndex = (this.currentPage - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
+    this.filteredRequests = this.requests.slice(startIndex, endIndex);
+  }
 
-    this.filteredRequests = filtered.slice(startIndex, endIndex);
+  filterRequests(): void {
+    this.triggerFilter();
   }
 
   selectRequest(request: VerificationRequestDto): void {
     this.selectedRequest = request;
     this.selectedUser = this.users.find(res => res.id === request.userId) || null;
-
-    console.log(request);
-    this.comment = ''; // resetuje komentar
+    this.comment = '';
   }
 
   approveRequest(request: VerificationRequestDto): void {
@@ -118,7 +133,7 @@ export class VerificationRequestComponent implements OnInit {
     request.reviewedByAdmin = false;
 
     this.verificationService.ConfirmVerificationRequest(request, request.id).subscribe({
-      next:_ => {window.location.reload();},
+      next:_ => { this.triggerFilter(); this.selectedRequest = null; },
       error:err=>console.log(err)
     })
   }
@@ -130,7 +145,7 @@ export class VerificationRequestComponent implements OnInit {
     request.reviewedByAdmin = false;
 
     this.verificationService.DenyVerificationRequest(request, request.id).subscribe({
-      next:_ => {window.location.reload();},
+      next:_ => { this.triggerFilter(); this.selectedRequest = null; },
       error:err=>console.log(err)
     })
   }
@@ -138,18 +153,10 @@ export class VerificationRequestComponent implements OnInit {
 
   getStatus(request: VerificationRequestDto | null): string {
     if (!request) return '';
-    if (request.requestStatus === 1) {
-      return 'Approved';
-    }
-    else if (request.requestStatus === 0) {
-      return 'Denied';
-    }
-    else if (request.requestStatus === 2){
-      return 'Active';
-    }
-    else{
-      return 'Undefined'
-    }
+    if (request.requestStatus === 1) return 'Approved';
+    if (request.requestStatus === 0) return 'Denied';
+    if (request.requestStatus === 2) return 'Active';
+    return 'Undefined';
   }
 
   getUsername(userId:number): string{
@@ -165,14 +172,14 @@ export class VerificationRequestComponent implements OnInit {
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.filterRequests();
+      this.applyLocalPagination();
     }
   }
 
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.filterRequests();
+      this.applyLocalPagination();
     }
   }
 

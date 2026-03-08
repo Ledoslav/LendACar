@@ -1,108 +1,189 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Verification Requests</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body>
+<div class="verification-container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="page-title">{{ 'VERIFICATION_REQUESTS.TITLE' | translate }}</h1>
+    <button class="btn btn-outline-primary btn-premium shadow-sm" routerLink="/employee/dashboard">
+      <i class="fas fa-arrow-left me-2"></i> {{ 'SIDEBAR.HOME' | translate }}
+    </button>
+  </div>
 
-  <div class="container mt-4">
-    <h1 class="mb-4">Verification Requests</h1>
+  <!-- Selected Request Details -->
+  <div *ngIf="selectedRequest && selectedUser" class="details-card">
+    <div class="details-header d-flex justify-content-between align-items-center">
+      <h3><i class="fas fa-info-circle me-2"></i> {{ 'VERIFICATION_REQUESTS.DETAILS' | translate }}</h3>
+      <button class="btn-close btn-close-white" (click)="selectedRequest = null"></button>
+    </div>
+    <div class="details-body">
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <h5 class="mb-3 text-muted fw-bold small text-uppercase">{{ 'VERIFICATION_REQUESTS.GENERAL_INFO' | translate }}</h5>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>{{ 'VERIFICATION_REQUESTS.DATE' | translate }}</label>
+              <span>{{ selectedRequest.requestDate | date:'medium' }}</span>
+            </div>
+            <div class="info-item">
+              <label>{{ 'VERIFICATION_REQUESTS.USER' | translate }}</label>
+              <span>{{ selectedUser.username }}</span>
+            </div>
+            <div class="info-item">
+              <label>{{ 'VERIFICATION_REQUESTS.STATUS' | translate }}</label>
+              <span class="status-badge" [ngClass]="{
+                'status-approved': selectedRequest.requestStatus === 1,
+                'status-denied': selectedRequest.requestStatus === 0,
+                'status-active': selectedRequest.requestStatus === 2
+              }">{{ getStatus(selectedRequest) }}</span>
+            </div>
+            <div class="info-item">
+              <label>{{ 'VERIFICATION_REQUESTS.CITY' | translate }}</label>
+              <span>{{ getCityName(selectedUser.cityId) }}</span>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <label class="text-muted small text-uppercase mb-1 d-block">{{ 'VERIFICATION_REQUESTS.COMMENT' | translate }}</label>
+            <p class="mb-0 p-3 bg-light-dark rounded" style="font-style: italic; color: #e0e0e0;">"{{ selectedRequest.requestComment || ('VERIFICATION_REQUEST.NO_COMMENT' | translate) }}"</p>
+          </div>
+        </div>
 
-    <!-- Selected Request Details -->
-    <div *ngIf="selectedRequest && selectedUser" class="mb-4">
-      <h3>Request Details</h3>
-      <div class="card p-3">
-        <p><strong>Request Date:</strong> {{ selectedRequest.requestDate }}</p>
-        <p><strong>User:</strong> {{ selectedUser.username }}</p>
-        <p><strong>Request Comment:</strong> {{ selectedRequest.requestComment || 'No comment provided' }}</p>
-        <p><strong>Status:</strong> {{ getStatus(selectedRequest) }}</p>
-        <h4>User Information</h4>
-        <p><strong>First Name:</strong> {{ selectedUser.firstName }}</p>
-        <p><strong>Last Name:</strong> {{ selectedUser.lastName }}</p>
-        <p><strong>Phone Number:</strong> {{ selectedUser.phoneNumber }}</p>
-        <p><strong>Average Rating:</strong> {{ selectedUser.averageRating }}</p>
-        <p><strong>Birth Date:</strong> {{ selectedUser.birthDate }}</p>
-        <p><strong>City:</strong> {{ getCityName(selectedUser.cityId) }}</p>
-        <h4 *ngIf="selectedRequest.requestStatus !== 2">Request Review Information</h4>
-        <p *ngIf="selectedRequest.requestStatus !== 2"><strong>Review Date:</strong> {{ selectedRequest.requestReviewDate }}</p>
-        <p *ngIf="selectedRequest.requestStatus !== 2 && selectedRequest.reviewedByAdmin === false"><strong>Employee:</strong> {{ selectedRequest.empAdmId || 'Unknown' }}</p>
-        <p *ngIf="selectedRequest.requestStatus !== 2 && selectedRequest.reviewedByAdmin === true"><strong>Administrator:</strong> {{ selectedRequest.empAdmId || 'Unknown' }}</p>
-        <p *ngIf="selectedRequest.requestStatus !== 2"><strong>Comment from employee:</strong> {{ selectedRequest.denialComment || 'No reasoning provided' }}</p>
+        <div class="col-lg-5">
+          <div class="user-info-panel p-3 border rounded h-100">
+            <h5 class="mb-3 text-muted fw-bold small text-uppercase">{{ 'VERIFICATION_REQUESTS.USER_INFO' | translate }}</h5>
+            <p><strong><i class="fas fa-user me-2"></i></strong> {{ selectedUser.firstName }} {{ selectedUser.lastName }}</p>
+            <p><strong><i class="fas fa-phone me-2"></i></strong> {{ selectedUser.phoneNumber }}</p>
+            <p><strong><i class="fas fa-star text-warning me-2"></i></strong> {{ selectedUser.averageRating }}</p>
+            <p><strong><i class="fas fa-birthday-cake me-2"></i></strong> {{ selectedUser.birthDate | date:'longDate' }}</p>
+          </div>
+        </div>
+      </div>
 
-        <div *ngIf="selectedRequest.requestStatus === 2" class="mt-3">
-          <textarea
-            class="form-control mb-2"
-            [(ngModel)]="comment"
-            placeholder="Enter a comment for approval or denial"
-          ></textarea>
-          <button class="btn btn-success me-2" (click)="approveRequest(selectedRequest)">
-            Approve
+      <div *ngIf="selectedRequest.requestStatus !== 2" class="mt-4 pt-4 border-top border-secondary">
+        <h5 class="mb-3 text-muted fw-bold small text-uppercase">{{ 'VERIFICATION_REQUESTS.REVIEW_INFO' | translate }}</h5>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="text-muted small">{{ 'VERIFICATION_REQUESTS.REVIEW_DATE' | translate }}</label>
+            <p class="fw-bold">{{ selectedRequest.requestReviewDate | date:'medium' }}</p>
+          </div>
+          <div class="col-md-4">
+            <label class="text-muted small">{{ 'VERIFICATION_REQUESTS.REVIEWED_BY' | translate }}</label>
+            <p class="fw-bold">{{ selectedRequest.reviewedByAdmin ? 'Administrator' : ('COMPANY.EMPLOYEE_VIEW_TITLE' | translate) }} (ID: {{ selectedRequest.empAdmId }})</p>
+          </div>
+          <div class="col-md-4">
+            <label class="text-muted small">{{ 'VERIFICATION_REQUESTS.REVIEW_COMMENT' | translate }}</label>
+            <p class="fw-bold">{{ selectedRequest.denialComment || ('VERIFICATION_REQUEST.NO_COMMENT' | translate) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="selectedRequest.requestStatus === 2" class="mt-4 pt-4 border-top border-secondary">
+        <label class="form-label fw-bold mb-2">{{ 'VERIFICATION_REQUESTS.DECISION_COMMENT' | translate }}</label>
+        <textarea
+          class="form-control mb-3 shadow-sm"
+          [(ngModel)]="comment"
+          rows="3"
+          [placeholder]="'VERIFICATION_REQUESTS.COMMENT_PLACEHOLDER' | translate"
+        ></textarea>
+        <div class="d-flex gap-2">
+          <button class="btn btn-approve btn-premium px-4" (click)="approveRequest(selectedRequest)">
+             <i class="fas fa-check-circle me-2"></i> {{ 'RESERVATION.FORM.CONFIRM' | translate }}
           </button>
-          <button class="btn btn-danger me-2" (click)="denyRequest(selectedRequest)">
-            Deny
+          <button class="btn btn-deny btn-premium px-4" (click)="denyRequest(selectedRequest)">
+            <i class="fas fa-times-circle me-2"></i> {{ 'RESERVATION.FORM.CANCEL' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-section shadow-sm">
+    <div class="row align-items-end g-3">
+      <div class="col-lg-4">
+        <label for="search" class="form-label fw-bold small mb-2">{{ 'VERIFICATION_REQUESTS.SEARCH_LABEL' | translate }}</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <input
+            type="text"
+            id="search"
+            class="form-control"
+            [(ngModel)]="searchQuery"
+            (input)="filterRequests()"
+            [placeholder]="'VERIFICATION_REQUESTS.SEARCH_PLACEHOLDER' | translate"
+          />
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <label for="filter" class="form-label fw-bold small mb-2">{{ 'VERIFICATION_REQUESTS.STATUS_FILTER' | translate }}</label>
+        <select id="filter" class="form-select" [(ngModel)]="filter" (change)="filterRequests()">
+          <option value="all">{{ 'HOME.ALL' | translate }}</option>
+          <option value="active">Active Requests</option>
+          <option value="approved">Approved</option>
+          <option value="denied">Denied</option>
+        </select>
+      </div>
+      <div class="col-lg-4">
+        <label for="cityFilter" class="form-label fw-bold small mb-2">{{ 'VERIFICATION_REQUESTS.CITY_FILTER' | translate }}</label>
+        <select id="cityFilter" class="form-select" [(ngModel)]="selectedCityId" (change)="filterRequests()">
+          <option [value]="0">{{ 'HOME.ALL' | translate }}</option>
+          <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-wrapper">
+    <div *ngIf="filteredRequests.length > 0; else noResults">
+      <table class="custom-table table-hover">
+        <thead>
+          <tr>
+            <th style="width: 80px">#</th>
+            <th>{{ 'VERIFICATION_REQUESTS.COL_USER' | translate }}</th>
+            <th>{{ 'VERIFICATION_REQUESTS.COL_DATE' | translate }}</th>
+            <th>{{ 'VERIFICATION_REQUESTS.COL_CITY' | translate }}</th>
+            <th>{{ 'VERIFICATION_REQUESTS.COL_STATUS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let request of filteredRequests; let i = index" (click)="selectRequest(request)" style="cursor: pointer;">
+            <td class="fw-bold text-muted">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td class="fw-bold">{{ getUsername(request.userId) }}</td>
+            <td>{{ request.requestDate | date:'short' }}</td>
+            <td>{{ getCityName(request.user?.cityId || 0) }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="{
+                'status-approved': request.requestStatus === 1,
+                'status-denied': request.requestStatus === 0,
+                'status-active': request.requestStatus === 2
+              }">{{ getStatus(request) }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="pagination-controls">
+        <div class="text-muted small">
+          {{ 'VERIFICATION_REQUESTS.SHOWING' | translate }} <strong>{{ filteredRequests.length }}</strong> 
+          {{ 'VERIFICATION_REQUESTS.OF' | translate }} <strong>{{ totalResults }}</strong> 
+          {{ 'VERIFICATION_REQUESTS.TOTAL' | translate }} 
+          | {{ 'HOME.PAGE' | translate }} {{ currentPage }} / {{ totalPages }}
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-outline-secondary px-3" (click)="previousPage()" [disabled]="currentPage === 1">
+            <i class="fas fa-chevron-left me-1"></i> {{ 'HOME.PREV' | translate }}
+          </button>
+          <button class="btn btn-outline-secondary px-3" (click)="nextPage()" [disabled]="currentPage === totalPages || totalPages === 0">
+            {{ 'HOME.NEXT' | translate }} <i class="fas fa-chevron-right ms-1"></i>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Sarch bar -->
-    <div class="mb-3">
-      <label for="search" class="form-label">Search by Username</label>
-      <input
-        type="text"
-        id="search"
-        class="form-control"
-        [(ngModel)]="searchQuery"
-        (input)="filterRequests()"
-        placeholder="Enter username"
-      />
-    </div>
-    <!-- Filters -->
-    <div class="mb-3">
-      <label for="filter" class="form-label">Filter Requests</label>
-      <select id="filter" class="form-select" [(ngModel)]="filter" (change)="filterRequests()">
-        <option value="all">All Requests</option>
-        <option value="active">Active Requests</option>
-        <option value="approved">Approved Requests</option>
-        <option value="denied">Denied Requests</option>
-      </select>
-    </div>
-
-    <!-- Table -->
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Username</th>
-          <th>Request Date</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let request of filteredRequests; let i = index" (click)="selectRequest(request)">
-          <td>{{ i + 1 }}</td>
-          <td>{{ getUsername(request.userId) }}</td>
-          <td>{{ request.requestDate }}</td>
-          <td>{{ getStatus(request) }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <!-- Table pagination -->
-    <div class="d-flex justify-content-between align-items-center mt-3">
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <div>
-        <button class="btn btn-secondary btn-sm me-2" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
-        <button class="btn btn-secondary btn-sm" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    <ng-template #noResults>
+      <div class="no-results-msg">
+        <i class="fas fa-search-minus mb-3"></i>
+        <h4 class="text-white">{{ 'VERIFICATION_REQUESTS.NO_RESULTS' | translate }}</h4>
+        <p>{{ 'VERIFICATION_REQUESTS.ADJUST_FILTERS' | translate }}</p>
       </div>
-    </div>
-
-
-    <div>
-        <button type="button" class="btn btn-primary btn-sm" routerLink="/employee/dashboard">Back</button>
-    </div>
+    </ng-template>
   </div>
-</body>
-</html>
+</div>

@@ -4,15 +4,17 @@ import {LayoutComponent} from './layout/layout.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import { VehicleListingComponent } from './vehicle-listing/vehicle-listing';
 import { ReservationFormComponent } from './reservation-form/reservation-form.component';
+import { ReservationSuccessComponent } from './reservation-success/reservation-success.component';
 
 const routes: Routes = [
   {
     path: '', component: LayoutComponent, children: [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
       {path:'dashboard', component:DashboardComponent},
-      {path: '**', redirectTo: 'home', pathMatch: 'full'},
       {path:'listing/:id', component: VehicleListingComponent},
       {path:'reservationForm/:id', component: ReservationFormComponent},
+      {path:'reservation-success/:id', component: ReservationSuccessComponent},
+      {path: '**', redirectTo: 'home', pathMatch: 'full'},
     ]
   }
 ];

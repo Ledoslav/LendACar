@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, ViewChild} from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import {Country} from '../../Models/Country';
 import {CountryService} from '../../services/country.service';
 import {NgForm} from '@angular/forms';
@@ -15,6 +15,7 @@ import {PaginatedResult} from '../../Models/Pagination';
   styleUrl: './admin-country-overview.component.css'
 })
 export class AdminCountryOverviewComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.initSearchListener();
@@ -78,7 +79,9 @@ export class AdminCountryOverviewComponent implements OnInit {
       dataItems: res.body as Country[],
       pagination:JSON.parse(res.headers.get('Pagination')!)
     }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
 
@@ -93,7 +96,9 @@ export class AdminCountryOverviewComponent implements OnInit {
       distinctUntilChanged(),
     ).subscribe((filterValue) => {
       this.LoadCountries();
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
   onCountryNameSearch(){
@@ -114,7 +119,9 @@ export class AdminCountryOverviewComponent implements OnInit {
       if (result) {
         this.removeCountry(event)
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
 

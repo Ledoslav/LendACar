@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {SecurityQuestion, SecurityQuestionService} from '../../../services/security-question.service';
 import {AbstractControl, FormBuilder, ValidatorFn, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
@@ -13,6 +13,7 @@ import {MySnackbarService} from '../../../services/snackbars/my-snackbar.service
   styleUrl: './account-security-page.component.css'
 })
 export class AccountSecurityPageComponent implements OnInit{
+  private cdr = inject(ChangeDetectorRef);
   model:any={};
 
 

@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {EmployeeService} from '../../services/employee.service';
 import {Router} from '@angular/router';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
@@ -10,6 +10,7 @@ import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit{
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
       //let employee=localStorage.getItem('auth-token');

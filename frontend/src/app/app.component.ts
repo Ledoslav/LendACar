@@ -4,6 +4,7 @@ import {UserDto} from './Models/UserDto';
 import {EmployeeDto} from './Models/EmployeeDto';
 import {EmployeeService} from './services/employee.service';
 import {AdminService} from './services/administrator.service';
+import {LoadingService} from './services/loading.service';
 
 @Component({
   standalone: false,
@@ -16,6 +17,7 @@ export class AppComponent implements OnInit {
   private accountService=inject(UserService)
   private employeeService=inject(EmployeeService)
   private adminService=inject(AdminService);
+  loadingService=inject(LoadingService);
   ngOnInit() {
     this.setCurrentUSer();
     this.setCurrentEmployee();

@@ -113,47 +113,47 @@ export class VehicleListingComponent implements OnInit {
 
   public getTransmissionType(transmissionId: number): string {
     if (transmissionId === null || transmissionId === undefined) {
-      return "Unknown";
+      return "VEHICLE.TYPES.UNKNOWN";
     }
 
     switch (transmissionId) {
-      case 0: return "Manual";
-      case 1: return "Automatic";
-      case 2: return "AutomatedManual";
-      case 3: return "DCT";
-      case 4: return "CVT";
-      default: return "Unknown";
+      case 0: return "VEHICLE.TYPES.MANUAL";
+      case 1: return "VEHICLE.TYPES.AUTOMATIC";
+      case 2: return "VEHICLE.TYPES.AUTOMATED_MANUAL";
+      case 3: return "VEHICLE.TYPES.DCT";
+      case 4: return "VEHICLE.TYPES.CVT";
+      default: return "VEHICLE.TYPES.UNKNOWN";
     }
   }
 
   public getACType(acId: number): string {
     if (acId === null || acId === undefined) {
-      return "Unknown";
+      return "VEHICLE.TYPES.UNKNOWN";
     }
 
     switch (acId) {
-      case 0: return "None";
-      case 1: return "Single-Zone";
-      case 2: return "Double-Zone";
-      case 3: return "Triple-Zone";
-      case 4: return "Quad-Zone";
-      default: return "Unknown";
+      case 0: return "VEHICLE.TYPES.NONE";
+      case 1: return "VEHICLE.TYPES.SINGLE_ZONE";
+      case 2: return "VEHICLE.TYPES.DOUBLE_ZONE";
+      case 3: return "VEHICLE.TYPES.TRIPLE_ZONE";
+      case 4: return "VEHICLE.TYPES.QUAD_ZONE";
+      default: return "VEHICLE.TYPES.UNKNOWN";
     }
   }
 
   public getFuelType(transmissionId: number): string {
     if (transmissionId === null || transmissionId === undefined) {
-      return "Unknown";
+      return "VEHICLE.TYPES.UNKNOWN";
     }
 
     switch (transmissionId) {
-      case 0: return "Petrol";
-      case 1: return "Diesel";
-      case 2: return "Electric";
-      case 3: return "Hybrid";
-      case 4: return "LPG";
-      case 5: return "CNG";
-      default: return "Unknown";
+      case 0: return "VEHICLE.TYPES.PETROL";
+      case 1: return "VEHICLE.TYPES.DIESEL";
+      case 2: return "VEHICLE.TYPES.ELECTRIC";
+      case 3: return "VEHICLE.TYPES.HYBRID";
+      case 4: return "VEHICLE.TYPES.LPG";
+      case 5: return "VEHICLE.TYPES.CNG";
+      default: return "VEHICLE.TYPES.UNKNOWN";
     }
   }
 

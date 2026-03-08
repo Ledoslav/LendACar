@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, ViewChild} from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import {CityService} from '../../services/city.service';
 import {City} from '../../Models/City';
 import {Country} from '../../Models/Country';
@@ -17,6 +17,7 @@ import {DialogConfirmComponent} from '../../shared/dialogs/dialog-confirm/dialog
   styleUrl: './admin-city-overview.component.css'
 })
 export class AdminCityOverviewComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.initSearchListener();
@@ -98,7 +99,9 @@ export class AdminCityOverviewComponent implements OnInit {
   LoadCountries(){
     this.countryService.getAllCountries().subscribe(res=>{
       this.countries=[{id:0, name:'Select Country'},...res];
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   LoadCities(){
@@ -107,7 +110,9 @@ export class AdminCityOverviewComponent implements OnInit {
         dataItems: res.body as City[],
         pagination:JSON.parse(res.headers.get('Pagination')!)
       }
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   initSearchListener(): void {
@@ -116,7 +121,9 @@ export class AdminCityOverviewComponent implements OnInit {
       distinctUntilChanged(),
     ).subscribe((filterValue) => {
       this.LoadCities();
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 
   onCityNameSearch(){
@@ -149,6 +156,8 @@ export class AdminCityOverviewComponent implements OnInit {
       if (result) {
         this.removeCity(event)
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 }

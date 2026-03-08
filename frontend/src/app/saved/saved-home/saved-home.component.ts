@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {MyAuthServiceService} from '../../services/auth-service/my-auth-service.service';
 import {CompanyEmployeeService} from '../../services/companyemployee.service';
@@ -15,6 +15,7 @@ import {ActivityCreateRequest, ActivityService} from '../../services/activity-se
   styleUrl: './saved-home.component.css'
 })
 export class SavedHomeComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   accountService = inject(UserService);
   authService = inject(MyAuthServiceService);
   companyEmployeeService = inject(CompanyEmployeeService);

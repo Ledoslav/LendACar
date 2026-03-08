@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import {UserDto} from '../../Models/UserDto';
 import {City} from '../../Models/City';
 import {Country} from '../../Models/Country';
@@ -20,6 +20,7 @@ import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
   styleUrl: './user-overview.component.css'
 })
 export class UserOverviewComponent  implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   private router=inject(Router);
   private dialog=inject(MatDialog);
   private snackBarService=inject(MySnackbarService)
@@ -37,7 +38,9 @@ export class UserOverviewComponent  implements OnInit {
         this.showCityField = true;
         this.userSearchForm.get('cityId')?.enable();
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
 
     this.userSearchForm.valueChanges
       .pipe(
@@ -47,7 +50,9 @@ export class UserOverviewComponent  implements OnInit {
       .subscribe(() => {
         if(!this.userSearchForm.invalid)
           this.filterUsers();
-      });
+      
+    this.cdr.detectChanges();
+  });
   }
   fb=inject(FormBuilder);
   userService=inject(UserService)
@@ -69,7 +74,9 @@ export class UserOverviewComponent  implements OnInit {
   loadCities(){
     this.cityService.GetAllCities().subscribe(res=>{
       this.cities = res;
-    })
+    
+    this.cdr.detectChanges();
+  })
   }
 
   loadCountries(){
@@ -170,6 +177,8 @@ export class UserOverviewComponent  implements OnInit {
       } else {
         console.log('Korisnik je otkazao brisanje');
       }
-    });
+    
+    this.cdr.detectChanges();
+  });
   }
 }

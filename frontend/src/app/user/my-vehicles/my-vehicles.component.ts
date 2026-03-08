@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { VehicleListingService } from '../../services/vehiclelisting.service';
 import { UserDto } from '../../Models/UserDto';
@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./my-vehicles.component.css']
 })
 export class MyVehiclesComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
   user: UserDto | null = null;
   vehicles: VehicleWithImagesDto[] = [];
   searchText: string = '';
@@ -41,7 +42,9 @@ export class MyVehiclesComponent implements OnInit {
         this.vehicleImageIndexes[v.id] = 0;
       });
       console.log(this.vehicles);
-    });
+    
+    this.cdr.detectChanges();
+  });
 
   }
 
