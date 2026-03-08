@@ -71,7 +71,7 @@ export class VehicleListingComponent implements OnInit {
   nextImage() {
     if (!this.vehicle?.vehicleImages?.length) return;
 
-    // update main image
+    // update main image alright
     this.selectedImageIndex = (this.selectedImageIndex + 1) % this.vehicle.vehicleImages.length;
 
     // scroll thumbnails container
