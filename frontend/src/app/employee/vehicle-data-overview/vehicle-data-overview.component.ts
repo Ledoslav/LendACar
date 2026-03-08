@@ -29,12 +29,20 @@ export class VehicleDataOverviewComponent implements OnInit {
   totalPages = 0;
 
   fuelTypes = [
-    { id: 0, name: 'Petrol' },
-    { id: 1, name: 'Diesel' },
-    { id: 2, name: 'Electric' },
-    { id: 3, name: 'Hybrid' },
-    { id: 4, name: 'LPG' },
-    { id: 5, name: 'CNG' }
+    { id: 0, name: 'PROFILE.TYPES.PETROL' },
+    { id: 1, name: 'PROFILE.TYPES.DIESEL' },
+    { id: 2, name: 'PROFILE.TYPES.ELECTRIC' },
+    { id: 3, name: 'PROFILE.TYPES.HYBRID' },
+    { id: 4, name: 'PROFILE.TYPES.LPG' },
+    { id: 5, name: 'PROFILE.TYPES.CNG' }
+  ];
+
+  transmissionTypes = [
+    { id: 0, name: 'PROFILE.TYPES.MANUAL' },
+    { id: 1, name: 'PROFILE.TYPES.AUTOMATIC' },
+    { id: 2, name: 'PROFILE.TYPES.AUTOMATED_MANUAL' },
+    { id: 3, name: 'PROFILE.TYPES.DCT' },
+    { id: 4, name: 'PROFILE.TYPES.CVT' }
   ];
 
   sortOptions = [
@@ -91,7 +99,12 @@ export class VehicleDataOverviewComponent implements OnInit {
 
   getFuelTypeName(type: number): string {
     const fuel = this.fuelTypes.find(f => f.id === type);
-    return fuel ? fuel.name : 'Unknown';
+    return fuel ? fuel.name : 'PROFILE.TYPES.UNKNOWN';
+  }
+
+  getTransmissionTypeName(type: number): string {
+    const trans = this.transmissionTypes.find(t => t.id === type);
+    return trans ? trans.name : 'PROFILE.TYPES.UNKNOWN';
   }
 
   deleteVehicle(id: number): void {

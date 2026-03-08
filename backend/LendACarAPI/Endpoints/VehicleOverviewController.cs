@@ -96,6 +96,7 @@ namespace LendACarAPI.Endpoints
                     CityName = v.User.City.Name,
                     CategoryName = v.VehicleCategory.Name,
                     FuelType = v.FuelType,
+                    TransmissionType = v.TransmissionType,
                     PricePerDay = v.PricePerDay,
                     ReservationsCount = db.Reservations.Count(r => r.VehicleID == v.Id)
                 })

@@ -12,6 +12,7 @@ namespace LendACarAPI.DTOs
         public string CityName { get; set; }
         public string CategoryName { get; set; }
         public int FuelType { get; set; } // 0 - Petrol , 1 - Diesel, 2 - Electric, 3 - Hybrid, 4 - LPG, 5 - CNG
+        public int TransmissionType { get; set; } // 0 - Manual, 1 - Automatic, 2 - Automated Manual, 3 - DCT, 4 - CVT
         public double PricePerDay { get; set; }
         public int ReservationsCount { get; set; }
     }

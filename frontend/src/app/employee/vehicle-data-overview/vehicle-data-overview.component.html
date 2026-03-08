@@ -41,7 +41,7 @@
           <label class="form-label">Fuel Type</label>
           <select class="form-select" [(ngModel)]="request.fuelType" (change)="onFilterChange()">
             <option [ngValue]="undefined">All Fuels</option>
-            <option *ngFor="let fuel of fuelTypes" [ngValue]="fuel.id">{{fuel.name}}</option>
+            <option *ngFor="let fuel of fuelTypes" [ngValue]="fuel.id">{{fuel.name | translate}}</option>
           </select>
         </div>
         <div class="col-md-2">
@@ -68,6 +68,7 @@
               <th>City</th>
               <th>Category</th>
               <th>Fuel</th>
+              <th>Transmission</th>
               <th class="text-end">Price/Day</th>
               <th class="text-center">Reservations</th>
               <th class="text-center">Actions</th>
@@ -81,7 +82,8 @@
               <td>{{vehicle.brandName}}</td>
               <td>{{vehicle.cityName}}</td>
               <td><span class="badge bg-secondary">{{vehicle.categoryName}}</span></td>
-              <td>{{getFuelTypeName(vehicle.fuelType)}}</td>
+              <td>{{getFuelTypeName(vehicle.fuelType) | translate}}</td>
+              <td>{{getTransmissionTypeName(vehicle.transmissionType) | translate}}</td>
               <td class="text-end text-primary fw-bold">{{vehicle.pricePerDay | currency:'EUR':'symbol'}}</td>
               <td class="text-center">
                 <span class="badge rounded-pill bg-info text-dark">{{vehicle.reservationsCount}}</span>
@@ -93,7 +95,7 @@
               </td>
             </tr>
             <tr *ngIf="vehicles.length === 0">
-              <td colspan="10" class="text-center py-5">
+              <td colspan="11" class="text-center py-5">
                 <div class="text-muted">No vehicles found matching the filters.</div>
               </td>
             </tr>

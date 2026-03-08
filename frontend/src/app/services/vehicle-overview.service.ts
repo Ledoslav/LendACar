@@ -23,6 +23,7 @@ export interface VehicleOverviewDto {
   cityName: string;
   categoryName: string;
   fuelType: number;
+  transmissionType: number;
   pricePerDay: number;
   reservationsCount: number;
 }
