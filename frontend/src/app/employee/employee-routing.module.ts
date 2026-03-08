@@ -22,7 +22,6 @@ const routes: Routes = [
     data:{isEmployee:true},
     children:[
       {path:'',redirectTo:'dashboard' ,pathMatch:'full'},
-      { path: '**', redirectTo: 'not-found', pathMatch: 'full' },
       {path:'dashboard', component: DashboardComponent},
       {path:'verificationRequests',component:VerificationRequestComponent},
       {path:'pollManagement', component:PollManagementComponent},
@@ -33,6 +32,7 @@ const routes: Routes = [
           { path:'edit-photo', component: PhotoPageComponent}
 
         ]},
+      { path: '**', redirectTo: 'not-found', pathMatch: 'full' },
     ]
   }
 

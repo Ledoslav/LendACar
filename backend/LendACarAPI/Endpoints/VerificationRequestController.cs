@@ -1,4 +1,4 @@
-﻿using Azure.Core;
+using Azure.Core;
 using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
@@ -21,6 +21,47 @@ namespace LendACarAPI.Endpoints
         public async Task<ActionResult<VehicleCategory[]>> GetAllVerificationRequests()
         {
             var requests = await db.VerificationRequests.ToArrayAsync();
+            return Ok(requests);
+        }
+
+        [HttpGet("getFiltered")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
+        public async Task<IActionResult> GetFilteredVerificationRequests(
+            [FromQuery] int? status, 
+            [FromQuery] string? searchQuery, 
+            [FromQuery] int? cityId)
+        {
+            var query = db.VerificationRequests
+                .Include(vr => vr.User)
+                .AsQueryable();
+
+            if (status.HasValue && status.Value != -1)
+            {
+                query = query.Where(vr => vr.RequestStatus == status.Value);
+            }
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(vr => vr.User.Username.Contains(searchQuery));
+            }
+
+            if (cityId.HasValue && cityId.Value != 0)
+            {
+                query = query.Where(vr => vr.User.CityId == cityId.Value);
+            }
+
+            var requests = await query.ToListAsync();
+
+            // Fix kind for dates
+            foreach (var r in requests)
+            {
+                r.RequestDate = DateTime.SpecifyKind(r.RequestDate, DateTimeKind.Utc);
+                if (r.RequestReviewDate.HasValue)
+                {
+                    r.RequestReviewDate = DateTime.SpecifyKind(r.RequestReviewDate.Value, DateTimeKind.Utc);
+                }
+            }
+
             return Ok(requests);
         }
 

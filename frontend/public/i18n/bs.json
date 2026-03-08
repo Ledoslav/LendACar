@@ -403,5 +403,35 @@
       "PICKUP": "Preuzimanje",
       "DROPOFF": "Povrat"
     }
+  },
+  "VERIFICATION_REQUESTS": {
+    "TITLE": "Zahtjevi za verifikaciju",
+    "DETAILS": "Detalji zahtjeva",
+    "GENERAL_INFO": "Opšte informacije",
+    "DATE": "Datum zahtjeva",
+    "USER": "Korisnik",
+    "STATUS": "Status",
+    "CITY": "Grad",
+    "COMMENT": "Korisnički komentar",
+    "USER_INFO": "Kontakt podaci korisnika",
+    "REVIEW_INFO": "Historija pregleda",
+    "REVIEW_DATE": "Datum pregleda",
+    "REVIEWED_BY": "Pregledao",
+    "REVIEW_COMMENT": "Komentar pregledovača",
+    "DECISION_COMMENT": "Unesite razlog za odluku",
+    "COMMENT_PLACEHOLDER": "Unesite razlog za odobrenje ili odbijanje...",
+    "SEARCH_LABEL": "Pretraži po korisničkom imenu",
+    "SEARCH_PLACEHOLDER": "Unesite korisničko ime...",
+    "STATUS_FILTER": "Filtriraj po statusu",
+    "CITY_FILTER": "Filtriraj po gradu",
+    "COL_USER": "Korisnik",
+    "COL_DATE": "Poslano",
+    "COL_CITY": "Grad",
+    "COL_STATUS": "Status",
+    "SHOWING": "Prikazano",
+    "OF": "od",
+    "TOTAL": "rezultata",
+    "NO_RESULTS": "Nema podudarnih zahtjeva",
+    "ADJUST_FILTERS": "Pokušajte prilagoditi pretragu ili filtere kako biste pronašli ono što tražite."
   }
 }

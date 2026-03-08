@@ -403,5 +403,35 @@
       "PICKUP": "Pick-up",
       "DROPOFF": "Drop-off"
     }
+  },
+  "VERIFICATION_REQUESTS": {
+    "TITLE": "Verification Requests",
+    "DETAILS": "Request Details",
+    "GENERAL_INFO": "General Information",
+    "DATE": "Request Date",
+    "USER": "User",
+    "STATUS": "Status",
+    "CITY": "City",
+    "COMMENT": "User's Request Comment",
+    "USER_INFO": "User Contact & Details",
+    "REVIEW_INFO": "Review History",
+    "REVIEW_DATE": "Review Date",
+    "REVIEWED_BY": "Reviewed By",
+    "REVIEW_COMMENT": "Reviewer's Comment",
+    "DECISION_COMMENT": "Provide Reasoning for Decision",
+    "COMMENT_PLACEHOLDER": "Enter a reason for approval or denial...",
+    "SEARCH_LABEL": "Search by Username",
+    "SEARCH_PLACEHOLDER": "Type username...",
+    "STATUS_FILTER": "Filter by Status",
+    "CITY_FILTER": "Filter by City",
+    "COL_USER": "User",
+    "COL_DATE": "Requested",
+    "COL_CITY": "City",
+    "COL_STATUS": "Status",
+    "SHOWING": "Showing",
+    "OF": "of",
+    "TOTAL": "results",
+    "NO_RESULTS": "No matching requests found",
+    "ADJUST_FILTERS": "Try adjusting your search query or filters to find what you are looking for."
   }
 }
