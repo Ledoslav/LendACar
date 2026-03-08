@@ -1,58 +1,66 @@
-<nav class="navbar navbar-expand" aria-label="Second navbar example">
-    <div class="container-fluid">
-
-        <div class="d-flex align-items-center">
-            <img src="LAC_logo.png" alt="Logo" style="height: 40px;" class="me-3">
-            <span>LendACar</span>
-        </div>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-  
-      <div class="collapse navbar-collapse" id="navbarsExample02">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/user/dashboard">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/user/polls">Polls</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/user/myVehicles">My Vehicles</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-        </ul>
-        @if (accountService.currentUser()==null){
-          <div>
-            <a routerLink="/user/login" style="margin-right: 5px; text-decoration: none">Login</a>
-            <a routerLink="/user/register" style="margin-left: 5px; text-decoration: none">Register</a>
-          </div>
-        } @else {
-          <div>
-            <a routerLink="/user/userProfile" style="margin-right: 5px; text-decoration: none">View account</a>
-            <a (click)="logout()" style="margin-left: 5px; text-decoration: none; cursor: pointer">Logout</a>
-          </div>
-        }
-  
-      </div>
+<!-- polls.component.html -->
+<div class="user-polls-container">
+    <div class="header-section mb-5 text-center">
+        <h1 class="page-title text-premium">Community Polls</h1>
+        <p class="text-white-50">Make your voice heard! Vote on active polls and see real-time statistics.</p>
     </div>
-  </nav>
-<div class="poll-container">
-  <div class="poll-card" *ngFor="let poll of polls; trackBy: trackByIndex">
-    <h3 style="text-align: left;">{{ poll.question }}</h3>
-    <ul>
-      <li *ngFor="let option of poll.options">
-        <button
-          (click)="castVote(poll.id, option.option)"
-          [style.background]="'linear-gradient(to right, #353A40 ' + option.percentage + '%, #545B62 ' + option.percentage + '%)'"
-        >
-          {{ option.option }} ({{ option.percentage ? (option.percentage | number: '1.0-2') : 0 }}%)
-        </button>
-      </li>
-    </ul>
-  </div>
-</div>
 
-  
+    <div class="row g-4 justify-content-center">
+        <div *ngFor="let poll of polls" class="col-xl-4 col-lg-6">
+            <div class="poll-card glass-card p-4 shadow-lg h-100" [ngClass]="{'border-closed': poll.isClosed, 'voted': poll.userHasVoted}">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <h3 class="poll-question">{{ poll.question }}</h3>
+                    <div class="badges-stack d-flex flex-column align-items-end gap-2">
+                        <span class="status-badge" [ngClass]="poll.isClosed ? 'closed' : 'active-poll'">
+                            {{ poll.isClosed ? 'Closed' : 'Active' }}
+                        </span>
+                        <span *ngIf="poll.userHasVoted" class="voted-badge">
+                            <i class="fas fa-check-circle me-1"></i>Voted
+                        </span>
+                    </div>
+                </div>
+
+                <div class="options-container mb-4">
+                    <!-- Voting Mode -->
+                    <div *ngIf="!poll.isClosed && !poll.userHasVoted" class="voting-options d-flex flex-column gap-3">
+                        <button *ngFor="let opt of poll.options" 
+                                class="btn btn-vote-option" 
+                                (click)="castVote(poll.id, opt.option)">
+                            {{ opt.option }}
+                        </button>
+                    </div>
+
+                    <!-- Statistics Mode -->
+                    <div *ngIf="poll.isClosed || poll.userHasVoted" class="results-stats d-flex flex-column gap-3">
+                        <div *ngFor="let opt of poll.options" class="stat-item p-3 rounded-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-bold">{{ opt.option }}</span>
+                                <span class="text-premium">{{ opt.percentage | number:'1.0-1' }}%</span>
+                            </div>
+                            <div class="progress premium-progress" style="height: 10px;">
+                                <div class="progress-bar bg-premium" 
+                                     [style.width.%]="opt.percentage"
+                                     [ngClass]="{'bg-success': poll.isClosed && opt.percentage == 100}">
+                                </div>
+                            </div>
+                            <div class="small text-muted mt-1">{{ opt.votes }} votes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer-stats mt-auto pt-3 border-top border-secondary">
+                    <div class="d-flex justify-content-between align-items-center text-muted small">
+                        <span><i class="fas fa-users me-2"></i>{{ poll.totalVotes }} Participations</span>
+                        <span *ngIf="poll.isClosed" class="text-warning">Final Results</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="polls.length === 0" class="no-polls-user text-center py-5">
+            <i class="fas fa-poll fa-4x text-muted mb-4"></i>
+            <h2 class="text-muted">No Polls Available</h2>
+            <p class="text-white-50">Come back later for new community discussions!</p>
+        </div>
+    </div>
+</div>

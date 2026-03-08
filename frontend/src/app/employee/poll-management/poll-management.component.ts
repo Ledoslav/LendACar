@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Chart, registerables, ChartItem } from 'chart.js';
 import {EmployeeService} from '../../services/employee.service';
+import { jsPDF } from 'jspdf';
 
 
 Chart.register(...registerables);
@@ -49,12 +50,9 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngAfterViewInit(): void {
-    // Re-render charts whenever the QueryList of canvases changes
     this.chartCanvases.changes.subscribe(() => {
       this.renderCharts();
     });
-    
-    // Initial attempt
     this.renderCharts();
   }
 
@@ -87,9 +85,11 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
 
   processPollData(poll: any): any {
     poll.id = poll.id ?? poll.Id;
+    poll.isClosed = poll.isClosed ?? poll.IsClosed;
     
     const votes: { [key: string]: number } = poll.votes || poll.Votes || {};
     const totalVotes: number = Object.values(votes).reduce((acc: number, v: number) => acc + (v || 0), 0);
+    poll.totalVotes = totalVotes; // store for PDF
 
     const optionsRaw = poll.options || poll.Options || [];
     poll.options = optionsRaw.map((opt: any) => {
@@ -127,7 +127,6 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
       const poll = this.polls.find(p => p.id === pollId);
       
       if (poll && poll.chartData) {
-        // Cleanup existing instance for this specific ID
         if (this.chartInstances.has(pollId)) {
           this.chartInstances.get(pollId)?.destroy();
           this.chartInstances.delete(pollId);
@@ -138,7 +137,7 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
           data: poll.chartData,
           options: {
             responsive: true,
-            maintainAspectRatio: false, // Allow CSS to control height
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom',
@@ -197,6 +196,69 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
         console.error('Error creating poll:', error);
       },
     });
+  }
+
+  closePoll(pollId: number): void {
+    if (confirm('Are you sure you want to close this poll? User voting will be disabled.')) {
+        this.http.post(`${this.apiUrl}/${pollId}/close`, {}).subscribe({
+            next: () => {
+                alert('Poll closed successfully!');
+            },
+            error: (err) => {
+                console.error('Error closing poll:', err);
+                alert('Could not close poll.');
+            }
+        });
+    }
+  }
+
+  printResults(poll: any): void {
+    const doc = new jsPDF();
+    const chart = this.chartInstances.get(poll.id);
+    
+    // Header
+    doc.setFillColor(33, 37, 41); // Dark background
+    doc.rect(0, 0, 210, 40, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.text('Poll Results Report', 10, 25);
+    
+    // Question Section
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(18);
+    doc.text(`Question: ${poll.question}`, 10, 55);
+    
+    doc.setFontSize(14);
+    doc.text(`Total Votes: ${poll.totalVotes}`, 10, 65);
+    
+    // Statistics Table
+    doc.setFontSize(16);
+    doc.text('Option Breakdown:', 10, 80);
+    
+    let y = 90;
+    doc.setFontSize(12);
+    poll.options.forEach((opt: any) => {
+      doc.text(`${opt.option}:`, 15, y);
+      doc.text(`${opt.votes} votes`, 80, y);
+      doc.text(`${opt.percentage.toFixed(1)}%`, 140, y);
+      y += 8;
+    });
+
+    // Chart
+    if (chart) {
+      const canvas = chart.canvas as HTMLCanvasElement;
+      const chartImage = canvas.toDataURL('image/png', 1.0);
+      doc.text('Visual Statistics:', 10, y + 10);
+      doc.addImage(chartImage, 'PNG', 50, y + 15, 110, 110);
+    }
+
+    // Footer
+    const date = new Date().toLocaleString();
+    doc.setFontSize(10);
+    doc.setTextColor(150, 150, 150);
+    doc.text(`Report generated on: ${date}`, 10, 285);
+    
+    doc.save(`Poll_Results_${poll.id}.pdf`);
   }
 
   trackByIndex(index: number, item: any): number {

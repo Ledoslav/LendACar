@@ -1,65 +1,119 @@
-<div class="poll-management">
-   <!-- Form to create a poll -->
-    <form class="poll-form" (submit)="createPoll()">
-      <div class="form-group">
-        <label for="question">Poll Question:</label>
-        <input
-          id="question"
-          type="text"
-          [(ngModel)]="newPoll.question"
-          name="question"
-          class="form-control"
-          placeholder="Enter your poll question"
-          required
-        />
-      </div>
+<!-- poll-management.component.html -->
+<div class="poll-management-container">
+  <div class="header-section mb-4 d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="page-title text-premium"><i class="fas fa-poll-h me-2"></i>Poll Management</h1>
+      <p class="text-muted">Create and manage real-time engagement polls</p>
+    </div>
+    <button class="btn btn-premium-outline" routerLink="/employee/dashboard">
+      <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+    </button>
+  </div>
 
-      <div *ngFor="let option of newPoll.options; let i = index; trackBy: trackByIndex" class="form-group option-group">
-        <label for="option{{ i }}">Option {{ i + 1 }}:</label>
-
-        <!-- Use Flexbox to align input and button side by side -->
-        <div class="input-group">
-          <input
-            id="option{{ i }}"
-            type="text"
-            [(ngModel)]="newPoll.options[i]"
-            name="option{{ i }}"
-            class="form-control"
-            placeholder="Enter option text"
-            required
-          />
-          <button type="button" class="btn btn-danger btn-sm remove-btn" (click)="removeOption(i)">
-            Remove
-          </button>
-        </div>
-      </div>
-
-      <!-- Button to add new option -->
-      <button type="button" class="btn btn-secondary add-option-btn" (click)="addOption()">
-        Add Option
-      </button>
-
-      <!-- Submit button to create the poll -->
-      <button type="submit" class="btn btn-primary create-btn">Create Poll</button>
-    </form>
-
-    <!-- List of created polls -->
-    <h3>Existing Polls</h3>
-    <div *ngIf="polls.length > 0; else noPolls" class="poll-list">
-      <div *ngFor="let poll of polls" class="poll-card">
-        <h4>{{ poll.question }}</h4>
-        <div class="poll-options">
-          <div *ngFor="let option of poll.options" class="poll-option">
-            <p><strong>{{ option.option }}:</strong> {{ option.votes }} votes ( {{ option.percentage | number: '1.0-2' }}% )</p>
+  <div class="row g-4">
+    <!-- Create Poll Form -->
+    <div class="col-lg-4">
+      <div class="glass-card poll-form-card p-4 shadow-lg h-100">
+        <h3 class="card-title mb-4"><i class="fas fa-plus-circle me-2"></i>Create New Poll</h3>
+        <form (submit)="createPoll()">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Question</label>
+            <input
+              type="text"
+              class="form-control premium-input text-white"
+              [(ngModel)]="newPoll.question"
+              name="question"
+              placeholder="Enter your question here..."
+              required
+            />
           </div>
-        </div>
 
-        <!-- Graph for the poll -->
-        <canvas *ngIf="poll.chartData" #pollChart [attr.data-poll-id]="poll.id" width="400" height="400"></canvas>
+          <div class="mb-4">
+            <label class="form-label fw-bold d-flex justify-content-between">
+              Options
+              <button type="button" class="btn btn-sm btn-link text-premium p-0" (click)="addOption()">
+                <i class="fas fa-plus me-1"></i>Add Option
+              </button>
+            </label>
+            <div *ngFor="let option of newPoll.options; let i = index; trackBy: trackByIndex" class="input-group mb-2">
+              <span class="input-group-text bg-transparent border-end-0 text-muted">{{ i + 1 }}</span>
+              <input
+                type="text"
+                class="form-control premium-input border-start-0 text-white"
+                [(ngModel)]="newPoll.options[i]"
+                [name]="'option' + i"
+                placeholder="Option text"
+                required
+              />
+              <button
+                type="button"
+                class="btn btn-outline-danger border-start-0"
+                (click)="removeOption(i)"
+                *ngIf="newPoll.options.length > 1"
+              >
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-premium w-100">
+            <i class="fas fa-paper-plane me-2"></i>Launch Poll
+          </button>
+        </form>
       </div>
     </div>
 
-    <ng-template #noPolls>
-      <p class="no-polls">No polls have been created yet.</p>
-    </ng-template>
+    <!-- Active Polls List -->
+    <div class="col-lg-8">
+      <div class="glass-card p-4 shadow-lg">
+        <h3 class="card-title mb-4 d-flex justify-content-between">
+          <i class="fas fa-stream me-2"></i>Poll Statistics
+          <span class="badge bg-premium-gradient">{{ polls.length }} Total</span>
+        </h3>
+        
+        <div class="row g-4 scrollable-list" style="max-height: 70vh; overflow-y: auto; padding: 5px;">
+          <div *ngFor="let poll of polls" class="col-md-6">
+            <div class="poll-stat-card p-4 h-100" [ngClass]="{'border-closed': poll.isClosed}">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <h4 class="poll-question">{{ poll.question }}</h4>
+                <span class="status-badge" [ngClass]="poll.isClosed ? 'closed' : 'active-poll'">
+                  {{ poll.isClosed ? 'Closed' : 'Live' }}
+                </span>
+              </div>
+
+              <div class="chart-container-wrapper mb-4">
+                <canvas #pollChart [attr.data-poll-id]="poll.id" height="250"></canvas>
+              </div>
+
+              <div class="stats-breakdown mb-4">
+                <div *ngFor="let opt of poll.options" class="opt-stat mb-2">
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span class="text-white-50">{{ opt.option }}</span>
+                    <span class="fw-bold">{{ opt.votes }} ({{ opt.percentage | number:'1.1-1' }}%)</span>
+                  </div>
+                  <div class="progress premium-progress" style="height: 6px;">
+                    <div class="progress-bar bg-premium" [style.width.%]="opt.percentage"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button *ngIf="!poll.isClosed" class="btn btn-outline-warning w-100 btn-sm" (click)="closePoll(poll.id)">
+                  <i class="fas fa-lock me-2"></i>Close Poll
+                </button>
+                <button *ngIf="poll.isClosed" class="btn btn-premium w-100 btn-sm" (click)="printResults(poll)">
+                  <i class="fas fa-file-pdf me-2"></i>Print Results
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="polls.length === 0" class="no-polls text-center py-5">
+            <i class="fas fa-poll fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No polls found. Create one to get started!</p>
+        </div>
+      </div>
+    </div>
   </div>
+</div>

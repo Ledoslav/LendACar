@@ -1,3 +1,4 @@
+// polls.component.ts
 import { Component, OnInit, OnDestroy, inject, NgZone, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../services/user.service';
@@ -61,7 +62,9 @@ export class PollsComponent implements OnInit, OnDestroy {
   }
 
   updatePollList(updatedPoll: any): void {
-    const pollIndex = this.polls.findIndex(poll => poll.id === updatedPoll.id);
+    const updatedId = updatedPoll.id ?? updatedPoll.Id;
+    const pollIndex = this.polls.findIndex(poll => poll.id === updatedId);
+    
     const processedPoll = this.processPollData(updatedPoll);
     
     if (pollIndex !== -1) {
@@ -73,11 +76,21 @@ export class PollsComponent implements OnInit, OnDestroy {
   }
 
   processPollData(poll: any): any {
-    const votes: { [key: string]: number } = poll.votes || {};
+    const user = this.accountService.currentUser();
+    const userId = user?.id;
+    
+    poll.id = poll.id ?? poll.Id;
+    poll.isClosed = poll.isClosed ?? poll.IsClosed;
+    const votedIds = poll.votedUserIds || poll.VotedUserIds || [];
+    poll.userHasVoted = userId ? votedIds.includes(userId) : false;
+
+    const votes: { [key: string]: number } = poll.votes || poll.Votes || {};
     const totalVotes: number = Object.values(votes).reduce((acc: number, v: number) => acc + (v || 0), 0);
+    poll.totalVotes = totalVotes;
   
-    poll.options = (poll.options || []).map((opt: any) => {
-      const optionText = typeof opt === 'string' ? opt : opt.option;
+    const optionsRaw = poll.options || poll.Options || [];
+    poll.options = optionsRaw.map((opt: any) => {
+      const optionText = typeof opt === 'string' ? opt : (opt.option ?? opt.Option);
       return {
         option: optionText,
         votes: votes[optionText] || 0,
@@ -89,7 +102,13 @@ export class PollsComponent implements OnInit, OnDestroy {
   }
 
   castVote(pollId: number, option: string): void {
-    const voteUrl = `${this.apiUrl}/${pollId}/vote`;
+    const user = this.accountService.currentUser();
+    if (!user) {
+      alert('You must be logged in to vote.');
+      return;
+    }
+
+    const voteUrl = `${this.apiUrl}/${pollId}/vote?userId=${user.id}`;
 
     if (!option) {
       alert('Please select a valid option.');
@@ -100,18 +119,13 @@ export class PollsComponent implements OnInit, OnDestroy {
       headers: { 'Content-Type': 'application/json' }
     }).subscribe({
       next: () => {
-        // Vote casted successfully, SignalR will handle the refresh
+        // Vote casted successfully, SignalR handles update
       },
       error: (error) => {
         console.error('Error casting vote:', error);
-        alert('Failed to cast vote. Please try again.');
+        alert(error.error || 'Failed to cast vote.');
       },
     });
-  }
-
-  logout() {
-    this.accountService.currentUser.set(null);
-    localStorage.removeItem('user');
   }
 
   trackByIndex(index: number, item: any): number {
