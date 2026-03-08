@@ -9,8 +9,9 @@ import {ForgotPasswordComponent} from './forgot-password/forgot-password.compone
 import {EmployeeLayoutComponent} from './employee-layout/employee-layout.component';
 import {ProfileLayoutComponent} from './profile/profile-layout/profile-layout.component';
 import {ProfilePageComponent} from './profile/profile-page/profile-page.component';
-import {AccountSecurityPageComponent} from './profile/account-security-page/account-security-page.component';
 import {PhotoPageComponent} from './profile/photo-page/photo-page.component';
+import {AccountSecurityPageComponent} from './profile/account-security-page/account-security-page.component';
+import { VehicleDataOverviewComponent } from './vehicle-data-overview/vehicle-data-overview.component';
 
 const routes: Routes = [
   {path:'login', component: LoginComponent},
@@ -25,6 +26,7 @@ const routes: Routes = [
       {path:'dashboard', component: DashboardComponent},
       {path:'verificationRequests',component:VerificationRequestComponent},
       {path:'pollManagement', component:PollManagementComponent},
+      {path:'vehicleDataOverview', component: VehicleDataOverviewComponent},
       {path:'profile', component:ProfileLayoutComponent, children: [
           { path: '', redirectTo: 'overview', pathMatch: 'full' },
           { path: 'overview', component: ProfilePageComponent  },

@@ -34,7 +34,7 @@
         <p>{{ 'VEHICLE.MY_VEHICLES.UNVERIFIED_WARNING' | translate }}</p>
       </div>
 
-      <div *ngIf="user?.isVerified && vehicles?.length === 0" class="no-vehicles-message">
+      <div *ngIf="user?.isVerified && vehicles.length === 0" class="no-vehicles-message">
         <p>{{ 'VEHICLE.MY_VEHICLES.NO_VEHICLES' | translate }}</p>
       </div>
 
