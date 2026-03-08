@@ -4,53 +4,53 @@
       <div class="success-icon">
         <i class="fas fa-check-circle"></i>
       </div>
-      <h1>Reservation Placed Successfully!</h1>
-      <p class="subtitle">Your request has been sent to the vehicle owner.</p>
+      <h1>{{ 'RESERVATION.SUCCESS.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'RESERVATION.SUCCESS.SUBTITLE' | translate }}</p>
     </div>
 
     <div class="details-grid">
       <!-- Reservation Info -->
       <div class="detail-section">
-        <h3><i class="fas fa-calendar-alt"></i> Reservation Details</h3>
+        <h3><i class="fas fa-calendar-alt"></i> {{ 'RESERVATION.SUCCESS.DETAILS_TITLE' | translate }}</h3>
         <div class="detail-item">
-          <span class="label">Reservation ID:</span>
+          <span class="label">{{ 'RESERVATION.SUCCESS.ID' | translate }}:</span>
           <span class="value">#REC-{{reservation.id}}</span>
         </div>
         <div class="detail-item">
-          <span class="label">Period:</span>
+          <span class="label">{{ 'RESERVATION.SUCCESS.PERIOD' | translate }}:</span>
           <span class="value">{{reservation.pickUpDateTime | date:'mediumDate'}} - {{reservation.dropOffDateTime | date:'mediumDate'}}</span>
         </div>
         <div class="detail-item">
-          <span class="label">Pick-up City:</span>
+          <span class="label">{{ 'RESERVATION.SUCCESS.PICKUP_CITY' | translate }}:</span>
           <span class="value">{{reservation.pickUpCity?.name}}</span>
         </div>
         <div class="detail-item">
-          <span class="label">Total Price:</span>
+          <span class="label">{{ 'RESERVATION.SUCCESS.TOTAL_PRICE' | translate }}:</span>
           <span class="value price">{{reservation.price}} KM</span>
         </div>
       </div>
 
       <!-- Vehicle Info -->
       <div class="detail-section">
-        <h3><i class="fas fa-car"></i> Vehicle Info</h3>
+        <h3><i class="fas fa-car"></i> {{ 'RESERVATION.SUCCESS.VEHICLE_INFO' | translate }}</h3>
         <div class="detail-item">
-          <span class="label">Model:</span>
+          <span class="label">{{ 'RESERVATION.SUCCESS.MODEL' | translate }}:</span>
           <span class="value">{{reservation.vehicle?.title}}</span>
         </div>
         <div class="detail-item">
-          <span class="label">Category:</span>
+          <span class="label">{{ 'RESERVATION.SUCCESS.CATEGORY' | translate }}:</span>
           <span class="value">{{reservation.vehicle?.vehicleCategory?.name}}</span>
         </div>
       </div>
 
       <!-- Owner Info -->
       <div class="detail-section full-width">
-        <h3><i class="fas fa-user-tie"></i> Owner Contact</h3>
+        <h3><i class="fas fa-user-tie"></i> {{ 'RESERVATION.SUCCESS.OWNER_CONTACT' | translate }}</h3>
         <div class="owner-card">
           <div class="owner-info">
             <p class="owner-name">{{reservation.owner?.firstName}} {{reservation.owner?.lastName}}</p>
             <p><i class="fas fa-envelope"></i> {{reservation.owner?.emailAddress}}</p>
-            <p><i class="fas fa-phone"></i> {{reservation.owner?.phoneNumber || 'No phone provided'}}</p>
+            <p><i class="fas fa-phone"></i> {{reservation.owner?.phoneNumber || ('RESERVATION.SUCCESS.NO_PHONE' | translate)}}</p>
           </div>
         </div>
       </div>
@@ -58,10 +58,10 @@
 
     <div class="actions">
       <button class="btn btn-pdf" (click)="downloadPdf()">
-        <i class="fas fa-file-pdf"></i> Download PDF Summary
+        <i class="fas fa-file-pdf"></i> {{ 'RESERVATION.SUCCESS.DOWNLOAD_PDF' | translate }}
       </button>
       <button class="btn btn-home" routerLink="/public/home">
-        Go to Home
+        {{ 'RESERVATION.SUCCESS.GO_HOME' | translate }}
       </button>
     </div>
   </div>
@@ -69,12 +69,12 @@
 
 <ng-template #loadingOrError>
   <div class="loading-state" *ngIf="loading">
-    <p>Loading reservation details...</p>
+    <p>{{ 'RESERVATION.SUCCESS.LOADING' | translate }}</p>
   </div>
   <div class="error-state" *ngIf="!loading && !reservation">
     <i class="fas fa-exclamation-triangle"></i>
-    <h2>Reservation Not Found</h2>
-    <p>We couldn't retrieve the details for this reservation.</p>
-    <button class="btn btn-home" (click)="goToDashboard()">Return Home</button>
+    <h2>{{ 'RESERVATION.SUCCESS.NOT_FOUND' | translate }}</h2>
+    <p>{{ 'RESERVATION.SUCCESS.NOT_FOUND_TEXT' | translate }}</p>
+    <button class="btn btn-home" (click)="goToDashboard()">{{ 'RESERVATION.SUCCESS.RETURN_HOME' | translate }}</button>
   </div>
 </ng-template>

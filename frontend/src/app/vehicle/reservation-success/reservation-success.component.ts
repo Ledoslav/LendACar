@@ -4,6 +4,7 @@ import { ReservationService } from '../../services/reservation.service';
 import { ReservationDto } from '../../Models/ReservationDto';
 import jsPDF from 'jspdf';
 import { DatePipe } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   standalone: false,
@@ -18,6 +19,7 @@ export class ReservationSuccessComponent implements OnInit {
   private router = inject(Router);
   private reservationService = inject(ReservationService);
   private datePipe = inject(DatePipe);
+  private translate = inject(TranslateService);
 
   reservation: ReservationDto | null = null;
   loading = true;
@@ -62,7 +64,7 @@ export class ReservationSuccessComponent implements OnInit {
     // Header
     doc.setFontSize(22);
     doc.setTextColor(52, 152, 219); // Blue
-    doc.text('LendACar Reservation Summary', 105, 20, { align: 'center' });
+    doc.text(this.translate.instant('RESERVATION.PDF.SUMMARY_TITLE'), 105, 20, { align: 'center' });
     
     doc.setDrawColor(200, 200, 200);
     doc.line(20, 25, 190, 25);
@@ -70,35 +72,35 @@ export class ReservationSuccessComponent implements OnInit {
     // Reservation info
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
-    doc.text('Reservation Details', 20, 40);
+    doc.text(this.translate.instant('RESERVATION.SUCCESS.DETAILS_TITLE'), 20, 40);
     
     doc.setFontSize(12);
-    doc.text(`Reservation ID: #REC-${r.id}`, 20, 50);
-    doc.text(`Status: Pending Confirmation`, 20, 58);
-    doc.text(`Total Price: ${r.price} KM`, 20, 66);
-    doc.text(`Pick-up: ${this.formatDate(r.pickUpDateTime)} at ${r.pickUpCity?.name}`, 20, 74);
-    doc.text(`Drop-off: ${this.formatDate(r.dropOffDateTime)} at ${r.dropOffCity?.name}`, 20, 82);
+    doc.text(`${this.translate.instant('RESERVATION.SUCCESS.ID')}: #REC-${r.id}`, 20, 50);
+    doc.text(this.translate.instant('RESERVATION.PDF.STATUS_PENDING'), 20, 58);
+    doc.text(`${this.translate.instant('RESERVATION.SUCCESS.TOTAL_PRICE')}: ${r.price} KM`, 20, 66);
+    doc.text(`${this.translate.instant('RESERVATION.PDF.PICKUP')}: ${this.formatDate(r.pickUpDateTime)} at ${r.pickUpCity?.name}`, 20, 74);
+    doc.text(`${this.translate.instant('RESERVATION.PDF.DROPOFF')}: ${this.formatDate(r.dropOffDateTime)} at ${r.dropOffCity?.name}`, 20, 82);
 
     // Vehicle info
     doc.setFontSize(16);
-    doc.text('Vehicle Information', 20, 100);
+    doc.text(this.translate.instant('RESERVATION.PDF.VEHICLE_INFO'), 20, 100);
     
     doc.setFontSize(12);
-    doc.text(`Vehicle: ${v?.title}`, 20, 110);
-    doc.text(`Category: ${v?.vehicleCategory?.name || 'N/A'}`, 20, 118);
+    doc.text(`${this.translate.instant('VEHICLE.LISTING.MODEL')}: ${v?.title}`, 20, 110);
+    doc.text(`${this.translate.instant('RESERVATION.SUCCESS.CATEGORY')}: ${v?.vehicleCategory?.name || 'N/A'}`, 20, 118);
 
     // Owner info
     doc.setFontSize(16);
-    doc.text('Owner Contact Details', 20, 136);
+    doc.text(this.translate.instant('RESERVATION.PDF.OWNER_DETAILS'), 20, 136);
     
     doc.setFontSize(12);
-    doc.text(`Owner: ${owner?.firstName} ${owner?.lastName}`, 20, 146);
-    doc.text(`Phone: ${owner?.phoneNumber || 'N/A'}`, 20, 154);
+    doc.text(`${this.translate.instant('VEHICLE.LISTING.OWNER')}: ${owner?.firstName} ${owner?.lastName}`, 20, 146);
+    doc.text(`${this.translate.instant('COMPANY.PHONE')}: ${owner?.phoneNumber || 'N/A'}`, 20, 154);
 
     // Footer
     doc.setFontSize(10);
     doc.setTextColor(150, 150, 150);
-    doc.text('Thank you for choosing LendACar!', 105, 280, { align: 'center' });
+    doc.text(this.translate.instant('RESERVATION.PDF.THANK_YOU'), 105, 280, { align: 'center' });
 
     doc.save(`Reservation-${r.id}.pdf`);
     console.log('PDF saved');

@@ -8,57 +8,57 @@
             <form #reservationForm="ngForm" (ngSubmit)="confirm()">
     
                 <!-- Pick-up -->
-                <label>Pick-up Date & Time</label>
+                <label>{{ 'RESERVATION.FORM.PICKUP_DATETIME' | translate }}</label>
                 <input type="datetime-local" [(ngModel)]="pickUpDateTime" [min]="today" name="pickUpDateTime" (change)="updateTotalPrice()" required />
     
-                <label>Pick-up Country</label>
+                <label>{{ 'RESERVATION.FORM.PICKUP_COUNTRY' | translate }}</label>
                 <select [(ngModel)]="pickUpCountryId" name="pickUpCountry" (change)="loadPickUpCities()" required>
                     <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
                 </select>
     
-                <label>Pick-up City</label>
+                <label>{{ 'RESERVATION.FORM.PICKUP_CITY' | translate }}</label>
                 <select [(ngModel)]="pickUpCityId" name="pickUpCity" required>
                     <option *ngFor="let city of pickUpCities" [value]="city.id">{{ city.name }}</option>
                 </select>
     
                 <!-- Drop-off -->
-                <label>Drop-off Date & Time</label>
+                <label>{{ 'RESERVATION.FORM.DROPOFF_DATETIME' | translate }}</label>
                 <input type="datetime-local" [(ngModel)]="dropOffDateTime" name="dropOffDateTime" [min]="pickUpDateTime || today" (change)="updateTotalPrice()" required />
     
-                <label>Drop-off Country</label>
+                <label>{{ 'RESERVATION.FORM.DROPOFF_COUNTRY' | translate }}</label>
                 <select [(ngModel)]="dropOffCountryId" name="dropOffCountry" (change)="loadDropOffCities()" required>
                     <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
                 </select>
     
-                <label>Drop-off City</label>
+                <label>{{ 'RESERVATION.FORM.DROPOFF_CITY' | translate }}</label>
                 <select [(ngModel)]="dropOffCityId" name="dropOffCity" required>
                     <option *ngFor="let city of dropOffCities" [value]="city.id">{{ city.name }}</option>
                 </select>
     
                 <!-- Payment -->
-                <label>Payment Method</label>
+                <label>{{ 'RESERVATION.FORM.PAYMENT_METHOD' | translate }}</label>
                 <label>
-                    <input type="radio" [(ngModel)]="isCashPayment" [value]="true" name="paymentMethod" /> Cash
+                    <input type="radio" [(ngModel)]="isCashPayment" [value]="true" name="paymentMethod" /> {{ 'RESERVATION.FORM.CASH' | translate }}
                 </label>
                 <label>
-                    <input type="radio" [(ngModel)]="isCashPayment" [value]="false" name="paymentMethod" /> Card
+                    <input type="radio" [(ngModel)]="isCashPayment" [value]="false" name="paymentMethod" /> {{ 'RESERVATION.FORM.CARD' | translate }}
                 </label>
     
                 <div *ngIf="!isCashPayment" class="card-fields">
-                    <label>Card Number</label>
+                    <label>{{ 'RESERVATION.FORM.CARD_NUMBER' | translate }}</label>
                     <input type="text" placeholder="1234 5678 9012 3456" />
     
-                    <label>Expiry Date</label>
+                    <label>{{ 'RESERVATION.FORM.EXPIRY_DATE' | translate }}</label>
                     <input type="month" />
     
-                    <label>CVV</label>
+                    <label>{{ 'RESERVATION.FORM.CVV' | translate }}</label>
                     <input type="text" placeholder="123" />
                 </div>
     
                 <!-- Buttons -->
                 <div class="step-buttons">
-                    <button type="button" (click)="cancel()">Cancel</button>
-                    <button type="submit">Confirm</button>
+                    <button type="button" (click)="cancel()">{{ 'RESERVATION.FORM.CANCEL' | translate }}</button>
+                    <button type="submit">{{ 'RESERVATION.FORM.CONFIRM' | translate }}</button>
                 </div>
             </form>
 
@@ -79,7 +79,7 @@
       <hr />
       <div class="price-info">
         <img class="price-icon" src="money-white.png" alt="Price icon" />
-        <span class="price"> Price per day: {{ vehicle.pricePerDay }} BAM</span>
+        <span class="price"> {{ 'RESERVATION.FORM.PRICE_PER_DAY' | translate }}: {{ vehicle.pricePerDay }} BAM</span>
       </div>
       <div class="calculated-price">
         <img class="calc-icon" src="money-black.png" alt="Calc icon" />
