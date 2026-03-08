@@ -1,0 +1,121 @@
+<div class="container mt-4">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h3 class="card-title mb-4">Vehicle Data Overview</h3>
+
+      <!-- Filters and Search -->
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Search Title</label>
+          <input type="text" class="form-control" [(ngModel)]="request.search" (input)="onSearch()" placeholder="Search vehicles...">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Owner</label>
+          <select class="form-select" [(ngModel)]="request.ownerId" (change)="onFilterChange()">
+            <option [ngValue]="undefined">All Owners</option>
+            <option *ngFor="let owner of filterOptions.owners" [ngValue]="owner.id">{{owner.name}}</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Brand</label>
+          <select class="form-select" [(ngModel)]="request.brandId" (change)="onFilterChange()">
+            <option [ngValue]="undefined">All Brands</option>
+            <option *ngFor="let brand of filterOptions.brands" [ngValue]="brand.id">{{brand.name}}</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">City (Owner)</label>
+          <select class="form-select" [(ngModel)]="request.cityId" (change)="onFilterChange()">
+            <option [ngValue]="undefined">All Cities</option>
+            <option *ngFor="let city of filterOptions.cities" [ngValue]="city.id">{{city.name}}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Category</label>
+          <select class="form-select" [(ngModel)]="request.categoryId" (change)="onFilterChange()">
+            <option [ngValue]="undefined">All Categories</option>
+            <option *ngFor="let cat of filterOptions.categories" [ngValue]="cat.id">{{cat.name}}</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Fuel Type</label>
+          <select class="form-select" [(ngModel)]="request.fuelType" (change)="onFilterChange()">
+            <option [ngValue]="undefined">All Fuels</option>
+            <option *ngFor="let fuel of fuelTypes" [ngValue]="fuel.id">{{fuel.name}}</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Sort By</label>
+          <select class="form-select" [(ngModel)]="request.sortOrder" (change)="onFilterChange()">
+            <option *ngFor="let opt of sortOptions" [ngValue]="opt.id">{{opt.name}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Owner</th>
+              <th>Brand</th>
+              <th>City</th>
+              <th>Category</th>
+              <th>Fuel</th>
+              <th class="text-end">Price/Day</th>
+              <th class="text-center">Reservations</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let vehicle of vehicles">
+              <td>{{vehicle.id}}</td>
+              <td><strong>{{vehicle.title}}</strong></td>
+              <td>{{vehicle.ownerName}}</td>
+              <td>{{vehicle.brandName}}</td>
+              <td>{{vehicle.cityName}}</td>
+              <td><span class="badge bg-secondary">{{vehicle.categoryName}}</span></td>
+              <td>{{getFuelTypeName(vehicle.fuelType)}}</td>
+              <td class="text-end text-primary fw-bold">{{vehicle.pricePerDay | currency:'EUR':'symbol'}}</td>
+              <td class="text-center">
+                <span class="badge rounded-pill bg-info text-dark">{{vehicle.reservationsCount}}</span>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteVehicle(vehicle.id)">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="vehicles.length === 0">
+              <td colspan="10" class="text-center py-5">
+                <div class="text-muted">No vehicles found matching the filters.</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <span class="text-muted small">Showing {{vehicles.length}} of {{totalCount}} vehicles</span>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="request.pageNumber === 1">
+            <button class="page-link" (click)="prevPage()">Previous</button>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link">Page {{request.pageNumber}} of {{totalPages || 1}}</span>
+          </li>
+          <li class="page-item" [class.disabled]="request.pageNumber === totalPages || totalPages === 0">
+            <button class="page-link" (click)="nextPage()">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

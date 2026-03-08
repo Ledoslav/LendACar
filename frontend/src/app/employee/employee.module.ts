@@ -14,6 +14,7 @@ import { ProfileLayoutComponent } from './profile/profile-layout/profile-layout.
 import { ProfilePageComponent } from './profile/profile-page/profile-page.component';
 import { AccountSecurityPageComponent } from './profile/account-security-page/account-security-page.component';
 import { PhotoPageComponent } from './profile/photo-page/photo-page.component';
+import { VehicleDataOverviewComponent } from './vehicle-data-overview/vehicle-data-overview.component';
 import {ImageCropperComponent} from 'ngx-image-cropper';
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {TranslateModule} from '@ngx-translate/core';
@@ -32,6 +33,7 @@ import {TranslateModule} from '@ngx-translate/core';
     ProfilePageComponent,
     AccountSecurityPageComponent,
     PhotoPageComponent,
+    VehicleDataOverviewComponent,
   ],
     imports: [
         CommonModule,

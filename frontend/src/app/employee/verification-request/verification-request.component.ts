@@ -122,7 +122,8 @@ export class VerificationRequestComponent implements OnInit {
 
   selectRequest(request: VerificationRequestDto): void {
     this.selectedRequest = request;
-    this.selectedUser = this.users.find(res => res.id === request.userId) || null;
+    // Prioritize embedded user data from backend Include
+    this.selectedUser = request.user || this.users.find(res => res.id === request.userId) || null;
     this.comment = '';
   }
 
@@ -159,13 +160,15 @@ export class VerificationRequestComponent implements OnInit {
     return 'Undefined';
   }
 
-  getUsername(userId:number): string{
-    const user = this.users.find(res => res.id === userId);
+  getUsername(request: VerificationRequestDto): string{
+    if (request.user) return request.user.username;
+    const user = this.users.find(res => res.id === request.userId);
     return user?.username || 'Unknown';
   }
 
-  getCityName(cityId:number): string{
-    const city = this.cities.find(res => res.id === cityId);
+  getCityName(user: UserDto | null | undefined): string{
+    if (user?.city) return user.city.name;
+    const city = this.cities.find(res => res.id === user?.cityId);
     return city?.name || 'Unknown';
   }
 

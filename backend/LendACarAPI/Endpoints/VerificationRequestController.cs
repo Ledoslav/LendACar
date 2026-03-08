@@ -18,9 +18,23 @@ namespace LendACarAPI.Endpoints
     {
         [HttpGet("get")]
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
-        public async Task<ActionResult<VehicleCategory[]>> GetAllVerificationRequests()
+        public async Task<ActionResult<IEnumerable<VerificationRequest>>> GetAllVerificationRequests()
         {
-            var requests = await db.VerificationRequests.ToArrayAsync();
+            var requests = await db.VerificationRequests
+                .Include(vr => vr.User)
+                .ThenInclude(u => u.City)
+                .ToListAsync();
+
+            // Fix kind for dates
+            foreach (var r in requests)
+            {
+                r.RequestDate = DateTime.SpecifyKind(r.RequestDate, DateTimeKind.Utc);
+                if (r.RequestReviewDate.HasValue)
+                {
+                    r.RequestReviewDate = DateTime.SpecifyKind(r.RequestReviewDate.Value, DateTimeKind.Utc);
+                }
+            }
+
             return Ok(requests);
         }
 
