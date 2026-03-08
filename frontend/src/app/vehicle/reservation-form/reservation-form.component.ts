@@ -155,7 +155,7 @@ export class ReservationFormComponent implements OnInit {
     this.addActivity(30,0,dto.vehicleID,0);
 
     this.reservationService.create(dto).subscribe({
-      next: () => this.router.navigate(['/vehicle/listing/' + this.vehicleId]),
+      next: (res: any) => this.router.navigate(['/vehicle/reservation-success/' + res.id]),
       error: err => console.error('Reservation creation failed', err)
     });
   }
