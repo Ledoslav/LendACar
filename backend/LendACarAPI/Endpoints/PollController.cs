@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using LendACarAPI.Services;
 
 namespace LendACarAPI.Endpoints
 {
@@ -26,9 +27,11 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpGet]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public IActionResult GetPolls() => Ok(Polls);
 
         [HttpPost]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public IActionResult CreatePoll([FromBody] Poll poll)
         {
             poll.Id = Polls.Any() ? Polls.Max(p => p.Id) + 1 : 1;
@@ -39,6 +42,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPost("{pollId}/close")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<IActionResult> ClosePoll(int pollId)
         {
             var poll = Polls.FirstOrDefault(p => p.Id == pollId);
@@ -50,6 +54,7 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPost("{pollId}/vote")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> Vote(int pollId, [FromQuery] int userId, [FromBody] string option)
         {
             if (string.IsNullOrEmpty(option))

@@ -1,4 +1,4 @@
-﻿using CloudinaryDotNet;
+using CloudinaryDotNet;
 using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
@@ -21,11 +21,13 @@ namespace LendACarAPI.Endpoints
     {
         private readonly ApplicationDbContext db;
         private readonly IPhotoService photoService;
+        private readonly IAuthService authService;
 
-        public VehicleController(ApplicationDbContext db, IPhotoService photoService)
+        public VehicleController(ApplicationDbContext db, IPhotoService photoService, IAuthService authService)
         {
             this.db = db;
             this.photoService = photoService ?? throw new ArgumentNullException(nameof(photoService));
+            this.authService = authService;
         }
 
         [HttpGet("get")]
@@ -539,11 +541,16 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpDelete("remove/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> RemoveVehicle(int id)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
             var vehicle = await db.Vehicles.FirstOrDefaultAsync(v => v.Id == id);
 
             if (vehicle == null) return NotFound("Vehicle not found");
+
+            if (vehicle.UserID != authInfo.UserId && !authInfo.IsAdmin && !authInfo.IsEmployee)
+                return Unauthorized("Not authorized");
 
             var vehicleImages = await db.VehicleImages.Where(vi => vi.VehicleId == id).ToListAsync();
 
