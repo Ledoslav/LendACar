@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy, inject, NgZone, ChangeDetectorRef } from 
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../services/user.service';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { MyConfig } from '../../my-config';
 
 @Component({
   standalone: false,
@@ -17,7 +18,7 @@ export class PollsComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
 
   polls: any[] = [];
-  private apiUrl = 'http://localhost:7000/api/Poll';
+  private apiUrl = MyConfig.api_address + 'Poll';
   private hubConnection!: HubConnection;
 
   constructor() {}
@@ -47,7 +48,7 @@ export class PollsComponent implements OnInit, OnDestroy {
 
   setupSignalRConnection(): void {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl('http://localhost:7000/pollHub')
+      .withUrl(MyConfig.server_address + '/pollHub')
       .build();
 
     this.hubConnection.on('ReceiveVoteUpdate', (updatedPoll) => {

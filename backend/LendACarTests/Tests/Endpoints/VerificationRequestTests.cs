@@ -28,7 +28,8 @@ namespace LendACarTests.Tests.Endpoints
             });
             await db.SaveChangesAsync();
 
-            var controller = new VerificationRequestController(db);
+            mockAuthService.Setup(a => a.GetAuthInfoFromRequest()).Returns(new AuthClaims { UserId = 1, IsAdmin = true });
+            var controller = new VerificationRequestController(db, mockAuthService.Object);
 
             var result = await controller.GetAllVerificationRequests();
 
@@ -50,7 +51,8 @@ namespace LendACarTests.Tests.Endpoints
             db.VerificationRequests.Add(request);
             await db.SaveChangesAsync();
 
-            var controller = new VerificationRequestController(db);
+            mockAuthService.Setup(a => a.GetAuthInfoFromRequest()).Returns(new AuthClaims { UserId = 2, IsAdmin = true });
+            var controller = new VerificationRequestController(db, mockAuthService.Object);
 
             var result = await controller.GetVerificationRequestById(request.Id);
 
@@ -66,7 +68,8 @@ namespace LendACarTests.Tests.Endpoints
             var mockPhotoService = new Mock<IPhotoService>();
             var db = await TestApplicationDbContext.CreateAsync(mockAuthService.Object, mockPhotoService.Object, new Mock<IRenderPDFReport>().Object);
 
-            var controller = new VerificationRequestController(db);
+            mockAuthService.Setup(a => a.GetAuthInfoFromRequest()).Returns(new AuthClaims { UserId = 999, IsAdmin = true });
+            var controller = new VerificationRequestController(db, mockAuthService.Object);
 
             var result = await controller.GetVerificationRequestById(999);
 
@@ -87,7 +90,8 @@ namespace LendACarTests.Tests.Endpoints
                 RequestComment = "Please verify my account." 
             };
 
-            var controller = new VerificationRequestController(db);
+            mockAuthService.Setup(a => a.GetAuthInfoFromRequest()).Returns(new AuthClaims { UserId = 3, IsAdmin = true });
+            var controller = new VerificationRequestController(db, mockAuthService.Object);
 
             var result = await controller.AddVerificationRequest(newRequestDto);
 
@@ -112,7 +116,8 @@ namespace LendACarTests.Tests.Endpoints
                 RequestComment = "Another request" 
             };
 
-            var controller = new VerificationRequestController(db);
+            mockAuthService.Setup(a => a.GetAuthInfoFromRequest()).Returns(new AuthClaims { UserId = 4, IsAdmin = true });
+            var controller = new VerificationRequestController(db, mockAuthService.Object);
 
             var result = await controller.AddVerificationRequest(existingRequestDto);
 

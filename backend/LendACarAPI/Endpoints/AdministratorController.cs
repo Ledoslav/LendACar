@@ -1,4 +1,4 @@
-﻿using LendACarAPI.Data;
+using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
 using LendACarAPI.Services;
@@ -16,32 +16,6 @@ namespace LendACarAPI.Endpoints
     [ApiController]
     public class AdministratorController(ApplicationDbContext db, IAuthService authService) : ControllerBase
     {
-        [HttpPost("register")]
-        public async Task<ActionResult<string>> RegisterAdministrator([FromBody] AdministratorRegisterDto registerAdmin,CancellationToken cancellationToken)
-        {
-            var hmac = new HMACSHA256();
-
-            if(await AdminExists(registerAdmin.Username, registerAdmin.EmailAdress)) { return BadRequest("Username or email is taken"); }
-
-            var newAdmin = new Administrator
-            {
-                FirstName = registerAdmin.FirstName,
-                LastName = registerAdmin.LastName,
-                BirthDate = DateTime.Parse(registerAdmin.BirthDate),
-                PhoneNumber = registerAdmin.PhoneNumber,
-                CityId = registerAdmin.CityId,
-                EmailAdress = registerAdmin.EmailAdress,
-                Username = registerAdmin.Username,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerAdmin.Password)),
-                PasswordSalt = hmac.Key,
-                IsAdmin=true
-            };
-
-            db.Administrators.Add(newAdmin);
-           await db.SaveChangesAsync(cancellationToken);
-
-            return Created();
-        }
 
         [HttpPost("login")]
 
@@ -55,17 +29,17 @@ namespace LendACarAPI.Endpoints
             if(admin == null)
                 return Unauthorized("Invalid credentials");
 
-            var hmac = new HMACSHA256(admin.PasswordSalt);
+            using var hmac = new HMACSHA256(admin.PasswordSalt);
 
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(adminLogin.Password));
-
-            var token = authService.CreatToken(admin);
 
             for (var i = 0; i < computedHash.Length; i++)
             {
                 if (computedHash[i] != admin.PasswordHash[i]) 
                     return Unauthorized("Invalid credentials");
             }
+
+            var token = authService.CreatToken(admin);
 
             return Ok(new AdministratorDto
             {

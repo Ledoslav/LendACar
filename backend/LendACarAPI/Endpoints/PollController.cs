@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using LendACarAPI.Services;
 
 namespace LendACarAPI.Endpoints
 {
@@ -15,7 +16,6 @@ namespace LendACarAPI.Endpoints
     [ApiController]
     public class PollController : ControllerBase
     {
-        private static readonly List<Poll> Polls = new();
         private readonly IHubContext<PollHub> _hubContext;
         private readonly ApplicationDbContext _db;
 
@@ -26,30 +26,35 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpGet]
-        public IActionResult GetPolls() => Ok(Polls);
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
+        public async Task<IActionResult> GetPolls() => Ok(await _db.Polls.ToListAsync());
 
         [HttpPost]
-        public IActionResult CreatePoll([FromBody] Poll poll)
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
+        public async Task<IActionResult> CreatePoll([FromBody] Poll poll)
         {
-            poll.Id = Polls.Any() ? Polls.Max(p => p.Id) + 1 : 1;
             poll.IsClosed = false;
             poll.VotedUserIds = new List<int>();
-            Polls.Add(poll);
+            _db.Polls.Add(poll);
+            await _db.SaveChangesAsync();
             return Ok(poll);
         }
 
         [HttpPost("{pollId}/close")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
         public async Task<IActionResult> ClosePoll(int pollId)
         {
-            var poll = Polls.FirstOrDefault(p => p.Id == pollId);
+            var poll = await _db.Polls.FirstOrDefaultAsync(p => p.Id == pollId);
             if (poll == null) return NotFound();
 
             poll.IsClosed = true;
+            await _db.SaveChangesAsync();
             await _hubContext.Clients.All.SendAsync("ReceiveVoteUpdate", poll);
             return Ok(poll);
         }
 
         [HttpPost("{pollId}/vote")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> Vote(int pollId, [FromQuery] int userId, [FromBody] string option)
         {
             if (string.IsNullOrEmpty(option))
@@ -57,7 +62,7 @@ namespace LendACarAPI.Endpoints
                 return BadRequest("The option field is required.");
             }
 
-            var poll = Polls.FirstOrDefault(p => p.Id == pollId);
+            var poll = await _db.Polls.FirstOrDefaultAsync(p => p.Id == pollId);
             if (poll == null)
             {
                 return NotFound();
@@ -95,6 +100,9 @@ namespace LendACarAPI.Endpoints
             {
                 poll.VotedUserIds.Add(userId);
             }
+
+            _db.Polls.Update(poll);
+            await _db.SaveChangesAsync();
 
             // Notify all clients about the updated poll
             await _hubContext.Clients.All.SendAsync("ReceiveVoteUpdate", poll);

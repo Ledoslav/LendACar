@@ -1,4 +1,4 @@
-﻿using LendACarAPI.Data;
+using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
 using LendACarAPI.Filters;
@@ -39,7 +39,7 @@ namespace LendACarAPI.Endpoints
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
-                BirthDate = user.BirthDate.ToString("yyy-MM-dd"),
+                BirthDate = user.BirthDate.ToString("dd.MM.yyyy"),
                 City = user.City,
                 CityId = user.CityId,
                 EmailAddress = user.EmailAdress,
