@@ -1,4 +1,4 @@
-﻿using LendACarAPI.Data.Models;
+using LendACarAPI.Data.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,15 +15,15 @@ namespace LendACarAPI.DTOs
 
         [Required]
         public int RenterId { get; set; }
-        public User? Renter { get; set; }
+        public UserBasicInfoDto? Renter { get; set; }
 
         [Required]
         public int OwnerId { get; set; }
-        public User? Owner { get; set; }
+        public UserBasicInfoDto? Owner { get; set; }
 
         [Required]
         public int VehicleID { get; set; }
-        public Vehicle? Vehicle { get; set; }
+        public VehicleBasicInfoDto? Vehicle { get; set; }
 
         [Required]
         public int PickUpCityID { get; set; }

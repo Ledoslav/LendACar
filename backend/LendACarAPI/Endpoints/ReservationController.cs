@@ -164,6 +164,45 @@ namespace LendACarAPI.Endpoints
 
         private static ReservationDto MapToDto(Reservation reservation)
         {
+            var mapUserToBasic = (User u) => u == null ? null : new UserBasicInfoDto
+            {
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Username = u.Username,
+                ProfilePhotoUrl = u.ProfilePhotoUrl,
+                EmailAddress = u.EmailAdress,
+                PhoneNumber = u.PhoneNumber
+            };
+
+            var mapVehicleToBasic = (Vehicle v) => v == null ? null : new VehicleBasicInfoDto
+            {
+                Id = v.Id,
+                Title = v.Title,
+                PricePerDay = v.PricePerDay,
+                EngineDisplacement = v.EngineDisplacement,
+                EnginePower = v.EnginePower,
+                TransmissionType = v.TransmissionType,
+                FuelType = v.FuelType,
+                AirConditioning = v.AirConditioning,
+                NumberOfSeats = v.NumberOfSeats,
+                TowingHitch = v.TowingHitch,
+                Description = v.Description,
+                ProductionYear = v.ProductionYear,
+                Avaliable = v.Avaliable,
+                AverageRating = v.AverageRating,
+                LastUpdated = v.LastUpdated,
+                VehicleModelID = v.VehicleModelID,
+                VehicleModel = v.VehicleModel,
+                VehicleCategoryID = v.VehicleCategoryID,
+                VehicleCategory = v.VehicleCategory,
+                CityID = v.CityID,
+                City = v.City,
+                UserID = v.UserID,
+                User = mapUserToBasic(v.User),
+                VehicleImages = v.VehicleImages?.Select(img => new VehicleImageDto { Id = img.Id, ImageUrl = img.ImageUrl, PublicId = img.PublicId }).ToList() ?? new List<VehicleImageDto>()
+            };
+
             return new ReservationDto
             {
                 Id = reservation.Id,
@@ -173,26 +212,11 @@ namespace LendACarAPI.Endpoints
                 PickUpDateTime = reservation.PickUpDateTime,
                 DropOffDateTime = reservation.DropOffDateTime,
                 RenterId = reservation.RenterId,
-                Renter = reservation.Renter,
+                Renter = mapUserToBasic(reservation.Renter),
                 OwnerId = reservation.OwnerId,
-                Owner = reservation.Owner,
+                Owner = mapUserToBasic(reservation.Owner),
                 VehicleID = reservation.VehicleID,
-                Vehicle = reservation.Vehicle == null ? null : new Vehicle { 
-                    Id = reservation.Vehicle.Id, 
-                    Title = reservation.Vehicle.Title, 
-                    EngineDisplacement = reservation.Vehicle.EngineDisplacement, 
-                    EnginePower = reservation.Vehicle.EnginePower, 
-                    TransmissionType = reservation.Vehicle.TransmissionType,
-                    FuelType = reservation.Vehicle.FuelType, AirConditioning = reservation.Vehicle.AirConditioning, 
-                    NumberOfSeats = reservation.Vehicle.NumberOfSeats, TowingHitch = reservation.Vehicle.TowingHitch, 
-                    Description = reservation.Vehicle.Description, ProductionYear = reservation.Vehicle.ProductionYear, 
-                    Avaliable = reservation.Vehicle.Avaliable, AverageRating = reservation.Vehicle.AverageRating, 
-                    PricePerDay = reservation.Vehicle.PricePerDay, LastUpdated = reservation.Vehicle.LastUpdated,
-                    VehicleModelID = reservation.Vehicle.VehicleModelID, VehicleModel = reservation.Vehicle.VehicleModel, 
-                    VehicleCategoryID = reservation.Vehicle.VehicleCategoryID, VehicleCategory = reservation.Vehicle.VehicleCategory, 
-                    UserID = reservation.Vehicle.UserID, User = reservation.Vehicle.User, CityID = reservation.Vehicle.CityID, 
-                    City = reservation.Vehicle.City, 
-                    VehicleImages = reservation.Vehicle.VehicleImages.Select(img => new VehicleImage { Id = img.Id, ImageUrl = img.ImageUrl, PublicId = img.PublicId }).ToList() },
+                Vehicle = mapVehicleToBasic(reservation.Vehicle),
                 PickUpCityID = reservation.PickUpCityID,
                 PickUpCity = reservation.PickUpCity,
                 DropOffCityID = reservation.DropOffCityID,
