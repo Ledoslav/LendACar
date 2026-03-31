@@ -29,17 +29,17 @@ namespace LendACarAPI.Endpoints
             if(admin == null)
                 return Unauthorized("Invalid credentials");
 
-            var hmac = new HMACSHA256(admin.PasswordSalt);
+            using var hmac = new HMACSHA256(admin.PasswordSalt);
 
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(adminLogin.Password));
-
-            var token = authService.CreatToken(admin);
 
             for (var i = 0; i < computedHash.Length; i++)
             {
                 if (computedHash[i] != admin.PasswordHash[i]) 
                     return Unauthorized("Invalid credentials");
             }
+
+            var token = authService.CreatToken(admin);
 
             return Ok(new AdministratorDto
             {
