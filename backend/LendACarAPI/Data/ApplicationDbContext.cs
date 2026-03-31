@@ -106,11 +106,35 @@ namespace LendACarAPI.Data
             modelBuilder.Entity<Poll>()
                 .Property(p => p.Votes)
                 .HasConversion(
-                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null), // Serialize to JSON string
-                    v => JsonSerializer.Deserialize<Dictionary<string, int>>(v, (JsonSerializerOptions)null) // Deserialize back to Dictionary
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<Dictionary<string, int>>(v, (JsonSerializerOptions)null)
                 )
                 .Metadata
                 .SetValueComparer(dictionaryComparer);
+
+            modelBuilder.Entity<Poll>()
+                .Property(p => p.Options)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null) ?? new List<string>()
+                )
+                .Metadata.SetValueComparer(new ValueComparer<List<string>>(
+                    (a, b) => JsonSerializer.Serialize(a, (JsonSerializerOptions)null) == JsonSerializer.Serialize(b, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null).GetHashCode(),
+                    v => JsonSerializer.Deserialize<List<string>>(JsonSerializer.Serialize(v, (JsonSerializerOptions)null), (JsonSerializerOptions)null)!
+                ));
+
+            modelBuilder.Entity<Poll>()
+                .Property(p => p.VotedUserIds)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<List<int>>(v, (JsonSerializerOptions)null) ?? new List<int>()
+                )
+                .Metadata.SetValueComparer(new ValueComparer<List<int>>(
+                    (a, b) => JsonSerializer.Serialize(a, (JsonSerializerOptions)null) == JsonSerializer.Serialize(b, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null).GetHashCode(),
+                    v => JsonSerializer.Deserialize<List<int>>(JsonSerializer.Serialize(v, (JsonSerializerOptions)null), (JsonSerializerOptions)null)!
+                ));
 
             modelBuilder.Entity<Reservation>()
                     .Property(r => r.Price)

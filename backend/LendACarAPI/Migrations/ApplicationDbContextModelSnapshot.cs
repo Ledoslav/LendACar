@@ -393,11 +393,18 @@ namespace LendACarAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Options")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VotedUserIds")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1214,8 +1221,7 @@ namespace LendACarAPI.Migrations
                 {
                     b.HasOne("LendACarAPI.Data.Models.UserSecurityQuestionAnswer", "UserSecurityQuestionAnswer")
                         .WithMany()
-                        .HasForeignKey("UserSecurityQuestionAnswerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserSecurityQuestionAnswerId");
 
                     b.Navigation("UserSecurityQuestionAnswer");
                 });
