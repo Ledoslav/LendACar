@@ -24,14 +24,6 @@ namespace LendACarAPI.Endpoints
         }
 
 
-        [HttpGet("env-test")]
-        public IActionResult TestEndpoint2()
-        {
-            if (!env.IsDevelopment()) return NotFound("Disabled in production.");
-            var test=Environment.GetEnvironmentVariable("SecretKey");
-
-            return Ok(test);
-        }
 
 
     }
