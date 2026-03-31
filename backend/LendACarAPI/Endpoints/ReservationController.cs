@@ -1,6 +1,8 @@
-﻿using LendACarAPI.Data;
+using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
+using LendACarAPI.Filters;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -14,15 +16,20 @@ namespace LendACarAPI.Endpoints
     public class ReservationController : ControllerBase
     {
         private readonly ApplicationDbContext db;
+        private readonly IAuthService authService;
 
-        public ReservationController(ApplicationDbContext db)
+        public ReservationController(ApplicationDbContext db, IAuthService authService)
         {
             this.db = db;
+            this.authService = authService;
         }
 
         [HttpGet("getById/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> GetReservationById(int id, CancellationToken cancellationToken)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
+
             var reservation = await db.Reservations
                 .AsNoTracking()
                 .Include(r => r.Vehicle)
@@ -37,13 +44,21 @@ namespace LendACarAPI.Endpoints
 
             if (reservation == null) return NotFound("Reservation not found");
 
+            if (reservation.RenterId != authInfo.UserId && reservation.OwnerId != authInfo.UserId && !authInfo.IsAdmin && !authInfo.IsEmployee)
+                return Unauthorized("Not authorized to view this reservation");
+
             var dto = MapToDto(reservation);
             return Ok(dto);
         }
 
         [HttpGet("getByOwner/{ownerId}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> GetReservationsByOwner(int ownerId, CancellationToken cancellationToken)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
+            if (ownerId != authInfo.UserId && !authInfo.IsAdmin && !authInfo.IsEmployee)
+                return Unauthorized("Not authorized");
+
             var reservations = await db.Reservations
                 .AsNoTracking()
                 .Where(r => r.OwnerId == ownerId)
@@ -63,8 +78,13 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpGet("getByRenter/{renterId}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> GetReservationsByRenter(int renterId, CancellationToken cancellationToken)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
+            if (renterId != authInfo.UserId && !authInfo.IsAdmin && !authInfo.IsEmployee)
+                return Unauthorized("Not authorized");
+
             var reservations = await db.Reservations
                 .AsNoTracking()
                 .Where(r => r.RenterId == renterId)
@@ -84,8 +104,12 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPost("create")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> CreateReservation([FromBody] ReservationCreateDto reservationDto, CancellationToken cancellationToken)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
+            reservationDto.RenterId = authInfo.UserId; // Ensure user can only create reservations for themselves
+
             // Validate renter, owner, vehicle, and cities
             var renter = await db.Users.FirstOrDefaultAsync(u => u.Id == reservationDto.RenterId, cancellationToken);
             var owner = await db.Users.FirstOrDefaultAsync(u => u.Id == reservationDto.OwnerId, cancellationToken);
@@ -121,10 +145,15 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpPut("updateStatus/{id}")]
+        [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> UpdateReservationStatus(int id, [FromBody] UpdateReservationStatusDto dto, CancellationToken cancellationToken)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
             var reservation = await db.Reservations.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
             if (reservation == null) return NotFound("Reservation not found");
+
+            if (reservation.OwnerId != authInfo.UserId && !authInfo.IsAdmin && !authInfo.IsEmployee)
+                return Unauthorized("Not authorized to update this reservation");
 
             reservation.Status = dto.Status;
             await db.SaveChangesAsync(cancellationToken);

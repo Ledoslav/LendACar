@@ -14,7 +14,7 @@ namespace LendACarAPI.Endpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VerificationRequestController(ApplicationDbContext db) : ControllerBase
+    public class VerificationRequestController(ApplicationDbContext db, IAuthService authService) : ControllerBase
     {
         [HttpGet("get")]
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
@@ -83,9 +83,13 @@ namespace LendACarAPI.Endpoints
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> GetVerificationRequestById(int id)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
             var request = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.Id == id);
 
             if (request == null) return NotFound("Verification request not found");
+
+            if (request.UserId != authInfo.UserId && !authInfo.IsAdmin && !authInfo.IsEmployee)
+                return Unauthorized("Not authorized");
 
             var verificationRequest = new VerificationDto
             {
@@ -108,8 +112,12 @@ namespace LendACarAPI.Endpoints
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> GetVerificationRequestByUsername(string username)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
             var user = await db.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user == null) return NotFound("Username doesn't exist.");
+
+            if (user.Id != authInfo.UserId && !authInfo.IsAdmin && !authInfo.IsEmployee)
+                return Unauthorized("Not authorized");
 
             var request = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.UserId == user.Id);
             if (request == null) return NotFound("User hasn't submited a request.");
@@ -136,6 +144,10 @@ namespace LendACarAPI.Endpoints
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> GetVerificationRequestByUserId(int id)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
+            if (id != authInfo.UserId && !authInfo.IsAdmin && !authInfo.IsEmployee)
+                return Unauthorized("Not authorized");
+
             var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null) return NotFound("User doesn't exist.");
 
@@ -163,6 +175,9 @@ namespace LendACarAPI.Endpoints
         [MyAuthorization(IsAdmin: false, IsEmployee: false, isAppUser: true)]
         public async Task<IActionResult> AddVerificationRequest([FromBody] VerificationSubmitDto verificationSubmitDto)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
+            verificationSubmitDto.UserId = authInfo.UserId; // Ensure user creates request for themselves
+
             if (await VerificationRequestExists(verificationSubmitDto.UserId))
                 return BadRequest("User already submited a verification request!");
 
@@ -253,9 +268,13 @@ namespace LendACarAPI.Endpoints
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
         public async Task<IActionResult> DeleteVerificationRequest(int id)
         {
+            var authInfo = authService.GetAuthInfoFromRequest();
             var verificationRequest = await db.VerificationRequests.FirstOrDefaultAsync(vr => vr.Id == id);
 
             if (verificationRequest == null) return NotFound("Verification request not found");
+
+            if (verificationRequest.UserId != authInfo.UserId && !authInfo.IsAdmin && !authInfo.IsEmployee)
+                return Unauthorized("Not authorized");
 
             db.VerificationRequests.Remove(verificationRequest);
             await db.SaveChangesAsync();
