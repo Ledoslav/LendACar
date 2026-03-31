@@ -23,7 +23,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(x => x.OperationFilter<MyAuthorizationSwaggerHeader>());
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IRenderPDFReport, RenderPDFReport>();
 builder.Services.AddScoped<IAuthService, AuthService>();

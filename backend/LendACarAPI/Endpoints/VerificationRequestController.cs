@@ -25,15 +25,7 @@ namespace LendACarAPI.Endpoints
                 .ThenInclude(u => u.City)
                 .ToListAsync();
 
-            // Fix kind for dates
-            foreach (var r in requests)
-            {
-                r.RequestDate = DateTime.SpecifyKind(r.RequestDate, DateTimeKind.Utc);
-                if (r.RequestReviewDate.HasValue)
-                {
-                    r.RequestReviewDate = DateTime.SpecifyKind(r.RequestReviewDate.Value, DateTimeKind.Utc);
-                }
-            }
+
 
             return Ok(requests);
         }
@@ -66,15 +58,7 @@ namespace LendACarAPI.Endpoints
 
             var requests = await query.ToListAsync();
 
-            // Fix kind for dates
-            foreach (var r in requests)
-            {
-                r.RequestDate = DateTime.SpecifyKind(r.RequestDate, DateTimeKind.Utc);
-                if (r.RequestReviewDate.HasValue)
-                {
-                    r.RequestReviewDate = DateTime.SpecifyKind(r.RequestReviewDate.Value, DateTimeKind.Utc);
-                }
-            }
+
 
             return Ok(requests);
         }
@@ -94,11 +78,10 @@ namespace LendACarAPI.Endpoints
             var verificationRequest = new VerificationDto
             {
                 Id = request.Id,
-                RequestDate = DateTime.SpecifyKind(request.RequestDate, DateTimeKind.Utc),
+                RequestDate = request.RequestDate,
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
-                RequestReviewDate = request.RequestReviewDate.HasValue ? 
-                    DateTime.SpecifyKind(request.RequestReviewDate.Value, DateTimeKind.Utc) : null,
+                RequestReviewDate = request.RequestReviewDate,
                 RequestStatus = request.RequestStatus,
                 DenialComment = request.DenialComment,
                 EmpAdmId = request.EmpAdmId,
@@ -126,11 +109,10 @@ namespace LendACarAPI.Endpoints
             var verificationRequest = new VerificationDto
             {
                 Id = request.Id,
-                RequestDate = DateTime.SpecifyKind(request.RequestDate, DateTimeKind.Utc),
+                RequestDate = request.RequestDate,
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
-                RequestReviewDate = request.RequestReviewDate.HasValue ?
-                    DateTime.SpecifyKind(request.RequestReviewDate.Value, DateTimeKind.Utc) : null,
+                RequestReviewDate = request.RequestReviewDate,
                 RequestStatus = request.RequestStatus,
                 DenialComment = request.DenialComment,
                 EmpAdmId = request.EmpAdmId,
@@ -157,11 +139,10 @@ namespace LendACarAPI.Endpoints
             var verificationRequest = new VerificationDto
             {
                 Id = request.Id,
-                RequestDate = DateTime.SpecifyKind(request.RequestDate, DateTimeKind.Utc),
+                RequestDate = request.RequestDate,
                 UserId = request.UserId,
                 RequestComment = request.RequestComment,
-                RequestReviewDate = request.RequestReviewDate.HasValue ? 
-                    DateTime.SpecifyKind(request.RequestReviewDate.Value, DateTimeKind.Utc) : null,
+                RequestReviewDate = request.RequestReviewDate,
                 RequestStatus = request.RequestStatus,
                 DenialComment = request.DenialComment,
                 EmpAdmId = request.EmpAdmId,
