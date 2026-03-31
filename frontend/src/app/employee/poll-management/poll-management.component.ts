@@ -6,7 +6,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Chart, registerables, ChartItem } from 'chart.js';
 import {EmployeeService} from '../../services/employee.service';
 import { jsPDF } from 'jspdf';
-
+import { MyConfig } from '../../my-config';
 
 Chart.register(...registerables);
 
@@ -30,7 +30,7 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
     options: [''],
   };
 
-  private apiUrl = 'http://localhost:7000/api/Poll';
+  private apiUrl = MyConfig.api_address + 'Poll';
   private hubConnection!: HubConnection;
   private chartInstances = new Map<number, Chart>();
 
@@ -156,7 +156,7 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
 
   setupSignalRConnection(): void {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl('http://localhost:7000/pollHub')
+      .withUrl(MyConfig.server_address + '/pollHub')
       .build();
 
     this.hubConnection.on('ReceiveVoteUpdate', (updatedPoll) => {

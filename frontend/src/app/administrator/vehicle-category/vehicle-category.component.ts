@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { isElementAccessExpression } from 'typescript';
 import {AdminService} from '../../services/administrator.service';
 import {Router} from '@angular/router';
+import { MyConfig } from '../../my-config';
 
 interface VehicleCategory {
   id?: number;
@@ -27,7 +28,7 @@ export class VehicleCategoriesComponent implements OnInit {
   editMode = false;
   editCategoryId: number | null = null;
 
-  private apiUrl = 'http://localhost:7000/api/VehicleCategory'; 
+  private apiUrl = MyConfig.api_address + 'VehicleCategory'; 
 
   constructor(private http: HttpClient) {}
 

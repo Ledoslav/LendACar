@@ -20,7 +20,7 @@ import {catchError, map, Observable, of} from 'rxjs';
 import {SecurityQuestion, SecurityQuestionService} from '../../services/security-question.service';
 import {StepperSelectionEvent} from '@angular/cdk/stepper';
 import {MySnackbarService} from '../../services/snackbars/my-snackbar.service';
-
+import { MyConfig } from '../../my-config';
 
 @Component({
   standalone: false,
@@ -179,7 +179,7 @@ showJustCaptcha=false
       ResponseToken:token
     }
 
-    this.httpClient.post("http://localhost:7000/api/Captcha/verify",obj ).subscribe({
+    this.httpClient.post(MyConfig.api_address + "Captcha/verify",obj ).subscribe({
       next: result => {
         this.captchaSuccess=true;
       },
