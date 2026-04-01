@@ -36,7 +36,6 @@ export class ReservationSuccessComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          console.error('Failed to load reservation', err);
           this.loading = false;
           this.cdr.detectChanges();
         }
@@ -47,9 +46,8 @@ export class ReservationSuccessComponent implements OnInit {
   }
 
   downloadPdf(): void {
-    console.log('Download PDF clicked');
     if (!this.reservation) {
-      console.warn('No reservation data available for PDF');
+
       return;
     }
 
@@ -59,7 +57,7 @@ export class ReservationSuccessComponent implements OnInit {
       const v = r.vehicle;
       const owner = r.owner;
       
-      console.log('Generating PDF for reservation:', r.id);
+
 
     // Header
     doc.setFontSize(22);
@@ -103,9 +101,8 @@ export class ReservationSuccessComponent implements OnInit {
     doc.text(this.translate.instant('RESERVATION.PDF.THANK_YOU'), 105, 280, { align: 'center' });
 
     doc.save(`Reservation-${r.id}.pdf`);
-    console.log('PDF saved');
     } catch (error) {
-      console.error('Error generating PDF:', error);
+
     }
   }
 
@@ -114,7 +111,6 @@ export class ReservationSuccessComponent implements OnInit {
   }
 
   goToDashboard(): void {
-    console.log('Go to Dashboard clicked');
     this.router.navigate(['/public/home']);
   }
 }

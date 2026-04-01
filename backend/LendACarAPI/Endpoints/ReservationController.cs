@@ -1,7 +1,6 @@
 using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
-using LendACarAPI.Filters;
 using LendACarAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

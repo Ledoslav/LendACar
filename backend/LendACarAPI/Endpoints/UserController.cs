@@ -1,7 +1,6 @@
 using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
-using LendACarAPI.Filters;
 using LendACarAPI.Helper;
 using LendACarAPI.Services;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +18,7 @@ namespace LendACarAPI.Endpoints
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(ApplicationDbContext db,IAuthService authService,IPhotoService photoService) : ControllerBase
+    public class UserController(ApplicationDbContext db, IAuthService authService, IPhotoService photoService, IUserService userService) : ControllerBase
     {
 
         [HttpGet("getById/{id}")]
@@ -54,16 +53,15 @@ namespace LendACarAPI.Endpoints
 
 
         [HttpGet("getAll")]
-        [TypeFilter(typeof(UserFilterAttribute))]
-        public async Task<ActionResult<MyPagedList<UserDto[]>>> GetAllUsers([FromQuery]MyPagingRequest pagedParams, CancellationToken cancellationToken)
+        public async Task<ActionResult<MyPagedList<UserDto[]>>> GetAllUsers([FromQuery] UserFilterDto filter, [FromQuery] MyPagingRequest pagedParams, CancellationToken cancellationToken)
         {
-            var query = HttpContext.Items["users"] as IQueryable<UserDto>;
+            var query = userService.GetFilteredUsers(filter);
 
             var users = await MyPagedList<UserDto>.CreateAsync(query, pagedParams, cancellationToken);
 
             Response.AddPaginationHeader(users);
 
-            if (users.DataItems.Length==0) return BadRequest();
+            if (users.DataItems.Length == 0) return BadRequest();
 
             return Ok(users.DataItems);
         }
@@ -323,16 +321,13 @@ namespace LendACarAPI.Endpoints
         }
 
         [HttpGet("filter")]
-        [TypeFilter(typeof(UserFilterAttribute))]
         [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: true)]
-        public async Task<ActionResult<MyPagedList<UserDto[]>>> FilterUser([FromQuery] UserFilterDto filterDto,[FromQuery]MyPagingRequest pagingRequest, CancellationToken token)
+        public async Task<ActionResult<MyPagedList<UserDto[]>>> FilterUser([FromQuery] UserFilterDto filterDto, [FromQuery] MyPagingRequest pagingRequest, CancellationToken token)
         {
-            var query = HttpContext.Items["users"] as IQueryable<UserDto>;
+            var query = userService.GetFilteredUsers(filterDto);
 
-           
             var users = await MyPagedList<UserDto>.CreateAsync(query, pagingRequest, token);
             Response.AddPaginationHeader(users);
-
 
             return Ok(users.DataItems);
         }
@@ -349,11 +344,16 @@ namespace LendACarAPI.Endpoints
 
             if (user == null) return BadRequest();
 
-            var result = await photoService.AddPhotoAsync(file);
-
-            user.ProfilePhotoPublicId = result.PublicId;
-            user.ProfilePhotoUrl = result.SecureUrl.AbsoluteUri;
-
+            try
+            {
+                var result = await photoService.AddPhotoAsync(file);
+                user.ProfilePhotoPublicId = result.PublicId;
+                user.ProfilePhotoUrl = result.SecureUrl.AbsoluteUri;
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             await db.SaveChangesAsync(cancellationToken);
 

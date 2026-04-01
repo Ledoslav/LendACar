@@ -4,6 +4,7 @@ using LendACarAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using LendACarAPI.Helper;
 
 namespace LendACarAPI.Endpoints
 {
@@ -107,22 +108,32 @@ namespace LendACarAPI.Endpoints
                 FileName = request.FileName
             };
 
-            if (request.CompanyAvatar != null)
+            try
             {
-                using (var memoryStream = new MemoryStream())
+                if (request.CompanyAvatar != null)
                 {
-                    await request.CompanyAvatar.CopyToAsync(memoryStream);
-                    company.CompanyAvatar = memoryStream.ToArray();
+                    FileValidator.ValidateImage(request.CompanyAvatar);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await request.CompanyAvatar.CopyToAsync(memoryStream);
+                        company.CompanyAvatar = memoryStream.ToArray();
+                    }
+                }
+
+                if (request.File != null)
+                {
+                    // For the general document 'File', we'll allow 5MB but limit extensions to safe ones (docs, pdf, images)
+                    FileValidator.ValidateFile(request.File, 5 * 1024 * 1024, new[] { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" }, null);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await request.File.CopyToAsync(memoryStream);
+                        company.File = memoryStream.ToArray();
+                    }
                 }
             }
-
-            if (request.File != null)
+            catch (ArgumentException ex)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await request.File.CopyToAsync(memoryStream);
-                    company.File = memoryStream.ToArray();
-                }
+                return BadRequest(ex.Message);
             }
 
             _context.Companies.Add(company);
@@ -203,22 +214,31 @@ namespace LendACarAPI.Endpoints
             company.CompanyAddress = request.CompanyAddress ?? company.CompanyAddress;
             company.FileName = request.FileName ?? company.FileName;
 
-            if (request.CompanyAvatar != null)
+            try
             {
-                using (var memoryStream = new MemoryStream())
+                if (request.CompanyAvatar != null)
                 {
-                    await request.CompanyAvatar.CopyToAsync(memoryStream);
-                    company.CompanyAvatar = memoryStream.ToArray();
+                    FileValidator.ValidateImage(request.CompanyAvatar);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await request.CompanyAvatar.CopyToAsync(memoryStream);
+                        company.CompanyAvatar = memoryStream.ToArray();
+                    }
+                }
+
+                if (request.File != null)
+                {
+                    FileValidator.ValidateFile(request.File, 5 * 1024 * 1024, new[] { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" }, null);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await request.File.CopyToAsync(memoryStream);
+                        company.File = memoryStream.ToArray();
+                    }
                 }
             }
-
-            if (request.File != null)
+            catch (ArgumentException ex)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await request.File.CopyToAsync(memoryStream);
-                    company.File = memoryStream.ToArray();
-                }
+                return BadRequest(ex.Message);
             }
 
             await _context.SaveChangesAsync();
