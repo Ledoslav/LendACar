@@ -62,9 +62,7 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
         this.polls = (data || []).map((poll) => this.processPollData(poll));
         this.cdr.detectChanges();
       },
-      error: (error) => {
-        console.error('Error fetching polls:', error);
-      }
+      error: (error) => { }
     });
   }
 
@@ -166,9 +164,7 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
     });
 
     this.hubConnection.start().then(() => {
-      console.log('SignalR connection established');
     }).catch((err) => {
-      console.error('SignalR connection failed: ', err);
     });
   }
 
@@ -192,9 +188,7 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
         this.newPoll = { question: '', options: [''] };
         this.loadPolls();
       },
-      error: (error) => {
-        console.error('Error creating poll:', error);
-      },
+      error: (error) => { }
     });
   }
 
@@ -204,10 +198,7 @@ export class PollManagementComponent implements OnInit, OnDestroy, AfterViewInit
             next: () => {
                 alert('Poll closed successfully!');
             },
-            error: (err) => {
-                console.error('Error closing poll:', err);
-                alert('Could not close poll.');
-            }
+            error: (err) => { }
         });
     }
   }

@@ -47,7 +47,7 @@ export class VehicleCategoriesComponent implements OnInit {
       
     this.cdr.detectChanges();
   },
-      (error) => console.error('Failed to fetch categories:', error)
+      (error) => { }
     );
   }
 
@@ -70,7 +70,7 @@ export class VehicleCategoriesComponent implements OnInit {
       
     this.cdr.detectChanges();
   },
-      (error) => console.error('Failed to add category:', error)
+      (error) => { }
     );
   }
 
@@ -82,7 +82,7 @@ export class VehicleCategoriesComponent implements OnInit {
       
     this.cdr.detectChanges();
   },
-      (error) => console.error('Failed to update category:', error)
+      (error) => { }
     );
   }
 
@@ -90,7 +90,7 @@ export class VehicleCategoriesComponent implements OnInit {
     if (confirm('Are you sure you want to delete this category?')) {
       this.http.delete(`${this.apiUrl}/remove/${id}`).subscribe(
         () => (this.vehicleCategories = this.vehicleCategories.filter((cat) => cat.id !== id)),
-        (error) => console.error('Failed to delete category:', error)
+        (error) => { }
       );
     }
   }

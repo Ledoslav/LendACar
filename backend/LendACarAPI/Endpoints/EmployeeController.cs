@@ -1,4 +1,4 @@
-﻿using LendACarAPI.Data;
+using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
 using Microsoft.AspNetCore.Http;
@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
-using LendACarAPI.Filters;
 using LendACarAPI.Services;
 using LendACarAPI.Helper;
 using Newtonsoft.Json.Linq;
@@ -16,7 +15,7 @@ namespace LendACarAPI.Endpoints
     [Route("api/[controller]")]
 
     [ApiController]
-    public class EmployeeController(ApplicationDbContext db, IRenderPDFReport renderPDF,IAuthService authService, IPhotoService photoService) : ControllerBase
+    public class EmployeeController(ApplicationDbContext db, IRenderPDFReport renderPDF, IAuthService authService, IPhotoService photoService, IEmployeeService employeeService) : ControllerBase
     {
         [MyAuthorization(IsAdmin: true, IsEmployee: false, isAppUser: false)]
         [HttpPost("register")]
@@ -225,12 +224,11 @@ namespace LendACarAPI.Endpoints
 
         [HttpGet("filter")]
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: false)]
-        [TypeFilter(typeof(EmployeeFilterAttribute))]
         public async Task<ActionResult<EmployeeDto[]>> FilterEmployee([FromQuery] EmployeeFilterDto filterDto, [FromQuery] MyPagingRequest pagingRequest, CancellationToken token)
         {
-            var query = HttpContext.Items["result"] as IQueryable<EmployeeDto>;
+            var query = employeeService.GetFilteredEmployees(filterDto);
 
-            var result= await MyPagedList<EmployeeDto>.CreateAsync(query, pagingRequest, token);
+            var result = await MyPagedList<EmployeeDto>.CreateAsync(query, pagingRequest, token);
             Response.AddPaginationHeader(result);
 
             return Ok(result.DataItems);
@@ -247,11 +245,16 @@ namespace LendACarAPI.Endpoints
 
             if (employee == null) return BadRequest();
 
-            var result = await photoService.AddPhotoAsync(file);
-
-            employee.ProfilePhotoPublicId = result.PublicId;
-            employee.ProfilePhotoUrl = result.SecureUrl.AbsoluteUri;
-
+            try
+            {
+                var result = await photoService.AddPhotoAsync(file);
+                employee.ProfilePhotoPublicId = result.PublicId;
+                employee.ProfilePhotoUrl = result.SecureUrl.AbsoluteUri;
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             await db.SaveChangesAsync(cancellationToken);
 

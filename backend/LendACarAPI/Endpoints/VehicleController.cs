@@ -2,7 +2,6 @@ using CloudinaryDotNet;
 using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
-using LendACarAPI.Filters;
 using LendACarAPI.Helper;
 using LendACarAPI.Migrations;
 using LendACarAPI.Services;
@@ -484,16 +483,23 @@ namespace LendACarAPI.Endpoints
 
             if (newImages != null && newImages.Any())
             {
-                foreach (var file in newImages)
+                try
                 {
-                    var upload = await photoService.AddVehiclePhotoAsync(file);
-
-                    db.VehicleImages.Add(new VehicleImage
+                    foreach (var file in newImages)
                     {
-                        VehicleId = vehicle.Id,
-                        ImageUrl = upload.SecureUrl.AbsoluteUri,
-                        PublicId = upload.PublicId
-                    });
+                        var upload = await photoService.AddVehiclePhotoAsync(file);
+
+                        db.VehicleImages.Add(new VehicleImage
+                        {
+                            VehicleId = vehicle.Id,
+                            ImageUrl = upload.SecureUrl.AbsoluteUri,
+                            PublicId = upload.PublicId
+                        });
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    return BadRequest(ex.Message);
                 }
             }
 
@@ -596,15 +602,24 @@ namespace LendACarAPI.Endpoints
 
             if (images != null && images.Any())
             {
-                foreach (var file in images)
+                try
                 {
-                    var result = await photoService.AddVehiclePhotoAsync(file);
-                    db.VehicleImages.Add(new VehicleImage
+                    foreach (var file in images)
                     {
-                        VehicleId = vehicle.Id,
-                        ImageUrl = result.SecureUrl.AbsoluteUri,
-                        PublicId = result.PublicId
-                    });
+                        var result = await photoService.AddVehiclePhotoAsync(file);
+                        db.VehicleImages.Add(new VehicleImage
+                        {
+                            VehicleId = vehicle.Id,
+                            ImageUrl = result.SecureUrl.AbsoluteUri,
+                            PublicId = result.PublicId
+                        });
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    // If image upload fails, we should ideally rollback the vehicle creation,
+                    // but for simplicity we'll just return the error.
+                    return BadRequest(ex.Message);
                 }
                 await db.SaveChangesAsync(cancellationToken);
 

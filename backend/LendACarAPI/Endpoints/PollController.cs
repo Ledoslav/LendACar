@@ -4,11 +4,11 @@ using LendACarAPI.Data;
 using LendACarAPI.Data.Models;
 using LendACarAPI.DTOs;
 using LendACarAPI.Hubs;
+using LendACarAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using LendACarAPI.Services;
 
 namespace LendACarAPI.Endpoints
 {
@@ -18,11 +18,13 @@ namespace LendACarAPI.Endpoints
     {
         private readonly IHubContext<PollHub> _hubContext;
         private readonly ApplicationDbContext _db;
+        private readonly IAuthService _authService;
 
-        public PollController(IHubContext<PollHub> hubContext, ApplicationDbContext db)
+        public PollController(IHubContext<PollHub> hubContext, ApplicationDbContext db, IAuthService authService)
         {
             _hubContext = hubContext;
             _db = db;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -55,8 +57,15 @@ namespace LendACarAPI.Endpoints
 
         [HttpPost("{pollId}/vote")]
         [MyAuthorization(IsAdmin: true, IsEmployee: true, isAppUser: true)]
-        public async Task<IActionResult> Vote(int pollId, [FromQuery] int userId, [FromBody] string option)
+        public async Task<IActionResult> Vote(int pollId, [FromBody] string option)
         {
+            // Extract userId from JWT token — never trust client-supplied identity
+            var claims = _authService.GetAuthInfoFromRequest();
+            if (claims == null)
+                return Unauthorized();
+
+            var userId = claims.UserId;
+
             if (string.IsNullOrEmpty(option))
             {
                 return BadRequest("The option field is required.");
@@ -73,7 +82,7 @@ namespace LendACarAPI.Endpoints
                 return BadRequest("This poll is closed.");
             }
 
-            // check if user is admin or employee to allow multiple votes for testing
+            // Admins and employees may vote multiple times (for testing purposes)
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
             bool isPrivileged = user != null && (user.IsAdmin || user.IsEmployee);
 

@@ -109,7 +109,7 @@ export class PollsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const voteUrl = `${this.apiUrl}/${pollId}/vote?userId=${user.id}`;
+    const voteUrl = `${this.apiUrl}/${pollId}/vote`;
 
     if (!option) {
       alert('Please select a valid option.');
