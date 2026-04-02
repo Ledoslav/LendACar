@@ -41,7 +41,6 @@ export class MyVehiclesComponent implements OnInit {
       this.vehicles.forEach(v => {
         this.vehicleImageIndexes[v.id] = 0;
       });
-      console.log(this.vehicles);
     
     this.cdr.detectChanges();
   });

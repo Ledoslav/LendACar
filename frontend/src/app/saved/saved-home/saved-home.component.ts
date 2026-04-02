@@ -94,7 +94,7 @@ export class SavedHomeComponent implements OnInit {
           return;
         }
 
-        console.log("No company admin email found");
+        
         this.isOwner = false;
         this.isEmployee = false;
         return;
@@ -134,7 +134,7 @@ export class SavedHomeComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Failed to update bookmark', err);
+        
       }
     });
   }
@@ -151,10 +151,10 @@ export class SavedHomeComponent implements OnInit {
 
     this.activityService.create(activity).subscribe({
       next:(response:any) =>{
-        console.log(response);
+        
       },
       error:(err:any)=>{
-        console.log(err);
+        
       }
     })
 
@@ -175,7 +175,7 @@ export class SavedHomeComponent implements OnInit {
           v.isBookmarked = this.bookmarks.some(b => b.vehicleId === v.id);
         });
       },
-      error: (err) => console.error(err)
+      error: (err) => 
     });
   }
 

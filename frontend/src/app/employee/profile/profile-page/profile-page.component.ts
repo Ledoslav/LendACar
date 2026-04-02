@@ -50,14 +50,13 @@ export class ProfilePageComponent{
       countryId:this.employeeService.currentEmployee()?.city.countryId
     };
 
-    console.log(updateUser);
     this.employeeService.Update(updateUser).subscribe({
       next: result => {
         this.employeeService.currentEmployee.set(result);
 
         this.snackBarService.showSuccessMessage("Profile updated successfully!");
       },
-      error: err => console.log(err)
+      error: err => {}
     })
   }
 

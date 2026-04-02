@@ -137,7 +137,6 @@ SubmitAnswer(){
   loadSecurityQuestion() {
     this.securityQuestionService.GetAllQuestions().subscribe(res => {
       this.questions = res;
-      console.log(this.questions)
     
     this.cdr.detectChanges();
   })

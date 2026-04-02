@@ -41,7 +41,6 @@ export class PollsComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error fetching polls:', error);
       }
     });
   }
@@ -58,8 +57,8 @@ export class PollsComponent implements OnInit, OnDestroy {
     });
 
     this.hubConnection.start()
-      .then(() => console.log('SignalR connection established'))
-      .catch(err => console.error('Error establishing SignalR connection: ', err));
+      .then(() => {})
+      .catch(err => {});
   }
 
   updatePollList(updatedPoll: any): void {
@@ -123,7 +122,6 @@ export class PollsComponent implements OnInit, OnDestroy {
         // Vote casted successfully, SignalR handles update
       },
       error: (error) => {
-        console.error('Error casting vote:', error);
         alert(error.error || 'Failed to cast vote.');
       },
     });

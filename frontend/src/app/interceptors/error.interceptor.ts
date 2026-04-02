@@ -49,7 +49,6 @@ export class ErrorInterceptor implements HttpInterceptor {
                break;
              default:
                this.snackBar.showErrorMessage("Something went wrong");
-               console.log(err);
                break;
            }
          }

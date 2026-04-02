@@ -114,9 +114,9 @@ export class VehicleDataOverviewComponent implements OnInit {
           this.loadVehicles();
         },
         error: (err) => {
-          console.error('Error deleting vehicle:', err);
           alert('Failed to delete vehicle. Please try again.');
         }
+
       });
     }
   }

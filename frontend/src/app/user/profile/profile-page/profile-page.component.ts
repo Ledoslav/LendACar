@@ -67,7 +67,7 @@ export class ProfilePageComponent implements OnInit{
         this.accountService.currentUser.set(result);
         this.snackBarService.showSuccessMessage("Profile updated successfully!");
       },
-      error: err => console.log(err)
+      error: err => {}
     })
   }
 
@@ -75,7 +75,7 @@ export class ProfilePageComponent implements OnInit{
   loadCountries(){
     this.countryService.getAllCountries().subscribe({
       next:res=>this.countries=res,
-      error:err=>console.log(err)
+      error:err=>{}
     })
   }
 

@@ -64,7 +64,6 @@ export class AdminEditOwnProfileComponent implements OnInit {
           window.location.reload();
         },
         error: err => {
-          console.log(err);
           this.snackBarService.showErrorMessage("Failed to update profile.");
         }
       });

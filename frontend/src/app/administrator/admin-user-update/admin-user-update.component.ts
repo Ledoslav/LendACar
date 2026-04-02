@@ -92,7 +92,7 @@ export class AdminUserUpdateComponent implements OnInit {
   loadCountries(){
     this.countryService.getAllCountries().subscribe({
       next:res=>this.countries=res,
-      error:err=>console.log(err)
+      error:err=>{}
     })
   }
     getUserById(idString:string){
@@ -151,7 +151,7 @@ export class AdminUserUpdateComponent implements OnInit {
           window.location.reload();
         }, 2500);
       },
-      error:err => console.log(err)
+      error:err => {}
     })
   }
 }

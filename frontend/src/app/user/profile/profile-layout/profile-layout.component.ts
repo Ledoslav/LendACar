@@ -11,7 +11,6 @@ import {Router} from '@angular/router';
 })
 export class ProfileLayoutComponent implements OnInit{
   ngOnInit(): void {
-     console.log("User photo",this.accountService.currentUser());
 
     if(localStorage.getItem('mode') == 'dark-mode'){
       this.mode = 'dark-mode';

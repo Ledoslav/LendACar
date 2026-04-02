@@ -141,7 +141,7 @@ export class DashboardComponent implements OnInit {
       }));
 
       if (this.chatService.connected) {
-        this.chatService.joinChat(chat.id).catch(console.warn);
+        this.chatService.joinChat(chat.id).catch(() => {});
       }
     
     this.cdr.detectChanges();
@@ -175,12 +175,12 @@ export class DashboardComponent implements OnInit {
             this.snackbarService.showSuccessMessage('Chat deleted successfully!');
           },
           error: (err) => {
-            console.error('Error deleting chat:', err);
+            
             this.snackbarService.showErrorMessage('Failed to delete chat');
           }
         });
       } else {
-        console.log('User canceled chat deletion');
+        
       }
     
     this.cdr.detectChanges();
@@ -198,7 +198,7 @@ export class DashboardComponent implements OnInit {
       this.selectedChat.id,
       Number(this.user?.id),
       msg
-    ).catch(console.error);
+    ).catch(() => {});
 
     // Optimistic UI
     this.selectedChat.messages.push({

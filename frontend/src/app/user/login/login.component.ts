@@ -22,8 +22,8 @@ accountService=inject(UserService);
         void this.router.navigateByUrl('/public/home');
       },
       error:err=>{
-        console.log(err);
       }
+
     })
   }
 }

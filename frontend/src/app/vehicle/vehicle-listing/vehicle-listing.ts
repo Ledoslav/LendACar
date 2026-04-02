@@ -42,11 +42,9 @@ export class VehicleListingComponent implements OnInit {
         .subscribe({
           next: (vehicle) => {
             this.vehicle = vehicle; // save the data
-            console.log('Vehicle loaded:', vehicle);
             this.cdr.detectChanges();
           },
           error: (err) => {
-            console.error('Failed to load vehicle', err);
           }
         });
     }
@@ -79,7 +77,6 @@ export class VehicleListingComponent implements OnInit {
       this.thumbnailsContainer.nativeElement.scrollBy({ left: this.scrollAmount, behavior: 'smooth' });
     }
 
-    console.log("next");
   }
 
   prevImage() {

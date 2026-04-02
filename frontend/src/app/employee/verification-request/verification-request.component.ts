@@ -135,7 +135,7 @@ export class VerificationRequestComponent implements OnInit {
 
     this.verificationService.ConfirmVerificationRequest(request, request.id).subscribe({
       next:_ => { this.triggerFilter(); this.selectedRequest = null; },
-      error:err=>console.log(err)
+      error:err=>{}
     })
   }
 
@@ -147,7 +147,7 @@ export class VerificationRequestComponent implements OnInit {
 
     this.verificationService.DenyVerificationRequest(request, request.id).subscribe({
       next:_ => { this.triggerFilter(); this.selectedRequest = null; },
-      error:err=>console.log(err)
+      error:err=>{}
     })
   }
 

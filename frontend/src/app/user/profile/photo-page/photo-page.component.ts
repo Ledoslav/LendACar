@@ -57,16 +57,16 @@ export class PhotoPageComponent implements OnInit{
       this.croppedImage = blob;
       this.croppedImageUrl = event.objectUrl;
     } else {
-      console.error('Blob image is undefined.');
     }
+
   }
 
 
   uploadCroppedImage(): void {
     if (!this.croppedImage) {
-      console.error('No cropped image available.');
       return;
     }
+
 
     this.isLoading = true;
     const formData = new FormData();
@@ -81,19 +81,19 @@ export class PhotoPageComponent implements OnInit{
       this.isLoading = false;
     },
     error:(error) => {
-      console.error('Upload failed:', error);
       this.snackbarService.showErrorMessage('Failed to upload profile picture')
       this.isLoading = false;
     }
+
    }
     );
   }
 
   removeProfilePhoto(): void {
     if (this.accountService.currentUser()?.profilePhotoUrl==null) {
-      console.error('No image available.');
       return;
     }
+
 
     this.openMyConfirmDialog();
   }
@@ -130,19 +130,17 @@ export class PhotoPageComponent implements OnInit{
       if (result) {
         this.accountService.RemoveProfilePhoto(this.accountService.currentUser()?.id).subscribe({
             next:(response: any) => {
-              console.log('Removal successful:', response);
               this.showCropper = false;
               this.accountService.currentUser.set(response);
               this.snackbarService.showSuccessMessage('Profile picture removed successfully!')
             },
             error:(error) => {
-              console.error('Removal failed:', error);
               this.snackbarService.showErrorMessage('Failed to remove profile picture.')
             }
+
           }
         );
       } else {
-        console.log('Korisnik je otkazao brisanje');
       }
     
     this.cdr.detectChanges();

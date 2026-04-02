@@ -148,7 +148,7 @@ export class VehicleOverviewComponent implements OnInit, AfterViewInit {
         this.hasImage$.next(false);
         this.vehicleId$.next(null);
       },
-      error: err => console.error(err)
+      error: err => {}
     });
   }
 
@@ -227,12 +227,11 @@ export class VehicleOverviewComponent implements OnInit, AfterViewInit {
 
     this.ServiceVehicle.AddVehicle(payload).subscribe({
       next: () => {
-        console.log('Vehicle added successfully');
         this.loadVehicles();
         this.formIsClosed = true;
         this.resetAddForm();
       },
-      error: (error) => console.error('Error adding vehicle:', error)
+      error: (error) => {}
     });
   }
 
@@ -253,13 +252,12 @@ export class VehicleOverviewComponent implements OnInit, AfterViewInit {
 
     this.ServiceVehicle.UpdateVehicle(payload).subscribe({
       next: () => {
-        console.log('Vehicle updated successfully');
         this.loadVehicles();
         this.updateFormIsClosed = true;
         this.resetUpdateForm();
       },
       error: (error) => {
-        console.error('Error updating vehicle:', error);
+        // Error handling potentially already covered by interceptor
       }
     });
   }
@@ -307,14 +305,14 @@ export class VehicleOverviewComponent implements OnInit, AfterViewInit {
     if(window.confirm("Are you sure you want to delete this vehicle?")){
       this.ServiceVehicle.DeleteVehicle(number).subscribe({
         next: () => {
-          console.log('Vehicle deleted successfully');
           this.loadVehicles(); // Refresh vehicle list
           location.reload();
         },
 
         error: (error) => {
-          console.error('There was an error deleting the vehicle:', error);
+          // Error handling potentially already covered by interceptor
         }
+
       });
     }
   }
@@ -364,14 +362,14 @@ export class VehicleOverviewComponent implements OnInit, AfterViewInit {
     if(window.confirm("Are you sure you want to delete the ${name} brand? It will delete every model associated with this brand.")){
       this.ServiceVehicle.DeleteBrand(number).subscribe({
         next: () => {
-          console.log('Vehicle deleted successfully');
           this.loadVehicles();
           location.reload();
         },
 
         error: (error) => {
-          console.error('There was an error deleting the vehicle:', error);
+          // Error handling potentially already covered by interceptor
         }
+
       });
     }
   }

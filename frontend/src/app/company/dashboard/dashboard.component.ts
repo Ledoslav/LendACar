@@ -315,11 +315,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
                   if (this.paginator) {
                     this.dataSource.paginator = this.paginator;
-                    console.log('Paginator assigned:', this.dataSource.paginator);
                   }
                 },
                 error: (error) => {
-                  console.error('Error fetching employees:', error);
                   this.handleNoEmployees();
                 }
               });
@@ -350,7 +348,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
           }
         },
         error: (err) => {
-          console.error('Error checking companyAdminEmail:', err);
           this.isEmployee = false;
           this.hasCompany = false;
         }
@@ -399,16 +396,13 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   ngAfterViewInit() {
     if (this.paginator) {
       this.dataSource.paginator = this.paginator; // assign paginator after view init
-      console.log('Paginator assigned:', this.dataSource.paginator);
     } else {
-      console.warn('Paginator still not available!');
     }
   }
 
   ngAfterViewChecked() {
     if (this.paginator && this.dataSource.paginator !== this.paginator) {
       this.dataSource.paginator = this.paginator;
-      console.log('Paginator now assigned in AfterViewChecked');
     }
   }
 
@@ -430,10 +424,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     this.activityService.create(activity).subscribe({
       next:(response:any) =>{
-        console.log(response);
       },
       error:(err:any)=>{
-        console.log(err);
       }
     })
 
@@ -473,13 +465,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       sunday: formTimeValue.sunday!,
     };
 
-    console.log(newEmployee);
 
     const username = newEmployee.firstName + newEmployee.lastName;
 
     this.companyEmployeeService.addEmployee(newEmployee).subscribe({
       next: (response) => {
-        console.log('Employee added successfully:', response);
         this.isEmployeeFormVisible = false; // Hide the form
         this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
           next: (employees) => {
@@ -492,12 +482,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
             window.location.reload();
           },
           error: (error) => {
-            console.error('Error fetching employees:', error);
+            
           }
         })
       },
       error: (error) => {
-        console.error('Error adding employee:', error);
       }
     });
   }
@@ -530,11 +519,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       sunday: formTimeValue.sunday!,
     };
 
-    console.log(updateEmployee);
 
     this.companyEmployeeService.updateEmployee(updateEmployee).subscribe({
       next: (response) => {
-        console.log('Employee updated successfully:', response);
         this.isUpdateEmployeeFormVisible = false; // Hide the form
         this.companyEmployeeService.getAllEmployeesForAdmin().subscribe({
           next: (employees) => {
@@ -545,7 +532,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
             this.closeUpdateEmployeeForm();
           },
           error: (error) => {
-            console.error('Error fetching employees:', error);
+            
           }
         })
       }
@@ -573,7 +560,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         this.snackbarService.showSuccessMessage('Employee deleted successfully!')
         this.addActivity(3,userIdToDelete,0,0);
       } else {
-        console.log('Korisnik je otkazao brisanje');
+        
       }
     
     this.cdr.detectChanges();
@@ -685,7 +672,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   },
       (error) => {
         this.snackbarService.showErrorMessage('Failed to create company');
-        console.error('Error creating company:', error);
       
     this.cdr.detectChanges();
   }
@@ -708,7 +694,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       userId: this.userId
     };
 
-    console.log(companyUpdateData);
 
     this.companyService.updateCompanyByUserId(this.userId, companyUpdateData).subscribe(
       () => {
@@ -721,7 +706,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
   },
       (error) => {
         this.snackbarService.showErrorMessage('Failed to update company');
-        console.error('Error updating company:', error);
       
     this.cdr.detectChanges();
   }
@@ -760,14 +744,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
   openCompanyPdf() {
     if (!this.file) {
-      console.error('No file to preview.');
       return;
     }
-    console.log(this.file); // See what you actually have
 
     // Create a Blob URL directly from the File
     const fileURL = URL.createObjectURL(this.file);
-    console.log('File URL:', fileURL);
     const pdfWindow = window.open();
 
     if (pdfWindow) {
@@ -784,13 +765,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
       this.croppedImage = blob;
       this.croppedImageUrl = event.objectUrl;
     } else {
-      console.error('Blob image is undefined.');
     }
   }
 
   uploadCroppedImage(): void {
     if (!this.croppedImage) {
-      console.error('No cropped image available.');
       return;
     }
 
@@ -802,7 +781,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     this.showCropper = false;
 
-    console.log('Company avatar stored for later:', this.companyAvatar);
     this.convertImageToDataUrl(this.companyAvatar);
   }
 
@@ -828,7 +806,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         this.companyAvatar = null;
         this.snackbarService.showSuccessMessage('Company profile picture removed successfully!')
       } else {
-        console.log('Korisnik je otkazao brisanje');
+        
       }
     
     this.cdr.detectChanges();
@@ -908,11 +886,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
           },
           (error) => {
             this.snackbarService.showErrorMessage('Failed to delete company');
-            console.error('Error deleting company:', error);
           }
         );
       } else {
-        console.log('User canceled company deletion');
       }
     
     this.cdr.detectChanges();
@@ -934,7 +910,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.isUpdateEmployeeFormVisible = true;
     this.employeeIdToUpdate = employee.userId;
 
-    console.log(employee);
 
     this.companyUpdateEmployeeFormGroup.patchValue({
       firstName: employee.user.firstName,
@@ -978,12 +953,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
           ...v,
           imageIndex: 0
         }));
-        console.log(this.vehicles);
 
         this.hasVehicles = true;
       },
       error: (error) => {
-        console.log(error);
+        
       }
     })
 
@@ -992,7 +966,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         this.vehicleBrands = brands;
       },
       error: (error) => {
-        console.log(error);
+        
       }
     });
   }
@@ -1004,7 +978,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         this.vehicleCategories = categories;
       },
       error: (error) => {
-        console.log(error);
+        
       }
     });
   }
@@ -1040,7 +1014,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         }
       },
       error: err => {
-        console.error('Error loading models:', err);
       }
     });
   }
@@ -1094,13 +1067,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
 
     this.vehicleListingService.uploadVehicleWithImages(formData).subscribe({
       next: response => {
-        console.log('Vehicle uploaded successfully:', response);
         this.addActivity(23,0,0,response.id);
         this.isLoading = false;
         this.closeAddVehicleForm();
         this.getVehicles();
       },
-      error: err => console.error('Upload failed:', err)
     });
   }
 
@@ -1129,7 +1100,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
         this.companyAdminUserId = response;
       },
       error: (error) => {
-        console.log(error);
+        
       }
     });
   }
@@ -1196,11 +1167,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
           },
           error: (err) => {
             this.snackbarService.showErrorMessage('Failed to delete vehicle');
-            console.error('Error deleting vehicle:', err);
           }
         });
       } else {
-        console.log('User canceled vehicle deletion');
       }
     
     this.cdr.detectChanges();
@@ -1261,14 +1230,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit, Aft
     this.vehicleListingService.updateVehicle(this.vehicleIdToUpdate, formData)
       .subscribe({
         next: response => {
-          console.log('Vehicle updated successfully:', response);
           this.addActivity(25,0,0,response.id);
           this.closeUpdateVehicleForm();
           this.getVehicles();
           this.isLoading = false;
         },
         error: err => {
-          console.error('Update failed:', err);
           this.isLoading = false;
         }
       });

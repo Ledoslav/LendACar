@@ -28,11 +28,9 @@ export class VerificationRequestPageComponent implements OnInit{
       this.verificationService.GetVerificationRequestByUserId(currentUser.id).subscribe({
         next: (res) => {
           this.verificationRequest = res;
-          console.log(this.verificationRequest);
           this.CheckVerificationStatus(); // Ensure to re-check after updating verificationRequest
         },
         error: (err) => {
-          console.error('Error fetching verification request:', err);
           this.verificationRequest = null;
           this.CheckVerificationStatus(); // Reset status if there's an error
         }
@@ -68,11 +66,9 @@ export class VerificationRequestPageComponent implements OnInit{
           window.location.reload();
         },
         error: (err) => {
-          console.log(err);
         }
       });
     } else {
-      console.log('No user is logged in.');
     }
   }
 
@@ -80,7 +76,7 @@ export class VerificationRequestPageComponent implements OnInit{
   DeleteRequest(){
     this.verificationService.DeleteVerificationRequest(this.verificationRequest?.id || 0).subscribe({
       next:_ => {window.location.reload();},
-      error:err=>console.log(err)
+      error:err=>{}
     })
   }
 

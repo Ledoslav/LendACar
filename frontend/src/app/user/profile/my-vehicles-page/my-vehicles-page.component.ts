@@ -32,8 +32,8 @@ export class MyVehiclesPageComponent implements OnInit{
         this.userVehicles=res;
       },
       error:err=>{
-        console.log(err);
       }
+
     })
   }
 

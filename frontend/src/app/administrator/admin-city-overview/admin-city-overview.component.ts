@@ -54,7 +54,7 @@ export class AdminCityOverviewComponent implements OnInit {
          this.snackbarService.showSuccessMessage("Successfully added city!");
          this.LoadCities();
        },
-       error:err=>console.log(err),
+        error:err=>{},
      })
   }
 
@@ -64,7 +64,7 @@ export class AdminCityOverviewComponent implements OnInit {
         this.snackbarService.showSuccessMessage("Successfully deleted city!");
         this.LoadCities();
         },
-      error:err=>console.log(err),
+      error:err=>{},
     })
   }
 
@@ -84,7 +84,7 @@ export class AdminCityOverviewComponent implements OnInit {
         this.LoadCities();
         this.CancelCountryEdit();
         },
-      error:err=>console.log(err)
+      error:err=>{}
     })
   }
 

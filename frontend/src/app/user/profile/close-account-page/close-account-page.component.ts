@@ -18,13 +18,10 @@ export class CloseAccountPageComponent {
   private dialog = inject(MatDialog);
 
   Delete() {
-    console.log(this.accountService.currentUser()?.id);
     this.accountService.Delete(this.accountService.currentUser()?.id).subscribe({
       next: result => {
-        console.log(result);
         this.accountService.Logout();},
       error: err => {
-        console.log(err);
         this.accountService.currentUser.set(null);
         localStorage.removeItem('user');
       }
@@ -45,7 +42,6 @@ export class CloseAccountPageComponent {
       if (result) {
         this.Delete()
       } else {
-        console.log('Korisnik je otkazao brisanje');
       }
     
     this.cdr.detectChanges();

@@ -69,8 +69,8 @@ export class EmployeeService {
       },
       error:error=>{
         alert(error.error);
-        console.log(error)
       }
+
       }
     )
   }

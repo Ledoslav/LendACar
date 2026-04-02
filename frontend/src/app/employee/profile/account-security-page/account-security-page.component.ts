@@ -56,7 +56,7 @@ export class AccountSecurityPageComponent implements OnInit{
     })
     const passwordChangeModel={...this.changePasswordForm.value};
     delete passwordChangeModel.passwordShow
-    console.log(passwordChangeModel);
+    
 
     this.passwordResetService.ChangePassword(passwordChangeModel)
   }
