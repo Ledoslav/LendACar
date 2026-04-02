@@ -116,7 +116,7 @@ export class UserOverviewComponent  implements OnInit {
             window.location.reload();
           }, 4000);
           },
-        error:err=>console.log(err),
+        error:err=>{},
       })
   }
 
@@ -139,7 +139,7 @@ export class UserOverviewComponent  implements OnInit {
             pagination: JSON.parse(res.headers.get('Pagination')!)
           };
         },
-        error: (err) => console.log(err),
+        error: (err) => {},
       });
   }
 
@@ -175,7 +175,6 @@ export class UserOverviewComponent  implements OnInit {
       if (result) {
         this.DeleteUser(event)
       } else {
-        console.log('Korisnik je otkazao brisanje');
       }
     
     this.cdr.detectChanges();

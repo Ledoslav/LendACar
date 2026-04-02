@@ -34,7 +34,6 @@ export class UserService {
          const { token, ...user } = response;
          localStorage.setItem('user', JSON.stringify(user));
          this.currentUser.set(user);
-         console.log("Current user set:", this.currentUser());
        }
        return response;
      })
@@ -78,7 +77,6 @@ export class UserService {
         void this.router.navigateByUrl("/user/dashboard");
         this.currentUser.set(null);
       },
-      error:error=>{console.log(error)}
     })
   }
 
@@ -129,7 +127,6 @@ export class UserService {
     }
     return this.http.post<{ isTaken: boolean }>(this.baseUrl+'Validator/check-username',object)
       .pipe(map(response => {
-        console.log("Server response",response);
         return response.isTaken
       }
       ));
@@ -142,7 +139,6 @@ export class UserService {
           localStorage.removeItem('user');
           localStorage.setItem('user',JSON.stringify(user));
           this.currentUser.set(user)
-          console.log("Current user set:", this.currentUser());
         }
         return user;
       })

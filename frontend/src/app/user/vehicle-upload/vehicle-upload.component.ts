@@ -218,10 +218,9 @@ export class VehicleUploadComponent implements OnInit {
 
     this.vehicleService.uploadVehicleWithImages(formData).subscribe({
       next: response => {
-        console.log('Vehicle uploaded successfully:', response);
         void this.router.navigateByUrl('/user/myVehicles');
       },
-      error: err => console.error('Upload failed:', err)
+      error: err => {}
     });
   }
 

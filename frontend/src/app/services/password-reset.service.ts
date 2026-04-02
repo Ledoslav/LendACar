@@ -35,7 +35,8 @@ export class PasswordResetService {
           void this.router.navigateByUrl("/employee/login");
         }
       },
-      error:error=>{console.log(error)}
+      error:error=>{}
+
     })
   }
 
@@ -58,7 +59,8 @@ export class PasswordResetService {
           void this.router.navigateByUrl("/employee/login");
         }
       },
-      error:error=>{console.log(error)}
+      error:error=>{}
+
     })
   }
 

@@ -65,7 +65,7 @@ export class ReservationFormComponent implements OnInit {
     if (this.vehicleId) {
       this.vehicleService.getVehicleByIdWithImages(this.vehicleId).subscribe({
         next: v => this.vehicle = v,
-        error: err => console.error('Failed to load vehicle', err)
+        error: err => {}
       });
     }
 
@@ -120,10 +120,8 @@ export class ReservationFormComponent implements OnInit {
 
     this.activityService.create(activity).subscribe({
       next:(response:any) =>{
-        console.log(response);
       },
       error:(err:any)=>{
-        console.log(err);
       }
     })
 
@@ -156,7 +154,7 @@ export class ReservationFormComponent implements OnInit {
 
     this.reservationService.create(dto).subscribe({
       next: (res: any) => this.router.navigate(['/vehicle/reservation-success/' + res.id]),
-      error: err => console.error('Reservation creation failed', err)
+      error: err => {}
     });
   }
 }

@@ -127,7 +127,6 @@ export class RegisterComponent implements OnInit {
   loadSecurityQuestion(){
     this.securityQuestionService.GetAllQuestions().subscribe(res=>{
       this.questions=res;
-      console.log(this.questions)
     
     this.cdr.detectChanges();
   })
@@ -162,13 +161,12 @@ showJustCaptcha=false
         this.snackbar.showSuccessMessage("User created successfully")
         void this.router.navigateByUrl('/user/login');
       },
-      error: err => console.log(err)
+      error: err => {}
     })
   }
 
 
   FilterCities($event:any) {
-    console.log(this.address.get('countryId')?.value);
     let countryId=this.address.get('countryId')?.value
     this.filteredCities=this.cities.filter(city=>city.countryId==countryId)
   }
@@ -183,7 +181,7 @@ showJustCaptcha=false
       next: result => {
         this.captchaSuccess=true;
       },
-      error: err => {console.log(err)},
+      error: err => {},
     })
   }
 

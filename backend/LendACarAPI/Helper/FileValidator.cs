@@ -10,18 +10,40 @@ namespace LendACarAPI.Helper
         private const long MaxImageSize = 5 * 1024 * 1024; // 5 MB
         private static readonly string[] AllowedImageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
         private static readonly string[] AllowedImageMimeTypes = { "image/jpeg", "image/png", "image/gif", "image/webp" };
+        
+        private static readonly string[] AllowedDocumentExtensions = { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" };
+        private static readonly string[] AllowedDocumentMimeTypes = 
+        { 
+            "application/pdf", 
+            "application/msword", 
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "image/jpeg", 
+            "image/png" 
+        };
 
         public static void ValidateImage(IFormFile file)
         {
             ValidateFile(file, MaxImageSize, AllowedImageExtensions, AllowedImageMimeTypes);
 
-            // Magic Bytes Check for Images
             using var stream = file.OpenReadStream();
             using var reader = new BinaryReader(stream);
             var headerBytes = reader.ReadBytes(8);
 
             if (!IsValidImageHeader(headerBytes))
                 throw new ArgumentException("File content does not match common image formats.");
+        }
+
+        public static void ValidateDocument(IFormFile file)
+        {
+            // Documents share the same 5MB limit
+            ValidateFile(file, MaxImageSize, AllowedDocumentExtensions, AllowedDocumentMimeTypes);
+
+            using var stream = file.OpenReadStream();
+            using var reader = new BinaryReader(stream);
+            var headerBytes = reader.ReadBytes(8);
+
+            if (!IsValidDocumentHeader(headerBytes))
+                throw new ArgumentException("File content does not match allowed document or image formats.");
         }
 
         public static void ValidateFile(IFormFile file, long maxSize, string[] allowedExtensions, string[] allowedMimeTypes)
@@ -67,6 +89,23 @@ namespace LendACarAPI.Helper
             }
 
             return false;
+        }
+
+        private static bool IsValidDocumentHeader(byte[] header)
+        {
+            if (header.Length < 4) return false;
+
+            // PDF: %PDF (25 50 44 46)
+            if (header[0] == 0x25 && header[1] == 0x50 && header[2] == 0x44 && header[3] == 0x46) return true;
+
+            // DOCX / ZIP: PK (50 4B 03 04)
+            if (header[0] == 0x50 && header[1] == 0x4B && header[2] == 0x03 && header[3] == 0x04) return true;
+
+            // DOC / OLE2: (D0 CF 11 E0 A1 B1 1A E1)
+            if (header.Length >= 8 && header[0] == 0xD0 && header[1] == 0xCF && header[2] == 0x11 && header[3] == 0xE0) return true;
+
+            // Also allow common image headers if they are in the allowed extensions
+            return IsValidImageHeader(header);
         }
     }
 }

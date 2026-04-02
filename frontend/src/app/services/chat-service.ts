@@ -22,12 +22,10 @@ export class ChatService {
 
     this.hub.onclose(() => {
       this.connected = false;
-      console.warn('SignalR disconnected');
     });
 
     return this.hub.start().then(() => {
       this.connected = true;
-      console.log('SignalR connected');
     });
   }
 

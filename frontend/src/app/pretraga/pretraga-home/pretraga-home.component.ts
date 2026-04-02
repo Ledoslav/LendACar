@@ -128,7 +128,7 @@ export class PretragaHomeComponent implements OnInit {
           return;
         }
 
-        console.log("No company admin email found");
+        
         this.isOwner = false;
         this.isEmployee = false;
         this.loadBookmarks();
@@ -184,7 +184,7 @@ export class PretragaHomeComponent implements OnInit {
           v.isBookmarked = this.bookmarks.some(b => b.vehicleId === v.id);
         });
       },
-      error: (err) => console.error(err)
+      error: (err) => 
     });
   }
 
@@ -300,7 +300,7 @@ export class PretragaHomeComponent implements OnInit {
           imageIndex: 0
         }));
 
-        console.log(this.vehicles);
+        
         this.cdr.detectChanges();
         this.noVehiclesFlag = this.vehicles.length == 0;
 
@@ -317,7 +317,7 @@ export class PretragaHomeComponent implements OnInit {
     this.cityService.GetAllCities().subscribe({
       next: (response:any) => {
         this.cities = response;
-        console.log(this.cities);
+        
       }
     })
   }
@@ -397,7 +397,7 @@ export class PretragaHomeComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Failed to update bookmark', err);
+        
       }
     });
   }
@@ -414,10 +414,10 @@ export class PretragaHomeComponent implements OnInit {
 
     this.activityService.create(activity).subscribe({
       next:(response:any) =>{
-        console.log(response);
+        
       },
       error:(err:any)=>{
-        console.log(err);
+        
       }
     })
 

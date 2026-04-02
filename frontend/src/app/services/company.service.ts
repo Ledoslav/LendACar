@@ -32,7 +32,6 @@ export class CompanyService {
     formData.append('userId', companyData.userId);
     formData.append('fileName', companyData.fileName);
 
-    console.log('companyData:', companyData);
     if (companyData.companyAvatar) {
       formData.append('companyAvatar', companyData.companyAvatar, companyData.companyAvatar.name);
     }

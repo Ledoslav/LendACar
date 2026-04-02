@@ -53,7 +53,7 @@ export class ActivityHomeComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Failed to load activities', err);
+        
         this.loading = false;
         this.error = 'Failed to load activities.';
       }

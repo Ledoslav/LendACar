@@ -247,7 +247,8 @@ export class RegisterComponent implements OnInit {
         this.formatDate();
         this.snackBarService.showSuccessMessage("Successfully updated employee")
       },
-      error:err=>{console.log(err) }
+      error:err=>{}
+
     })
   }
 

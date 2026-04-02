@@ -92,7 +92,7 @@ export class HomeComponent implements OnInit {
       this.isOwner = false;
       this.isEmployee = false;
 
-      console.log(this.isOwner, this.isEmployee);
+      
       this.getVehicles(this.paging);
       return;
     }
@@ -107,7 +107,7 @@ export class HomeComponent implements OnInit {
           return;
         }
 
-        console.log("No company admin email found");
+        
         this.isOwner = false;
         this.isEmployee = false;
         return;
@@ -200,7 +200,7 @@ export class HomeComponent implements OnInit {
     this.vehicleService.getVehicle(paging).subscribe({
       next: (response) =>{
         this.vehicles = response;
-        console.log(this.vehicles);
+        
         this.cdr.detectChanges();
       }
     })
@@ -220,7 +220,7 @@ export class HomeComponent implements OnInit {
 }
 
 loadCities(countryId: number){
-    console.log(countryId);
+    
 
     this.cityService.GetAllCitiesByCountryId(countryId).subscribe({
       next: (response) => {

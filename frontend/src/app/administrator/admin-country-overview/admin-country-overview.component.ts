@@ -41,7 +41,8 @@ export class AdminCountryOverviewComponent implements OnInit {
         this.snackBarService.showSuccessMessage("Successfully added country!");
         this.LoadCountries();
       },
-      error:err=>console.log(err),
+      error:err=>{},
+
     })
   }
   removeCountry($event:any){
@@ -50,7 +51,8 @@ export class AdminCountryOverviewComponent implements OnInit {
         this.snackBarService.showSuccessMessage("Successfully deleted country!");
         this.LoadCountries();
       },
-      error:err=>console.log(err),
+      error:err=>{},
+
     })
   }
 
@@ -69,7 +71,7 @@ export class AdminCountryOverviewComponent implements OnInit {
         this.LoadCountries();
         this.CancelCountryEdit();
         },
-      error:err=>console.log(err)
+      error:err=>{}
     })
   }
 

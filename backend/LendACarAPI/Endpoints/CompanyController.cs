@@ -122,8 +122,7 @@ namespace LendACarAPI.Endpoints
 
                 if (request.File != null)
                 {
-                    // For the general document 'File', we'll allow 5MB but limit extensions to safe ones (docs, pdf, images)
-                    FileValidator.ValidateFile(request.File, 5 * 1024 * 1024, new[] { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" }, null);
+                    FileValidator.ValidateDocument(request.File);
                     using (var memoryStream = new MemoryStream())
                     {
                         await request.File.CopyToAsync(memoryStream);
@@ -228,7 +227,7 @@ namespace LendACarAPI.Endpoints
 
                 if (request.File != null)
                 {
-                    FileValidator.ValidateFile(request.File, 5 * 1024 * 1024, new[] { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" }, null);
+                    FileValidator.ValidateDocument(request.File);
                     using (var memoryStream = new MemoryStream())
                     {
                         await request.File.CopyToAsync(memoryStream);

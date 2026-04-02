@@ -25,7 +25,6 @@ export class ReservationHistoryPageComponent {
 
   onSubmit(): void {
     if (this.profileForm.valid) {
-      console.log('Profile updated:', this.profileForm.value);
       alert('Profile updated successfully!');
     } else {
       alert('Please fill out all fields correctly.');

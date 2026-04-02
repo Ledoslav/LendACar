@@ -31,7 +31,6 @@ export class AdminLoginComponent implements OnInit  {
         void this.router.navigateByUrl('/admin/dashboard');
       },
       error:err=>{
-        console.log(err);
       }
     })
   }

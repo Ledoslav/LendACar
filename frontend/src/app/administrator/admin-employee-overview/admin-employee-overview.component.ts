@@ -84,7 +84,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
           pagination: JSON.parse(res.headers.get('Pagination')!)
         }
       },
-      error: err => console.log(err)
+      error: err => {}
     })
   }
 
@@ -122,7 +122,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
         window.location.reload()
       },
       error: err => {
-        console.log(err)
+        // error: err => {}
       }
     });
   }
@@ -172,7 +172,7 @@ export class AdminEmployeeOverviewComponent implements OnInit {
           pagination: JSON.parse(res.headers.get('Pagination')!)
         }
       },
-      error: err => console.log(err)
+      error: err => {}
     })
   }
 
@@ -198,7 +198,6 @@ export class AdminEmployeeOverviewComponent implements OnInit {
       if (result) {
         this.DeleteEmployee(event)
       } else {
-        console.log('Korisnik je otkazao brisanje');
       }
     
     this.cdr.detectChanges();

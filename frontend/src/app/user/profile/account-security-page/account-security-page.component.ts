@@ -98,7 +98,7 @@ export class AccountSecurityPageComponent implements OnInit{
         localStorage.removeItem('auth-token');
         void this.router.navigateByUrl('/public/home');
       },
-      error: err => console.log(err)
+      error: err => {}
     });
   }
 
@@ -114,7 +114,7 @@ export class AccountSecurityPageComponent implements OnInit{
         localStorage.removeItem('auth-token');
         void this.router.navigateByUrl('/public/home');
       },
-      error: err => console.log(err)
+      error: err => {}
     });
   }
 
@@ -129,7 +129,7 @@ export class AccountSecurityPageComponent implements OnInit{
         localStorage.removeItem('auth-token');
         void this.router.navigateByUrl('/public/home');
       },
-      error: err => console.log(err)
+      error: err => {}
     });
   }
 
@@ -148,7 +148,7 @@ export class AccountSecurityPageComponent implements OnInit{
       if (result) {
         this.RemoveQuestion()
       } else {
-        console.log('Korisnik je otkazao brisanje');
+        
       }
     
     this.cdr.detectChanges();
@@ -169,7 +169,7 @@ export class AccountSecurityPageComponent implements OnInit{
       if (result) {
         this.ChangeQuestion()
       } else {
-        console.log('Korisnik je otkazao brisanje');
+        
       }
     
     this.cdr.detectChanges();
@@ -190,7 +190,7 @@ export class AccountSecurityPageComponent implements OnInit{
       if (result) {
         this.AddQuestion()
       } else {
-        console.log('Korisnik je otkazao brisanje');
+        
       }
     
     this.cdr.detectChanges();

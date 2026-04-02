@@ -40,7 +40,6 @@ export class CompanyEmployeeService {
     ).pipe(
       map((response) => response.companyAdminEmail || null),
       catchError((error) => {
-        console.error('Error fetching admin email:', error);
         return of(null);  // Return null if an error occurs
       })
     );

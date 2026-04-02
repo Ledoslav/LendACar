@@ -54,17 +54,17 @@ export class PhotoPageComponent {
     if (blob) {
       this.croppedImage = blob;
       this.croppedImageUrl = event.objectUrl;
-      console.log('Cropped Blob:', this.croppedImage);
-      console.log('Preview URL:', this.croppedImageUrl);
+      
+      
     } else {
-      console.error('Blob image is undefined.');
+      
     }
   }
 
 
   uploadCroppedImage(): void {
     if (!this.croppedImage) {
-      console.error('No cropped image available.');
+      
       return;
     }
 
@@ -75,14 +75,14 @@ export class PhotoPageComponent {
 
     this.employeeService.UploadProfilePhoto(formData,this.employeeService.currentEmployee()?.id).subscribe({
         next:(response: any) => {
-          console.log('Upload successful:', response);
+          
           this.showCropper = false;
           this.employeeService.currentEmployee.set(response);
           this.snackbarService.showSuccessMessage('Profile picture updated successfully!')
           this.isLoading=false;
         },
         error:(error) => {
-          console.error('Upload failed:', error);
+          
           this.snackbarService.showErrorMessage('Failed to upload profile picture.');
           this.isLoading=false;
         }
@@ -92,7 +92,7 @@ export class PhotoPageComponent {
 
   removeProfilePhoto(): void {
     if (this.employeeService.currentEmployee()?.profilePhotoUrl==null) {
-      console.error('No image available.');
+      
       return;
     }
 
@@ -133,19 +133,19 @@ export class PhotoPageComponent {
       if (result) {
         this.employeeService.RemoveProfilePhoto(this.employeeService.currentEmployee()?.id).subscribe({
             next:(response: any) => {
-              console.log('Removal successful:', response);
+              
               this.showCropper = false;
               this.employeeService.currentEmployee.set(response);
               this.snackbarService.showSuccessMessage('Profile picture removed successfully!')
             },
             error:(error) => {
-              console.error('Removal failed:', error);
+              
               this.snackbarService.showErrorMessage('Failed to remove profile picture.');
             }
           }
         );
       } else {
-        console.log('Korisnik je otkazao brisanje');
+        
       }
     
     this.cdr.detectChanges();

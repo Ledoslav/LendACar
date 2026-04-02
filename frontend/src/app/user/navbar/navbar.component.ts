@@ -36,7 +36,6 @@ export class NavbarComponent implements OnInit {
       this.isOwner = false;
       this.isEmployee = false;
 
-      console.log(this.isOwner,this.isEmployee);
 
       return;
     }
@@ -50,7 +49,6 @@ export class NavbarComponent implements OnInit {
           return;
         }
 
-        console.log("No company admin email found");
         this.isOwner = false;
         this.isEmployee = false;
         return;
@@ -82,7 +80,6 @@ export class NavbarComponent implements OnInit {
           this.isOwner = false;
           this.isEmployee = false;
         }
-        console.log(this.isOwner,this.isEmployee);
       }
     })
   }
